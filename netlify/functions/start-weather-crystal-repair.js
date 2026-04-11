@@ -1,11 +1,11 @@
 // start-weather-crystal-repair.js
 // Thin action helper for parcel Weather Crystal repair.
 // Database is the single source of truth.
-// This file only triggers repair — no duration calc, no Qi calc, no status logic.
+// This file only triggers repair -- no duration calc, no Qi calc, no status logic.
 //
-// Auth: Two paths —
-//   1. Cookie session (browser)  → avatar key resolved from session
-//   2. sl_avatar_key in body (LSL in-world) → verified against members table
+// Auth: Two paths --
+//   1. Cookie session (browser)  -> avatar key resolved from session
+//   2. sl_avatar_key in body (LSL in-world) -> verified against members table
 
 const { createClient } = require("@supabase/supabase-js");
 
@@ -15,7 +15,7 @@ const COOKIE_NAME         = (process.env.SESSION_COOKIE_NAME || "ap_session").tr
 
 const supabase = createClient(SUPABASE_URL, SUPABASE_SECRET_KEY);
 
-// ── Helpers ──────────────────────────────────────────────────
+// -- Helpers --
 
 function parseCookies(header) {
   var cookies = {};
@@ -47,7 +47,7 @@ function safeText(value, fallback) {
   return t || (fallback || "");
 }
 
-// ── Handler ──────────────────────────────────────────────────
+// -- Handler --
 
 exports.handler = async function(event) {
 
@@ -72,7 +72,7 @@ exports.handler = async function(event) {
     return json(400, { success: false, message: "parcel_key is required." });
   }
 
-  // ── Auth: try cookie session first, fall back to sl_avatar_key ──
+  // -- Auth: try cookie session first, fall back to sl_avatar_key --
   var avatarKey = "";
 
   // Path 1: Cookie session (browser callers)
@@ -122,7 +122,7 @@ exports.handler = async function(event) {
     avatarKey = bodyAvatarKey;
   }
 
-  // ── Call database function ─────────────────────────────────
+  // -- Call database function --
   try {
     var result = await supabase.schema("weather").rpc("start_parcel_crystal_repair", {
       p_parcel_key: parcelKey,
@@ -140,4 +140,28 @@ exports.handler = async function(event) {
 
     var data = result.data;
 
-    //
+    // DB function returns jsonb with success field
+    if (!data || data.success === false) {
+      var errorCode = data && data.error ? data.error : "unknown_error";
+      var httpStatus = 400;
+
+      if (errorCode === "parcel_crystal_not_found") httpStatus = 404;
+      if (errorCode === "member_not_found") httpStatus = 404;
+      if (errorCode === "insufficient_qi") httpStatus = 422;
+      if (errorCode === "already_repairing") httpStatus = 409;
+      if (errorCode === "no_repair_needed") httpStatus = 409;
+
+      return json(httpStatus, data);
+    }
+
+    // Return the DB result as-is
+    return json(200, data);
+
+  } catch(err) {
+    console.error("start-weather-crystal-repair unexpected error:", err);
+    return json(500, {
+      success: false,
+      message: "Unexpected error starting crystal repair."
+    });
+  }
+};
