@@ -251,7 +251,9 @@
     .gate-side .gate-scene {
       flex: 1;
       height: auto;
-      min-height: 240px;
+      min-height: 280px;
+      background: #0a0a14;
+      border-radius: 0;
     }
     .record-stats-bar {
       background: #0d0a00;
@@ -754,38 +756,10 @@
               <h2 class="gate-title" id="gate-title">Gate Sealed</h2>
               <p class="gate-desc" id="gate-desc">This section has not yet been opened.</p>
             </div>
-            <div class="gate-scene" id="gate-scene">
-              <div id="gate-bg"></div>
-              <div id="gate-qi-layer"></div>
-              <div id="gate-spark-layer"></div>
-              <div class="gate-flash" id="gate-flash"></div>
-              <div class="gate-archway">
-                <div class="gate-arch-top" id="gate-arch-top">
-                  <span class="gate-rune" id="gate-rune-l">&#x2B21;</span>
-                  <span class="gate-rune" id="gate-rune-m">&#x2630;</span>
-                  <span class="gate-rune" id="gate-rune-r">&#x2B21;</span>
-                </div>
-                <div class="gate-arch-pillar-l" id="gate-pillar-l"><span></span></div>
-                <div class="gate-arch-pillar-r" id="gate-pillar-r"><span></span></div>
-                <div class="gate-beam" id="gate-beam"></div>
-                <div class="gate-door-l" id="gate-door-l">
-                  <div class="gate-door-panel" id="gate-door-panel-l">
-                    <div class="gate-door-inner" id="gate-door-inner-l"></div>
-                  </div>
-                </div>
-                <div class="gate-door-r" id="gate-door-r">
-                  <div class="gate-door-panel" id="gate-door-panel-r">
-                    <div class="gate-door-inner" id="gate-door-inner-r"></div>
-                  </div>
-                </div>
-                <div class="gate-seam" id="gate-seam"></div>
-                <div class="gate-progress-bar-wrap" id="gate-progress-wrap" style="display:none;">
-                  <div class="gate-progress-bar-fill" id="gate-progress-fill"></div>
-                </div>
-              </div>
-              <canvas class="gate-figure" id="gate-figure" style="display:none;"></canvas>
-              <div class="gate-floor" id="gate-floor"></div>
-            </div>
+      <div class="gate-scene" id="gate-scene" style="position:relative;overflow:hidden;">
+        <canvas id="portal-canvas" style="width:100%;height:100%;display:block;"></canvas>
+        <div class="gate-flash" id="gate-flash" style="position:absolute;top:0;left:0;right:0;bottom:0;background:#fff;opacity:0;pointer-events:none;transition:opacity 0.3s;z-index:5;"></div>
+      </div>
             <div class="gate-footer">
               <div class="gate-chips" id="gate-chips"></div>
               <button class="gate-action-btn" id="gate-action-btn" style="display:none;"></button>
@@ -1783,6 +1757,260 @@
     }
 
 
+    var _portalState = 'sealed';
+    var _portalRealmColors = { pri:'#5a9acc', sec:'#3a6a99', dim:'#1a3a55', glow:'#88ccff', particle:'#aaddff', rune:'#6ab4ee' };
+    var _portalRaf = null;
+    var _portalTime = 0;
+    var _portalEntering = false;
+    var _portalEnterStartTime = 0;
+    var _portalMotes = [];
+    var _portalCracks = [];
+    var _portalInited = false;
+
+    function initPortalParticles() {
+      if (_portalInited) return;
+      _portalInited = true;
+      _portalMotes = [];
+      for (var i = 0; i < 60; i++) {
+        _portalMotes.push({ a: Math.random()*Math.PI*2, r: 30+Math.random()*60, speed: 0.2+Math.random()*0.4, sz: 0.8+Math.random()*1.8, phase: Math.random()*Math.PI*2 });
+      }
+      _portalCracks = [];
+      for (var j = 0; j < 7; j++) {
+        var ca = -Math.PI*0.7 + Math.random()*Math.PI*1.4;
+        var clen = 20+Math.random()*35;
+        var segs = [];
+        var cpx = 0, cpy = 0;
+        for (var k = 0; k < 4; k++) {
+          cpx += Math.cos(ca+Math.random()*0.5-0.25)*(clen/4);
+          cpy += Math.sin(ca+Math.random()*0.5-0.25)*(clen/4);
+          segs.push({ x: cpx, y: cpy });
+        }
+        _portalCracks.push({ segs: segs, alpha: 0.3+Math.random()*0.4 });
+      }
+    }
+
+    function startPortalCanvas() {
+      initPortalParticles();
+      if (_portalRaf) return;
+      var canvas = document.getElementById('portal-canvas');
+      if (!canvas) return;
+      var ctx = canvas.getContext('2d');
+
+      function resize() {
+        var rect = canvas.parentElement.getBoundingClientRect();
+        var dpr = window.devicePixelRatio || 1;
+        canvas.width = rect.width * dpr;
+        canvas.height = rect.height * dpr;
+        ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+      }
+      resize();
+      window.addEventListener('resize', resize);
+
+      function frame() {
+        _portalRaf = requestAnimationFrame(frame);
+        _portalTime += 0.016;
+        var t = _portalTime;
+        var rc = _portalRealmColors;
+        var st = _portalState;
+        var rect = canvas.parentElement.getBoundingClientRect();
+        var W = rect.width, H = rect.height;
+        var pcx = W / 2, pcy = H * 0.45;
+        var portalR = st === 'active' ? 55 : 50;
+        var sealed = st === 'sealed' || st === 'cultivating' || st === 'complete';
+        var damaged = st === 'damaged';
+        var intensity = sealed ? 0.15 : damaged ? 0.25 : _portalEntering ? Math.min(1.5, 0.6 + (_portalTime - _portalEnterStartTime) * 0.5) : 0.5;
+
+        ctx.clearRect(0, 0, W, H);
+
+        var skyGrd = ctx.createLinearGradient(0, 0, 0, H);
+        skyGrd.addColorStop(0, '#0a0a14'); skyGrd.addColorStop(1, '#0e0e18');
+        ctx.fillStyle = skyGrd; ctx.fillRect(0, 0, W, H);
+
+        var groundY = H * 0.82;
+        ctx.fillStyle = '#131320'; ctx.fillRect(0, groundY, W, H - groundY);
+        ctx.strokeStyle = '#222233'; ctx.lineWidth = 1;
+        ctx.beginPath(); ctx.moveTo(0, groundY); ctx.lineTo(W, groundY); ctx.stroke();
+
+        var ambGrd = ctx.createRadialGradient(pcx, pcy, 5, pcx, pcy, portalR * 3);
+        ambGrd.addColorStop(0, rc.pri + '25'); ambGrd.addColorStop(1, 'transparent');
+        ctx.fillStyle = ambGrd; ctx.globalAlpha = sealed ? 0.3 : 1; ctx.fillRect(0, 0, W, H); ctx.globalAlpha = 1;
+
+        drawPortalArch(ctx, pcx, pcy, portalR, rc, st, t, intensity);
+        drawPortalVoid(ctx, pcx, pcy, portalR, rc, st, t, intensity, sealed);
+
+        if (!sealed) {
+          drawPortalSwirls(ctx, pcx, pcy, portalR, rc, t, intensity);
+          drawPortalMotes(ctx, pcx, pcy, portalR, rc, t, intensity);
+        }
+
+        if (damaged) {
+          drawPortalCracks(ctx, pcx, pcy, portalR, t);
+        }
+
+        if (sealed) {
+          ctx.font = '500 10px sans-serif'; ctx.textAlign = 'center';
+          ctx.fillStyle = '#444455'; ctx.globalAlpha = 0.4 + 0.2 * Math.sin(t * 1.5);
+          ctx.fillText('SEALED', pcx, pcy + 3); ctx.globalAlpha = 1;
+        }
+
+        if (_portalEntering) {
+          drawPortalEnterAnim(ctx, pcx, pcy, portalR, rc, t, groundY);
+        }
+      }
+      _portalRaf = requestAnimationFrame(frame);
+    }
+
+    function drawPortalArch(ctx, cx, cy, r, rc, st, t, intensity) {
+      var archW = r * 2, archH = r * 2.4;
+      var baseX = cx - archW / 2, baseY = cy + r * 1;
+
+      ctx.strokeStyle = rc.sec; ctx.lineWidth = 5; ctx.globalAlpha = 0.6;
+      ctx.beginPath();
+      ctx.moveTo(baseX, baseY);
+      ctx.lineTo(baseX, cy - archH / 2 + 20);
+      ctx.quadraticCurveTo(baseX, cy - archH / 2, cx, cy - archH / 2 - 15);
+      ctx.quadraticCurveTo(baseX + archW, cy - archH / 2, baseX + archW, cy - archH / 2 + 20);
+      ctx.lineTo(baseX + archW, baseY);
+      ctx.stroke();
+
+      ctx.strokeStyle = rc.dim; ctx.lineWidth = 8; ctx.globalAlpha = 0.3;
+      ctx.beginPath();
+      ctx.moveTo(baseX - 2, baseY);
+      ctx.lineTo(baseX - 2, cy - archH / 2 + 22);
+      ctx.quadraticCurveTo(baseX - 2, cy - archH / 2 + 2, cx, cy - archH / 2 - 13);
+      ctx.quadraticCurveTo(baseX + archW + 2, cy - archH / 2 + 2, baseX + archW + 2, cy - archH / 2 + 22);
+      ctx.lineTo(baseX + archW + 2, baseY);
+      ctx.stroke();
+      ctx.globalAlpha = 1;
+
+      var runePos = [
+        { x: baseX - 3, y: cy - 25 }, { x: baseX - 3, y: cy + 10 },
+        { x: baseX + archW + 3, y: cy - 25 }, { x: baseX + archW + 3, y: cy + 10 },
+        { x: cx, y: cy - archH / 2 - 18 }
+      ];
+      var runeChars = ['\u2630', '\u2631', '\u2632', '\u2633', '\u2B21'];
+      ctx.font = '500 11px serif'; ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+      for (var i = 0; i < runePos.length; i++) {
+        ctx.fillStyle = rc.rune;
+        ctx.globalAlpha = st === 'sealed' ? 0.15 : st === 'damaged' ? 0.1 : 0.3 + 0.3 * Math.sin(t * 1.3 + i * 0.8);
+        ctx.fillText(runeChars[i], runePos[i].x, runePos[i].y);
+      }
+      ctx.globalAlpha = 1;
+
+      ctx.fillStyle = rc.glow;
+      ctx.globalAlpha = 0.5 + 0.3 * Math.sin(t * 2);
+      ctx.beginPath(); ctx.arc(cx, cy - archH / 2 - 16, 3.5 + Math.sin(t * 2.5) * 1.5, 0, Math.PI * 2); ctx.fill();
+      ctx.globalAlpha = 1;
+    }
+
+    function drawPortalVoid(ctx, cx, cy, r, rc, st, t, intensity, sealed) {
+      var voidGrd = ctx.createRadialGradient(cx, cy, 0, cx, cy, r);
+      if (sealed) {
+        voidGrd.addColorStop(0, '#12121a'); voidGrd.addColorStop(1, '#08080e');
+      } else if (st === 'damaged') {
+        voidGrd.addColorStop(0, '#220808'); voidGrd.addColorStop(1, '#0e0303');
+      } else {
+        voidGrd.addColorStop(0, rc.dim + 'cc'); voidGrd.addColorStop(0.7, rc.dim + '66'); voidGrd.addColorStop(1, '#08080e');
+      }
+      ctx.beginPath(); ctx.ellipse(cx, cy, r, r * 1.25, 0, 0, Math.PI * 2);
+      ctx.fillStyle = voidGrd; ctx.fill();
+    }
+
+    function drawPortalSwirls(ctx, cx, cy, r, rc, t, intensity) {
+      for (var s = 0; s < 3; s++) {
+        ctx.beginPath(); ctx.strokeStyle = rc.pri; ctx.lineWidth = 0.8;
+        ctx.globalAlpha = (0.1 + s * 0.06) * intensity;
+        var sr = r * 0.25 + s * r * 0.22;
+        for (var i = 0; i <= 40; i++) {
+          var a = (i / 40) * Math.PI * 2;
+          var wobble = Math.sin(a * 3 + t * (1.2 + s * 0.3)) * 4 * intensity;
+          var px = cx + Math.cos(a) * (sr + wobble);
+          var py = cy + Math.sin(a) * (sr + wobble) * 1.25;
+          i === 0 ? ctx.moveTo(px, py) : ctx.lineTo(px, py);
+        }
+        ctx.stroke();
+      }
+      for (var arm = 0; arm < 2; arm++) {
+        ctx.beginPath(); ctx.strokeStyle = rc.glow; ctx.lineWidth = 0.8;
+        ctx.globalAlpha = 0.15 * intensity;
+        var baseA = arm * Math.PI + t * 0.4;
+        for (var j = 0; j < 50; j++) {
+          var frac = j / 50;
+          var sa = baseA + frac * Math.PI * 2.2;
+          var rr = 4 + frac * r * 0.85;
+          var spx = cx + Math.cos(sa) * rr;
+          var spy = cy + Math.sin(sa) * rr * 1.25;
+          j === 0 ? ctx.moveTo(spx, spy) : ctx.lineTo(spx, spy);
+        }
+        ctx.stroke();
+      }
+      ctx.globalAlpha = 1;
+    }
+
+    function drawPortalMotes(ctx, cx, cy, r, rc, t, intensity) {
+      for (var i = 0; i < _portalMotes.length; i++) {
+        var m = _portalMotes[i];
+        m.a += m.speed * 0.007 * intensity;
+        var mr = m.r + Math.sin(t + m.phase) * 6;
+        var mx = cx + Math.cos(m.a) * mr;
+        var my = cy + Math.sin(m.a) * mr * 1.25;
+        var dx = (mx - cx) / r, dy = (my - cy) / (r * 1.25);
+        if (dx * dx + dy * dy > 1) continue;
+        ctx.beginPath(); ctx.fillStyle = rc.particle;
+        ctx.globalAlpha = (0.15 + 0.3 * Math.sin(t * 2 + m.phase)) * intensity;
+        ctx.arc(mx, my, m.sz, 0, Math.PI * 2); ctx.fill();
+      }
+      ctx.globalAlpha = 1;
+    }
+
+    function drawPortalCracks(ctx, cx, cy, r, t) {
+      for (var i = 0; i < _portalCracks.length; i++) {
+        var c = _portalCracks[i];
+        ctx.beginPath(); ctx.strokeStyle = '#ff3322';
+        ctx.lineWidth = 1.2 + Math.sin(t * 3) * 0.4;
+        ctx.globalAlpha = c.alpha * (0.4 + 0.3 * Math.sin(t * 2.5));
+        ctx.moveTo(cx, cy);
+        for (var j = 0; j < c.segs.length; j++) { ctx.lineTo(cx + c.segs[j].x, cy + c.segs[j].y); }
+        ctx.stroke();
+      }
+      ctx.globalAlpha = 1;
+      var damGrd = ctx.createRadialGradient(cx, cy, r * 0.4, cx, cy, r);
+      damGrd.addColorStop(0, '#ff220012'); damGrd.addColorStop(1, '#ff220004');
+      ctx.fillStyle = damGrd; ctx.globalAlpha = 0.5 + 0.2 * Math.sin(t * 2);
+      ctx.beginPath(); ctx.ellipse(cx, cy, r, r * 1.25, 0, 0, Math.PI * 2); ctx.fill();
+      ctx.globalAlpha = 1;
+    }
+
+    function drawPortalEnterAnim(ctx, cx, cy, r, rc, t, groundY) {
+      var elapsed = t - _portalEnterStartTime;
+      if (elapsed < 1.8) {
+        var walkProgress = Math.min(1, elapsed / 1.2);
+        var figStartX = cx - 70;
+        var fx = figStartX + (cx - figStartX) * walkProgress;
+        var fy = groundY;
+        var alpha = elapsed > 1 ? Math.max(0, 1 - (elapsed - 1) / 0.8) : 1;
+        var scale = elapsed > 0.8 ? Math.max(0.2, 1 - (elapsed - 0.8) * 1) : 1;
+        ctx.save(); ctx.translate(fx, fy); ctx.scale(scale, scale); ctx.translate(-fx, -fy);
+        ctx.globalAlpha = alpha * 0.85; ctx.fillStyle = '#e8d5b0'; ctx.strokeStyle = '#e8d5b0'; ctx.lineWidth = 2;
+        ctx.beginPath(); ctx.arc(fx, fy - 38, 5.5, 0, Math.PI * 2); ctx.fill();
+        ctx.beginPath(); ctx.moveTo(fx, fy - 32); ctx.lineTo(fx, fy - 14); ctx.stroke();
+        ctx.beginPath(); ctx.moveTo(fx, fy - 28); ctx.lineTo(fx - 9, fy - 20); ctx.stroke();
+        ctx.beginPath(); ctx.moveTo(fx, fy - 28); ctx.lineTo(fx + 9, fy - 20); ctx.stroke();
+        ctx.beginPath(); ctx.moveTo(fx, fy - 14); ctx.lineTo(fx - 5, fy); ctx.stroke();
+        ctx.beginPath(); ctx.moveTo(fx, fy - 14); ctx.lineTo(fx + 5, fy); ctx.stroke();
+        ctx.restore();
+
+        if (elapsed > 0.6) {
+          var pullAlpha = Math.min(1, (elapsed - 0.6) * 2.5);
+          var pullGrd = ctx.createRadialGradient(cx, cy, 0, cx, cy, r * 1.4);
+          pullGrd.addColorStop(0, rc.glow + '55'); pullGrd.addColorStop(1, 'transparent');
+          ctx.fillStyle = pullGrd; ctx.globalAlpha = pullAlpha * 0.5;
+          ctx.beginPath(); ctx.ellipse(cx, cy, r * 1.4, r * 1.7, 0, 0, Math.PI * 2); ctx.fill();
+          ctx.globalAlpha = 1;
+        }
+      }
+    }
+
     var _gateFigureCache = null;
     var _gateFigureLoading = false;
     var _gateFigureCallbacks = [];
@@ -1901,188 +2129,65 @@
           var req = safeNumber(focus.required_seconds, 0);
           progressPct = req > 0 ? Math.min(100, Math.round((acc / req) * 100)) : 0;
         }
-        var fromLabel = volumeNumber > 0 ? realmFromVolume(volumeNumber) : '--';
 
-        var wrap      = document.getElementById('gate-wrap');
-        var kicker    = document.getElementById('gate-kicker');
-        var titleEl   = document.getElementById('gate-title');
-        var descEl    = document.getElementById('gate-desc');
-        var scene     = document.getElementById('gate-scene');
-        var archTop   = document.getElementById('gate-arch-top');
-        var pillarL   = document.getElementById('gate-pillar-l');
-        var pillarR   = document.getElementById('gate-pillar-r');
-        var doorL     = document.getElementById('gate-door-l');
-        var doorR     = document.getElementById('gate-door-r');
-        var doorPanL  = document.getElementById('gate-door-panel-l');
-        var doorPanR  = document.getElementById('gate-door-panel-r');
-        var doorInL   = document.getElementById('gate-door-inner-l');
-        var doorInR   = document.getElementById('gate-door-inner-r');
-        var beam      = document.getElementById('gate-beam');
-        var seam      = document.getElementById('gate-seam');
-        var floor     = document.getElementById('gate-floor');
-        var runeL     = document.getElementById('gate-rune-l');
-        var runeM     = document.getElementById('gate-rune-m');
-        var runeR     = document.getElementById('gate-rune-r');
-        var bgLayer   = document.getElementById('gate-bg');
-        var qiLayer   = document.getElementById('gate-qi-layer');
-        var spLayer   = document.getElementById('gate-spark-layer');
-        var progWrap  = document.getElementById('gate-progress-wrap');
-        var progFill  = document.getElementById('gate-progress-fill');
-        var actionBtn    = document.getElementById('gate-action-btn');
+        var wrap = document.getElementById('gate-wrap');
+        var kicker = document.getElementById('gate-kicker');
+        var titleEl = document.getElementById('gate-title');
+        var descEl = document.getElementById('gate-desc');
+        var chipsEl = document.getElementById('gate-chips');
+        var actionBtn = document.getElementById('gate-action-btn');
         var actionBtnOff = document.getElementById('gate-action-btn-off');
-        var subNote   = document.getElementById('gate-sub-note');
-        var chipsEl   = document.getElementById('gate-chips');
-        var figCanvas = document.getElementById('gate-figure');
-        var flash     = document.getElementById('gate-flash');
+        var subNote = document.getElementById('gate-sub-note');
+        var panel = document.getElementById('vessel-gate-panel');
         if (!wrap) return;
 
-        var C = {
-          sealed:      {bg:'#080808',kc:'#555',tc:'rgba(255,255,255,0.3)',pBg:'#111',pBorder:'#222',aBg:'#111',aBorder:'#222',dBg:'#0e0e0e',dBorder:'#2a2a2a',dPanel:'#1f1f1f',dInner:'#181818',fBg:'#0d0d0d',fBorder:'#1a1a1a',seam:'#1a1a1a',seamAnim:false,dTL:'',dTR:'',beam:false,runes:false,figCol:'#444',figOp:0.2,figX:-145,figSz:85,figAnim:'none',starCol:'#333',stars:10,qi:false,sparks:false,prog:false},
-          cultivating: {bg:'#060c12',kc:'#6aaccc',tc:null,pBg:'#0d1a24',pBorder:'#3a608055',aBg:'#0d1a24',aBorder:'#3a608066',dBg:'#0d1a24',dBorder:'#3a608066',dPanel:'#3a608044',dInner:'#3a608033',fBg:'#080f16',fBorder:'#3a608033',seam:'#3a608055',seamAnim:false,dTL:'',dTR:'',beam:false,runes:true,runeCol:'#3a608088',figCol:'#6aaccc',figOp:0.75,figX:-130,figSz:100,figAnim:'meditate',starCol:'#3a6080',stars:22,qi:true,sparks:false,prog:true,progCol:'#6aaccc'},
-          complete:    {bg:'#0a0800',kc:'#c8a96a88',tc:null,pBg:'#1a1400',pBorder:'#c8a96a44',aBg:'#1a1400',aBorder:'#c8a96a44',dBg:'#1a1400',dBorder:'#c8a96a55',dPanel:'#c8a96a33',dInner:'#c8a96a22',fBg:'#1a1400',fBorder:'#c8a96a22',seam:'#c8a96a44',seamAnim:true,dTL:'',dTR:'',beam:false,runes:true,runeCol:'#c8a96a66',figCol:'#c8a96a',figOp:0.9,figX:-112,figSz:104,figAnim:'lean',starCol:'#c8a96a',stars:28,qi:false,sparks:false,prog:false},
-          open:        {bg:'#0a0800',kc:'#c8a96a',tc:null,pBg:'#1e1600',pBorder:'#c8a96a66',aBg:'#1e1600',aBorder:'#c8a96a66',dBg:'#1e1600',dBorder:'#c8a96a66',dPanel:'#c8a96a44',dInner:'#c8a96a33',fBg:'#1a1400',fBorder:'#c8a96a33',seam:null,seamAnim:false,dTL:'perspective(300px) rotateY(-72deg)',dTR:'perspective(300px) rotateY(72deg)',beam:true,beamCol:'#c8a96a2a',beamSpd:'2.5s',runes:true,runeCol:'#c8a96a',figCol:'#c8a96a',figOp:1,figX:-130,figSz:110,figAnim:'meditate',starCol:'#c8a96a',stars:35,qi:false,sparks:true,prog:false},
-          active:      {bg:'#0a0700',kc:'#e8a840',tc:null,pBg:'#1a1000',pBorder:'#e8a84066',aBg:'#1a1000',aBorder:'#e8a84066',dBg:'#1a1000',dBorder:'#e8a84066',dPanel:'#e8a84044',dInner:'#e8a84033',fBg:'#140c00',fBorder:'#e8a84033',seam:null,seamAnim:false,dTL:'perspective(300px) rotateY(-88deg)',dTR:'perspective(300px) rotateY(88deg)',beam:true,beamCol:'#e8a84022',beamSpd:'1.2s',runes:true,runeCol:'#e8a840',figCol:'#e8a840',figOp:0.45,figX:5,figSz:65,figAnim:'none',starCol:'#e8a840',stars:18,qi:false,sparks:true,prog:false},
-          damaged:     {bg:'#080303',kc:'#cc4444',tc:null,pBg:'#150808',pBorder:'#7a202055',aBg:'#150808',aBorder:'#7a202066',dBg:'#150808',dBorder:'#aa303066',dPanel:'#7a202044',dInner:'#7a202033',fBg:'#100505',fBorder:'#7a202044',seam:'#cc444433',seamAnim:true,dTL:'perspective(300px) rotateY(-28deg) rotateZ(-4deg)',dTR:'perspective(300px) rotateY(22deg) rotateZ(3deg)',beam:false,runes:false,figCol:'#cc4444',figOp:0.85,figX:-168,figSz:95,figAnim:'knockback',starCol:'#7a2020',stars:12,qi:false,sparks:false,prog:false}
-        };
-        var c = C[gateState] || C.sealed;
-
         wrap.className = 'gate-wrap state-' + gateState;
-        scene.style.background = c.bg;
-        scene.className = 'gate-scene' + (gateState === 'open' ? ' is-clickable' : '');
+        if (panel) panel.className = 'vessel-gate-panel state-' + gateState;
 
-        // Task 1B — CSS variables per gate state
-        var gateVars = {
-          sealed:      { frame:'#181828', rim:'#222235', door:'#131322', glowColor:'#222235', beamColor:'transparent' },
-          cultivating: { frame:'#0d1e30', rim:'#1a3555', door:'#0a1824', glowColor:'#3a6080', beamColor:'transparent' },
-          complete:    { frame:'#1e1800', rim:'#3a2a00', door:'#181200', glowColor:'#c8a96a', beamColor:'transparent' },
-          open:        { frame:'#201a00', rim:'#c8a96a', door:'#181200', glowColor:'#c8a96a', beamColor:'rgba(200,169,106,0.4)' },
-          active:      { frame:'#281400', rim:'#e09040', door:'#1a0e00', glowColor:'#e09040', beamColor:'rgba(220,130,40,0.35)' },
-          damaged:     { frame:'#200808', rim:'#7a1515', door:'#160505', glowColor:'#c03030', beamColor:'transparent' },
+        var realmColors = {
+          mortal:              { pri:'#5a9acc', sec:'#3a6a99', dim:'#1a3a55', glow:'#88ccff', particle:'#aaddff', rune:'#6ab4ee' },
+          'qi gathering':      { pri:'#44bb88', sec:'#2a8866', dim:'#1a5544', glow:'#66eebb', particle:'#99ffdd', rune:'#55ddaa' },
+          foundation:          { pri:'#8866cc', sec:'#6644aa', dim:'#3a2266', glow:'#aa88ee', particle:'#ccbbff', rune:'#9977dd' },
+          'core formation':    { pri:'#cc7733', sec:'#aa5522', dim:'#663311', glow:'#eebb55', particle:'#ffcc88', rune:'#ddaa44' },
+          'nascent soul':      { pri:'#cc8833', sec:'#aa6622', dim:'#664411', glow:'#eebb55', particle:'#ffdd88', rune:'#ddaa44' },
+          'soul transformation':{ pri:'#aa44cc', sec:'#8822aa', dim:'#551166', glow:'#cc66ee', particle:'#dd99ff', rune:'#bb55dd' },
+          'void refinement':   { pri:'#7744cc', sec:'#5522aa', dim:'#331166', glow:'#9966ee', particle:'#bb99ff', rune:'#8855dd' },
+          'body integration':  { pri:'#cc4444', sec:'#aa2222', dim:'#661111', glow:'#ee6655', particle:'#ff9988', rune:'#dd5544' },
+          mahayana:            { pri:'#ccaa33', sec:'#aa8822', dim:'#665511', glow:'#eedd55', particle:'#ffee88', rune:'#ddcc44' },
+          tribulation:         { pri:'#eebb33', sec:'#ccaa22', dim:'#886611', glow:'#ffdd55', particle:'#ffee88', rune:'#eedd44' }
         };
-        var gv = gateVars[gateState] || gateVars.sealed;
-        var gateEl = document.getElementById('gate-scene') || document.querySelector('.gate-scene');
-        if (gateEl) {
-          gateEl.style.setProperty('--gate-frame', gv.frame);
-          gateEl.style.setProperty('--gate-rim', gv.rim);
-          gateEl.style.setProperty('--gate-door', gv.door);
-          gateEl.style.setProperty('--gate-glow-color', gv.glowColor);
-          gateEl.style.setProperty('--gate-beam-color', gv.beamColor);
-        }
+        var realmKey = safeLower(state.member && state.member.realm_key || 'mortal');
+        var rc = realmColors[realmKey] || realmColors.mortal;
 
-        if (archTop)  { archTop.style.background = c.aBg;  archTop.style.border  = '1px solid ' + c.aBorder; }
-        if (pillarL)  { pillarL.style.background = c.pBg;  pillarL.style.border  = '1px solid ' + c.pBorder; }
-        if (pillarR)  { pillarR.style.background = c.pBg;  pillarR.style.border  = '1px solid ' + c.pBorder; }
-        if (floor)    { floor.style.background   = c.fBg;  floor.style.borderTop = '1px solid ' + c.fBorder; }
+        if (kicker) kicker.textContent = 'Ascension Threshold';
+        if (kicker) kicker.style.color = rc.pri;
+        var titles = { sealed:'Portal Sealed', cultivating:'Portal Dormant', complete:"Awaiting Heaven's Judgment", open:'Portal Awakened', active:'In Tribulation', damaged:'Portal Fractured' };
+        var descs = { sealed:'Continue cultivating to awaken the portal.', cultivating:'Qi flows through you. The portal stirs.', complete:'Comprehension is complete. The heavens judge your readiness.', open:'The portal calls. Step through to face tribulation.', active:'You are within the tribulation chamber.', damaged:'The portal is fractured. Repair required.' };
+        if (titleEl) { titleEl.textContent = titles[gateState] || 'Portal'; titleEl.style.color = ''; }
+        if (descEl) descEl.textContent = descs[gateState] || '';
 
-        function applyDoor(el, pan, inn, tr) {
-          if (!el) return;
-          el.style.background = c.dBg; el.style.border = '1px solid ' + c.dBorder; el.style.transform = tr;
-          if (pan) pan.style.border = '0.5px solid ' + c.dPanel;
-          if (inn) inn.style.border = '0.5px solid ' + c.dInner;
-        }
-        applyDoor(doorL, doorPanL, doorInL, c.dTL);
-        applyDoor(doorR, doorPanR, doorInR, c.dTR);
+        _portalState = gateState;
+        _portalRealmColors = rc;
+        startPortalCanvas();
 
-        if (seam) {
-          if (c.seam) {
-            seam.style.display = 'block'; seam.style.background = c.seam;
-            seam.style.width = gateState === 'damaged' ? '3px' : '2px';
-            seam.style.animation = c.seamAnim ? 'gateCrack 1.5s ease-in-out infinite' : 'none';
-          } else { seam.style.display = 'none'; }
-        }
-
-        if (beam) {
-          if (c.beam) {
-            beam.style.display = 'block';
-            beam.style.width = '80px';
-            beam.style.opacity = '1';
-            beam.style.background = 'radial-gradient(ellipse at 50% 30%,' + c.beamCol + ' 0%,transparent 70%)';
-            beam.style.animation = 'gateBeamPulse ' + c.beamSpd + ' ease-in-out infinite';
-          } else {
-            beam.style.display = 'none';
-            beam.style.width = '0';
-            beam.style.opacity = '0';
-          }
-        }
-
-        var runeCol = c.runes ? (c.runeCol || '#c8a96a') : 'transparent';
-        if (runeL) { runeL.style.color = runeCol; runeL.style.animation = c.runes ? 'gateRuneGlow 2s infinite 0s' : 'none'; }
-        if (runeM) { runeM.style.color = runeCol; runeM.style.animation = c.runes ? 'gateRuneGlow 2s infinite 0.7s' : 'none'; }
-        if (runeR) { runeR.style.color = runeCol; runeR.style.animation = c.runes ? 'gateRuneGlow 2s infinite 1.4s' : 'none'; }
-        if (kicker) kicker.style.color = c.kc;
-
-        var titles = {sealed:'Gate Sealed',cultivating:'Comprehension in Progress',complete:"Awaiting Heaven's Judgment",open:'The Heavens Have Opened',active:'Breakthrough Underway',damaged:'The Gate Struck Back'};
-        var descs  = {sealed:'This section has not yet been opened.',cultivating:'The cultivator meditates before the sealed gate. Keep cultivating to open the threshold.',complete:'Comprehension is complete. The heavens are judging your readiness.',open:'Your comprehension is complete. The gate stands open — enter and face your tribulation.',active:'The cultivator has passed through. Return to the chamber to face your verdict.',damaged:'The tribulation struck and fractured the record. Repair the damage to open the gate again.'};
-        if (titleEl) { titleEl.textContent = titles[gateState] || 'Gate Sealed'; if (c.tc) titleEl.style.color = c.tc; else titleEl.style.color = ''; }
-        if (descEl)  descEl.textContent = descs[gateState] || '';
-
-        if (bgLayer) {
-          bgLayer.innerHTML = '';
-          for (var si = 0; si < c.stars; si++) {
-            var st = document.createElement('div'); st.className = 'gate-star';
-            st.style.cssText = 'left:'+Math.random()*100+'%;top:'+Math.random()*100+'%;background:'+c.starCol+';--td:'+(1.5+Math.random()*3)+'s;--ts:'+(Math.random()*3)+'s;';
-            bgLayer.appendChild(st);
-          }
-        }
-        if (qiLayer) {
-          qiLayer.innerHTML = '';
-          if (c.qi) {
-            for (var qi = 0; qi < 14; qi++) {
-              var qd = document.createElement('div'); qd.className = 'gate-qi';
-              qd.style.cssText = 'left:'+(25+Math.random()*25)+'%;bottom:'+(28+Math.random()*25)+'px;background:'+c.starCol+'88;--qd:'+(1.2+Math.random()*2)+'s;--qs:'+(Math.random()*3)+'s;';
-              qiLayer.appendChild(qd);
-            }
-          }
-        }
-        if (spLayer) {
-          spLayer.innerHTML = '';
-          if (c.sparks) {
-            for (var sp = 0; sp < 18; sp++) {
-              var spk = document.createElement('div'); spk.className = 'gate-spark';
-              var ang = Math.random()*Math.PI*2, dist = 20+Math.random()*55;
-              spk.style.cssText = 'left:calc(50% + '+(Math.random()*30-15)+'px);top:'+(35+Math.random()*35)+'%;background:'+c.starCol+';--sd:'+(0.9+Math.random()*1.3)+'s;--ss:'+(Math.random()*2.5)+'s;--sx:'+(Math.cos(ang)*dist)+'px;--sy:'+(Math.sin(ang)*dist-18)+'px;';
-              spLayer.appendChild(spk);
-            }
-          }
-        }
-
-        if (progWrap) {
-          progWrap.style.display = c.prog ? 'block' : 'none';
-          if (c.prog && progFill) { progFill.style.width = progressPct + '%'; progFill.style.background = c.progCol || '#6aaccc'; }
-        }
-
-        if (figCanvas) {
-          figCanvas.style.animation = 'none';
-          figCanvas.style.transform = '';
-          figCanvas.style.transformOrigin = '';
-          figCanvas.style.opacity = String(c.figOp);
-          figCanvas.style.left = 'calc(50% + ' + c.figX + 'px)';
-          figCanvas.style.transition = 'left 0.4s ease, opacity 0.4s ease';
-          if (c.figAnim === 'meditate')  figCanvas.style.animation = 'gateMeditate 3s ease-in-out infinite';
-          if (c.figAnim === 'knockback') { figCanvas.style.animation = 'gateKnockback 2s ease-in-out infinite'; figCanvas.style.transformOrigin = 'bottom center'; }
-          if (c.figAnim === 'lean')      { figCanvas.style.transform = 'rotate(-8deg)'; figCanvas.style.transformOrigin = 'bottom center'; }
-          window._gateCurrentFigColor = c.figCol;
-          window._gateCurrentFigSize  = c.figSz;
-          loadGateFigure(gender, function(src) { drawGateFigure(figCanvas, c.figCol, c.figSz, src); });
-        }
-
+        var fromLabel = volumeNumber > 0 ? realmFromVolume(volumeNumber) : '--';
         var chips = [];
         if (gateState === 'sealed') {
           chips = [{label:'Section',val:'Not Opened',lc:'#444',vc:'#555',bg:'#111',bc:'#222'}];
         } else if (gateState === 'cultivating') {
           var remSecs = focus ? safeNumber(focus.remaining_display_seconds || focus.remaining_seconds, 0) : 0;
           chips = [
-            {label:'Progress', val:progressPct+'%',                            lc:'#3a608099',vc:'#6aaccc',bg:'#0d1a2a',bc:'#3a608055'},
-            {label:'Remaining',val:remSecs > 0 ? formatDuration(remSecs) : '--', lc:'#3a608099',vc:'#6aaccc',bg:'#0d1a2a',bc:'#3a608055'},
-            {label:'Gate',     val:'Stirring',                                 lc:'#3a608099',vc:'#6aaccc',bg:'#0d1a2a',bc:'#3a608055'}
+            {label:'Progress', val:progressPct+'%',                            lc:rc.pri+'99',vc:rc.pri,bg:rc.dim+'44',bc:rc.dim+'66'},
+            {label:'Remaining',val:remSecs > 0 ? formatDuration(remSecs) : '--', lc:rc.pri+'99',vc:rc.pri,bg:rc.dim+'44',bc:rc.dim+'66'},
+            {label:'Portal',   val:'Stirring',                                 lc:rc.pri+'99',vc:rc.pri,bg:rc.dim+'44',bc:rc.dim+'66'}
           ];
         } else if (gateState === 'complete') {
-          chips = [{label:'Gate',val:'Judging',lc:'#c8a96a66',vc:'#c8a96a88',bg:'#1a1400',bc:'#c8a96a33'}];
+          chips = [{label:'Portal',val:'Judging',lc:'#c8a96a66',vc:'#c8a96a88',bg:'#1a1400',bc:'#c8a96a33'}];
         } else if (gateState === 'open') {
           chips = [
-            {label:'From',       val:fromLabel,    lc:'#c8a96a88',vc:'#c8a96a',bg:'#1a1400',bc:'#c8a96a44'},
-            {label:'To',         val:resolveNextStageName(store), lc:'#c8a96a88',vc:'#c8a96a',bg:'#1a1400',bc:'#c8a96a44'},
-            {label:'Tribulation',val:'Tempering',  lc:'#c8a96a88',vc:'#c8a96a',bg:'#1a1400',bc:'#c8a96a44'}
+            {label:'From',       val:fromLabel,    lc:rc.pri+'88',vc:rc.pri,bg:rc.dim+'44',bc:rc.dim+'66'},
+            {label:'To',         val:resolveNextStageName(store), lc:rc.pri+'88',vc:rc.pri,bg:rc.dim+'44',bc:rc.dim+'66'},
+            {label:'Tribulation',val:'Tempering',  lc:rc.pri+'88',vc:rc.pri,bg:rc.dim+'44',bc:rc.dim+'66'}
           ];
         } else if (gateState === 'active') {
           chips = [
@@ -2110,108 +2215,51 @@
         if (subNote)      subNote.textContent = '';
 
         if (gateState === 'sealed') {
-          actionBtnOff.style.display = 'block'; actionBtnOff.style.background = '#111'; actionBtnOff.style.border = '0.5px solid #222'; actionBtnOff.style.color = '#444'; actionBtnOff.textContent = 'Gate Sealed';
+          if (actionBtnOff) { actionBtnOff.style.display = 'block'; actionBtnOff.style.background = '#111'; actionBtnOff.style.border = '0.5px solid #222'; actionBtnOff.style.color = '#444'; actionBtnOff.textContent = 'Portal Sealed'; }
         } else if (gateState === 'cultivating') {
-          actionBtnOff.style.display = 'block'; actionBtnOff.style.background = '#0d1a2a'; actionBtnOff.style.border = '0.5px solid #3a608055'; actionBtnOff.style.color = '#3a6080'; actionBtnOff.textContent = 'Gate Closed — Keep Cultivating';
-          subNote.textContent = 'The threshold will manifest when comprehension is complete.'; subNote.style.color = '#3a608077';
+          if (actionBtnOff) { actionBtnOff.style.display = 'block'; actionBtnOff.style.background = rc.dim+'44'; actionBtnOff.style.border = '0.5px solid '+rc.dim+'66'; actionBtnOff.style.color = rc.pri; actionBtnOff.textContent = 'Portal Dormant \u2014 Keep Cultivating'; }
+          if (subNote) { subNote.textContent = 'The threshold will manifest when comprehension is complete.'; subNote.style.color = rc.pri+'77'; }
         } else if (gateState === 'complete') {
-          actionBtnOff.style.display = 'block'; actionBtnOff.style.background = '#1a1400'; actionBtnOff.style.border = '0.5px solid #c8a96a44'; actionBtnOff.style.color = '#c8a96a66'; actionBtnOff.textContent = "Awaiting Heaven's Judgment";
+          if (actionBtnOff) { actionBtnOff.style.display = 'block'; actionBtnOff.style.background = '#1a1400'; actionBtnOff.style.border = '0.5px solid #c8a96a44'; actionBtnOff.style.color = '#c8a96a66'; actionBtnOff.textContent = "Awaiting Heaven's Judgment"; }
         } else if (gateState === 'open') {
           var focusSession = getFocusRecord();
           var isMeditating = focusSession && focusSession.session_started_at != null;
           if (isMeditating) {
-            actionBtn.style.display = 'block';
-            actionBtn.style.background = '#c8a96a';
-            actionBtn.style.color = '#1a1200';
-            actionBtn.textContent = 'Enter the Breakthrough Chamber';
-            actionBtn.disabled = false;
-            actionBtn.onclick = function() { runGateCinematic(); };
-            subNote.textContent = 'Face the heavenly tribulation and ascend — or be cast back.';
-            subNote.style.color = '#c8a96a77';
+            if (actionBtn) { actionBtn.style.display = 'block'; actionBtn.style.background = rc.pri; actionBtn.style.color = '#0a0a14'; actionBtn.textContent = 'Enter the Portal'; actionBtn.disabled = false; actionBtn.onclick = function() { runPortalCinematic(); }; }
+            if (subNote) { subNote.textContent = 'Face the heavenly tribulation and ascend \u2014 or be cast back.'; subNote.style.color = rc.pri+'77'; }
           } else {
-            actionBtnOff.style.display = 'block';
-            actionBtnOff.style.background = '#1a1400';
-            actionBtnOff.style.border = '0.5px solid #c8a96a44';
-            actionBtnOff.style.color = '#c8a96a66';
-            actionBtnOff.textContent = 'Begin Meditation to Channel Qi into the Gate';
-            subNote.textContent = 'The gate is open but your qi is still. Meditate to channel your energy into the threshold.';
-            subNote.style.color = '#c8a96a55';
+            if (actionBtnOff) { actionBtnOff.style.display = 'block'; actionBtnOff.style.background = rc.dim+'44'; actionBtnOff.style.border = '0.5px solid '+rc.dim+'66'; actionBtnOff.style.color = rc.pri+'88'; actionBtnOff.textContent = 'Begin Meditation to Channel Qi'; }
+            if (subNote) { subNote.textContent = 'The portal is open but your qi is still. Meditate to channel your energy.'; subNote.style.color = rc.pri+'55'; }
           }
         } else if (gateState === 'active') {
-          actionBtn.style.display = 'block'; actionBtn.style.background = '#e8a840'; actionBtn.style.color = '#1a0f00'; actionBtn.textContent = 'Return to Breakthrough Chamber';
-          actionBtn.onclick = function() { window.location.href = getBreakthroughRoute(); };
+          if (actionBtn) { actionBtn.style.display = 'block'; actionBtn.style.background = '#e8a840'; actionBtn.style.color = '#1a0f00'; actionBtn.textContent = 'Return to Breakthrough Chamber'; actionBtn.onclick = function() { window.location.href = getBreakthroughRoute(); }; }
         } else if (gateState === 'damaged') {
-          actionBtn.style.display = 'block'; actionBtn.style.background = '#7a2020'; actionBtn.style.color = '#ffe0e0'; actionBtn.textContent = 'Repair the Record'; actionBtn.onclick = null;
+          if (actionBtn) { actionBtn.style.display = 'block'; actionBtn.style.background = '#7a2020'; actionBtn.style.color = '#ffe0e0'; actionBtn.textContent = 'Repair the Record'; actionBtn.onclick = null; }
         }
       } catch(e) {
         console.error('renderBreakthroughFooter error:', e);
       }
     }
 
-    function runGateCinematic() {
+    function runPortalCinematic() {
       try {
-        var doorL  = document.getElementById('gate-door-l');
-        var doorR  = document.getElementById('gate-door-r');
-        var flash  = document.getElementById('gate-flash');
-        var btn    = document.getElementById('gate-action-btn');
-        var note   = document.getElementById('gate-sub-note');
+        var btn = document.getElementById('gate-action-btn');
+        var note = document.getElementById('gate-sub-note');
+        var flash = document.getElementById('gate-flash');
         var vessel = document.getElementById('vessel-canvas');
-        var dualPanel = document.querySelector('.vessel-gate-panel');
-        if (!doorL || !vessel || !dualPanel) { window.location.href = getBreakthroughRoute(); return; }
-        if (btn) btn.disabled = true;
+        if (btn) { btn.disabled = true; btn.textContent = 'Entering...'; }
+        if (note) note.textContent = 'The portal opens...';
+        _portalEntering = true;
+        _portalEnterStartTime = _portalTime;
 
-        var panelRect  = dualPanel.getBoundingClientRect();
-        var vesselRect = vessel.getBoundingClientRect();
-        var doorLEl    = document.getElementById('gate-door-l');
-        var gateScene  = document.getElementById('gate-scene');
-        var gateRect   = gateScene ? gateScene.getBoundingClientRect() : null;
-
-        var startX = vesselRect.left - panelRect.left + vesselRect.width * 0.5;
-        var startY = vesselRect.top  - panelRect.top  + vesselRect.height * 0.5;
-        var endX   = gateRect ? (gateRect.left - panelRect.left + gateRect.width * 0.5) : panelRect.width * 0.75;
-        var endY   = gateRect ? (gateRect.top  - panelRect.top  + gateRect.height * 0.5) : startY;
-
-        var clone = document.createElement('canvas');
-        clone.width  = vessel.width;
-        clone.height = vessel.height;
-        var cloneCtx = clone.getContext('2d');
-        cloneCtx.drawImage(vessel, 0, 0);
-
-        var sz = vessel.width;
-        clone.style.cssText = 'position:absolute;z-index:50;pointer-events:none;'
-          + 'width:' + sz + 'px;height:' + sz + 'px;'
-          + 'left:' + (startX - sz * 0.5) + 'px;'
-          + 'top:'  + (startY - sz * 0.5) + 'px;'
-          + 'transition:none;';
-
-        dualPanel.style.position = 'relative';
-        dualPanel.style.overflow = 'visible';
-        dualPanel.appendChild(clone);
-
-        vessel.style.opacity = '0';
-
-        doorL.style.transform = 'perspective(300px) rotateY(-88deg)';
-        doorR.style.transform = 'perspective(300px) rotateY(88deg)';
-        if (note) note.textContent = 'The gate opens...';
+        if (vessel) vessel.style.opacity = '0.3';
 
         setTimeout(function() {
           if (note) note.textContent = 'Entering the threshold...';
-          clone.style.transition = 'left 1.6s cubic-bezier(0.4,0,0.3,1), top 1.6s cubic-bezier(0.4,0,0.3,1), width 1.6s ease, height 1.6s ease, opacity 0.5s ease 1.1s';
-          var targetSz = Math.round(sz * 0.25);
-          clone.style.width   = targetSz + 'px';
-          clone.style.height  = targetSz + 'px';
-          clone.style.left    = (endX - targetSz * 0.5) + 'px';
-          clone.style.top     = (endY - targetSz * 0.5) + 'px';
-          clone.style.opacity = '0.3';
-        }, 300);
+        }, 800);
 
         setTimeout(function() {
           if (note) note.textContent = 'Passing through...';
-          clone.style.opacity = '0';
-        }, 1600);
-
-        setTimeout(function() {
-          if (note) note.textContent = 'Ascending...';
           if (flash) flash.style.opacity = '0.65';
           stopGateVessel();
           var avatarKey = (state && state.member && state.member.sl_avatar_key) || (state && state.user && state.user.sl_avatar_key) || '';
@@ -2223,17 +2271,16 @@
               body: JSON.stringify({ sl_avatar_key: avatarKey })
             }).catch(function() {});
           }
-        }, 2000);
+        }, 1800);
 
         setTimeout(function() {
           if (flash) flash.style.opacity = '0';
-        }, 2400);
+        }, 2200);
 
         setTimeout(function() {
           if (note) note.textContent = 'Entering the Breakthrough Chamber...';
           window.location.href = getBreakthroughRoute();
         }, 2800);
-
       } catch(e) {
         window.location.href = getBreakthroughRoute();
       }
