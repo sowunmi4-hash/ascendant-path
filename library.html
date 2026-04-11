@@ -1,0 +1,2030 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>My Library | The Ascendant Path</title>
+  <link rel="stylesheet" href="style.css" />
+  <style>
+    .library-page {
+      width: min(1240px, calc(100% - 2rem));
+      margin: 1.5rem auto 4rem;
+      display: grid;
+      gap: 1.1rem;
+      position: relative;
+      z-index: 3;
+    }
+
+    .library-frame {
+      display: grid;
+      gap: 1.1rem;
+    }
+
+    .record-header {
+      position: relative;
+      overflow: hidden;
+      min-height: 320px;
+      display: grid;
+      align-content: end;
+      gap: 1rem;
+      padding: 1.75rem;
+      border: 1px solid var(--border-soft);
+      box-shadow: var(--shadow-lg);
+      border-radius: 18px;
+      background:
+        linear-gradient(180deg, rgba(7, 10, 18, 0.24), rgba(7, 10, 18, 0.84)),
+        radial-gradient(circle at 18% 20%, rgba(234, 215, 170, 0.08), transparent 24%),
+        radial-gradient(circle at 82% 18%, rgba(111, 151, 255, 0.14), transparent 24%),
+        url("https://images.unsplash.com/photo-1516979187457-637abb4f9353?auto=format&fit=crop&w=1800&q=80")
+          center 45% / cover no-repeat;
+    }
+
+    .record-header::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background:
+        linear-gradient(
+          90deg,
+          rgba(6, 9, 16, 0.84) 0%,
+          rgba(6, 9, 16, 0.48) 48%,
+          rgba(6, 9, 16, 0.82) 100%
+        );
+      pointer-events: none;
+    }
+
+    .record-header::after {
+      content: "";
+      position: absolute;
+      inset: auto 0 0;
+      height: 120px;
+      background: linear-gradient(180deg, transparent, rgba(6, 9, 16, 0.7));
+      pointer-events: none;
+    }
+
+    .record-header-main,
+    .record-header-actions,
+    .record-status-strip {
+      position: relative;
+      z-index: 1;
+    }
+
+    .record-header-main {
+      display: grid;
+      gap: 0.6rem;
+      max-width: 880px;
+    }
+
+    .record-eyebrow {
+      display: inline-block;
+      font-size: 0.78rem;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+      color: var(--blue-soft);
+    }
+
+    .record-header h1 {
+      margin: 0;
+      font-size: clamp(2.2rem, 4vw, 3.35rem);
+      line-height: 1.02;
+      color: #ffffff;
+      text-shadow: 0 6px 18px rgba(0, 0, 0, 0.28);
+    }
+
+    .record-session-line,
+    .record-header-copy {
+      margin: 0;
+      color: rgba(231, 237, 255, 0.84);
+      line-height: 1.6;
+      max-width: 860px;
+    }
+
+    .record-header-actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.8rem;
+    }
+
+    .record-status-strip {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 0.9rem;
+    }
+
+    .record-status-card,
+    .record-section,
+    .altar-main,
+    .altar-side,
+    .shrine-card,
+    .shelf-shell,
+    .archive-panel,
+    .scroll-card,
+    .empty-card {
+      position: relative;
+      overflow: hidden;
+      background:
+        linear-gradient(180deg, rgba(18, 24, 40, 0.82), rgba(11, 16, 28, 0.96));
+      border-top: 1px solid rgba(255, 255, 255, 0.07);
+      border-bottom: 1px solid rgba(255, 255, 255, 0.07);
+      box-shadow: 0 16px 42px rgba(0, 0, 0, 0.18);
+    }
+
+    .record-status-card::before,
+    .record-section::before,
+    .altar-main::before,
+    .altar-side::before,
+    .shrine-card::before,
+    .shelf-shell::before,
+    .archive-panel::before,
+    .scroll-card::before,
+    .empty-card::before,
+    .meta-block::before,
+    .summary-chip::before,
+    .shelf-spine::before,
+    .focus-chip::before {
+      content: "";
+      position: absolute;
+      left: 0;
+      top: 18px;
+      bottom: 18px;
+      width: 2px;
+      background: linear-gradient(180deg, rgba(142, 168, 255, 0.28), rgba(234, 215, 170, 0.16));
+    }
+
+    .record-status-card {
+      min-height: 108px;
+      display: grid;
+      gap: 0.35rem;
+      padding: 0.95rem 1rem 0.95rem 1.1rem;
+      border-radius: 14px;
+    }
+
+    .record-status-card span {
+      font-size: 0.72rem;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: rgba(196, 208, 255, 0.74);
+      padding-left: 0.35rem;
+    }
+
+    .record-status-card strong {
+      font-size: 1.1rem;
+      color: #ffffff;
+      line-height: 1.25;
+      padding-left: 0.35rem;
+    }
+
+    .record-section {
+      display: grid;
+      gap: 1rem;
+      padding: 1rem 1rem 1.05rem 1.05rem;
+      border-radius: 18px;
+    }
+
+    .section-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: end;
+      gap: 1rem;
+      flex-wrap: wrap;
+      padding-left: 0.2rem;
+    }
+
+    .section-header span {
+      font-size: 0.74rem;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: var(--blue-soft);
+    }
+
+    .section-header h2 {
+      margin: 0.2rem 0 0;
+      font-size: 1.34rem;
+      color: #ffffff;
+    }
+
+    .section-header p {
+      margin: 0.3rem 0 0;
+      color: rgba(228, 234, 255, 0.78);
+      line-height: 1.55;
+      max-width: 760px;
+    }
+
+    .view-toggle {
+      display: inline-flex;
+      gap: 0.25rem;
+      padding: 0.25rem;
+      border-radius: 999px;
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      background: rgba(255, 255, 255, 0.04);
+    }
+
+    .view-toggle button {
+      border: 0;
+      background: transparent;
+      color: rgba(226, 232, 255, 0.72);
+      font: inherit;
+      font-weight: 700;
+      padding: 0.72rem 1rem;
+      border-radius: 999px;
+      cursor: pointer;
+    }
+
+    .view-toggle button.active {
+      background: linear-gradient(180deg, rgba(120, 144, 230, 0.24), rgba(62, 78, 145, 0.36));
+      color: #ffffff;
+      box-shadow: inset 0 0 0 1px rgba(160, 182, 255, 0.18);
+    }
+
+    .altar-grid {
+      display: grid;
+      grid-template-columns: minmax(0, 1.35fr) minmax(280px, 0.65fr);
+      gap: 1rem;
+    }
+
+    .altar-main,
+    .altar-side,
+    .shrine-card,
+    .archive-panel {
+      border-radius: 16px;
+      padding: 1rem 1rem 1.05rem 1.05rem;
+    }
+
+    .altar-top,
+    .archive-top {
+      display: flex;
+      justify-content: space-between;
+      gap: 1rem;
+      align-items: start;
+      flex-wrap: wrap;
+      padding-bottom: 0.95rem;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+    }
+
+    .altar-type,
+    .archive-type {
+      font-size: 0.72rem;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--blue-soft);
+    }
+
+    .altar-main h3,
+    .archive-panel h3,
+    .shrine-card h3 {
+      margin: 0.25rem 0 0;
+      font-size: 1.3rem;
+      color: #ffffff;
+      line-height: 1.2;
+    }
+
+    .altar-copy,
+    .archive-copy {
+      margin: 0.45rem 0 0;
+      color: rgba(226, 232, 255, 0.78);
+      line-height: 1.55;
+    }
+
+    .state-badge,
+    .focus-chip {
+      position: relative;
+      min-width: 150px;
+      border-radius: 14px;
+      padding: 0.8rem 0.9rem 0.8rem 1rem;
+      background: rgba(255, 255, 255, 0.04);
+      border-top: 1px solid rgba(255, 255, 255, 0.06);
+      border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+    }
+
+    .state-badge span,
+    .focus-chip span {
+      display: block;
+      font-size: 0.7rem;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: rgba(196, 208, 255, 0.72);
+      padding-left: 0.3rem;
+    }
+
+    .state-badge strong,
+    .focus-chip strong {
+      display: block;
+      margin-top: 0.32rem;
+      font-size: 0.96rem;
+      color: #ffffff;
+      line-height: 1.35;
+      padding-left: 0.3rem;
+    }
+
+    .altar-meta-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 0.75rem;
+      margin-top: 1rem;
+    }
+
+    .meta-block,
+    .summary-chip {
+      position: relative;
+      display: grid;
+      gap: 0.28rem;
+      padding: 0.85rem 0.95rem 0.85rem 1rem;
+      background: rgba(255, 255, 255, 0.045);
+      border-top: 1px solid rgba(255, 255, 255, 0.06);
+      border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+      border-radius: 14px;
+    }
+
+    .meta-block span,
+    .summary-chip span {
+      font-size: 0.7rem;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: rgba(196, 208, 255, 0.72);
+      padding-left: 0.3rem;
+    }
+
+    .meta-block strong,
+    .summary-chip strong {
+      font-size: 0.98rem;
+      color: #ffffff;
+      line-height: 1.35;
+      padding-left: 0.3rem;
+    }
+
+    .altar-actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.75rem;
+      margin-top: 1rem;
+    }
+
+    .action-button {
+      border: 0;
+      cursor: pointer;
+      text-decoration: none;
+      display: inline-flex;
+      justify-content: center;
+      align-items: center;
+      gap: 0.45rem;
+      padding: 0.78rem 1rem;
+      min-width: 170px;
+      border-radius: 999px;
+      font: inherit;
+      font-weight: 700;
+      transition: transform 0.2s ease, box-shadow 0.2s ease, opacity 0.2s ease;
+    }
+
+    .action-button:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 12px 26px rgba(0, 0, 0, 0.16);
+    }
+
+    .action-button.primary {
+      background: linear-gradient(180deg, rgba(120, 144, 230, 0.24), rgba(62, 78, 145, 0.36));
+      color: #ffffff;
+      box-shadow: inset 0 0 0 1px rgba(160, 182, 255, 0.2);
+    }
+
+    .action-button.secondary {
+      background: rgba(255, 255, 255, 0.05);
+      color: #ffffff;
+      box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.08);
+    }
+
+    .action-button.muted {
+      background: rgba(255, 255, 255, 0.03);
+      color: rgba(220, 228, 255, 0.76);
+      box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.06);
+    }
+
+    .action-button.disabled {
+      opacity: 0.6;
+      pointer-events: none;
+      cursor: default;
+    }
+
+    .summary-stack {
+      display: grid;
+      gap: 0.75rem;
+      margin-top: 0.8rem;
+    }
+
+    .shrine-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 1rem;
+    }
+
+    .shrine-head {
+      display: flex;
+      justify-content: space-between;
+      align-items: start;
+      gap: 1rem;
+      flex-wrap: wrap;
+      margin-bottom: 1rem;
+    }
+
+    .shrine-head p {
+      margin: 0.35rem 0 0;
+      color: rgba(228, 234, 255, 0.78);
+      line-height: 1.55;
+    }
+
+    .shrine-toggle {
+      border: 0;
+      border-radius: 999px;
+      padding: 0.72rem 1rem;
+      font: inherit;
+      font-weight: 700;
+      cursor: pointer;
+    }
+
+    .shrine-toggle.active {
+      background: linear-gradient(180deg, rgba(120, 144, 230, 0.24), rgba(62, 78, 145, 0.36));
+      color: #ffffff;
+      box-shadow: inset 0 0 0 1px rgba(160, 182, 255, 0.2);
+    }
+
+    .shrine-toggle.inactive {
+      background: rgba(255, 255, 255, 0.05);
+      color: rgba(220, 228, 255, 0.76);
+      box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.08);
+    }
+
+    .shelf-shell {
+      display: grid;
+      gap: 0.9rem;
+    }
+
+    .shelf-title {
+      font-size: 0.72rem;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--blue-soft);
+      padding-left: 0.2rem;
+    }
+
+    .shelf-grid {
+      display: grid;
+      gap: 0.75rem;
+    }
+
+    .shelf-grid.cultivation-grid {
+      grid-template-columns: repeat(5, minmax(0, 1fr));
+    }
+
+    .shelf-grid.bond-grid {
+      grid-template-columns: repeat(5, minmax(0, 1fr));
+    }
+
+    .shelf-spine {
+      position: relative;
+      border: 0;
+      cursor: pointer;
+      display: grid;
+      gap: 0.55rem;
+      align-content: start;
+      text-align: center;
+      min-height: 142px;
+      padding: 0.85rem 0.45rem 0.85rem 0.65rem;
+      border-radius: 16px;
+      color: inherit;
+      background:
+        linear-gradient(180deg, rgba(18, 24, 40, 0.82), rgba(11, 16, 28, 0.96));
+      border-top: 1px solid rgba(255, 255, 255, 0.07);
+      border-bottom: 1px solid rgba(255, 255, 255, 0.07);
+      box-shadow: 0 16px 42px rgba(0, 0, 0, 0.18);
+      transition: transform 0.2s ease, background 0.2s ease;
+    }
+
+    .shelf-spine:hover {
+      transform: translateY(-2px);
+    }
+
+    .shelf-spine.active {
+      background:
+        linear-gradient(180deg, rgba(33, 44, 72, 0.96), rgba(14, 18, 32, 0.98));
+      box-shadow:
+        0 16px 42px rgba(0, 0, 0, 0.18),
+        0 0 0 1px rgba(223, 189, 104, 0.18);
+    }
+
+    .shelf-spine.unavailable {
+      opacity: 0.7;
+    }
+
+    .spine-subtle {
+      font-size: 0.68rem;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: rgba(196, 208, 255, 0.72);
+      padding-left: 0.15rem;
+    }
+
+    .spine-code {
+      font-size: 1.45rem;
+      font-weight: 800;
+      color: #ffffff;
+      line-height: 1;
+    }
+
+    .spine-marker {
+      border-radius: 12px;
+      padding: 0.5rem 0.35rem;
+      background: rgba(255, 255, 255, 0.05);
+      border-top: 1px solid rgba(255, 255, 255, 0.06);
+      border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+      color: #ffffff;
+      font-weight: 800;
+      font-size: 0.8rem;
+    }
+
+    .spine-state {
+      font-size: 0.76rem;
+      color: rgba(226, 232, 255, 0.78);
+      line-height: 1.35;
+      font-weight: 700;
+    }
+
+    .shelf-note {
+      margin: 0;
+      color: rgba(228, 234, 255, 0.76);
+      line-height: 1.55;
+      font-size: 0.93rem;
+    }
+
+    .archive-panel {
+      display: grid;
+      gap: 1rem;
+    }
+
+    .scroll-grid {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 0.85rem;
+    }
+
+    .scroll-card {
+      display: grid;
+      gap: 0.45rem;
+      border-radius: 14px;
+      padding: 0.9rem 0.9rem 0.95rem 1rem;
+    }
+
+    .scroll-label {
+      font-size: 0.68rem;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: rgba(196, 208, 255, 0.72);
+      padding-left: 0.25rem;
+    }
+
+    .scroll-title {
+      font-size: 0.98rem;
+      font-weight: 700;
+      color: #ffffff;
+      line-height: 1.35;
+      padding-left: 0.25rem;
+      min-height: 2.6em;
+    }
+
+    .scroll-meta {
+      font-size: 0.88rem;
+      color: rgba(226, 232, 255, 0.78);
+      line-height: 1.45;
+      padding-left: 0.25rem;
+    }
+
+    .progress-track {
+      width: 100%;
+      height: 12px;
+      border-radius: 999px;
+      overflow: hidden;
+      background: rgba(255, 255, 255, 0.08);
+      border-top: 1px solid rgba(255, 255, 255, 0.06);
+      border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+      margin-top: 0.35rem;
+    }
+
+    .progress-bar {
+      height: 100%;
+      background: linear-gradient(90deg, rgba(120, 144, 230, 0.82), rgba(223, 189, 104, 0.88));
+      width: 0%;
+    }
+
+    .empty-card {
+      border-radius: 14px;
+      padding: 1rem 1rem 1rem 1.05rem;
+      color: rgba(228, 234, 255, 0.78);
+      line-height: 1.55;
+      grid-column: 1 / -1;
+    }
+
+    .library-banner {
+      margin: 0;
+      padding: 0.9rem 1rem;
+      border-radius: 14px;
+      color: rgba(228, 234, 255, 0.9);
+      background:
+        linear-gradient(180deg, rgba(18, 24, 40, 0.82), rgba(11, 16, 28, 0.96));
+      border-top: 1px solid rgba(255, 255, 255, 0.07);
+      border-bottom: 1px solid rgba(255, 255, 255, 0.07);
+      box-shadow: 0 16px 42px rgba(0, 0, 0, 0.18);
+      line-height: 1.55;
+    }
+
+    .library-banner.error {
+      border-top-color: rgba(218, 114, 114, 0.38);
+      border-bottom-color: rgba(218, 114, 114, 0.22);
+      background: linear-gradient(180deg, rgba(90, 22, 22, 0.28), rgba(52, 14, 14, 0.18));
+      color: rgba(255, 222, 222, 0.92);
+    }
+
+    .is-hidden {
+      display: none !important;
+    }
+
+    @media (max-width: 1080px) {
+      .record-status-strip,
+      .altar-grid,
+      .shrine-grid,
+      .scroll-grid,
+      .altar-meta-grid {
+        grid-template-columns: 1fr 1fr;
+      }
+
+      .shelf-grid.cultivation-grid,
+      .shelf-grid.bond-grid {
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+      }
+    }
+
+    @media (max-width: 900px) {
+      .record-status-strip,
+      .altar-grid,
+      .shrine-grid,
+      .scroll-grid,
+      .altar-meta-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    @media (max-width: 720px) {
+      .library-page {
+        width: min(100% - 1rem, 1240px);
+        margin-top: 1rem;
+      }
+
+      .record-header {
+        min-height: 260px;
+        padding: 1.2rem 1rem;
+      }
+
+      .shelf-grid.cultivation-grid,
+      .shelf-grid.bond-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+
+      .record-header-actions,
+      .altar-actions {
+        flex-direction: column;
+      }
+
+      .action-button {
+        width: 100%;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="cloud-layer"></div>
+  <div class="rune-layer"></div>
+  <div class="lightning-flash"></div>
+
+  <nav>
+    <a href="/index.html">Home</a>
+    <a href="/lore.html">Lore</a>
+    <a href="/dashboard.html">Dashboard</a>
+    <a href="/store.html">Store</a>
+    <a href="/library.html" class="active">Library</a>
+    <button type="button" id="logout-button">Logout</button>
+  </nav>
+
+  <main class="library-page">
+    <div class="library-frame">
+      <section class="record-header">
+        <div class="record-header-main">
+          <span class="record-eyebrow">Sacred Archives</span>
+          <h1>The Inner Record Hall</h1>
+          <p class="record-session-line" id="session-line">Loading library access...</p>
+          <p class="record-header-copy">
+            A unified archive where personal cultivation and shared bond volumes may coexist
+            without losing their separate truths. What is yours remains recorded. What is shared
+            remains sanctified.
+          </p>
+        </div>
+
+        <div class="record-header-actions">
+          <a href="/store.html" class="primary">Visit Store</a>
+          <a href="/dashboard.html" class="secondary">Back to Dashboard</a>
+        </div>
+
+        <div class="record-status-strip">
+          <div class="record-status-card">
+            <span>Realm</span>
+            <strong id="header-realm">—</strong>
+          </div>
+          <div class="record-status-card">
+            <span>Bond Stage</span>
+            <strong id="header-bond-stage">—</strong>
+          </div>
+          <div class="record-status-card">
+            <span>Meditation</span>
+            <strong id="header-meditation">—</strong>
+          </div>
+          <div class="record-status-card">
+            <span>Library Bearer</span>
+            <strong id="header-user">—</strong>
+          </div>
+        </div>
+      </section>
+
+      <p id="page-message" class="library-banner is-hidden"></p>
+
+      <section class="record-section">
+        <div class="section-header">
+          <div>
+            <span>Active Altar</span>
+            <h2>Selected Record on the Altar</h2>
+            <p>The altar changes between personal cultivation and shared bond records.</p>
+          </div>
+
+          <div class="view-toggle">
+            <button id="toggle-cultivation" class="active" type="button">Cultivation View</button>
+            <button id="toggle-bond" type="button">Bond View</button>
+          </div>
+        </div>
+
+        <div class="altar-grid">
+          <div class="altar-main">
+            <div class="altar-top">
+              <div>
+                <div class="altar-type" id="altar-type">Cultivation Volume</div>
+                <h3 id="altar-title">—</h3>
+                <p class="altar-copy" id="altar-copy">—</p>
+              </div>
+
+              <div class="state-badge">
+                <span id="altar-state-label">State</span>
+                <strong id="altar-state-value">—</strong>
+              </div>
+            </div>
+
+            <div class="altar-meta-grid" id="altar-meta-grid"></div>
+            <div class="altar-actions" id="altar-actions"></div>
+          </div>
+
+          <div class="altar-side">
+            <div class="altar-type" id="summary-title">Cultivation Summary</div>
+            <div class="summary-stack" id="summary-stack"></div>
+          </div>
+        </div>
+      </section>
+
+      <section class="record-section">
+        <div class="shrine-grid">
+          <div class="shrine-card">
+            <div class="shrine-head">
+              <div>
+                <span class="record-eyebrow">Shrine Gate</span>
+                <h3>Cultivation Shrine</h3>
+                <p>Personal cultivation volumes across the canon realm shelf rest here.</p>
+              </div>
+              <button id="activate-cultivation-shrine" class="shrine-toggle active" type="button">
+                Active Shrine
+              </button>
+            </div>
+
+            <div class="shelf-shell">
+              <div class="shelf-title">Cultivation Codex Shelf</div>
+              <div id="cultivation-shelf" class="shelf-grid cultivation-grid"></div>
+              <p class="shelf-note">
+                Selecting a cultivation spine raises that volume onto the altar above.
+              </p>
+            </div>
+          </div>
+
+          <div class="shrine-card">
+            <div class="shrine-head">
+              <div>
+                <span class="record-eyebrow">Shrine Gate</span>
+                <h3>Bond Shrine</h3>
+                <p>Shared partner volumes from Seed to Eternity rest upon this sacred shelf.</p>
+              </div>
+              <button id="activate-bond-shrine" class="shrine-toggle inactive" type="button">
+                Enter Shrine
+              </button>
+            </div>
+
+            <div class="shelf-shell">
+              <div class="shelf-title">Bond Codex Shelf</div>
+              <div id="bond-shelf" class="shelf-grid bond-grid"></div>
+              <p class="shelf-note">
+                When the Bond Shrine is active, the altar and the chamber below open to shared pair progress.
+              </p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="record-section">
+        <div class="section-header">
+          <div>
+            <span>Deep Archive</span>
+            <h2>Opened Record Chamber</h2>
+            <p>One chamber below changes according to the active shrine and selected volume.</p>
+          </div>
+
+          <div class="view-toggle">
+            <button id="archive-cultivation" class="active" type="button">Cultivation Record</button>
+            <button id="archive-bond" type="button">Bond Record</button>
+          </div>
+        </div>
+
+        <div class="archive-panel">
+          <div class="archive-top">
+            <div>
+              <div class="archive-type" id="archive-type">Expanded Cultivation Record</div>
+              <h3 id="archive-title">—</h3>
+              <p class="archive-copy" id="archive-copy">—</p>
+            </div>
+
+            <div class="focus-chip">
+              <span>Current Focus</span>
+              <strong id="archive-focus">—</strong>
+            </div>
+          </div>
+
+          <div id="archive-grid" class="scroll-grid"></div>
+        </div>
+      </section>
+    </div>
+  </main>
+
+  <footer>
+    The Ascendant Path • Personal and Bond Library • Record of cultivation and sacred union
+  </footer>
+
+  <script>
+    const LOGIN_PAGE_URL = "/login.html";
+    const VERIFY_SESSION_URL = "/.netlify/functions/verify-session";
+    const LOGOUT_URL = "/.netlify/functions/logout";
+
+    const REALM_SEQUENCE = [
+      "Mortal Realm",
+      "Qi Gathering Realm",
+      "Foundation Realm",
+      "Core Formation Realm",
+      "Nascent Soul Realm",
+      "Soul Transformation Realm",
+      "Void Refinement Realm",
+      "Body Integration Realm",
+      "Mahayana Realm",
+      "Tribulation Realm"
+    ];
+
+    const REALM_DISPLAY_MAP = {
+      mortal: "Mortal Realm",
+      "mortal realm": "Mortal Realm",
+      "qi gathering": "Qi Gathering Realm",
+      "qi gathering realm": "Qi Gathering Realm",
+      foundation: "Foundation Realm",
+      "foundation realm": "Foundation Realm",
+      "core formation": "Core Formation Realm",
+      "core formation realm": "Core Formation Realm",
+      "nascent soul": "Nascent Soul Realm",
+      "nascent soul realm": "Nascent Soul Realm",
+      "soul transformation": "Soul Transformation Realm",
+      "soul transformation realm": "Soul Transformation Realm",
+      "void refinement": "Void Refinement Realm",
+      "void refinement realm": "Void Refinement Realm",
+      "body integration": "Body Integration Realm",
+      "body integration realm": "Body Integration Realm",
+      mahayana: "Mahayana Realm",
+      "mahayana realm": "Mahayana Realm",
+      tribulation: "Tribulation Realm",
+      "tribulation realm": "Tribulation Realm"
+    };
+
+    const BOND_VOLUME_FALLBACKS = [
+      { volume_number: 1, item_name: "The Seed of Union" },
+      { volume_number: 2, item_name: "The Root of Accord" },
+      { volume_number: 3, item_name: "The Core of Communion" },
+      { volume_number: 4, item_name: "The Soul of Devotion" },
+      { volume_number: 5, item_name: "The Spirit of Eternity" }
+    ];
+
+    const state = {
+      session: null,
+      payload: null,
+      activeMode: "cultivation",
+      selectedCultivationIndex: 0,
+      selectedBondIndex: 0,
+      requestedPartnershipUuid: "",
+      requestedLegacyPartnershipId: ""
+    };
+
+    function safeText(value, fallback = "") {
+      const text = String(value ?? "").trim();
+      return text || fallback;
+    }
+
+    function safeLower(value) {
+      return safeText(value).toLowerCase();
+    }
+
+    function safeNumber(value, fallback = 0) {
+      const num = Number(value);
+      return Number.isFinite(num) ? num : fallback;
+    }
+
+    function safeBoolean(value) {
+      if (typeof value === "boolean") return value;
+      if (typeof value === "number") return value === 1;
+      const text = safeLower(value);
+      return ["true", "1", "yes", "y", "on", "active"].includes(text);
+    }
+
+    function escapeHtml(value) {
+      return safeText(value)
+        .replaceAll("&", "&amp;")
+        .replaceAll("<", "&lt;")
+        .replaceAll(">", "&gt;")
+        .replaceAll('"', "&quot;")
+        .replaceAll("'", "&#39;");
+    }
+
+    function titleCase(value, fallback = "Unknown") {
+      const text = safeLower(value);
+      if (!text) return fallback;
+
+      return text
+        .replaceAll("_", " ")
+        .replaceAll("-", " ")
+        .split(" ")
+        .filter(Boolean)
+        .map(part => part.charAt(0).toUpperCase() + part.slice(1))
+        .join(" ");
+    }
+
+    function formatPercent(value, digits = 1) {
+      const num = safeNumber(value, 0);
+      return `${num.toFixed(digits)}%`;
+    }
+
+    function formatDateTime(value) {
+      if (!value) return "Unknown";
+      const date = new Date(value);
+      if (Number.isNaN(date.getTime())) return "Unknown";
+      return date.toLocaleString();
+    }
+
+    function formatRealmLabel(value, fallback = "Unknown Realm") {
+      const lowered = safeLower(value);
+      return REALM_DISPLAY_MAP[lowered] || safeText(value, fallback);
+    }
+
+    function getQueryPartnershipUuid() {
+      return safeText(new URLSearchParams(window.location.search).get("partnership_uuid"));
+    }
+
+    function getQueryLegacyPartnershipId() {
+      return safeText(new URLSearchParams(window.location.search).get("partnership_id"));
+    }
+
+    function clearClientSessionArtifacts() {
+      const keysToRemove = [
+        "session",
+        "sessionToken",
+        "session_token",
+        "websiteSession",
+        "website_session",
+        "member",
+        "memberState",
+        "member_state",
+        "user",
+        "user_state",
+        "sl_username",
+        "slUsername",
+        "avatar_key",
+        "avatarKey",
+        "selected_partnership_uuid",
+        "selectedPartnershipUuid"
+      ];
+
+      for (const key of keysToRemove) {
+        try { localStorage.removeItem(key); } catch (_) {}
+        try { sessionStorage.removeItem(key); } catch (_) {}
+      }
+    }
+
+    function redirectToLogin() {
+      clearClientSessionArtifacts();
+      window.location.href = LOGIN_PAGE_URL;
+    }
+
+    async function authFetch(url, options = {}) {
+      const response = await fetch(url, {
+        ...options,
+        credentials: "include",
+        cache: "no-store",
+        headers: {
+          Accept: "application/json",
+          ...(options.headers || {})
+        }
+      });
+
+      if (response.status === 401 || response.status === 403) {
+        redirectToLogin();
+        throw new Error("Your session has expired. Please sign in again.");
+      }
+
+      return response;
+    }
+
+    async function verifySession() {
+      const response = await authFetch(VERIFY_SESSION_URL, {
+        method: "GET"
+      });
+
+      const rawText = await response.text();
+      let payload = null;
+
+      try {
+        payload = rawText ? JSON.parse(rawText) : null;
+      } catch {
+        payload = null;
+      }
+
+      if (!response.ok || !payload?.success) {
+        redirectToLogin();
+        throw new Error(payload?.message || "Unable to verify session.");
+      }
+
+      const member =
+        payload.member ||
+        payload.session?.member ||
+        payload.user ||
+        null;
+
+      state.session = {
+        sl_avatar_key: safeText(member?.sl_avatar_key || member?.avatar_key),
+        sl_username: safeText(member?.sl_username || member?.username),
+        display_name: safeText(member?.display_name),
+        character_name: safeText(member?.character_name),
+        realm_display_name: safeText(member?.realm_display_name),
+        realm_name: safeText(member?.realm_name)
+      };
+
+      return payload;
+    }
+
+    async function logoutUser() {
+      try {
+        await fetch(LOGOUT_URL, {
+          method: "POST",
+          credentials: "include"
+        });
+      } catch (error) {
+        console.error("Logout request error:", error);
+      } finally {
+        clearClientSessionArtifacts();
+        window.location.href = LOGIN_PAGE_URL;
+      }
+    }
+
+    function getSelectedPartnershipContext() {
+      const payload = state.payload || {};
+      const bondLibrary = payload.bond_library || {};
+      const basePartnership =
+        payload.selected_partnership ||
+        payload.partnership ||
+        bondLibrary.partnership ||
+        {};
+
+      const basePartner =
+        basePartnership.partner ||
+        payload.partnership?.partner ||
+        payload.selected_partnership?.partner ||
+        bondLibrary.partner ||
+        {};
+
+      const partnershipUuid = safeText(
+        basePartnership.partnership_uuid ||
+        basePartnership.id ||
+        payload.partnership?.partnership_uuid ||
+        payload.partnership?.id ||
+        payload.selected_partnership?.partnership_uuid ||
+        payload.selected_partnership?.id ||
+        bondLibrary.partnership_uuid ||
+        bondLibrary.selected_partnership_uuid ||
+        bondLibrary.partnership?.partnership_uuid ||
+        bondLibrary.partnership?.id ||
+        state.requestedPartnershipUuid
+      );
+
+      const legacyPartnershipId = safeText(
+        basePartnership.partnership_id ||
+        basePartnership.legacy_partnership_id ||
+        payload.partnership?.partnership_id ||
+        payload.selected_partnership?.partnership_id ||
+        bondLibrary.partnership_id ||
+        bondLibrary.legacy_partnership_id ||
+        state.requestedLegacyPartnershipId
+      );
+
+      const partnerDisplayName = safeText(
+        basePartner.display_name ||
+        basePartner.character_name ||
+        basePartnership.partner_display_name ||
+        bondLibrary.partner_display_name
+      );
+
+      const partnerUsername = safeText(
+        basePartner.sl_username ||
+        basePartner.username ||
+        basePartnership.partner_sl_username ||
+        bondLibrary.partner_sl_username
+      );
+
+      const hasPartner = safeBoolean(
+        basePartnership.has_partner ??
+        payload.partnership?.has_partner ??
+        payload.selected_partnership?.has_partner ??
+        bondLibrary.has_partner ??
+        bondLibrary.available ??
+        !!(partnerDisplayName || partnerUsername)
+      );
+
+      const partnershipStatus = safeText(
+        basePartnership.partnership_status ||
+        basePartnership.status ||
+        payload.partnership?.partnership_status ||
+        payload.partnership?.status ||
+        payload.selected_partnership?.partnership_status ||
+        payload.selected_partnership?.status ||
+        bondLibrary.partnership_status
+      );
+
+      return {
+        partnership_uuid: partnershipUuid,
+        partnership_id: legacyPartnershipId,
+        partner_display_name: partnerDisplayName,
+        partner_username: partnerUsername,
+        has_partner: hasPartner,
+        partnership_status: partnershipStatus
+      };
+    }
+
+    function syncLibraryUrlFromState() {
+      const params = new URLSearchParams();
+      const context = getSelectedPartnershipContext();
+
+      if (safeText(context.partnership_uuid)) {
+        params.set("partnership_uuid", context.partnership_uuid);
+      } else if (safeText(context.partnership_id)) {
+        params.set("partnership_id", context.partnership_id);
+      }
+
+      const nextUrl = `${window.location.pathname}${params.toString() ? "?" + params.toString() : ""}`;
+      const currentUrl = `${window.location.pathname}${window.location.search}`;
+
+      if (nextUrl !== currentUrl) {
+        window.history.replaceState({}, "", nextUrl);
+      }
+    }
+
+    function buildOpenedRecordUrl(mode, volumeNumber, partnershipUuid = "", partnershipId = "") {
+      const safeVolume = safeNumber(volumeNumber, 0);
+      const params = new URLSearchParams();
+
+      if (safeVolume > 0) {
+        params.set("volume", String(safeVolume));
+      }
+
+      if (safeLower(mode) === "bond") {
+        if (safeText(partnershipUuid)) {
+          params.set("partnership_uuid", partnershipUuid);
+        } else if (safeText(partnershipId)) {
+          params.set("partnership_id", partnershipId);
+        }
+
+        return `/bond-book.html${params.toString() ? "?" + params.toString() : ""}`;
+      }
+
+      return `/cultivation-book.html${params.toString() ? "?" + params.toString() : ""}`;
+    }
+
+    function buildPartnershipRecordUrl() {
+      const context = getSelectedPartnershipContext();
+
+      if (safeText(context.partnership_uuid)) {
+        return `/partnership-record.html?partnership_uuid=${encodeURIComponent(context.partnership_uuid)}`;
+      }
+
+      if (safeText(context.partnership_id)) {
+        return `/partnership.html?partnership_id=${encodeURIComponent(context.partnership_id)}`;
+      }
+
+      return "/partnership.html";
+    }
+
+    function getRealmLabelFromVolume(volumeNumber, fallback = "Unknown Realm") {
+      const safeVolume = safeNumber(volumeNumber, 0);
+      if (safeVolume >= 1 && safeVolume <= REALM_SEQUENCE.length) {
+        return REALM_SEQUENCE[safeVolume - 1];
+      }
+      return fallback;
+    }
+
+    function getCultivationItemRealmLabel(item) {
+      if (!item) return "Unknown Realm";
+
+      const fromVolume = getRealmLabelFromVolume(safeNumber(item.volume_number, 0), "");
+      if (fromVolume) return fromVolume;
+
+      return formatRealmLabel(
+        item.realm_display_name || item.realm_name,
+        "Unknown Realm"
+      );
+    }
+
+    function setMessage(text, tone = "info") {
+      const el = document.getElementById("page-message");
+
+      if (!text) {
+        el.textContent = "";
+        el.className = "library-banner is-hidden";
+        return;
+      }
+
+      el.textContent = text;
+      el.className = tone === "error" ? "library-banner error" : "library-banner";
+    }
+
+    function getCultivationItems() {
+      return Array.isArray(state.payload?.items) ? state.payload.items : [];
+    }
+
+    function getBondLibrary() {
+      return state.payload?.bond_library || null;
+    }
+
+    function getBondVolumesForShelf() {
+      const bondLibrary = getBondLibrary();
+      const purchased = Array.isArray(bondLibrary?.volumes) ? bondLibrary.volumes : [];
+
+      const purchasedMap = new Map();
+      purchased.forEach(volume => {
+        purchasedMap.set(safeNumber(volume.volume_number, 0), volume);
+      });
+
+      return BOND_VOLUME_FALLBACKS.map(fallback => {
+        if (purchasedMap.has(fallback.volume_number)) {
+          return purchasedMap.get(fallback.volume_number);
+        }
+
+        return {
+          volume_number: fallback.volume_number,
+          item_name: fallback.item_name,
+          volume_status: "sealed",
+          books: [],
+          books_total: 4,
+          books_completed: 0,
+          is_placeholder: true
+        };
+      });
+    }
+
+    function getSelectedCultivationItem() {
+      const items = getCultivationItems();
+      if (!items.length) return null;
+
+      const index = Math.max(0, Math.min(state.selectedCultivationIndex, items.length - 1));
+      return items[index];
+    }
+
+    function getSelectedBondVolume() {
+      const volumes = getBondVolumesForShelf();
+      if (!volumes.length) return null;
+
+      const index = Math.max(0, Math.min(state.selectedBondIndex, volumes.length - 1));
+      return volumes[index];
+    }
+
+    function updateSessionLine(user) {
+      const sessionLine = document.getElementById("session-line");
+
+      if (!user) {
+        sessionLine.textContent = "Loading library access...";
+        return;
+      }
+
+      const displayName =
+        safeText(user.character_name) ||
+        safeText(user.display_name) ||
+        safeText(user.sl_username) ||
+        "Cultivator";
+
+      const username = safeText(user.sl_username);
+      const context = getSelectedPartnershipContext();
+
+      let baseLine = username
+        ? `Library opened for ${displayName} • @${username}`
+        : `Library opened for ${displayName}`;
+
+      if (state.activeMode === "bond" && context.has_partner) {
+        const partnerLabel = safeText(
+          context.partner_display_name || context.partner_username,
+          "Focused Partner"
+        );
+        baseLine += ` • Bond context: ${partnerLabel}`;
+      }
+
+      sessionLine.textContent = baseLine;
+    }
+
+    function getCurrentRealmName() {
+      const userRealm = formatRealmLabel(
+        state.payload?.user?.realm_display_name ||
+        state.payload?.user?.realm_name ||
+        state.session?.realm_display_name ||
+        state.session?.realm_name,
+        ""
+      );
+
+      if (userRealm) return userRealm;
+
+      const selected = getSelectedCultivationItem();
+      if (selected) return getCultivationItemRealmLabel(selected);
+
+      const items = getCultivationItems();
+      const latest = items[items.length - 1];
+      if (latest) return getCultivationItemRealmLabel(latest);
+
+      return "Unknown Realm";
+    }
+
+    function renderHeaderStrip() {
+      const context = getSelectedPartnershipContext();
+      const headerBondStage =
+        state.payload?.bond_library?.summary?.bond_stage ||
+        "Bond Seed";
+
+      document.getElementById("header-realm").textContent = safeText(getCurrentRealmName(), "Unknown Realm");
+      document.getElementById("header-bond-stage").textContent = safeText(headerBondStage, "Bond Seed");
+      document.getElementById("header-meditation").textContent = state.payload?.meditation?.is_active
+        ? "Active"
+        : "Inactive";
+
+      const user =
+        state.payload?.user?.display_name ||
+        state.payload?.user?.sl_username ||
+        state.session?.display_name ||
+        state.session?.sl_username ||
+        "Unknown Cultivator";
+
+      document.getElementById("header-user").textContent =
+        state.activeMode === "bond" && context.has_partner
+          ? `${user} • ${safeText(context.partner_display_name || context.partner_username, "Focused Partner")}`
+          : user;
+    }
+
+    function renderToggleStates() {
+      const cultivationActive = state.activeMode === "cultivation";
+
+      document.getElementById("toggle-cultivation").classList.toggle("active", cultivationActive);
+      document.getElementById("toggle-bond").classList.toggle("active", !cultivationActive);
+      document.getElementById("archive-cultivation").classList.toggle("active", cultivationActive);
+      document.getElementById("archive-bond").classList.toggle("active", !cultivationActive);
+
+      const cultivationShrineButton = document.getElementById("activate-cultivation-shrine");
+      const bondShrineButton = document.getElementById("activate-bond-shrine");
+
+      cultivationShrineButton.className = cultivationActive
+        ? "shrine-toggle active"
+        : "shrine-toggle inactive";
+
+      bondShrineButton.className = cultivationActive
+        ? "shrine-toggle inactive"
+        : "shrine-toggle active";
+    }
+
+    function createMetaBlock(label, value) {
+      return `
+        <div class="meta-block">
+          <span>${escapeHtml(label)}</span>
+          <strong>${escapeHtml(value)}</strong>
+        </div>
+      `;
+    }
+
+    function createSummaryChip(label, value) {
+      return `
+        <div class="summary-chip">
+          <span>${escapeHtml(label)}</span>
+          <strong>${escapeHtml(value)}</strong>
+        </div>
+      `;
+    }
+
+    function createActionButton(label, kind = "secondary", onClickName = "") {
+      if (onClickName) {
+        return `<button type="button" class="action-button ${escapeHtml(kind)}" data-action="${escapeHtml(onClickName)}">${escapeHtml(label)}</button>`;
+      }
+
+      return `<button type="button" class="action-button ${escapeHtml(kind)}">${escapeHtml(label)}</button>`;
+    }
+
+    function createActionLink(label, href, kind = "secondary") {
+      return `<a href="${escapeHtml(href)}" class="action-button ${escapeHtml(kind)}">${escapeHtml(label)}</a>`;
+    }
+
+    function renderCultivationAltar() {
+      const selected = getSelectedCultivationItem();
+      const summary = state.payload?.summary || {};
+
+      document.getElementById("altar-type").textContent = "Cultivation Volume";
+      document.getElementById("summary-title").textContent = "Cultivation Summary";
+
+      if (!selected) {
+        document.getElementById("altar-title").textContent = "No Cultivation Volume Selected";
+        document.getElementById("altar-copy").textContent = "No personal cultivation volume is currently available.";
+        document.getElementById("altar-state-label").textContent = "State";
+        document.getElementById("altar-state-value").textContent = "Dormant";
+        document.getElementById("altar-meta-grid").innerHTML = createMetaBlock("Status", "No recorded volume");
+        document.getElementById("altar-actions").innerHTML = "";
+        document.getElementById("summary-stack").innerHTML = createSummaryChip("Owned Volumes", "0");
+        return;
+      }
+
+      const openedRecordUrl = buildOpenedRecordUrl("cultivation", safeNumber(selected.volume_number, 0));
+
+      document.getElementById("altar-title").textContent =
+        `${getCultivationItemRealmLabel(selected)} — Volume ${safeNumber(selected.volume_number, 0)}`;
+      document.getElementById("altar-copy").textContent =
+        safeText(
+          selected.description,
+          "The selected personal volume rises onto the altar here, showing status, progress, and the current section being cultivated."
+        );
+      document.getElementById("altar-state-label").textContent = "State";
+      document.getElementById("altar-state-value").textContent =
+        titleCase(selected.volume_status, "Unknown");
+
+      const activeTimer =
+        selected.section_timers?.[safeLower(selected.current_section)] || null;
+
+      document.getElementById("altar-meta-grid").innerHTML = [
+        createMetaBlock("Title", safeText(selected.item_name, "Unnamed Volume")),
+        createMetaBlock(
+          "Current Section",
+          safeText(selected.current_section_label || selected.current_section, "None")
+        ),
+        createMetaBlock(
+          "Insight",
+          `${safeNumber(selected.insight_current, 0)} / ${safeNumber(selected.insight_required, 100)}`
+        ),
+        createMetaBlock(
+          "Time State",
+          safeText(activeTimer?.display_timer_state || activeTimer?.timer_state || selected.volume_status, "Unknown")
+        )
+      ].join("");
+
+      document.getElementById("altar-actions").innerHTML = [
+        createActionLink("Open Volume", openedRecordUrl, "primary"),
+        createActionLink("Continue Study", openedRecordUrl, "secondary"),
+        createActionButton("View Section Timers", "muted", "scroll-archive")
+      ].join("");
+
+      document.getElementById("summary-stack").innerHTML = [
+        createSummaryChip("Owned Volumes", String(safeNumber(summary.total_owned_volumes, 0))),
+        createSummaryChip("Completed Volumes", String(safeNumber(summary.completed_volumes, 0))),
+        createSummaryChip("Active Volumes", String(safeNumber(summary.active_volumes, 0))),
+        createSummaryChip("Ready Now", String(safeNumber(summary.eligible_volumes, 0)))
+      ].join("");
+    }
+
+    function renderBondAltar() {
+      const bondLibrary = getBondLibrary();
+      const selected = getSelectedBondVolume();
+      const context = getSelectedPartnershipContext();
+
+      const partnerName = safeText(
+        context.partner_display_name ||
+        context.partner_username,
+        "Unbound"
+      );
+
+      document.getElementById("altar-type").textContent = "Bond Volume";
+      document.getElementById("summary-title").textContent = "Bond Summary";
+
+      document.getElementById("altar-title").textContent = selected
+        ? `${safeText(selected.item_name, "Unnamed Bond Volume")} — Volume ${safeNumber(selected.volume_number, 0)}`
+        : "No Bond Volume Selected";
+
+      document.getElementById("altar-copy").textContent = selected
+        ? safeText(
+            selected.description,
+            "The selected shared bond volume rises onto the altar here, showing partner-linked progress, bond stage, and the current shared book."
+          )
+        : safeText(
+            bondLibrary?.message,
+            "Bond Shrine remains dormant until a valid shared bond record exists."
+          );
+
+      document.getElementById("altar-state-label").textContent = "Shared State";
+      document.getElementById("altar-state-value").textContent =
+        bondLibrary?.active_session?.status
+          ? titleCase(bondLibrary.active_session.status)
+          : (selected?.is_placeholder ? "Dormant" : titleCase(selected?.volume_status, "Dormant"));
+
+      const activeBookName =
+        selected?.active_book_name ||
+        selected?.current_focus_book_name ||
+        (Array.isArray(selected?.books)
+          ? selected.books.find(book => safeBoolean(book.is_active) || safeBoolean(book.is_current_book))?.book_name
+          : "") ||
+        "No active book";
+
+      document.getElementById("altar-meta-grid").innerHTML = [
+        createMetaBlock("Focused Partner", partnerName),
+        createMetaBlock(
+          "Partnership State",
+          safeText(context.partnership_status, context.has_partner ? "Focused" : "Unbound")
+        ),
+        createMetaBlock("Bond Stage", safeText(bondLibrary?.summary?.bond_stage, "Bond Seed")),
+        createMetaBlock("Current Book", safeText(activeBookName, "No active book"))
+      ].join("");
+
+      const bondOpenedRecordUrl =
+        selected && !selected.is_placeholder
+          ? buildOpenedRecordUrl(
+              "bond",
+              safeNumber(selected.volume_number, 0),
+              context.partnership_uuid,
+              context.partnership_id
+            )
+          : "";
+
+      const partnershipRecordUrl = buildPartnershipRecordUrl();
+
+      if (selected && !selected.is_placeholder && context.has_partner) {
+        document.getElementById("altar-actions").innerHTML = [
+          createActionLink("Open Shared Volume", bondOpenedRecordUrl, "primary"),
+          createActionLink("View Bond Record", bondOpenedRecordUrl, "secondary"),
+          createActionLink("Check Partner State", partnershipRecordUrl, "muted")
+        ].join("");
+      } else if (context.has_partner) {
+        document.getElementById("altar-actions").innerHTML = [
+          `<span class="action-button primary disabled">Open Shared Volume</span>`,
+          `<span class="action-button secondary disabled">View Bond Record</span>`,
+          createActionLink("Check Partner State", partnershipRecordUrl, "muted")
+        ].join("");
+      } else {
+        document.getElementById("altar-actions").innerHTML = [
+          `<span class="action-button primary disabled">Open Shared Volume</span>`,
+          `<span class="action-button secondary disabled">View Bond Record</span>`,
+          createActionLink("Go to Partnership Hall", "/partnership.html", "muted")
+        ].join("");
+      }
+
+      const bondSummary = bondLibrary?.summary || {};
+      document.getElementById("summary-stack").innerHTML = [
+        createSummaryChip("Purchased Volumes", String(safeNumber(bondSummary.purchased_volumes, 0))),
+        createSummaryChip("Completed Books", String(safeNumber(bondSummary.completed_books, 0))),
+        createSummaryChip(
+          "Active Book",
+          bondSummary.active_book_number ? `Book ${safeNumber(bondSummary.active_book_number, 0)}` : "—"
+        ),
+        createSummaryChip(
+          "Shared Session",
+          bondLibrary?.active_session?.status ? titleCase(bondLibrary.active_session.status) : "Dormant"
+        )
+      ].join("");
+    }
+
+    function getCultivationSpineMeta(item, isSelected) {
+      const status = safeLower(item?.volume_status);
+
+      if (isSelected) return { marker: "SEL", label: "Selected" };
+      if (status === "completed_volume") return { marker: "✓", label: "Completed" };
+      if (status === "under_comprehension") return { marker: "✦", label: "Active" };
+      if (item?.eligible_for_comprehension) return { marker: "○", label: "Ready" };
+      return { marker: "🔒", label: "Sealed" };
+    }
+
+    function getBondSpineMeta(volume, isSelected) {
+      const status = safeLower(volume?.volume_status);
+
+      if (isSelected) return { marker: "SEL", label: "Selected" };
+      if (status === "completed") return { marker: "✓", label: "Completed" };
+      if (["active", "in_progress", "cultivating", "underway", "owned", "unlocked", "available", "paused"].includes(status) && !volume?.is_placeholder) {
+        return { marker: "✦", label: "Owned" };
+      }
+      if (!volume?.is_placeholder) return { marker: "○", label: "Owned" };
+      return { marker: "🔒", label: "Sealed" };
+    }
+
+    function renderCultivationShelf() {
+      const shelf = document.getElementById("cultivation-shelf");
+      const items = getCultivationItems();
+
+      if (!items.length) {
+        shelf.innerHTML = `<div class="empty-card">No cultivation volumes are recorded yet.</div>`;
+        return;
+      }
+
+      shelf.innerHTML = items.map((item, index) => {
+        const isSelected = state.activeMode === "cultivation" && index === state.selectedCultivationIndex;
+        const meta = getCultivationSpineMeta(item, isSelected);
+
+        return `
+          <button
+            type="button"
+            class="shelf-spine ${isSelected ? "active" : ""}"
+            data-cultivation-index="${index}"
+          >
+            <div class="spine-subtle">Spine</div>
+            <div class="spine-code">V${safeNumber(item.volume_number, index + 1)}</div>
+            <div class="spine-marker">${escapeHtml(meta.marker)}</div>
+            <div class="spine-state">${escapeHtml(meta.label)}</div>
+          </button>
+        `;
+      }).join("");
+
+      shelf.querySelectorAll("[data-cultivation-index]").forEach(button => {
+        button.addEventListener("click", () => {
+          state.selectedCultivationIndex = safeNumber(button.getAttribute("data-cultivation-index"), 0);
+          state.activeMode = "cultivation";
+          renderAll();
+          scrollToSection(".record-section");
+        });
+      });
+    }
+
+    function renderBondShelf() {
+      const shelf = document.getElementById("bond-shelf");
+      const bondLibrary = getBondLibrary();
+      const context = getSelectedPartnershipContext();
+
+      if (!context.has_partner && !bondLibrary?.available) {
+        shelf.innerHTML = `<div class="empty-card">Bond Shrine remains dormant until a valid focused partnership exists.</div>`;
+        return;
+      }
+
+      const volumes = getBondVolumesForShelf();
+
+      shelf.innerHTML = volumes.map((volume, index) => {
+        const isSelected = state.activeMode === "bond" && index === state.selectedBondIndex;
+        const meta = getBondSpineMeta(volume, isSelected);
+
+        return `
+          <button
+            type="button"
+            class="shelf-spine ${isSelected ? "active" : ""} ${volume.is_placeholder ? "unavailable" : ""}"
+            data-bond-index="${index}"
+          >
+            <div class="spine-subtle">Spine</div>
+            <div class="spine-code">B${safeNumber(volume.volume_number, index + 1)}</div>
+            <div class="spine-marker">${escapeHtml(meta.marker)}</div>
+            <div class="spine-state">${escapeHtml(meta.label)}</div>
+          </button>
+        `;
+      }).join("");
+
+      shelf.querySelectorAll("[data-bond-index]").forEach(button => {
+        button.addEventListener("click", () => {
+          state.selectedBondIndex = safeNumber(button.getAttribute("data-bond-index"), 0);
+          state.activeMode = "bond";
+          renderAll();
+          scrollToSection(".record-section");
+        });
+      });
+    }
+
+    function renderArchiveCultivation() {
+      const selected = getSelectedCultivationItem();
+      const grid = document.getElementById("archive-grid");
+
+      document.getElementById("archive-type").textContent = "Expanded Cultivation Record";
+      document.getElementById("archive-title").textContent = selected
+        ? `Section Scrolls of ${safeText(selected.item_name, "Unnamed Volume")}`
+        : "No Section Scrolls Available";
+
+      document.getElementById("archive-copy").textContent = selected
+        ? "When a cultivation volume is active, this chamber opens the internal section record, timers, and comprehension state."
+        : "No cultivation record is currently available for expansion.";
+
+      document.getElementById("archive-focus").textContent = selected
+        ? safeText(selected.current_section_book_title || selected.current_section_label || selected.current_section, "None")
+        : "—";
+
+      if (!selected) {
+        grid.innerHTML = `<div class="empty-card">There is no cultivation volume selected.</div>`;
+        return;
+      }
+
+      const keys = ["base", "early", "middle", "late"];
+
+      grid.innerHTML = keys.map(key => {
+        const timer = selected.section_timers?.[key] || null;
+        const title = safeText(selected.section_book_titles?.[key], `${titleCase(key)} Scripture`);
+        const status = safeText(timer?.display_timer_state || titleCase(selected.sections?.[key], "Unknown"));
+        const progress = safeNumber(timer?.progress_percent, 0);
+
+        return `
+          <div class="scroll-card">
+            <div class="scroll-label">Section</div>
+            <div class="scroll-title">${escapeHtml(title)}</div>
+            <div class="scroll-meta">Status: <strong>${escapeHtml(status)}</strong></div>
+            <div class="scroll-meta">Remaining: <strong>${escapeHtml(safeText(timer?.human_remaining, "Unknown"))}</strong></div>
+            <div class="scroll-meta">Progress: <strong>${escapeHtml(progress.toFixed(1))}%</strong></div>
+            <div class="progress-track">
+              <div class="progress-bar" style="width: ${progress}%"></div>
+            </div>
+          </div>
+        `;
+      }).join("");
+    }
+
+    function renderArchiveBond() {
+      const selected = getSelectedBondVolume();
+      const bondLibrary = getBondLibrary();
+      const context = getSelectedPartnershipContext();
+      const grid = document.getElementById("archive-grid");
+
+      document.getElementById("archive-type").textContent = "Expanded Bond Record";
+      document.getElementById("archive-title").textContent = selected
+        ? `Shared Book Sequence of ${safeText(selected.item_name, "Unnamed Bond Volume")}`
+        : "No Shared Bond Record";
+
+      document.getElementById("archive-copy").textContent = selected
+        ? "When a bond volume is active, this chamber swaps into the selected partnership's shared pair record, partner state, and current book progress."
+        : safeText(
+            bondLibrary?.message,
+            "Bond Shrine remains dormant until a valid shared bond record exists."
+          );
+
+      const activeBook =
+        selected?.active_book_name ||
+        selected?.current_focus_book_name ||
+        (Array.isArray(selected?.books)
+          ? selected.books.find(book => safeBoolean(book.is_active) || safeBoolean(book.is_current_book))?.book_name
+          : "") ||
+        "No active book";
+
+      const focusLabel = context.has_partner
+        ? `${activeBook} • ${safeText(context.partner_display_name || context.partner_username, "Focused Partner")}`
+        : activeBook;
+
+      document.getElementById("archive-focus").textContent = focusLabel;
+
+      if (!bondLibrary?.available && !context.has_partner) {
+        grid.innerHTML = `<div class="empty-card">Bond Shrine is dormant. Form a partnership and purchase shared bond volumes to awaken this chamber.</div>`;
+        return;
+      }
+
+      if (!selected || !Array.isArray(selected.books) || !selected.books.length) {
+        grid.innerHTML = `<div class="empty-card">${
+          selected?.is_placeholder
+            ? "This bond volume has not been purchased yet."
+            : "No shared bond books are recorded for this volume yet."
+        }</div>`;
+        return;
+      }
+
+      grid.innerHTML = selected.books.map(book => {
+        const progress = safeNumber(book.progress_percent, 0);
+
+        return `
+          <div class="scroll-card">
+            <div class="scroll-label">Bond Book</div>
+            <div class="scroll-title">${escapeHtml(book.book_name || `Book ${safeNumber(book.book_number, 0)}`)}</div>
+            <div class="scroll-meta">Status: <strong>${escapeHtml(titleCase(book.status, "Unknown"))}</strong></div>
+            <div class="scroll-meta">Updated: <strong>${escapeHtml(formatDateTime(book.updated_at))}</strong></div>
+            <div class="scroll-meta">Progress: <strong>${escapeHtml(progress.toFixed(1))}%</strong></div>
+            <div class="progress-track">
+              <div class="progress-bar" style="width: ${progress}%"></div>
+            </div>
+          </div>
+        `;
+      }).join("");
+    }
+
+    function renderAltar() {
+      if (state.activeMode === "bond") {
+        renderBondAltar();
+      } else {
+        renderCultivationAltar();
+      }
+    }
+
+    function renderArchive() {
+      if (state.activeMode === "bond") {
+        renderArchiveBond();
+      } else {
+        renderArchiveCultivation();
+      }
+    }
+
+    function renderAll() {
+      updateSessionLine(state.payload?.user || state.session);
+      renderHeaderStrip();
+      renderToggleStates();
+      renderCultivationShelf();
+      renderBondShelf();
+      renderAltar();
+      renderArchive();
+      wireDynamicActions();
+      syncLibraryUrlFromState();
+    }
+
+    function wireDynamicActions() {
+      document.querySelectorAll("[data-action='scroll-archive']").forEach(button => {
+        button.addEventListener("click", () => {
+          scrollToSection(".archive-panel");
+        });
+      });
+    }
+
+    function scrollToSection(selector) {
+      document.querySelector(selector)?.scrollIntoView({
+        behavior: "smooth",
+        block: "start"
+      });
+    }
+
+    function pickDefaultCultivationIndex(items) {
+      const activeIndex = items.findIndex(item => safeLower(item.volume_status) === "under_comprehension");
+      if (activeIndex >= 0) return activeIndex;
+
+      const eligibleIndex = items.findIndex(item => !!item.eligible_for_comprehension);
+      if (eligibleIndex >= 0) return eligibleIndex;
+
+      return items.length ? items.length - 1 : 0;
+    }
+
+    function pickDefaultBondIndex() {
+      const bondLibrary = getBondLibrary();
+      const volumes = getBondVolumesForShelf();
+
+      const activeVolumeNumber = safeNumber(
+        bondLibrary?.summary?.active_volume_number ||
+        bondLibrary?.current_volume_number,
+        0
+      );
+
+      const activeIndex = volumes.findIndex(volume => safeNumber(volume.volume_number, 0) === activeVolumeNumber);
+      if (activeIndex >= 0) return activeIndex;
+
+      const purchasedIndex = volumes.findIndex(volume => !volume.is_placeholder);
+      if (purchasedIndex >= 0) return purchasedIndex;
+
+      return 0;
+    }
+
+    async function loadLibrary() {
+      setMessage("");
+
+      try {
+        const params = new URLSearchParams();
+
+        if (safeText(state.requestedPartnershipUuid)) {
+          params.set("partnership_uuid", state.requestedPartnershipUuid);
+        } else if (safeText(state.requestedLegacyPartnershipId)) {
+          params.set("partnership_id", state.requestedLegacyPartnershipId);
+        }
+
+        const url = `/.netlify/functions/list-my-library${params.toString() ? `?${params.toString()}` : ""}`;
+
+        const response = await authFetch(url, {
+          method: "GET"
+        });
+
+        const rawText = await response.text();
+        let data = null;
+
+        try {
+          data = rawText ? JSON.parse(rawText) : null;
+        } catch {
+          data = null;
+        }
+
+        if (!response.ok || !data?.success) {
+          throw new Error(data?.message || "Failed to load library.");
+        }
+
+        state.payload = data;
+
+        const resolvedContext = getSelectedPartnershipContext();
+        if (safeText(resolvedContext.partnership_uuid)) {
+          state.requestedPartnershipUuid = resolvedContext.partnership_uuid;
+          state.requestedLegacyPartnershipId = "";
+        } else if (safeText(resolvedContext.partnership_id)) {
+          state.requestedLegacyPartnershipId = resolvedContext.partnership_id;
+        }
+
+        const cultivationItems = getCultivationItems();
+        state.selectedCultivationIndex = pickDefaultCultivationIndex(cultivationItems);
+        state.selectedBondIndex = pickDefaultBondIndex();
+
+        if (
+          (safeText(state.requestedPartnershipUuid) || safeText(state.requestedLegacyPartnershipId)) &&
+          (data.bond_library?.available || resolvedContext.has_partner)
+        ) {
+          state.activeMode = "bond";
+        } else if (!data.bond_library?.available && !resolvedContext.has_partner && state.activeMode === "bond") {
+          state.activeMode = "cultivation";
+        }
+
+        renderAll();
+
+        const warnings = Array.isArray(data.warnings) ? data.warnings.filter(Boolean) : [];
+        if (warnings.length) {
+          setMessage(warnings.join(" "), "info");
+        }
+      } catch (error) {
+        console.error("Library load error:", error);
+        state.payload = {
+          user: state.session,
+          summary: {},
+          items: [],
+          bond_library: null,
+          partnership: null,
+          selected_partnership: null,
+          meditation: { is_active: false }
+        };
+        renderAll();
+        setMessage(error.message || "Failed to load library.", "error");
+      }
+    }
+
+    function wireEvents() {
+      document.getElementById("toggle-cultivation").addEventListener("click", () => {
+        state.activeMode = "cultivation";
+        renderAll();
+      });
+
+      document.getElementById("toggle-bond").addEventListener("click", () => {
+        state.activeMode = "bond";
+        renderAll();
+      });
+
+      document.getElementById("archive-cultivation").addEventListener("click", () => {
+        state.activeMode = "cultivation";
+        renderAll();
+      });
+
+      document.getElementById("archive-bond").addEventListener("click", () => {
+        state.activeMode = "bond";
+        renderAll();
+      });
+
+      document.getElementById("activate-cultivation-shrine").addEventListener("click", () => {
+        state.activeMode = "cultivation";
+        renderAll();
+      });
+
+      document.getElementById("activate-bond-shrine").addEventListener("click", () => {
+        state.activeMode = "bond";
+        renderAll();
+      });
+
+      document.getElementById("logout-button").addEventListener("click", async () => {
+        await logoutUser();
+      });
+    }
+
+    async function init() {
+      state.requestedPartnershipUuid = getQueryPartnershipUuid();
+      state.requestedLegacyPartnershipId = getQueryLegacyPartnershipId();
+
+      updateSessionLine(null);
+      wireEvents();
+
+      try {
+        await verifySession();
+      } catch (error) {
+        console.error("Library auth error:", error);
+        return;
+      }
+
+      updateSessionLine(state.session);
+      await loadLibrary();
+    }
+
+    window.addEventListener("DOMContentLoaded", init);
+  </script>
+</body>
+</html>

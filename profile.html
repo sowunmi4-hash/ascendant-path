@@ -1,0 +1,1363 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta
+    name="viewport"
+    content="width=device-width, initial-scale=1.0"
+  />
+  <title>Profile | The Ascendant Path</title>
+  <link rel="stylesheet" href="style.css" />
+  <style>
+    :root {
+      --profile-accent: rgba(142, 168, 255, 0.95);
+      --profile-accent-soft: rgba(142, 168, 255, 0.18);
+      --profile-accent-glow: rgba(142, 168, 255, 0.28);
+      --profile-gold: rgba(234, 215, 170, 0.92);
+      --profile-gold-soft: rgba(234, 215, 170, 0.16);
+      --profile-text-main: #f4f7ff;
+      --profile-text-soft: rgba(229, 235, 255, 0.82);
+      --profile-text-dim: rgba(204, 214, 245, 0.62);
+      --profile-panel:
+        linear-gradient(180deg, rgba(16, 22, 38, 0.88), rgba(8, 12, 22, 0.96));
+      --profile-panel-2:
+        linear-gradient(180deg, rgba(14, 20, 34, 0.78), rgba(10, 14, 26, 0.94));
+      --profile-border: rgba(255, 255, 255, 0.07);
+      --profile-shadow: 0 26px 60px rgba(0, 0, 0, 0.32);
+      --profile-shadow-soft: 0 16px 34px rgba(0, 0, 0, 0.22);
+      --profile-radius: 22px;
+      --profile-radius-sm: 16px;
+    }
+
+    body.theme-yin {
+      --profile-accent: rgba(160, 190, 255, 0.96);
+      --profile-accent-soft: rgba(160, 190, 255, 0.17);
+      --profile-accent-glow: rgba(160, 190, 255, 0.30);
+      --profile-gold: rgba(208, 222, 255, 0.88);
+      --profile-gold-soft: rgba(208, 222, 255, 0.13);
+    }
+
+    body.theme-yang {
+      --profile-accent: rgba(255, 195, 106, 0.95);
+      --profile-accent-soft: rgba(255, 195, 106, 0.16);
+      --profile-accent-glow: rgba(255, 195, 106, 0.28);
+      --profile-gold: rgba(255, 224, 160, 0.92);
+      --profile-gold-soft: rgba(255, 224, 160, 0.18);
+    }
+
+    body.theme-taiji {
+      --profile-accent: rgba(178, 164, 255, 0.95);
+      --profile-accent-soft: rgba(178, 164, 255, 0.16);
+      --profile-accent-glow: rgba(178, 164, 255, 0.28);
+      --profile-gold: rgba(234, 215, 170, 0.9);
+      --profile-gold-soft: rgba(234, 215, 170, 0.14);
+    }
+
+    body.theme-hybrid {
+      --profile-accent: rgba(155, 196, 255, 0.95);
+      --profile-accent-soft: rgba(155, 196, 255, 0.16);
+      --profile-accent-glow: rgba(155, 196, 255, 0.28);
+      --profile-gold: rgba(249, 216, 156, 0.92);
+      --profile-gold-soft: rgba(249, 216, 156, 0.15);
+    }
+
+    .profile-page {
+      width: min(1260px, calc(100% - 2rem));
+      margin: 1.5rem auto 4rem;
+      display: grid;
+      gap: 1.15rem;
+      position: relative;
+      z-index: 3;
+    }
+
+    .profile-hero,
+    .profile-panel,
+    .path-impression,
+    .meaning-band,
+    .profile-links-band {
+      position: relative;
+      overflow: hidden;
+      border: 1px solid var(--profile-border);
+      border-radius: var(--profile-radius);
+      box-shadow: var(--profile-shadow);
+      background: var(--profile-panel);
+      isolation: isolate;
+    }
+
+    .profile-hero::before,
+    .profile-panel::before,
+    .path-impression::before,
+    .meaning-band::before,
+    .profile-links-band::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      pointer-events: none;
+      background:
+        radial-gradient(circle at 16% 18%, var(--profile-accent-soft), transparent 26%),
+        radial-gradient(circle at 86% 14%, var(--profile-gold-soft), transparent 24%);
+      z-index: 0;
+    }
+
+    .profile-hero {
+      min-height: 420px;
+      padding: 1.8rem;
+      display: grid;
+      align-items: center;
+      background:
+        linear-gradient(180deg, rgba(6, 10, 18, 0.38), rgba(6, 10, 18, 0.9)),
+        radial-gradient(circle at 20% 24%, rgba(255, 255, 255, 0.05), transparent 18%),
+        radial-gradient(circle at 78% 22%, var(--profile-accent-soft), transparent 20%),
+        url("https://images.unsplash.com/photo-1518562180175-34a163b1a9a6?auto=format&fit=crop&w=1800&q=80")
+          center 42% / cover no-repeat;
+    }
+
+    .profile-hero::after {
+      content: "";
+      position: absolute;
+      inset: auto 0 0;
+      height: 130px;
+      pointer-events: none;
+      background: linear-gradient(180deg, transparent, rgba(6, 10, 18, 0.7));
+      z-index: 0;
+    }
+
+    .hero-grid {
+      position: relative;
+      z-index: 1;
+      display: grid;
+      grid-template-columns: 320px minmax(0, 1fr);
+      gap: 1.5rem;
+      align-items: center;
+    }
+
+    .hero-seal-wrap {
+      display: grid;
+      justify-items: center;
+      align-content: center;
+      gap: 0.85rem;
+    }
+
+    .hero-seal-field {
+      position: relative;
+      width: min(280px, 72vw);
+      aspect-ratio: 1 / 1;
+      display: grid;
+      place-items: center;
+    }
+
+    .hero-seal-glow {
+      position: absolute;
+      inset: 10%;
+      border-radius: 50%;
+      background:
+        radial-gradient(circle, var(--profile-accent-glow), transparent 65%);
+      filter: blur(12px);
+      animation: auraPulse 4.8s ease-in-out infinite;
+      pointer-events: none;
+    }
+
+    .hero-seal-ring,
+    .hero-seal-ring::before,
+    .hero-seal-ring::after {
+      position: absolute;
+      border-radius: 50%;
+      inset: 0;
+      content: "";
+    }
+
+    .hero-seal-ring {
+      border: 1px solid rgba(255, 255, 255, 0.09);
+      box-shadow:
+        inset 0 0 0 1px rgba(255, 255, 255, 0.02),
+        0 0 0 1px rgba(255, 255, 255, 0.02);
+      animation: spinSlow 24s linear infinite;
+    }
+
+    .hero-seal-ring::before {
+      inset: 16px;
+      border: 1px dashed rgba(255, 255, 255, 0.12);
+      animation: spinReverse 18s linear infinite;
+    }
+
+    .hero-seal-ring::after {
+      inset: 38px;
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      box-shadow: inset 0 0 24px rgba(255, 255, 255, 0.03);
+    }
+
+    .hero-seal-core {
+      position: relative;
+      width: 62%;
+      aspect-ratio: 1 / 1;
+      border-radius: 50%;
+      display: grid;
+      place-items: center;
+      background:
+        radial-gradient(circle at 30% 24%, rgba(255, 255, 255, 0.14), transparent 20%),
+        linear-gradient(180deg, rgba(22, 31, 54, 0.9), rgba(9, 14, 25, 0.96));
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      box-shadow:
+        inset 0 0 22px rgba(255, 255, 255, 0.04),
+        0 20px 48px rgba(0, 0, 0, 0.28),
+        0 0 34px var(--profile-accent-soft);
+      overflow: hidden;
+    }
+
+    .hero-seal-core::before {
+      content: "";
+      position: absolute;
+      inset: 8%;
+      border-radius: 50%;
+      border: 1px solid rgba(255, 255, 255, 0.07);
+      pointer-events: none;
+    }
+
+    .hero-seal-core::after {
+      content: "";
+      position: absolute;
+      inset: -20%;
+      background: linear-gradient(
+        120deg,
+        transparent 35%,
+        rgba(255, 255, 255, 0.08) 50%,
+        transparent 64%
+      );
+      transform: translateX(-120%) rotate(12deg);
+      animation: shimmerSweep 6.5s linear infinite;
+      pointer-events: none;
+    }
+
+    .hero-seal-mark {
+      position: relative;
+      z-index: 1;
+      display: grid;
+      gap: 0.25rem;
+      justify-items: center;
+      text-align: center;
+      padding: 0.5rem;
+    }
+
+    .hero-seal-mark .seal-kanji {
+      font-size: 1.55rem;
+      letter-spacing: 0.22em;
+      color: rgba(221, 229, 255, 0.28);
+      line-height: 1;
+    }
+
+    .hero-seal-mark .seal-initials {
+      font-size: clamp(2rem, 5vw, 3rem);
+      line-height: 1;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      color: #ffffff;
+      text-shadow: 0 4px 24px rgba(0, 0, 0, 0.32);
+    }
+
+    .hero-seal-caption {
+      font-size: 0.78rem;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: var(--profile-text-dim);
+    }
+
+    .hero-copy {
+      display: grid;
+      gap: 1rem;
+      align-content: center;
+    }
+
+    .hero-eyebrow {
+      display: inline-flex;
+      width: fit-content;
+      align-items: center;
+      gap: 0.55rem;
+      padding: 0.48rem 0.85rem;
+      border-radius: 999px;
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      background: rgba(7, 12, 22, 0.48);
+      color: var(--profile-accent);
+      font-size: 0.76rem;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+      backdrop-filter: blur(8px);
+    }
+
+    .hero-eyebrow::before {
+      content: "";
+      width: 9px;
+      height: 9px;
+      border-radius: 50%;
+      background: var(--profile-accent);
+      box-shadow: 0 0 16px var(--profile-accent-glow);
+      animation: dotPulse 2.8s ease-in-out infinite;
+    }
+
+    .hero-copy h1 {
+      margin: 0;
+      font-size: clamp(2.35rem, 4.4vw, 4rem);
+      line-height: 0.98;
+      color: #ffffff;
+      text-shadow: 0 10px 28px rgba(0, 0, 0, 0.28);
+    }
+
+    .hero-summary {
+      margin: 0;
+      max-width: 760px;
+      color: var(--profile-text-soft);
+      line-height: 1.7;
+      font-size: 1rem;
+    }
+
+    .hero-chips {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.7rem;
+    }
+
+    .hero-chip {
+      position: relative;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      padding: 0.75rem 0.95rem;
+      border-radius: 999px;
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      background: rgba(11, 16, 28, 0.62);
+      color: #f6f8ff;
+      backdrop-filter: blur(8px);
+      box-shadow: 0 10px 28px rgba(0, 0, 0, 0.18);
+      transition: transform 0.22s ease, border-color 0.22s ease, box-shadow 0.22s ease;
+    }
+
+    .hero-chip:hover {
+      transform: translateY(-2px);
+      border-color: rgba(255, 255, 255, 0.14);
+      box-shadow: 0 16px 32px rgba(0, 0, 0, 0.22);
+    }
+
+    .hero-chip b {
+      font-size: 0.7rem;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: var(--profile-text-dim);
+      font-weight: 600;
+    }
+
+    .hero-chip span {
+      color: #ffffff;
+      font-size: 0.94rem;
+    }
+
+    .hero-flavor {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 0.8rem;
+      margin-top: 0.25rem;
+    }
+
+    .flavor-pill {
+      padding: 0.85rem 0.95rem;
+      border-radius: 14px;
+      border: 1px solid rgba(255, 255, 255, 0.07);
+      background: rgba(8, 12, 22, 0.55);
+      color: var(--profile-text-soft);
+      font-size: 0.92rem;
+      line-height: 1.5;
+      box-shadow: var(--profile-shadow-soft);
+    }
+
+    .flavor-pill strong {
+      display: block;
+      color: #ffffff;
+      margin-bottom: 0.2rem;
+      font-size: 0.9rem;
+      letter-spacing: 0.04em;
+    }
+
+    .panel-grid {
+      display: grid;
+      grid-template-columns: 1.12fr 0.88fr;
+      gap: 1rem;
+    }
+
+    .profile-panel {
+      padding: 1.2rem;
+    }
+
+    .panel-header,
+    .impression-header,
+    .meaning-header,
+    .profile-links-header {
+      position: relative;
+      z-index: 1;
+      display: grid;
+      gap: 0.32rem;
+      margin-bottom: 1rem;
+    }
+
+    .panel-header span,
+    .impression-header span,
+    .meaning-header span,
+    .profile-links-header span {
+      font-size: 0.75rem;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+      color: var(--profile-accent);
+    }
+
+    .panel-header h2,
+    .impression-header h2,
+    .meaning-header h2,
+    .profile-links-header h2 {
+      margin: 0;
+      font-size: 1.28rem;
+      color: #ffffff;
+    }
+
+    .panel-header p,
+    .impression-header p,
+    .meaning-header p,
+    .profile-links-header p {
+      margin: 0;
+      color: var(--profile-text-soft);
+      line-height: 1.6;
+      font-size: 0.95rem;
+      max-width: 760px;
+    }
+
+    .record-grid {
+      position: relative;
+      z-index: 1;
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 0.9rem;
+    }
+
+    .record-grid.single-column {
+      grid-template-columns: 1fr;
+    }
+
+    .record-card,
+    .meaning-card,
+    .profile-link-card {
+      position: relative;
+      overflow: hidden;
+      border-radius: var(--profile-radius-sm);
+      border: 1px solid rgba(255, 255, 255, 0.07);
+      background: var(--profile-panel-2);
+      box-shadow: var(--profile-shadow-soft);
+      transition:
+        transform 0.24s ease,
+        border-color 0.24s ease,
+        box-shadow 0.24s ease,
+        background 0.24s ease;
+    }
+
+    .record-card:hover,
+    .meaning-card:hover,
+    .profile-link-card:hover {
+      transform: translateY(-4px);
+      border-color: rgba(255, 255, 255, 0.12);
+      box-shadow: 0 24px 44px rgba(0, 0, 0, 0.26);
+    }
+
+    .record-card::before,
+    .meaning-card::before,
+    .profile-link-card::before {
+      content: "";
+      position: absolute;
+      left: 0;
+      top: 18px;
+      bottom: 18px;
+      width: 2px;
+      background: linear-gradient(
+        180deg,
+        var(--profile-accent),
+        rgba(255, 255, 255, 0.08),
+        var(--profile-gold)
+      );
+      opacity: 0.85;
+    }
+
+    .record-card::after,
+    .meaning-card::after,
+    .profile-link-card::after {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(
+        120deg,
+        transparent 28%,
+        rgba(255, 255, 255, 0.04) 50%,
+        transparent 70%
+      );
+      transform: translateX(-120%);
+      pointer-events: none;
+      opacity: 0;
+      transition: opacity 0.25s ease;
+    }
+
+    .record-card:hover::after,
+    .meaning-card:hover::after,
+    .profile-link-card:hover::after {
+      opacity: 1;
+      animation: shimmerQuick 1.35s linear 1;
+    }
+
+    .record-card-inner,
+    .meaning-card-inner,
+    .profile-link-inner {
+      position: relative;
+      z-index: 1;
+      display: grid;
+      gap: 0.42rem;
+      padding: 1rem 1rem 1rem 1.15rem;
+      min-height: 118px;
+      align-content: start;
+    }
+
+    .record-card .label,
+    .meaning-card .label,
+    .profile-link-card .label {
+      font-size: 0.72rem;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: rgba(200, 211, 248, 0.72);
+      padding-left: 0.34rem;
+    }
+
+    .record-card .value,
+    .profile-link-card h3 {
+      margin: 0;
+      padding-left: 0.34rem;
+      color: #ffffff;
+      font-size: 1.08rem;
+      line-height: 1.35;
+      word-break: break-word;
+    }
+
+    .meaning-card p,
+    .profile-link-card p {
+      margin: 0;
+      padding-left: 0.34rem;
+      color: var(--profile-text-soft);
+      line-height: 1.6;
+      font-size: 0.94rem;
+    }
+
+    .path-impression,
+    .meaning-band,
+    .profile-links-band {
+      padding: 1.15rem;
+    }
+
+    .path-impression-copy {
+      position: relative;
+      z-index: 1;
+      display: grid;
+      gap: 0.95rem;
+    }
+
+    .impression-quote {
+      position: relative;
+      padding: 1.15rem 1.2rem 1.15rem 1.4rem;
+      border-radius: 18px;
+      border: 1px solid rgba(255, 255, 255, 0.07);
+      background:
+        linear-gradient(180deg, rgba(15, 22, 38, 0.86), rgba(10, 14, 24, 0.96));
+      box-shadow: var(--profile-shadow-soft);
+      color: #f7f9ff;
+      font-size: 1.02rem;
+      line-height: 1.8;
+      overflow: hidden;
+    }
+
+    .impression-quote::before {
+      content: "“";
+      position: absolute;
+      left: 14px;
+      top: 6px;
+      font-size: 3.2rem;
+      line-height: 1;
+      color: rgba(255, 255, 255, 0.08);
+    }
+
+    .impression-tags {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.7rem;
+    }
+
+    .impression-tag {
+      padding: 0.58rem 0.85rem;
+      border-radius: 999px;
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      background: rgba(10, 14, 24, 0.6);
+      color: var(--profile-text-soft);
+      font-size: 0.88rem;
+      box-shadow: 0 8px 22px rgba(0, 0, 0, 0.16);
+    }
+
+    .meaning-grid,
+    .profile-links-grid {
+      position: relative;
+      z-index: 1;
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 1rem;
+    }
+
+    .profile-link-card {
+      color: inherit;
+      text-decoration: none;
+    }
+
+    .profile-link-inner {
+      min-height: 155px;
+    }
+
+    .profile-link-arrow {
+      margin-top: auto;
+      padding-left: 0.34rem;
+      color: var(--profile-accent);
+      font-size: 0.88rem;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+    }
+
+    .ambient-particles {
+      position: absolute;
+      inset: 0;
+      pointer-events: none;
+      z-index: 0;
+      overflow: hidden;
+    }
+
+    .ambient-particles span {
+      position: absolute;
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background:
+        radial-gradient(circle, rgba(255, 255, 255, 0.9), rgba(255, 255, 255, 0));
+      opacity: 0.28;
+      animation: particleFloat linear infinite;
+    }
+
+    .ambient-particles span:nth-child(1) {
+      left: 12%;
+      top: 70%;
+      animation-duration: 12s;
+      animation-delay: -3s;
+    }
+
+    .ambient-particles span:nth-child(2) {
+      left: 24%;
+      top: 84%;
+      animation-duration: 14s;
+      animation-delay: -6s;
+    }
+
+    .ambient-particles span:nth-child(3) {
+      left: 41%;
+      top: 76%;
+      animation-duration: 11s;
+      animation-delay: -2s;
+    }
+
+    .ambient-particles span:nth-child(4) {
+      left: 58%;
+      top: 82%;
+      animation-duration: 16s;
+      animation-delay: -5s;
+    }
+
+    .ambient-particles span:nth-child(5) {
+      left: 76%;
+      top: 74%;
+      animation-duration: 13s;
+      animation-delay: -4s;
+    }
+
+    .ambient-particles span:nth-child(6) {
+      left: 88%;
+      top: 80%;
+      animation-duration: 17s;
+      animation-delay: -7s;
+    }
+
+    .reveal {
+      opacity: 0;
+      transform: translateY(18px);
+      animation: fadeUp 0.9s ease forwards;
+    }
+
+    .reveal-delay-1 { animation-delay: 0.08s; }
+    .reveal-delay-2 { animation-delay: 0.18s; }
+    .reveal-delay-3 { animation-delay: 0.28s; }
+    .reveal-delay-4 { animation-delay: 0.38s; }
+    .reveal-delay-5 { animation-delay: 0.48s; }
+
+    @keyframes fadeUp {
+      from {
+        opacity: 0;
+        transform: translateY(18px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    @keyframes auraPulse {
+      0%, 100% {
+        transform: scale(0.98);
+        opacity: 0.72;
+      }
+      50% {
+        transform: scale(1.05);
+        opacity: 1;
+      }
+    }
+
+    @keyframes dotPulse {
+      0%, 100% {
+        transform: scale(0.9);
+        opacity: 0.7;
+      }
+      50% {
+        transform: scale(1.16);
+        opacity: 1;
+      }
+    }
+
+    @keyframes spinSlow {
+      from { transform: rotate(0deg); }
+      to { transform: rotate(360deg); }
+    }
+
+    @keyframes spinReverse {
+      from { transform: rotate(360deg); }
+      to { transform: rotate(0deg); }
+    }
+
+    @keyframes shimmerSweep {
+      0% { transform: translateX(-120%) rotate(12deg); }
+      100% { transform: translateX(130%) rotate(12deg); }
+    }
+
+    @keyframes shimmerQuick {
+      0% { transform: translateX(-120%); }
+      100% { transform: translateX(130%); }
+    }
+
+    @keyframes particleFloat {
+      0% {
+        transform: translateY(0) scale(0.9);
+        opacity: 0;
+      }
+      10% {
+        opacity: 0.26;
+      }
+      80% {
+        opacity: 0.2;
+      }
+      100% {
+        transform: translateY(-260px) scale(1.18);
+        opacity: 0;
+      }
+    }
+
+    @media (max-width: 1024px) {
+      .hero-grid,
+      .panel-grid,
+      .meaning-grid,
+      .profile-links-grid,
+      .hero-flavor {
+        grid-template-columns: 1fr;
+      }
+
+      .hero-seal-wrap {
+        justify-items: start;
+      }
+
+      .hero-seal-field {
+        width: min(240px, 62vw);
+      }
+    }
+
+    @media (max-width: 720px) {
+      .profile-page {
+        width: min(100% - 1rem, 1260px);
+        margin-top: 1rem;
+      }
+
+      .profile-hero,
+      .profile-panel,
+      .path-impression,
+      .meaning-band,
+      .profile-links-band {
+        border-radius: 16px;
+      }
+
+      .profile-hero {
+        min-height: auto;
+        padding: 1rem;
+      }
+
+      .hero-copy h1 {
+        font-size: clamp(2rem, 9vw, 2.8rem);
+      }
+
+      .record-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .hero-chip {
+        width: 100%;
+        justify-content: space-between;
+      }
+
+      .record-card-inner,
+      .meaning-card-inner,
+      .profile-link-inner,
+      .impression-quote {
+        padding-left: 1rem;
+        padding-right: 1rem;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="cloud-layer"></div>
+  <div class="rune-layer"></div>
+  <div class="lightning-flash"></div>
+
+  <nav>
+    <a href="/index.html">Home</a>
+    <a href="/lore.html">Lore</a>
+    <a href="/dashboard.html">Dashboard</a>
+    <a href="/profile.html" class="active">Profile</a>
+    <a href="/.netlify/functions/logout" id="logout-button">Logout</a>
+  </nav>
+
+  <main class="profile-page">
+    <section class="profile-hero reveal reveal-delay-1">
+      <div class="ambient-particles" aria-hidden="true">
+        <span></span><span></span><span></span><span></span><span></span><span></span>
+      </div>
+
+      <div class="hero-grid">
+        <div class="hero-seal-wrap">
+          <div class="hero-seal-field" aria-hidden="true">
+            <div class="hero-seal-glow"></div>
+            <div class="hero-seal-ring"></div>
+
+            <div class="hero-seal-core">
+              <div class="hero-seal-mark">
+                <div class="seal-kanji">人物録</div>
+                <div class="seal-initials" id="seal-initials">AC</div>
+              </div>
+            </div>
+          </div>
+
+          <div class="hero-seal-caption">Archive Seal</div>
+        </div>
+
+        <div class="hero-copy">
+          <div class="hero-eyebrow">Living Cultivator Archive</div>
+
+          <h1 id="character-name">Loading...</h1>
+
+          <p class="hero-summary" id="profile-summary-line">
+            A preserved record of identity, affiliation, and chosen direction within the cultivator world.
+          </p>
+
+          <div class="hero-chips">
+            <div class="hero-chip">
+              <b>Clan</b>
+              <span id="hero-clan">Loading...</span>
+            </div>
+
+            <div class="hero-chip">
+              <b>Cultivation Path</b>
+              <span id="hero-path">Loading...</span>
+            </div>
+
+            <div class="hero-chip">
+              <b>Path Type</b>
+              <span id="hero-path-type">Loading...</span>
+            </div>
+          </div>
+
+          <div class="hero-flavor">
+            <div class="flavor-pill">
+              <strong>Archive Record</strong>
+              This page preserves the cultivator’s present identity and linked registration.
+            </div>
+
+            <div class="flavor-pill">
+              <strong>Path Direction</strong>
+              The chosen path reflects how this record moves through discipline, resonance, and growth.
+            </div>
+
+            <div class="flavor-pill">
+              <strong>System Status</strong>
+              Use this archive as the personal gateway into deeper sections of the path.
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="panel-grid reveal reveal-delay-2">
+      <article class="profile-panel">
+        <div class="panel-header">
+          <span>Identity Tablet</span>
+          <h2>Cultivator Record</h2>
+          <p>The defining traits that shape this cultivator’s place and direction within the path.</p>
+        </div>
+
+        <div class="record-grid">
+          <div class="record-card">
+            <div class="record-card-inner">
+              <div class="label">Character Age</div>
+              <div class="value" id="character-age">Loading...</div>
+            </div>
+          </div>
+
+          <div class="record-card">
+            <div class="record-card-inner">
+              <div class="label">Clan</div>
+              <div class="value" id="clan">Loading...</div>
+            </div>
+          </div>
+
+          <div class="record-card">
+            <div class="record-card-inner">
+              <div class="label">Cultivation Path</div>
+              <div class="value" id="cultivation-path">Loading...</div>
+            </div>
+          </div>
+
+          <div class="record-card">
+            <div class="record-card-inner">
+              <div class="label">Path Type</div>
+              <div class="value" id="path-type">Loading...</div>
+            </div>
+          </div>
+        </div>
+      </article>
+
+      <article class="profile-panel">
+        <div class="panel-header">
+          <span>Account Tablet</span>
+          <h2>Linked Record</h2>
+          <p>The Second Life identity presently tied to this archive registration.</p>
+        </div>
+
+        <div class="record-grid single-column">
+          <div class="record-card">
+            <div class="record-card-inner">
+              <div class="label">SL Username</div>
+              <div class="value" id="sl-username">Loading...</div>
+            </div>
+          </div>
+
+          <div class="record-card">
+            <div class="record-card-inner">
+              <div class="label">Display Name</div>
+              <div class="value" id="display-name">Loading...</div>
+            </div>
+          </div>
+        </div>
+      </article>
+    </section>
+
+    <section class="path-impression reveal reveal-delay-3">
+      <div class="impression-header">
+        <span>Archive Impression</span>
+        <h2>Path Impression</h2>
+        <p>A living interpretation of this cultivator’s record and present direction.</p>
+      </div>
+
+      <div class="path-impression-copy">
+        <div class="impression-quote" id="path-impression-text">
+          This record remains in quiet formation, awaiting a clearer path through the cultivator world.
+        </div>
+
+        <div class="impression-tags">
+          <div class="impression-tag" id="impression-tag-clan">Clan: Unknown</div>
+          <div class="impression-tag" id="impression-tag-path">Path: Unchosen</div>
+          <div class="impression-tag" id="impression-tag-type">Type: Unchosen</div>
+        </div>
+      </div>
+    </section>
+
+    <section class="meaning-band reveal reveal-delay-4">
+      <div class="meaning-header">
+        <span>Archive Interpretation</span>
+        <h2>Record Meaning</h2>
+        <p>Understand what each preserved marker says about this cultivator’s place on the path.</p>
+      </div>
+
+      <div class="meaning-grid">
+        <article class="meaning-card">
+          <div class="meaning-card-inner">
+            <div class="label">Clan</div>
+            <p>Shows who this cultivator belongs to within the wider structure and order of the path.</p>
+          </div>
+        </article>
+
+        <article class="meaning-card">
+          <div class="meaning-card-inner">
+            <div class="label">Cultivation Path</div>
+            <p>Describes the journey this cultivator follows through discipline, identity, and advancement.</p>
+          </div>
+        </article>
+
+        <article class="meaning-card">
+          <div class="meaning-card-inner">
+            <div class="label">Path Type</div>
+            <p>Shows whether the path is walked alone, in union, or across blended forms of cultivation.</p>
+          </div>
+        </article>
+      </div>
+    </section>
+
+    <section class="profile-links-band reveal reveal-delay-5">
+      <div class="profile-links-header">
+        <span>System Pathways</span>
+        <h2>Continue Through the System</h2>
+        <p>Move between the main sections of the cultivator archive and continue along the active path.</p>
+      </div>
+
+      <div class="profile-links-grid">
+        <a class="profile-link-card" href="/dashboard.html">
+          <div class="profile-link-inner">
+            <div class="label">Overview</div>
+            <h3>Dashboard</h3>
+            <p>Return to your main overview and wider system state.</p>
+            <div class="profile-link-arrow">Enter Overview →</div>
+          </div>
+        </a>
+
+        <a class="profile-link-card" href="/cultivation.html">
+          <div class="profile-link-inner">
+            <div class="label">Practice</div>
+            <h3>Cultivation</h3>
+            <p>Enter the meditation chamber and continue along the active path.</p>
+            <div class="profile-link-arrow">Enter Practice →</div>
+          </div>
+        </a>
+
+        <a class="profile-link-card" href="/elements.html">
+          <div class="profile-link-inner">
+            <div class="label">Alignment</div>
+            <h3>Elements</h3>
+            <p>View elemental traits, spiritual alignment, and future analysis layers.</p>
+            <div class="profile-link-arrow">Enter Alignment →</div>
+          </div>
+        </a>
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    The Ascendant Path • Begin as Mortal, Ascend to Immortality
+  </footer>
+
+  <script>
+    const LOGIN_URL = "https://ascendantpath.org/login.html";
+    const VERIFY_SESSION_ENDPOINT = "/.netlify/functions/verify-session";
+    const LOGOUT_ENDPOINT = "/.netlify/functions/logout";
+    const DASHBOARD_ENDPOINT = "/.netlify/functions/load-dashboard-state";
+
+    function safeText(value, fallback = "Unknown") {
+      if (value === null || value === undefined) return fallback;
+      const text = String(value).trim();
+      return text ? text : fallback;
+    }
+
+    function formatPathType(value) {
+      const text = safeText(value, "").toLowerCase();
+
+      if (!text) return "Unchosen";
+      if (text === "single") return "Single Path";
+      if (text === "dual") return "Dual Path";
+      if (text === "hybrid") return "Hybrid Path";
+
+      return text.charAt(0).toUpperCase() + text.slice(1);
+    }
+
+    function getInitials(name) {
+      const clean = safeText(name, "Cultivator")
+        .split(/\s+/)
+        .filter(Boolean)
+        .slice(0, 2)
+        .map(part => part[0]?.toUpperCase() || "");
+
+      return clean.join("") || "AC";
+    }
+
+    function getCsrfToken() {
+      return sessionStorage.getItem("ap_csrf_token") || "";
+    }
+
+    function setCsrfToken(token) {
+      const value = safeText(token, "");
+      if (value) {
+        sessionStorage.setItem("ap_csrf_token", value);
+      }
+    }
+
+    function clearClientSessionArtifacts() {
+      sessionStorage.removeItem("ap_csrf_token");
+      localStorage.removeItem("session_token");
+    }
+
+    function redirectToLogin() {
+      const next = `${window.location.pathname}${window.location.search}${window.location.hash}`;
+      window.location.href = `${LOGIN_URL}?next=${encodeURIComponent(next)}`;
+    }
+
+    async function requireAuth() {
+      try {
+        const response = await fetch(VERIFY_SESSION_ENDPOINT, {
+          method: "GET",
+          credentials: "include",
+          headers: {
+            "Accept": "application/json"
+          }
+        });
+
+        if (response.status === 401) {
+          clearClientSessionArtifacts();
+          redirectToLogin();
+          return null;
+        }
+
+        if (!response.ok) {
+          throw new Error(`verify_session_failed_${response.status}`);
+        }
+
+        const data = await response.json();
+
+        if (!data || data.authenticated !== true) {
+          clearClientSessionArtifacts();
+          redirectToLogin();
+          return null;
+        }
+
+        const csrfToken =
+          data.csrf_token ||
+          data.csrfToken ||
+          data.csrf ||
+          "";
+
+        if (csrfToken) {
+          setCsrfToken(csrfToken);
+        }
+
+        return data;
+      } catch (error) {
+        console.error("Profile auth verification error:", error);
+        clearClientSessionArtifacts();
+        redirectToLogin();
+        return null;
+      }
+    }
+
+    async function logoutCurrentSession() {
+      const csrfToken = getCsrfToken();
+
+      try {
+        await fetch(LOGOUT_ENDPOINT, {
+          method: "POST",
+          credentials: "include",
+          headers: {
+            "Content-Type": "application/json",
+            "Accept": "application/json",
+            ...(csrfToken ? { "X-AP-CSRF-Token": csrfToken } : {})
+          },
+          body: JSON.stringify({})
+        });
+      } catch (error) {
+        console.error("Profile logout error:", error);
+      } finally {
+        clearClientSessionArtifacts();
+        window.location.href = LOGIN_URL;
+      }
+    }
+
+    function bindLogoutButton() {
+      const logoutButton = document.getElementById("logout-button");
+      if (!logoutButton) return;
+
+      logoutButton.addEventListener("click", async (event) => {
+        event.preventDefault();
+        await logoutCurrentSession();
+      });
+    }
+
+    async function fetchJson(url, options = {}) {
+      const response = await fetch(url, {
+        credentials: "include",
+        headers: {
+          Accept: "application/json",
+          ...(options.headers || {})
+        },
+        ...options
+      });
+
+      const text = await response.text();
+      let payload = null;
+
+      try {
+        payload = text ? JSON.parse(text) : null;
+      } catch {
+        payload = null;
+      }
+
+      if (response.status === 401) {
+        clearClientSessionArtifacts();
+        redirectToLogin();
+        throw new Error("unauthorized");
+      }
+
+      if (!response.ok) {
+        throw new Error(payload?.error || payload?.message || `request_failed_${response.status}`);
+      }
+
+      return payload;
+    }
+
+    function applyPathTheme(cultivationPath, pathType) {
+      const path = safeText(cultivationPath, "").toLowerCase();
+      const type = safeText(pathType, "").toLowerCase();
+
+      document.body.classList.remove("theme-yin", "theme-yang", "theme-taiji", "theme-hybrid");
+
+      if (path.includes("yin") || path.includes("moon") || path.includes("lunar")) {
+        document.body.classList.add("theme-yin");
+        return;
+      }
+
+      if (path.includes("yang") || path.includes("sun") || path.includes("solar")) {
+        document.body.classList.add("theme-yang");
+        return;
+      }
+
+      if (
+        path.includes("taiji") ||
+        path.includes("balance") ||
+        path.includes("equilibrium")
+      ) {
+        document.body.classList.add("theme-taiji");
+        return;
+      }
+
+      if (type === "hybrid" || type === "dual") {
+        document.body.classList.add("theme-hybrid");
+      }
+    }
+
+    function buildProfileSummary(member) {
+      const clan = safeText(member.sector_clan || member.clan, "an unclaimed clan");
+      const path = safeText(member.cultivation_path, "an unchosen path").toLowerCase();
+      const type = formatPathType(member.path_type).toLowerCase();
+
+      return `A preserved record of identity, clan affiliation, and chosen direction within the cultivator world. This archive currently reflects a cultivator bound to ${clan}, walking ${path}, under a ${type} formation.`;
+    }
+
+    function buildPathImpression(member) {
+      const name = safeText(member.character_name, "This cultivator");
+      const clan = safeText(member.sector_clan || member.clan, "an unclaimed clan");
+      const path = safeText(member.cultivation_path, "an unchosen path");
+      const rawType = safeText(member.path_type, "").toLowerCase();
+      const pathTypeLabel = formatPathType(member.path_type);
+
+      if (rawType === "single") {
+        return `${name} walks with a singular current of intent. The archive places this cultivator beneath the banner of ${clan}, following ${path} with focused discipline and a path that favors steady personal refinement.`;
+      }
+
+      if (rawType === "dual") {
+        return `${name} stands between joined currents. Bound to ${clan} and marked by ${path}, this record suggests a cultivator whose direction is shaped through union, resonance, and the strength of two aligned presences.`;
+      }
+
+      if (rawType === "hybrid") {
+        return `${name} bears a blended formation upon the path. With ties to ${clan} and a direction shaped by ${path}, this archive reflects a cultivator able to move between solitary discipline and shared ascent.`;
+      }
+
+      return `${name} remains recorded beneath ${clan}, with the archive pointing toward ${path}. Though the full shape of the path is still settling, this record already carries the quiet weight of cultivation and future ascent.`;
+    }
+
+    function renderProfile(member) {
+      const characterName = safeText(member.character_name, "Unnamed Cultivator");
+      const slUsername = safeText(member.sl_username, "unknown.user");
+      const displayName = safeText(member.display_name, "Unknown");
+      const characterAge = safeText(member.character_age, "Unknown");
+      const cultivationPath = safeText(member.cultivation_path, "Unchosen");
+      const pathType = formatPathType(member.path_type);
+      const clan = safeText(member.sector_clan || member.clan, "Unchosen");
+
+      applyPathTheme(cultivationPath, member.path_type);
+
+      document.getElementById("seal-initials").textContent = getInitials(characterName);
+      document.getElementById("character-name").textContent = characterName;
+      document.getElementById("profile-summary-line").textContent = buildProfileSummary(member);
+
+      document.getElementById("hero-clan").textContent = clan;
+      document.getElementById("hero-path").textContent = cultivationPath;
+      document.getElementById("hero-path-type").textContent = pathType;
+
+      document.getElementById("character-age").textContent = characterAge;
+      document.getElementById("clan").textContent = clan;
+      document.getElementById("cultivation-path").textContent = cultivationPath;
+      document.getElementById("path-type").textContent = pathType;
+
+      document.getElementById("sl-username").textContent = slUsername;
+      document.getElementById("display-name").textContent = displayName;
+
+      document.getElementById("path-impression-text").textContent = buildPathImpression(member);
+      document.getElementById("impression-tag-clan").textContent = `Clan: ${clan}`;
+      document.getElementById("impression-tag-path").textContent = `Path: ${cultivationPath}`;
+      document.getElementById("impression-tag-type").textContent = `Type: ${pathType}`;
+    }
+
+    async function loadProfileState() {
+      try {
+        const data = await fetchJson(DASHBOARD_ENDPOINT, {
+          method: "GET"
+        });
+
+        if (!data?.success || !data.member) {
+          clearClientSessionArtifacts();
+          redirectToLogin();
+          return;
+        }
+
+        renderProfile(data.member);
+      } catch (error) {
+        if (String(error?.message || "") === "unauthorized") {
+          return;
+        }
+
+        console.error("Profile load error:", error);
+        clearClientSessionArtifacts();
+        redirectToLogin();
+      }
+    }
+
+    window.addEventListener("DOMContentLoaded", async () => {
+      bindLogoutButton();
+
+      const auth = await requireAuth();
+      if (!auth) return;
+
+      await loadProfileState();
+    });
+  </script>
+</body>
+</html>

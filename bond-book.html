@@ -1,0 +1,2079 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Bond Book | The Ascendant Path</title>
+  <link rel="stylesheet" href="style.css" />
+  <style>
+    .book-page {
+      width: min(1280px, calc(100% - 2rem));
+      margin: 1.5rem auto 4rem;
+      display: grid;
+      gap: 1.1rem;
+      position: relative;
+      z-index: 3;
+    }
+
+    .is-hidden {
+      display: none !important;
+    }
+
+    .book-message {
+      margin: 0;
+      text-align: center;
+    }
+
+    .hero-panel,
+    .state-card,
+    .seal-card,
+    .action-card,
+    .shelf-card,
+    .empty-state-panel {
+      position: relative;
+      overflow: hidden;
+      border-radius: 18px;
+      border-top: 1px solid rgba(255, 255, 255, 0.07);
+      border-bottom: 1px solid rgba(255, 255, 255, 0.07);
+      box-shadow: 0 16px 42px rgba(0, 0, 0, 0.18);
+      background:
+        linear-gradient(180deg, rgba(18, 24, 40, 0.82), rgba(11, 16, 28, 0.96));
+    }
+
+    .hero-panel::before,
+    .state-card::before,
+    .seal-card::before,
+    .action-card::before,
+    .shelf-card::before,
+    .empty-state-panel::before {
+      content: "";
+      position: absolute;
+      left: 0;
+      top: 18px;
+      bottom: 18px;
+      width: 2px;
+      background: linear-gradient(180deg, rgba(142, 168, 255, 0.28), rgba(234, 215, 170, 0.16));
+    }
+
+    .hero-panel {
+      min-height: 300px;
+      display: grid;
+      align-content: end;
+      gap: 1rem;
+      padding: 1.7rem;
+      background:
+        linear-gradient(180deg, rgba(7, 10, 18, 0.24), rgba(7, 10, 18, 0.88)),
+        radial-gradient(circle at 18% 20%, rgba(234, 215, 170, 0.08), transparent 24%),
+        radial-gradient(circle at 82% 18%, rgba(111, 151, 255, 0.14), transparent 24%),
+        url("https://images.unsplash.com/photo-1518562180175-34a163b1a9a6?auto=format&fit=crop&w=1800&q=80")
+          center 50% / cover no-repeat;
+    }
+
+    .hero-panel::after {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background:
+        linear-gradient(
+          90deg,
+          rgba(6, 9, 16, 0.86) 0%,
+          rgba(6, 9, 16, 0.5) 50%,
+          rgba(6, 9, 16, 0.84) 100%
+        );
+      pointer-events: none;
+    }
+
+    .hero-panel > * {
+      position: relative;
+      z-index: 1;
+    }
+
+    .hero-eyebrow,
+    .panel-kicker,
+    .section-kicker {
+      margin: 0;
+      font-size: 0.78rem;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+      color: rgba(196, 208, 255, 0.78);
+    }
+
+    .hero-title-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      gap: 1rem;
+      flex-wrap: wrap;
+    }
+
+    .hero-title-wrap h1 {
+      margin: 0;
+      font-size: clamp(2.25rem, 4vw, 3.3rem);
+      line-height: 1.02;
+      color: #ffffff;
+      text-shadow: 0 6px 18px rgba(0, 0, 0, 0.28);
+    }
+
+    .hero-subtitle {
+      margin: 0.5rem 0 0;
+      max-width: 820px;
+      color: rgba(230, 236, 255, 0.84);
+      line-height: 1.58;
+      font-size: 0.98rem;
+    }
+
+    .hero-pill-row {
+      display: flex;
+      gap: 0.75rem;
+      flex-wrap: wrap;
+    }
+
+    .hero-pill {
+      border-radius: 999px;
+      padding: 0.62rem 0.95rem;
+      background: rgba(255, 255, 255, 0.08);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      font-size: 0.92rem;
+      color: #eef3ff;
+    }
+
+    .hero-pill.context-pill {
+      background: rgba(127, 214, 106, 0.14);
+      border-color: rgba(127, 214, 106, 0.22);
+      color: #dff5d5;
+    }
+
+    .state-grid {
+      display: grid;
+      gap: 1rem;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .state-card,
+    .seal-card,
+    .action-card,
+    .shelf-card,
+    .empty-state-panel {
+      padding: 1.1rem 1.1rem 1.15rem 1.2rem;
+      display: grid;
+      gap: 0.95rem;
+    }
+
+    .state-header,
+    .seal-header,
+    .shelf-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      gap: 0.75rem;
+      flex-wrap: wrap;
+    }
+
+    .state-title,
+    .seal-title,
+    .action-title,
+    .shelf-title,
+    .book-card-title {
+      margin: 0;
+      color: #ffffff;
+    }
+
+    .state-title,
+    .seal-title,
+    .action-title,
+    .shelf-title {
+      font-size: 1.35rem;
+      padding-left: 0.25rem;
+    }
+
+    .state-copy,
+    .seal-copy,
+    .action-copy,
+    .shelf-copy,
+    .book-card-copy {
+      margin: 0.3rem 0 0;
+      padding-left: 0.25rem;
+      color: rgba(229, 235, 255, 0.8);
+      line-height: 1.55;
+      font-size: 0.94rem;
+    }
+
+    .status-pill,
+    .tiny-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.35rem;
+      min-height: 32px;
+      padding: 0.38rem 0.7rem;
+      border-radius: 999px;
+      font-size: 0.78rem;
+      letter-spacing: 0.04em;
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      color: #eef3ff;
+      background: rgba(255, 255, 255, 0.06);
+      white-space: nowrap;
+    }
+
+    .status-pill.active,
+    .tiny-pill.active {
+      background: rgba(127, 214, 106, 0.14);
+      border-color: rgba(127, 214, 106, 0.22);
+      color: #dff5d5;
+    }
+
+    .status-pill.waiting,
+    .tiny-pill.waiting {
+      background: rgba(142, 168, 255, 0.12);
+      border-color: rgba(142, 168, 255, 0.2);
+      color: #dfe7ff;
+    }
+
+    .status-pill.paused,
+    .tiny-pill.paused {
+      background: rgba(255, 190, 105, 0.14);
+      border-color: rgba(255, 190, 105, 0.2);
+      color: #ffe1b1;
+    }
+
+    .status-pill.complete,
+    .tiny-pill.complete {
+      background: rgba(127, 214, 106, 0.14);
+      border-color: rgba(127, 214, 106, 0.22);
+      color: #dff5d5;
+    }
+
+    .status-pill.locked,
+    .tiny-pill.locked {
+      background: rgba(255, 255, 255, 0.06);
+      border-color: rgba(255, 255, 255, 0.08);
+      color: rgba(232, 237, 255, 0.76);
+    }
+
+    .state-metric-grid,
+    .seal-grid,
+    .book-card-grid {
+      display: grid;
+      gap: 0.8rem;
+    }
+
+    .state-metric-grid {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .seal-grid {
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+    }
+
+    .metric {
+      display: grid;
+      gap: 0.28rem;
+      padding-left: 0.25rem;
+    }
+
+    .metric span {
+      font-size: 0.72rem;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: rgba(196, 208, 255, 0.72);
+    }
+
+    .metric strong {
+      font-size: 1rem;
+      color: #ffffff;
+      line-height: 1.3;
+    }
+
+    .progress-shell {
+      display: grid;
+      gap: 0.55rem;
+      padding-left: 0.25rem;
+    }
+
+    .progress-top {
+      display: flex;
+      justify-content: space-between;
+      gap: 0.75rem;
+      align-items: center;
+      flex-wrap: wrap;
+      color: rgba(235, 240, 255, 0.88);
+      font-size: 0.93rem;
+    }
+
+    .progress-track {
+      width: 100%;
+      height: 12px;
+      background: rgba(255, 255, 255, 0.08);
+      border-radius: 999px;
+      overflow: hidden;
+    }
+
+    .progress-fill {
+      height: 100%;
+      border-radius: 999px;
+      background: linear-gradient(135deg, #8ea8ff, #7fd66a);
+      transition: width 0.25s ease;
+    }
+
+    .seal-grid-wrap {
+      display: grid;
+      gap: 1rem;
+      grid-template-columns: 1.25fr 1fr;
+    }
+
+    .seal-copy-block {
+      padding-left: 0.25rem;
+      color: rgba(229, 235, 255, 0.84);
+      line-height: 1.6;
+      font-size: 0.95rem;
+    }
+
+    .action-card {
+      gap: 1rem;
+    }
+
+    .action-button-row {
+      display: grid;
+      grid-template-columns: repeat(5, minmax(0, 1fr));
+      gap: 0.8rem;
+    }
+
+    .action-button,
+    .action-link {
+      display: inline-flex;
+      justify-content: center;
+      align-items: center;
+      text-decoration: none;
+      min-height: 54px;
+      padding: 0.92rem 1.1rem;
+      font-weight: 700;
+      transition: 0.2s ease;
+      position: relative;
+      text-align: center;
+      border-radius: 14px;
+    }
+
+    .action-button {
+      border: none;
+      cursor: pointer;
+    }
+
+    .action-button.offer-action {
+      background: linear-gradient(135deg, #ead7aa, #c2a76b);
+      color: #21180a;
+      box-shadow: 0 14px 30px rgba(194, 167, 107, 0.2);
+    }
+
+    .action-button.start-action {
+      background: linear-gradient(135deg, #7fd66a, #4fae48);
+      color: #0a1708;
+      box-shadow: 0 14px 30px rgba(79, 174, 72, 0.28);
+    }
+
+    .action-button.sync-action {
+      background: linear-gradient(135deg, #8ea8ff, #647de0);
+      color: #f5f8ff;
+      box-shadow: 0 14px 30px rgba(100, 125, 224, 0.26);
+    }
+
+    .action-button.pause-action {
+      background: linear-gradient(135deg, #ffbe69, #d98e2b);
+      color: #231505;
+      box-shadow: 0 14px 30px rgba(217, 142, 43, 0.24);
+    }
+
+    .action-link.return-action {
+      background:
+        linear-gradient(180deg, rgba(18, 24, 40, 0.82), rgba(11, 16, 28, 0.96));
+      border-top: 1px solid rgba(255, 255, 255, 0.07);
+      border-bottom: 1px solid rgba(255, 255, 255, 0.07);
+      color: #eef3ff;
+      box-shadow: 0 14px 30px rgba(0, 0, 0, 0.18);
+    }
+
+    .action-link.return-action::before {
+      content: "";
+      position: absolute;
+      left: 0;
+      top: 12px;
+      bottom: 12px;
+      width: 2px;
+      background: linear-gradient(180deg, rgba(142, 168, 255, 0.28), rgba(234, 215, 170, 0.16));
+    }
+
+    .action-button[disabled],
+    .action-button[aria-disabled="true"],
+    .action-link[aria-disabled="true"] {
+      opacity: 0.58;
+      pointer-events: none;
+      cursor: default;
+    }
+
+    .action-note {
+      margin: 0;
+      padding-left: 0.25rem;
+      color: rgba(229, 235, 255, 0.82);
+      line-height: 1.55;
+      font-size: 0.92rem;
+    }
+
+    .shelf-book-grid {
+      display: grid;
+      gap: 1rem;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      margin-top: 0.4rem;
+    }
+
+    .book-card {
+      position: relative;
+      overflow: hidden;
+      min-height: 300px;
+      display: grid;
+      gap: 0.8rem;
+      align-content: start;
+      padding: 1rem 1rem 1rem 1.1rem;
+      border-radius: 16px;
+      border-top: 1px solid rgba(255, 255, 255, 0.06);
+      border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+      background:
+        linear-gradient(180deg, rgba(20, 27, 44, 0.82), rgba(10, 15, 26, 0.96));
+      box-shadow: 0 14px 30px rgba(0, 0, 0, 0.16);
+    }
+
+    .book-card.current {
+      box-shadow:
+        0 14px 30px rgba(0, 0, 0, 0.16),
+        0 0 0 1px rgba(127, 214, 106, 0.16);
+    }
+
+    .book-card-top {
+      display: flex;
+      justify-content: space-between;
+      gap: 0.75rem;
+      align-items: flex-start;
+    }
+
+    .book-card-title {
+      padding-left: 0.2rem;
+      font-size: 1.1rem;
+    }
+
+    .book-card-copy {
+      padding-left: 0.2rem;
+      font-size: 0.92rem;
+    }
+
+    .book-card-grid {
+      grid-template-columns: 1fr;
+    }
+
+    .book-card-help {
+      margin: 0;
+      padding-left: 0.2rem;
+      color: rgba(228, 234, 255, 0.74);
+      line-height: 1.52;
+      font-size: 0.9rem;
+    }
+
+    .empty-state-panel h2 {
+      margin: 0;
+      color: #ffffff;
+      padding: 0 0.15rem;
+    }
+
+    .empty-state-panel p {
+      margin: 0;
+      color: rgba(228, 234, 255, 0.78);
+      line-height: 1.55;
+      padding: 0 0.15rem;
+    }
+
+    .empty-state-actions {
+      display: flex;
+      gap: 0.75rem;
+      flex-wrap: wrap;
+      padding: 0 0.15rem;
+      margin-top: 0.2rem;
+    }
+
+    .empty-state-actions .primary,
+    .empty-state-actions .secondary {
+      justify-content: center;
+      text-align: center;
+      min-width: 180px;
+    }
+
+    .login-error {
+      margin: 0;
+      padding: 0.85rem 1rem;
+      border-top: 1px solid rgba(218, 114, 114, 0.38);
+      border-bottom: 1px solid rgba(218, 114, 114, 0.22);
+      background: linear-gradient(180deg, rgba(90, 22, 22, 0.26), rgba(52, 14, 14, 0.18));
+      color: rgba(255, 222, 222, 0.92);
+      line-height: 1.55;
+    }
+
+    @media (max-width: 1180px) {
+      .seal-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+
+      .shelf-book-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+
+      .action-button-row {
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+      }
+    }
+
+    @media (max-width: 980px) {
+      .state-grid,
+      .seal-grid-wrap {
+        grid-template-columns: 1fr;
+      }
+
+      .action-button-row {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+    }
+
+    @media (max-width: 720px) {
+      .book-page {
+        width: min(100% - 1rem, 1280px);
+        margin-top: 1rem;
+      }
+
+      .hero-panel {
+        min-height: 250px;
+        padding: 1.2rem 1rem;
+        border-radius: 14px;
+      }
+
+      .state-card,
+      .seal-card,
+      .action-card,
+      .shelf-card,
+      .book-card,
+      .empty-state-panel {
+        border-radius: 14px;
+      }
+
+      .state-metric-grid,
+      .seal-grid,
+      .shelf-book-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .action-button-row {
+        grid-template-columns: 1fr;
+      }
+
+      .empty-state-actions {
+        flex-direction: column;
+      }
+
+      .empty-state-actions .primary,
+      .empty-state-actions .secondary {
+        width: 100%;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="cloud-layer"></div>
+  <div class="rune-layer"></div>
+  <div class="lightning-flash"></div>
+
+  <nav>
+    <a href="/index.html">Home</a>
+    <a href="/lore.html">Lore</a>
+    <a href="/dashboard.html">Dashboard</a>
+    <a href="/library.html" class="active">Library</a>
+    <a href="/cultivation.html">Cultivation</a>
+    <a href="/.netlify/functions/logout" id="logout-button">Logout</a>
+  </nav>
+
+  <main class="book-page">
+    <section class="hero-panel">
+      <p class="hero-eyebrow" id="hero-eyebrow">Sacred Bond Record</p>
+
+      <div class="hero-title-row">
+        <div class="hero-title-wrap">
+          <h1 id="hero-book-title">Loading bond record...</h1>
+          <p class="hero-subtitle" id="hero-subtitle">Preparing the selected partnership bond chamber...</p>
+        </div>
+      </div>
+
+      <div class="hero-pill-row">
+        <div class="hero-pill" id="hero-volume-pill">Volume --</div>
+        <div class="hero-pill" id="hero-stage-pill">Bond Seed</div>
+        <div class="hero-pill" id="hero-status-pill">Loading state...</div>
+        <div class="hero-pill context-pill" id="hero-partner-pill">Focused Partner: --</div>
+        <div class="hero-pill context-pill" id="hero-role-pill">Your Role: --</div>
+      </div>
+    </section>
+
+    <p id="page-message" class="summary is-hidden book-message"></p>
+
+    <section class="state-grid" id="state-grid">
+      <article class="state-card">
+        <div class="state-header">
+          <div>
+            <p class="panel-kicker">Your Path</p>
+            <h2 class="state-title">Your Bond State</h2>
+            <p class="state-copy" id="self-copy">Your offering, your progress, and your place within this sacred book.</p>
+          </div>
+          <div class="status-pill" id="self-status-pill">Loading...</div>
+        </div>
+
+        <div class="state-metric-grid">
+          <div class="metric">
+            <span>Offering</span>
+            <strong id="self-offering">Unknown</strong>
+          </div>
+          <div class="metric">
+            <span>Minutes</span>
+            <strong id="self-minutes">0 / 0</strong>
+          </div>
+          <div class="metric">
+            <span>Qi</span>
+            <strong id="self-qi">0 / 0</strong>
+          </div>
+          <div class="metric">
+            <span>Progress</span>
+            <strong id="self-progress-text">0%</strong>
+          </div>
+          <div class="metric">
+            <span>Meditation</span>
+            <strong id="self-meditation">Unknown</strong>
+          </div>
+        </div>
+
+        <div class="progress-shell">
+          <div class="progress-top">
+            <span>Your Book Progress</span>
+            <span id="self-progress-caption">This path is reading its current state.</span>
+          </div>
+          <div class="progress-track">
+            <div class="progress-fill" id="self-progress-fill" style="width: 0%;"></div>
+          </div>
+        </div>
+      </article>
+
+      <article class="state-card">
+        <div class="state-header">
+          <div>
+            <p class="panel-kicker">Partner Path</p>
+            <h2 class="state-title">Partner Bond State</h2>
+            <p class="state-copy" id="partner-copy">Your partner’s offering, progress, and ritual condition in this same book.</p>
+          </div>
+          <div class="status-pill" id="partner-status-pill">Loading...</div>
+        </div>
+
+        <div class="state-metric-grid">
+          <div class="metric">
+            <span>Offering</span>
+            <strong id="partner-offering">Unknown</strong>
+          </div>
+          <div class="metric">
+            <span>Minutes</span>
+            <strong id="partner-minutes">0 / 0</strong>
+          </div>
+          <div class="metric">
+            <span>Qi</span>
+            <strong id="partner-qi">0 / 0</strong>
+          </div>
+          <div class="metric">
+            <span>Progress</span>
+            <strong id="partner-progress-text">0%</strong>
+          </div>
+          <div class="metric">
+            <span>Meditation</span>
+            <strong id="partner-meditation">Unknown</strong>
+          </div>
+        </div>
+
+        <div class="progress-shell">
+          <div class="progress-top">
+            <span>Partner Book Progress</span>
+            <span id="partner-progress-caption">The mirrored path is reading its current state.</span>
+          </div>
+          <div class="progress-track">
+            <div class="progress-fill" id="partner-progress-fill" style="width: 0%;"></div>
+          </div>
+        </div>
+      </article>
+    </section>
+
+    <section class="seal-grid-wrap" id="seal-grid-wrap">
+      <article class="seal-card">
+        <div class="seal-header">
+          <div>
+            <p class="section-kicker">Shared Seal Chamber</p>
+            <h2 class="seal-title">The Shared Bond Seal</h2>
+            <p class="seal-copy" id="seal-copy">Separate cultivation, shared sacred progression.</p>
+          </div>
+          <div class="status-pill" id="pair-status-pill">Loading...</div>
+        </div>
+
+        <div class="seal-grid">
+          <div class="metric">
+            <span>Shared Offering</span>
+            <strong id="seal-offering">Unknown</strong>
+          </div>
+          <div class="metric">
+            <span>Pair Completion</span>
+            <strong id="seal-completion">Unknown</strong>
+          </div>
+          <div class="metric">
+            <span>Bond Core</span>
+            <strong id="seal-bond-percent">0%</strong>
+          </div>
+          <div class="metric">
+            <span>Stage</span>
+            <strong id="seal-stage">Bond Seed</strong>
+          </div>
+          <div class="metric">
+            <span>Completed Books</span>
+            <strong id="seal-completed-books">0</strong>
+          </div>
+          <div class="metric">
+            <span>Total Shared Minutes</span>
+            <strong id="seal-shared-minutes">0</strong>
+          </div>
+          <div class="metric">
+            <span>Next Book</span>
+            <strong id="seal-next-book">Unknown</strong>
+          </div>
+          <div class="metric">
+            <span>Partnership</span>
+            <strong id="seal-partner-name">Unknown</strong>
+          </div>
+        </div>
+
+        <p class="seal-copy-block" id="seal-guidance">
+          The sacred seal is reading the current state of this partnership record...
+        </p>
+      </article>
+
+      <article class="action-card">
+        <div>
+          <p class="section-kicker">Action Altar</p>
+          <h2 class="action-title">Ritual Actions</h2>
+          <p class="action-copy" id="action-copy">
+            Actions appear from the returned display state, not from the old shared runtime.
+          </p>
+        </div>
+
+        <div class="action-button-row">
+          <button type="button" class="action-button offer-action" id="offer-action-button" aria-disabled="true" disabled>
+            Loading...
+          </button>
+
+          <button type="button" class="action-button start-action" id="start-action-button" aria-disabled="true" disabled>
+            Loading...
+          </button>
+
+          <button type="button" class="action-button sync-action" id="sync-action-button" aria-disabled="true" disabled>
+            Loading...
+          </button>
+
+          <button type="button" class="action-button pause-action" id="pause-action-button" aria-disabled="true" disabled>
+            Loading...
+          </button>
+
+          <a href="/library.html" class="action-link return-action" id="return-action-link">Return to Library</a>
+        </div>
+
+        <p class="action-note" id="action-note">
+          Resolving the correct partnership-scoped bond actions...
+        </p>
+      </article>
+    </section>
+
+    <section class="shelf-card" id="shelf-card">
+      <div class="shelf-header">
+        <div>
+          <p class="section-kicker">Volume Shelf</p>
+          <h2 class="shelf-title" id="shelf-title">Book Shelf</h2>
+          <p class="shelf-copy" id="shelf-copy">The opened record chamber for the current bond volume.</p>
+        </div>
+      </div>
+
+      <div class="shelf-book-grid" id="book-shelf-root"></div>
+    </section>
+
+    <div id="empty-root"></div>
+  </main>
+
+  <footer>
+    The Ascendant Path • Bond Book Interface
+  </footer>
+
+  <script>
+    const ENDPOINTS = {
+      session: "/.netlify/functions/load-dashboard-state",
+      loadBondState: "/.netlify/functions/load-bond-state",
+      offerBond: "/.netlify/functions/offer-bond-book",
+      startBond: "/.netlify/functions/start-bond-cultivation",
+      syncBond: "/.netlify/functions/sync-bond-cultivation",
+      pauseBond: "/.netlify/functions/stop-bond-cultivation"
+    };
+
+    const state = {
+      member: null,
+      pageData: null,
+      requestedVolumeNumber: null,
+      requestedPartnershipUuid: null,
+      requestedLegacyPartnershipId: null,
+      controlActions: {
+        offer: null,
+        start: null,
+        sync: null,
+        pause: null
+      },
+      actionPendingKey: null,
+      refreshInterval: null,
+      refreshInFlight: false,
+      currentBook: null
+    };
+
+    function safeText(value, fallback = "") {
+      const text = String(value ?? "").trim();
+      return text || fallback;
+    }
+
+    function safeLower(value) {
+      return safeText(value).toLowerCase();
+    }
+
+    function safeNumber(value, fallback = 0) {
+      const num = Number(value);
+      return Number.isFinite(num) ? num : fallback;
+    }
+
+    function safeBoolean(value) {
+      if (typeof value === "boolean") return value;
+      if (typeof value === "number") return value === 1;
+      const text = safeLower(value);
+      return ["true", "1", "yes", "y", "on", "active"].includes(text);
+    }
+
+    function clamp(value, min, max) {
+      return Math.min(max, Math.max(min, value));
+    }
+
+    function toTitle(value, fallback = "Unknown") {
+      const text = safeLower(value);
+      if (!text) return fallback;
+
+      return text
+        .replace(/[_-]+/g, " ")
+        .split(" ")
+        .filter(Boolean)
+        .map(function (part) {
+          return part.charAt(0).toUpperCase() + part.slice(1);
+        })
+        .join(" ");
+    }
+
+    function formatPercent(value) {
+      return clamp(safeNumber(value, 0), 0, 100).toFixed(2).replace(/\.00$/, "") + "%";
+    }
+
+    function formatCount(value) {
+      return safeNumber(value, 0).toLocaleString();
+    }
+
+    function formatStateLabel(value) {
+      const text = safeLower(value);
+      if (!text) return "Unknown";
+
+      const map = {
+        ready_for_offering: "Ready for Offering",
+        waiting_for_partner_offering: "Waiting for Partner Offering",
+        ready_to_start: "Ready to Start",
+        active: "Active",
+        paused: "Paused",
+        awaiting_partner_completion: "Awaiting Partner Completion",
+        pair_completed: "Pair Completed",
+        locked: "Locked",
+        completed: "Completed"
+      };
+
+      return map[text] || toTitle(text);
+    }
+
+    function isCompleteLikeState(value) {
+      const text = safeLower(value);
+      return text === "pair_completed" || text === "completed";
+    }
+
+    function isPersonallyCompleteState(value) {
+      const text = safeLower(value);
+      return (
+        text === "awaiting_partner_completion" ||
+        text === "pair_completed" ||
+        text === "completed"
+      );
+    }
+
+    function getSideProgressCaption(prefix, statusValue) {
+      const stateValue = safeLower(statusValue);
+
+      if (prefix === "self") {
+        if (stateValue === "ready_for_offering") return "Place your offering to awaken your copy.";
+        if (stateValue === "waiting_for_partner_offering") return "Your seal waits for your partner’s offering.";
+        if (stateValue === "ready_to_start") return "Both offerings are complete. Begin your path.";
+        if (stateValue === "active") return "Your path is unfolding through meditation.";
+        if (stateValue === "paused") return "Your progress is preserved until you resume.";
+        if (stateValue === "awaiting_partner_completion") return "Your path is complete. Waiting for your partner.";
+        if (stateValue === "pair_completed") return "Your path is sealed within the completed pair.";
+        if (stateValue === "locked") return "This path is still sealed.";
+        return "This path is reading its current state.";
+      }
+
+      if (stateValue === "ready_for_offering") return "Your partner has not placed their offering yet.";
+      if (stateValue === "waiting_for_partner_offering") return "Their chamber still waits for offering.";
+      if (stateValue === "ready_to_start") return "Their path is ready to begin.";
+      if (stateValue === "active") return "Their mirrored path is unfolding through meditation.";
+      if (stateValue === "paused") return "Their progress is preserved until they resume.";
+      if (stateValue === "awaiting_partner_completion") return "Their path is complete and waiting on the pair seal.";
+      if (stateValue === "pair_completed") return "Their mirrored path is sealed within the completed pair.";
+      if (stateValue === "locked") return "Their path is still sealed.";
+      return "The mirrored path is reading its current state.";
+    }
+
+    function getShelfBookProgress(rawBook) {
+      const stateValue = safeLower(rawBook?.display_state || rawBook?.status || "");
+
+      if (isCompleteLikeState(stateValue)) {
+        return 100;
+      }
+
+      const explicitProgress = Number(
+        rawBook?.progress_percent ??
+        rawBook?.live_progress_percent
+      );
+
+      if (Number.isFinite(explicitProgress)) {
+        return clamp(explicitProgress, 0, 100);
+      }
+
+      const requiredMinutes = Math.max(
+        0,
+        safeNumber(rawBook?.required_minutes || rawBook?.required_shared_minutes, 0)
+      );
+
+      const minutesAccumulated = Math.max(
+        0,
+        safeNumber(
+          rawBook?.minutes_accumulated ??
+          rawBook?.shared_minutes_accumulated ??
+          rawBook?.self?.minutes_accumulated,
+          0
+        )
+      );
+
+      if (requiredMinutes > 0) {
+        return clamp((minutesAccumulated / requiredMinutes) * 100, 0, 100);
+      }
+
+      return 0;
+    }
+
+    function getStateClass(value) {
+      const text = safeLower(value);
+      if (text === "active") return "active";
+      if (text === "paused") return "paused";
+      if (text === "awaiting_partner_completion" || text === "pair_completed" || text === "completed") return "complete";
+      if (text === "ready_for_offering" || text === "waiting_for_partner_offering" || text === "ready_to_start") return "waiting";
+      if (text === "locked") return "locked";
+      return "";
+    }
+
+    function setMessage(text, tone = "info") {
+      const el = document.getElementById("page-message");
+
+      if (!text) {
+        el.textContent = "";
+        el.className = "summary is-hidden book-message";
+        return;
+      }
+
+      el.textContent = text;
+      el.className = tone === "error" ? "login-error book-message" : "summary book-message";
+    }
+
+    function getQueryParams() {
+      return new URLSearchParams(window.location.search);
+    }
+
+    function getVolumeNumberFromQuery() {
+      const raw = getQueryParams().get("volume");
+      const parsed = Number(raw);
+      return Number.isInteger(parsed) && parsed > 0 ? parsed : null;
+    }
+
+    function getPartnershipUuidFromQuery() {
+      return safeText(getQueryParams().get("partnership_uuid"));
+    }
+
+    function getLegacyPartnershipIdFromQuery() {
+      return safeText(getQueryParams().get("partnership_id"));
+    }
+
+    function buildBondPageUrl(volumeNumber, partnershipUuid, partnershipId) {
+      const params = new URLSearchParams();
+
+      if (safeNumber(volumeNumber, 0) > 0) {
+        params.set("volume", String(volumeNumber));
+      }
+
+      if (safeText(partnershipUuid)) {
+        params.set("partnership_uuid", safeText(partnershipUuid));
+      } else if (safeText(partnershipId)) {
+        params.set("partnership_id", safeText(partnershipId));
+      }
+
+      const query = params.toString();
+      return query ? "/bond-book.html?" + query : "/bond-book.html";
+    }
+
+    function buildPartnershipRecordUrl(record) {
+      const partnershipUuid = safeText(record?.partnership_uuid || state.requestedPartnershipUuid);
+      if (partnershipUuid) {
+        return "/partnership-record.html?partnership_uuid=" + encodeURIComponent(partnershipUuid);
+      }
+      return "/partnership.html";
+    }
+
+    function getRecord() {
+      return state.pageData?.bond_record || state.pageData?.record || null;
+    }
+
+    function getFocusedPartner(record) {
+      return (
+        record?.partner ||
+        state.pageData?.partner ||
+        state.pageData?.partnership?.counterpart ||
+        {}
+      );
+    }
+
+    function getSelectedVolume() {
+      const record = getRecord();
+      if (!record) return null;
+
+      return (
+        record.volume ||
+        record.selected_volume ||
+        (Array.isArray(record.volumes) && record.volumes.length ? record.volumes[0] : null) ||
+        null
+      );
+    }
+
+    function getBondSummary(record) {
+      return record?.summary || {};
+    }
+
+    function getDisplayState(record, book) {
+      return safeLower(
+        book?.display_state ||
+        book?.status ||
+        record?.display_state ||
+        record?.active_session?.display_state ||
+        record?.active_session?.status ||
+        ""
+      );
+    }
+
+    function getBooksForShelf(volume) {
+      const books = Array.isArray(volume?.books) ? volume.books.slice() : [];
+      return books.sort(function (a, b) {
+        return safeNumber(a?.book_number, 0) - safeNumber(b?.book_number, 0);
+      });
+    }
+
+    function pickBookFromVolume(volume) {
+      const books = getBooksForShelf(volume);
+      if (!books.length) return null;
+
+      const actionableStates = [
+        "ready_for_offering",
+        "waiting_for_partner_offering",
+        "ready_to_start",
+        "active",
+        "paused",
+        "awaiting_partner_completion",
+        "pair_completed"
+      ];
+
+      const actionable = books.find(function (book) {
+        const stateValue = safeLower(book?.display_state || book?.status || "");
+        return actionableStates.includes(stateValue);
+      });
+
+      if (actionable) return actionable;
+
+      const unlocked = books.find(function (book) {
+        const stateValue = safeLower(book?.display_state || book?.status || "");
+        return stateValue && stateValue !== "locked";
+      });
+
+      return unlocked || books[0] || null;
+    }
+
+    function normalizeSideState(book, sideKey) {
+      const side = book?.[sideKey] || {};
+      const bookState = safeLower(book?.display_state || book?.status || "");
+      const sideState = safeLower(side?.display_state || side?.status || bookState);
+
+      const requiredMinutes = Math.max(
+        0,
+        safeNumber(book?.required_minutes || book?.required_shared_minutes, 0)
+      );
+
+      const requiredQi = Math.max(
+        0,
+        safeNumber(book?.required_qi || book?.required_shared_qi, 0)
+      );
+
+      let offeringComplete = safeBoolean(
+        side?.offering_complete ??
+        (sideKey === "self" ? book?.self_cp_offered : book?.partner_cp_offered) ??
+        false
+      );
+
+      let minutesAccumulated = Math.max(
+        0,
+        safeNumber(
+          side?.minutes_accumulated ??
+          book?.minutes_accumulated ??
+          book?.shared_minutes_accumulated,
+          0
+        )
+      );
+
+      let qiAccumulated = Math.max(
+        0,
+        safeNumber(
+          side?.qi_accumulated ??
+          book?.qi_accumulated,
+          0
+        )
+      );
+
+      const explicitProgress = Number(
+        side?.progress_percent ??
+        book?.progress_percent
+      );
+
+      let progressPercent = Number.isFinite(explicitProgress)
+        ? explicitProgress
+        : (requiredMinutes > 0 ? (minutesAccumulated / requiredMinutes) * 100 : 0);
+
+      const isComplete =
+        isCompleteLikeState(bookState) ||
+        isPersonallyCompleteState(sideState);
+
+      if (isComplete) {
+        offeringComplete = true;
+        minutesAccumulated = requiredMinutes > 0 ? requiredMinutes : minutesAccumulated;
+        qiAccumulated = requiredQi > 0 ? requiredQi : qiAccumulated;
+        progressPercent = 100;
+      }
+
+      return {
+        offering_complete: offeringComplete,
+        offering_cp_spent: Math.max(
+          0,
+          safeNumber(side?.offering_cp_spent ?? book?.cp_cost_each, 0)
+        ),
+        offering_token_spent: Math.max(
+          0,
+          safeNumber(side?.offering_token_spent ?? book?.token_cost_each, 0)
+        ),
+        minutes_accumulated: minutesAccumulated,
+        qi_accumulated: qiAccumulated,
+        progress_percent: clamp(progressPercent, 0, 100),
+        status: safeText(side?.display_state || side?.status || book?.display_state || book?.status || ""),
+        started_at: side?.started_at || null,
+        last_progress_at: side?.last_progress_at || null,
+        paused_at: side?.paused_at || null,
+        completed_at: side?.completed_at || null
+      };
+    }
+
+    function normalizePairState(book) {
+      return {
+        offering_complete: safeBoolean(
+          book?.pair?.offering_complete ??
+          (safeBoolean(book?.self?.offering_complete ?? book?.self_cp_offered) &&
+            safeBoolean(book?.partner?.offering_complete ?? book?.partner_cp_offered))
+        ),
+        pair_completed: safeBoolean(
+          book?.pair?.pair_completed ??
+          safeLower(book?.display_state || book?.status) === "pair_completed"
+        )
+      };
+    }
+
+    function getSelectedBook() {
+      const record = getRecord();
+      const volume = getSelectedVolume();
+
+      if (!record && !volume) return null;
+
+      const raw =
+        record?.selected_book ||
+        record?.actionable_book ||
+        record?.current_book ||
+        record?.active_book ||
+        pickBookFromVolume(volume);
+
+      if (!raw) return null;
+
+      const volumeNumber = safeNumber(
+        raw?.volume_number ||
+        record?.selected_volume_number ||
+        volume?.volume_number ||
+        state.requestedVolumeNumber,
+        0
+      );
+
+      const bookNumber = safeNumber(
+        raw?.book_number ||
+        record?.selected_book_number ||
+        record?.summary?.active_book_number,
+        0
+      );
+
+      return {
+        raw,
+        volume_number: volumeNumber,
+        book_number: bookNumber,
+        title: safeText(raw?.title || raw?.book_name || raw?.name, "Bond Book"),
+        label: safeText(raw?.book_label, bookNumber > 0 ? "Book " + bookNumber : "Bond Book"),
+        description: safeText(raw?.description || raw?.book_description || ""),
+        display_state: getDisplayState(record, raw),
+        required_minutes: Math.max(0, safeNumber(raw?.required_minutes || raw?.required_shared_minutes, 0)),
+        required_qi: Math.max(0, safeNumber(raw?.required_qi || raw?.required_shared_qi, 0)),
+        cp_cost_each: Math.max(0, safeNumber(raw?.cp_cost_each || raw?.offering_cp_spent, 0)),
+        token_cost_each: Math.max(0, safeNumber(raw?.token_cost_each || raw?.offering_token_spent, 0)),
+        qi_drain_per_minute_each: Math.max(0, safeNumber(raw?.qi_drain_per_minute_each, 0)),
+        self: normalizeSideState(raw, "self"),
+        partner: normalizeSideState(raw, "partner"),
+        pair: normalizePairState(raw)
+      };
+    }
+
+    function getNextBookLabel(volume, currentBookNumber) {
+      const books = getBooksForShelf(volume);
+      const nextBook = books.find(function (book) {
+        const currentState = safeLower(book?.display_state || book?.status || "");
+        const number = safeNumber(book?.book_number, 0);
+
+        if (!number) return false;
+        if (currentBookNumber && number <= currentBookNumber) return false;
+        return currentState && currentState !== "pair_completed" && currentState !== "completed";
+      });
+
+      if (!nextBook) return "No further book";
+      return safeText(nextBook?.book_label || ("Book " + safeNumber(nextBook?.book_number, 0)), "Next Book");
+    }
+
+    function getBondCore(record) {
+      const summary = getBondSummary(record);
+
+      return {
+        bond_percent: safeNumber(
+          state.pageData?.bond_core?.bond_percent ??
+          state.pageData?.bond?.bond_percent ??
+          summary?.bond_percent,
+          0
+        ),
+        stage_name: safeText(
+          state.pageData?.bond_core?.stage_name ??
+          state.pageData?.bond?.current_stage_name ??
+          summary?.bond_stage ??
+          summary?.current_stage_name,
+          "Bond Seed"
+        ),
+        completed_books_count: safeNumber(
+          state.pageData?.bond_core?.completed_books_count ??
+          state.pageData?.bond?.completed_books_count ??
+          summary?.completed_books ??
+          summary?.completed_books_count,
+          0
+        ),
+        total_shared_minutes: safeNumber(
+          state.pageData?.bond_core?.total_shared_minutes ??
+          state.pageData?.bond?.total_shared_minutes,
+          0
+        )
+      };
+    }
+
+    function recordHasPartner(record) {
+      const partner = getFocusedPartner(record);
+
+      return Boolean(
+        safeBoolean(record?.has_partner) ||
+        safeText(record?.partnership_uuid || state.requestedPartnershipUuid) ||
+        safeText(record?.partnership_id || state.requestedLegacyPartnershipId) ||
+        safeText(partner?.sl_username) ||
+        safeText(partner?.display_name)
+      );
+    }
+
+    function recordIsAvailable(record, volume, book) {
+      return Boolean(
+        safeBoolean(record?.available) ||
+        volume ||
+        book ||
+        record?.selected_book ||
+        record?.actionable_book ||
+        record?.current_book ||
+        record?.active_book
+      );
+    }
+
+    function getActionSet(record, book) {
+      const displayState = safeLower(book?.display_state);
+      const cpCost = safeNumber(book?.cp_cost_each, 0);
+      const memberCp = safeNumber(state.member?.cultivation_points, 0);
+
+      const disabled = function (text, note) {
+        return { text, note, type: "disabled", endpoint: "", key: "" };
+      };
+
+      const api = function (text, note, endpoint, key) {
+        return { text, note, type: "api", endpoint, key };
+      };
+
+      if (!recordHasPartner(record) || !book) {
+        return {
+          offer: disabled("Partnership Required", "A valid partnership is required before the bond ritual can move."),
+          start: disabled("Start Unavailable", "No active bond book is ready yet."),
+          sync: disabled("Sync Unavailable", "No active bond book is running yet."),
+          pause: disabled("Pause Unavailable", "No active bond book is running yet.")
+        };
+      }
+
+      if (displayState === "ready_for_offering") {
+        if (cpCost > 0 && memberCp < cpCost) {
+          return {
+            offer: disabled("Not Enough CP", "You need " + cpCost.toLocaleString() + " Cultivation Points to place your offering."),
+            start: disabled("Await Offerings", "Both offerings must be completed before the book can start."),
+            sync: disabled("Sync Unavailable", "The book must be active before syncing."),
+            pause: disabled("Pause Unavailable", "The book must be active before pausing.")
+          };
+        }
+
+        return {
+          offer: api(
+            "Offer",
+            "Place your personal offering to open your side of this bond book.",
+            ENDPOINTS.offerBond,
+            "offer"
+          ),
+          start: disabled("Await Offerings", "Both offerings must be completed before the book can start."),
+          sync: disabled("Sync Unavailable", "The book must be active before syncing."),
+          pause: disabled("Pause Unavailable", "The book must be active before pausing.")
+        };
+      }
+
+      if (displayState === "waiting_for_partner_offering") {
+        return {
+          offer: disabled("Waiting for Partner", "Your offering is already placed. The chamber now waits for your partner."),
+          start: disabled("Await Offerings", "The book cannot start until both offerings are complete."),
+          sync: disabled("Sync Unavailable", "The book must be active before syncing."),
+          pause: disabled("Pause Unavailable", "The book must be active before pausing.")
+        };
+      }
+
+      if (displayState === "ready_to_start") {
+        return {
+          offer: disabled("Offering Complete", "Both offerings are complete for this book."),
+          start: api(
+            "Start Bond",
+            "Begin or join your personal progression for this shared bond book.",
+            ENDPOINTS.startBond,
+            "start"
+          ),
+          sync: disabled("Sync Unavailable", "Start the book before syncing progress."),
+          pause: disabled("Pause Unavailable", "Start the book before pausing.")
+        };
+      }
+
+      if (displayState === "active") {
+        return {
+          offer: disabled("Offering Complete", "The offering rite is already complete."),
+          start: disabled("Bond Active", "This book is already active for you."),
+          sync: api(
+            "Sync Progress",
+            "Advance your personal bond-book progress while you are meditating.",
+            ENDPOINTS.syncBond,
+            "sync"
+          ),
+          pause: api(
+            "Pause",
+            "Pause your personal progression on this bond book without losing earned progress.",
+            ENDPOINTS.pauseBond,
+            "pause"
+          )
+        };
+      }
+
+      if (displayState === "paused") {
+        return {
+          offer: disabled("Offering Complete", "The offering rite remains complete for this book."),
+          start: api(
+            "Resume Bond",
+            "Resume your personal progression on this paused bond book.",
+            ENDPOINTS.startBond,
+            "start"
+          ),
+          sync: disabled("Resume First", "Resume the book before syncing progress again."),
+          pause: disabled("Already Paused", "Your side of this bond book is already paused.")
+        };
+      }
+
+      if (displayState === "awaiting_partner_completion") {
+        return {
+          offer: disabled("Awaiting Partner", "Your side is complete and now waits for your partner."),
+          start: disabled("Awaiting Partner", "Your side is complete and now waits for your partner."),
+          sync: disabled("Awaiting Partner", "Your side is complete and now waits for your partner."),
+          pause: disabled("Awaiting Partner", "Your side is complete and now waits for your partner.")
+        };
+      }
+
+      if (displayState === "pair_completed") {
+        return {
+          offer: disabled("Pair Completed", "This book has already been pair-completed."),
+          start: disabled("Pair Completed", "This book has already been pair-completed."),
+          sync: disabled("Pair Completed", "This book has already been pair-completed."),
+          pause: disabled("Pair Completed", "This book has already been pair-completed.")
+        };
+      }
+
+      return {
+        offer: disabled("Unavailable", "This action is not available in the current state."),
+        start: disabled("Unavailable", "This action is not available in the current state."),
+        sync: disabled("Unavailable", "This action is not available in the current state."),
+        pause: disabled("Unavailable", "This action is not available in the current state.")
+      };
+    }
+
+    function renderButton(buttonId, action) {
+      const button = document.getElementById(buttonId);
+      const isPending = state.actionPendingKey === action?.key;
+      const disabled = action?.type !== "api" || isPending;
+
+      button.textContent = isPending ? "Processing..." : safeText(action?.text, "Unavailable");
+      button.disabled = disabled;
+      button.setAttribute("aria-disabled", disabled ? "true" : "false");
+      button.dataset.actionKey = safeText(action?.key);
+    }
+
+    function renderNotFound(customTitle, customText) {
+      document.getElementById("state-grid").style.display = "none";
+      document.getElementById("seal-grid-wrap").style.display = "none";
+      document.getElementById("shelf-card").style.display = "none";
+
+      document.getElementById("empty-root").innerHTML = `
+        <section class="empty-state-panel">
+          <h2>${safeText(customTitle, "This bond record is not available")}</h2>
+          <p>${safeText(customText, "Return to your library and open an available bond record.")}</p>
+          <div class="empty-state-actions">
+            <a href="/library.html" class="secondary">Back to Library</a>
+            <a href="/partnership.html" class="primary">Partnership Page</a>
+          </div>
+        </section>
+      `;
+    }
+
+    function clearNotFound() {
+      document.getElementById("state-grid").style.display = "";
+      document.getElementById("seal-grid-wrap").style.display = "";
+      document.getElementById("shelf-card").style.display = "";
+      document.getElementById("empty-root").innerHTML = "";
+    }
+
+    function renderHero(record, volume, book) {
+      const bondCore = getBondCore(record);
+      const partner = getFocusedPartner(record);
+
+      const partnerName =
+        safeText(partner?.display_name) ||
+        safeText(partner?.character_name) ||
+        safeText(partner?.sl_username) ||
+        "Unknown Partner";
+
+      const role =
+        safeText(
+          state.pageData?.partnership?.member_role ||
+          record?.partner_role ||
+          record?.buyer_role,
+          "Unknown"
+        );
+
+      document.getElementById("hero-book-title").textContent =
+        safeText(book?.title || volume?.item_name, "Bond Record");
+
+      document.getElementById("hero-subtitle").textContent =
+        safeText(
+          book?.description || volume?.description || record?.message,
+          "The selected partnership bond chamber is synchronized."
+        );
+
+      document.getElementById("hero-volume-pill").textContent =
+        "Volume " + (safeNumber(book?.volume_number || volume?.volume_number, 0) || "--");
+
+      document.getElementById("hero-stage-pill").textContent =
+        safeText(bondCore.stage_name, "Bond Seed");
+
+      document.getElementById("hero-status-pill").textContent =
+        formatStateLabel(book?.display_state);
+
+      document.getElementById("hero-partner-pill").textContent =
+        "Focused Partner: " + partnerName;
+
+      document.getElementById("hero-role-pill").textContent =
+        "Your Role: " + toTitle(role, "Unknown");
+    }
+
+    function renderStateCard(prefix, side, meditationActive) {
+      const status = safeText(side?.status || side?.display_state || "Unknown");
+      const statusPill = document.getElementById(prefix + "-status-pill");
+      const progress = clamp(safeNumber(side?.progress_percent, 0), 0, 100);
+
+      statusPill.textContent = formatStateLabel(status);
+      statusPill.className = "status-pill " + getStateClass(status);
+
+      document.getElementById(prefix + "-offering").textContent =
+        safeBoolean(side?.offering_complete) ? "Offering Complete" : "Offering Pending";
+
+      document.getElementById(prefix + "-minutes").textContent =
+        formatCount(side?.minutes_accumulated) + " / " + formatCount(state.currentBook?.required_minutes);
+
+      document.getElementById(prefix + "-qi").textContent =
+        formatCount(side?.qi_accumulated) + " / " + formatCount(state.currentBook?.required_qi);
+
+      document.getElementById(prefix + "-progress-text").textContent =
+        formatPercent(progress);
+
+      document.getElementById(prefix + "-progress-fill").style.width =
+        progress + "%";
+
+      document.getElementById(prefix + "-meditation").textContent =
+        safeBoolean(meditationActive) ? "Meditating" : "Not Meditating";
+
+      document.getElementById(prefix + "-progress-caption").textContent =
+        getSideProgressCaption(prefix, status);
+    }
+
+    function renderSharedSeal(record, volume, book) {
+      const bondCore = getBondCore(record);
+      const partner = getFocusedPartner(record);
+
+      const partnerName =
+        safeText(partner?.display_name) ||
+        safeText(partner?.character_name) ||
+        safeText(partner?.sl_username) ||
+        "Unknown Partner";
+
+      const nextBookLabel = getNextBookLabel(volume, safeNumber(book?.book_number, 0));
+      const pairPill = document.getElementById("pair-status-pill");
+      const pairState = safeBoolean(book?.pair?.pair_completed)
+        ? "pair_completed"
+        : safeBoolean(book?.pair?.offering_complete)
+          ? "ready_to_start"
+          : book?.display_state;
+
+      pairPill.textContent = safeBoolean(book?.pair?.pair_completed)
+        ? "Pair Completed"
+        : safeBoolean(book?.pair?.offering_complete)
+          ? "Shared Seal Active"
+          : "Seal Forming";
+
+      pairPill.className = "status-pill " + getStateClass(pairState);
+
+      document.getElementById("seal-offering").textContent =
+        safeBoolean(book?.pair?.offering_complete) ? "Both Offerings Complete" : "Incomplete";
+
+      document.getElementById("seal-completion").textContent =
+        safeBoolean(book?.pair?.pair_completed) ? "Pair Completed" : "Not Yet Completed";
+
+      document.getElementById("seal-bond-percent").textContent =
+        formatPercent(bondCore.bond_percent);
+
+      document.getElementById("seal-stage").textContent =
+        safeText(bondCore.stage_name, "Bond Seed");
+
+      document.getElementById("seal-completed-books").textContent =
+        formatCount(bondCore.completed_books_count);
+
+      document.getElementById("seal-shared-minutes").textContent =
+        formatCount(bondCore.total_shared_minutes);
+
+      document.getElementById("seal-next-book").textContent = nextBookLabel;
+      document.getElementById("seal-partner-name").textContent = partnerName;
+
+      let guidance = "Each partner advances their own copy of this bond book, and the shared Bond Core only grows when both sides complete the same rite.";
+
+      if (safeLower(book?.display_state) === "ready_for_offering") {
+        guidance = "This book is ready for the shared offering rite. Each partner must place their own offering before the book can awaken.";
+      } else if (safeLower(book?.display_state) === "waiting_for_partner_offering") {
+        guidance = "Your offering is already sealed. The shared chamber now waits for your partner to complete theirs.";
+      } else if (safeLower(book?.display_state) === "ready_to_start") {
+        guidance = "Both offerings are complete. The chamber is ready for each partner to begin their own progression.";
+      } else if (safeLower(book?.display_state) === "active") {
+        guidance = "Your side of the book is actively progressing. Continue meditating and syncing until your personal seal is complete.";
+      } else if (safeLower(book?.display_state) === "paused") {
+        guidance = "Your side of the book is paused, but the progress already earned remains preserved in the chamber.";
+      } else if (safeLower(book?.display_state) === "awaiting_partner_completion") {
+        guidance = "Your seal is complete. The shared bond now waits for your partner to finish the same book so the pair seal can form.";
+      } else if (safeLower(book?.display_state) === "pair_completed") {
+        guidance = "Both sides are complete. The shared seal for this book is closed, and the next record can now awaken.";
+      }
+
+      document.getElementById("seal-guidance").textContent = guidance;
+    }
+
+    function renderActionAltar(record, volume, book) {
+      const actions = getActionSet(record, book);
+      state.controlActions = actions;
+
+      renderButton("offer-action-button", actions.offer);
+      renderButton("start-action-button", actions.start);
+      renderButton("sync-action-button", actions.sync);
+      renderButton("pause-action-button", actions.pause);
+
+      document.getElementById("return-action-link").href =
+        buildBondPageUrl(
+          safeNumber(volume?.volume_number, 0),
+          safeText(record?.partnership_uuid || state.requestedPartnershipUuid),
+          safeText(record?.partnership_id || state.requestedLegacyPartnershipId)
+        );
+
+      const primaryNote =
+        actions.offer?.type === "api" ? actions.offer.note :
+        actions.start?.type === "api" ? actions.start.note :
+        actions.sync?.type === "api" ? actions.sync.note :
+        actions.pause?.type === "api" ? actions.pause.note :
+        actions.offer?.note ||
+        actions.start?.note ||
+        actions.sync?.note ||
+        actions.pause?.note ||
+        "The action altar is waiting for the next valid state.";
+
+      document.getElementById("action-note").textContent = primaryNote;
+    }
+
+    function renderShelf(volume, currentBook) {
+      const root = document.getElementById("book-shelf-root");
+      const books = getBooksForShelf(volume);
+
+      document.getElementById("shelf-title").textContent =
+        safeText(volume?.item_name, "Volume Shelf");
+
+      document.getElementById("shelf-copy").textContent =
+        "All books inside the selected bond volume, shown as separate records beneath the shared chamber.";
+
+      if (!books.length) {
+        root.innerHTML = `
+          <article class="book-card">
+            <div>
+              <h3 class="book-card-title">No Books Available</h3>
+              <p class="book-card-copy">This volume has no loaded books yet.</p>
+            </div>
+            <p class="book-card-help">Return to the library or try the bond record again later.</p>
+          </article>
+        `;
+        return;
+      }
+
+      root.innerHTML = books.map(function (rawBook) {
+        const bookNumber = safeNumber(rawBook?.book_number, 0);
+        const bookState = safeLower(rawBook?.display_state || rawBook?.status || "locked");
+        const current =
+          safeNumber(currentBook?.book_number, 0) === bookNumber &&
+          safeNumber(currentBook?.volume_number, 0) === safeNumber(rawBook?.volume_number || volume?.volume_number, 0);
+
+        const statusLabel = formatStateLabel(bookState);
+        const progress = getShelfBookProgress(rawBook);
+
+        return `
+          <article class="book-card ${current ? "current" : ""}">
+            <div class="book-card-top">
+              <div>
+                <h3 class="book-card-title">${safeText(rawBook?.book_label, bookNumber > 0 ? "Book " + bookNumber : "Bond Book")}</h3>
+                <p class="book-card-copy">${safeText(rawBook?.book_name || rawBook?.title, "Shared Bond Record")}</p>
+              </div>
+              <span class="tiny-pill ${getStateClass(bookState)}">${statusLabel}</span>
+            </div>
+
+            <div class="progress-track">
+              <div class="progress-fill" style="width: ${progress}%;"></div>
+            </div>
+
+            <div class="book-card-grid">
+              <div class="metric">
+                <span>Status</span>
+                <strong>${statusLabel}</strong>
+              </div>
+              <div class="metric">
+                <span>Progress</span>
+                <strong>${formatPercent(progress)}</strong>
+              </div>
+              <div class="metric">
+                <span>Required Minutes</span>
+                <strong>${formatCount(rawBook?.required_minutes || rawBook?.required_shared_minutes)}</strong>
+              </div>
+              <div class="metric">
+                <span>Offering Cost</span>
+                <strong>${formatCount(rawBook?.cp_cost_each)} CP</strong>
+              </div>
+            </div>
+
+            <p class="book-card-help">${safeText(rawBook?.description || rawBook?.book_description, "The chamber holds the state of this shared record.")}</p>
+          </article>
+        `;
+      }).join("");
+    }
+
+    function renderPage() {
+      clearNotFound();
+
+      const record = getRecord();
+      const volume = getSelectedVolume();
+      const book = getSelectedBook();
+
+      if (!recordHasPartner(record)) {
+        renderNotFound(
+          "Partnership required",
+          safeText(record?.message, "A valid partnership is required before the Bond Shrine can awaken.")
+        );
+        return;
+      }
+
+      if (!recordIsAvailable(record, volume, book)) {
+        renderNotFound(
+          "Unable to open this bond record",
+          safeText(record?.message, "Return to your library or partnership page and try again.")
+        );
+        return;
+      }
+
+      state.currentBook = book;
+
+      renderHero(record, volume, book);
+
+      document.getElementById("self-copy").textContent =
+        "Your offering, your progress, and your place within this same shared book.";
+
+      document.getElementById("partner-copy").textContent =
+        "Your partner’s offering and progress within the mirrored copy of the same bond record.";
+
+      const partnerContext = getFocusedPartner(record);
+
+      renderStateCard(
+        "self",
+        book.self,
+        safeBoolean(state.pageData?.meditation?.is_active ?? (state.member?.v2_cultivation_status === 'cultivating'))
+      );
+
+      renderStateCard(
+        "partner",
+        book.partner,
+        safeBoolean(
+          (partnerContext?.v2_cultivation_status === 'cultivating') ??
+          (partnerContext?.partner_v2_cultivation_status === 'cultivating') ??
+          false
+        )
+      );
+
+      renderSharedSeal(record, volume, book);
+      renderActionAltar(record, volume, book);
+      renderShelf(volume, book);
+    }
+
+    function attachActionHandlers() {
+      [
+        "offer-action-button",
+        "start-action-button",
+        "sync-action-button",
+        "pause-action-button"
+      ].forEach(function (id) {
+        const button = document.getElementById(id);
+        if (!button) return;
+
+        button.onclick = async function (event) {
+          event.preventDefault();
+          const actionKey = safeText(button.dataset.actionKey);
+          if (!actionKey) return;
+          await handleControlAction(actionKey);
+        };
+      });
+    }
+
+    async function handleControlAction(actionKey) {
+      const action = state.controlActions?.[actionKey];
+      const record = getRecord();
+      const book = getSelectedBook();
+      const volume = getSelectedVolume();
+
+      if (!action?.endpoint || !record || !book || !volume) return;
+      if (state.actionPendingKey) return;
+      if (!state.member) return;
+
+      state.actionPendingKey = actionKey;
+      setMessage("");
+      renderPage();
+      attachActionHandlers();
+
+      try {
+        const payload = {
+          sl_avatar_key: safeText(state.member?.sl_avatar_key),
+          sl_username: safeText(state.member?.sl_username),
+          partnership_uuid: safeText(record?.partnership_uuid || state.requestedPartnershipUuid) || null,
+          partnership_id: safeText(record?.partnership_id || state.requestedLegacyPartnershipId) || null,
+          volume_number: safeNumber(book?.volume_number || volume?.volume_number, 0) || null,
+          book_number: safeNumber(book?.book_number, 0) || null
+        };
+
+        const response = await fetch(action.endpoint, {
+          method: "POST",
+          credentials: "include",
+          headers: {
+            "Content-Type": "application/json"
+          },
+          body: JSON.stringify(payload)
+        });
+
+        const data = await response.json();
+
+        if (!response.ok || !data.success) {
+          throw new Error(data.message || "Failed to process bond action.");
+        }
+
+        setMessage(data.message || "Bond action completed successfully.");
+        await loadBookState();
+      } catch (error) {
+        console.error("Bond action error:", error);
+        setMessage(error.message || "Failed to process bond action.", "error");
+      } finally {
+        state.actionPendingKey = null;
+        if (state.pageData) {
+          renderPage();
+          attachActionHandlers();
+        }
+      }
+    }
+
+    async function loadViewerSession() {
+      try {
+        const response = await fetch(ENDPOINTS.session, {
+          method: "GET",
+          credentials: "include"
+        });
+
+        const data = await response.json();
+
+        if (!response.ok || !data.success || !data.member) {
+          window.location.href = "/login.html";
+          return false;
+        }
+
+        state.member = data.member;
+        return true;
+      } catch (error) {
+        console.error("Session load error:", error);
+        window.location.href = "/login.html";
+        return false;
+      }
+    }
+
+    async function fetchBookState() {
+      const params = new URLSearchParams();
+
+      if (state.member?.sl_avatar_key) {
+        params.set("sl_avatar_key", state.member.sl_avatar_key);
+      }
+
+      if (state.member?.sl_username) {
+        params.set("sl_username", state.member.sl_username);
+      }
+
+      if (safeNumber(state.requestedVolumeNumber, 0) > 0) {
+        params.set("volume_number", String(state.requestedVolumeNumber));
+      }
+
+      if (safeText(state.requestedPartnershipUuid)) {
+        params.set("partnership_uuid", state.requestedPartnershipUuid);
+      } else if (safeText(state.requestedLegacyPartnershipId)) {
+        params.set("partnership_id", state.requestedLegacyPartnershipId);
+      }
+
+      const response = await fetch(ENDPOINTS.loadBondState + "?" + params.toString(), {
+        method: "GET",
+        credentials: "include"
+      });
+
+      const data = await response.json();
+
+      if (!response.ok || !data.success) {
+        throw new Error(data.message || "Failed to load bond record.");
+      }
+
+      return data;
+    }
+
+    async function loadBookState() {
+      state.pageData = null;
+      state.controlActions = { offer: null, start: null, sync: null, pause: null };
+
+      try {
+        const data = await fetchBookState();
+        state.pageData = data;
+
+        state.member = {
+          ...(state.member || {}),
+          ...(data.user || data.member || {}),
+          v2_cultivation_status: data.meditation?.is_active ? 'cultivating' : (data.user?.v2_cultivation_status || data.member?.v2_cultivation_status || 'idle')
+        };
+
+        if (safeNumber(data.bond_record?.selected_volume_number, 0) > 0) {
+          state.requestedVolumeNumber = safeNumber(data.bond_record.selected_volume_number, 0);
+        }
+
+        if (safeText(data.bond_record?.partnership_uuid)) {
+          state.requestedPartnershipUuid = safeText(data.bond_record.partnership_uuid);
+        }
+
+        if (safeText(data.bond_record?.partnership_id)) {
+          state.requestedLegacyPartnershipId = safeText(data.bond_record.partnership_id);
+        }
+
+        renderPage();
+        attachActionHandlers();
+
+        if (Array.isArray(data.warnings) && data.warnings.length) {
+          setMessage(data.warnings.join(" "), "info");
+        } else {
+          setMessage("");
+        }
+      } catch (error) {
+        console.error("Bond book state load error:", error);
+        renderNotFound(
+          "Unable to load this bond record",
+          error.message || "Return to your library and try again."
+        );
+        setMessage(error.message || "Failed to load bond record.", "error");
+      }
+    }
+
+    async function maybeAutoSync() {
+      const record = getRecord();
+      const book = getSelectedBook();
+
+      if (!record || !book) return;
+      if (safeLower(book.display_state) !== "active") return;
+      if (!safeBoolean(state.pageData?.meditation?.is_active ?? (state.member?.v2_cultivation_status === 'cultivating'))) return;
+
+      try {
+        await fetch(ENDPOINTS.syncBond, {
+          method: "POST",
+          credentials: "include",
+          headers: {
+            "Content-Type": "application/json"
+          },
+          body: JSON.stringify({
+            sl_avatar_key: safeText(state.member?.sl_avatar_key),
+            sl_username: safeText(state.member?.sl_username),
+            partnership_uuid: safeText(record?.partnership_uuid || state.requestedPartnershipUuid) || null,
+            partnership_id: safeText(record?.partnership_id || state.requestedLegacyPartnershipId) || null,
+            volume_number: safeNumber(book?.volume_number, 0) || null,
+            book_number: safeNumber(book?.book_number, 0) || null
+          })
+        });
+      } catch (error) {
+        console.error("Auto sync error:", error);
+      }
+    }
+
+    async function silentRefreshAll() {
+      state.refreshInFlight = true;
+
+      try {
+        await maybeAutoSync();
+
+        const freshData = await fetchBookState();
+        state.pageData = freshData;
+
+        state.member = {
+          ...(state.member || {}),
+          ...(freshData.user || freshData.member || {}),
+          v2_cultivation_status: freshData.meditation?.is_active ? 'cultivating' : (freshData.user?.v2_cultivation_status || freshData.member?.v2_cultivation_status || 'idle')
+        };
+
+        if (safeNumber(freshData.bond_record?.selected_volume_number, 0) > 0) {
+          state.requestedVolumeNumber = safeNumber(freshData.bond_record.selected_volume_number, 0);
+        }
+
+        if (safeText(freshData.bond_record?.partnership_uuid)) {
+          state.requestedPartnershipUuid = safeText(freshData.bond_record.partnership_uuid);
+        }
+
+        if (safeText(freshData.bond_record?.partnership_id)) {
+          state.requestedLegacyPartnershipId = safeText(freshData.bond_record.partnership_id);
+        }
+
+        renderPage();
+        attachActionHandlers();
+      } catch (error) {
+        console.error("Silent refresh error:", error);
+      } finally {
+        state.refreshInFlight = false;
+      }
+    }
+
+    function startAutoRefreshLoop() {
+      if (state.refreshInterval) {
+        clearInterval(state.refreshInterval);
+      }
+
+      state.refreshInterval = setInterval(async function () {
+        if (!state.member || state.actionPendingKey || state.refreshInFlight) {
+          return;
+        }
+
+        await silentRefreshAll();
+      }, 10000);
+    }
+
+    async function init() {
+      state.requestedVolumeNumber = getVolumeNumberFromQuery();
+      state.requestedPartnershipUuid = getPartnershipUuidFromQuery();
+      state.requestedLegacyPartnershipId = getLegacyPartnershipIdFromQuery();
+
+      startAutoRefreshLoop();
+
+      const ok = await loadViewerSession();
+      if (!ok) return;
+
+      await loadBookState();
+    }
+
+    window.addEventListener("DOMContentLoaded", init);
+
+    window.addEventListener("beforeunload", function () {
+      if (state.refreshInterval) {
+        clearInterval(state.refreshInterval);
+      }
+    });
+  </script>
+</body>
+</html>

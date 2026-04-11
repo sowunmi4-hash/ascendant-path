@@ -1,0 +1,828 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Lore | The Ascendant Path</title>
+  <link rel="stylesheet" href="style.css" />
+  <style>
+    .lore-page {
+      width: min(1240px, calc(100% - 2rem));
+      margin: 1.5rem auto 4rem;
+      display: grid;
+      gap: 1.1rem;
+      position: relative;
+      z-index: 3;
+    }
+
+    .lore-hero-band {
+      position: relative;
+      overflow: hidden;
+      min-height: 300px;
+      display: grid;
+      align-content: end;
+      padding: 1.75rem;
+      border: 1px solid var(--border-soft);
+      box-shadow: var(--shadow-lg);
+      border-radius: 18px;
+      background:
+        linear-gradient(180deg, rgba(7, 10, 18, 0.22), rgba(7, 10, 18, 0.82)),
+        radial-gradient(circle at 18% 20%, rgba(234, 215, 170, 0.08), transparent 24%),
+        radial-gradient(circle at 82% 18%, rgba(111, 151, 255, 0.14), transparent 24%),
+        url("https://images.unsplash.com/photo-1511497584788-876760111969?auto=format&fit=crop&w=1800&q=80")
+          center 38% / cover no-repeat;
+    }
+
+    .lore-hero-band::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background:
+        linear-gradient(
+          90deg,
+          rgba(6, 9, 16, 0.82) 0%,
+          rgba(6, 9, 16, 0.46) 48%,
+          rgba(6, 9, 16, 0.78) 100%
+        );
+      pointer-events: none;
+    }
+
+    .lore-hero-band::after {
+      content: "";
+      position: absolute;
+      inset: auto 0 0;
+      height: 110px;
+      background: linear-gradient(180deg, transparent, rgba(6, 9, 16, 0.64));
+      pointer-events: none;
+    }
+
+    .lore-hero-content {
+      position: relative;
+      z-index: 1;
+      display: grid;
+      gap: 0.7rem;
+      max-width: 780px;
+    }
+
+    .lore-eyebrow {
+      display: inline-block;
+      font-size: 0.78rem;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+      color: var(--blue-soft);
+    }
+
+    .lore-title {
+      margin: 0;
+      font-size: clamp(2.4rem, 5vw, 4.15rem);
+      line-height: 0.98;
+      color: #ffffff;
+      text-shadow: 0 6px 18px rgba(0, 0, 0, 0.28);
+    }
+
+    .lore-kanji {
+      font-size: clamp(1.35rem, 3.6vw, 2.3rem);
+      letter-spacing: 0.18em;
+      color: rgba(224, 232, 255, 0.24);
+      margin-top: -0.1rem;
+    }
+
+    .lore-subtitle {
+      margin: 0;
+      font-size: 1rem;
+      line-height: 1.75;
+      color: rgba(241, 244, 255, 0.88);
+      max-width: 670px;
+    }
+
+    .chronicle-sanctum-band {
+      position: relative;
+      padding: 1.2rem 0.2rem 0.45rem;
+      display: grid;
+      justify-items: center;
+    }
+
+    .chronicle-sanctum-band::before,
+    .chronicle-sanctum-band::after {
+      content: "";
+      position: absolute;
+      left: 0;
+      right: 0;
+      height: 1px;
+      background: linear-gradient(90deg, transparent, rgba(234, 215, 170, 0.18), transparent);
+    }
+
+    .chronicle-sanctum-band::before {
+      top: 0;
+    }
+
+    .chronicle-sanctum-band::after {
+      bottom: 0;
+    }
+
+    .chronicle-sanctum {
+      position: relative;
+      width: min(820px, 100%);
+      display: grid;
+      gap: 0.95rem;
+      justify-items: center;
+      text-align: center;
+      padding: 1.45rem 1.25rem 1.25rem;
+      border: 1px solid rgba(142, 168, 255, 0.14);
+      background:
+        linear-gradient(180deg, rgba(18, 24, 40, 0.94), rgba(10, 15, 28, 0.98)),
+        radial-gradient(circle at center, rgba(47, 85, 188, 0.14), transparent 58%);
+      box-shadow: var(--shadow-lg);
+      clip-path: polygon(
+        18px 0,
+        calc(100% - 18px) 0,
+        100% 18px,
+        100% calc(100% - 18px),
+        calc(100% - 18px) 100%,
+        18px 100%,
+        0 calc(100% - 18px),
+        0 18px
+      );
+    }
+
+    .chronicle-sanctum::before,
+    .chronicle-sanctum::after {
+      content: "";
+      position: absolute;
+      width: 170px;
+      height: 170px;
+      border-radius: 50%;
+      pointer-events: none;
+    }
+
+    .chronicle-sanctum::before {
+      right: -64px;
+      top: -64px;
+      background: radial-gradient(circle, rgba(142, 168, 255, 0.09), transparent 70%);
+    }
+
+    .chronicle-sanctum::after {
+      left: -64px;
+      bottom: -64px;
+      background: radial-gradient(circle, rgba(234, 215, 170, 0.08), transparent 70%);
+    }
+
+    .sanctum-label {
+      position: relative;
+      z-index: 1;
+      display: inline-block;
+      font-size: 0.74rem;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: var(--blue-soft);
+    }
+
+    .sanctum-title {
+      position: relative;
+      z-index: 1;
+      margin: 0;
+      font-size: 1.42rem;
+      color: #ffffff;
+    }
+
+    .sanctum-copy {
+      position: relative;
+      z-index: 1;
+      margin: 0;
+      color: rgba(228, 234, 255, 0.84);
+      line-height: 1.68;
+      max-width: 700px;
+    }
+
+    .doctrine-band,
+    .path-band {
+      display: grid;
+      gap: 0.85rem;
+      padding-top: 0.2rem;
+      position: relative;
+      z-index: 1;
+    }
+
+    .band-head {
+      display: grid;
+      gap: 0.35rem;
+    }
+
+    .band-label {
+      display: inline-block;
+      font-size: 0.74rem;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: var(--blue-soft);
+    }
+
+    .band-head h2 {
+      margin: 0;
+      font-size: 1.25rem;
+      color: #ffffff;
+    }
+
+    .band-head p {
+      margin: 0;
+      color: rgba(228, 234, 255, 0.8);
+      line-height: 1.6;
+    }
+
+    .doctrine-track {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 0.95rem;
+    }
+
+    .doctrine-strip,
+    .path-card {
+      position: relative;
+      display: grid;
+      gap: 0.35rem;
+      padding: 0.85rem 0.95rem 0.9rem 1.05rem;
+      background:
+        linear-gradient(180deg, rgba(18, 24, 40, 0.82), rgba(11, 16, 28, 0.96));
+      border-top: 1px solid rgba(255, 255, 255, 0.07);
+      border-bottom: 1px solid rgba(255, 255, 255, 0.07);
+      box-shadow: 0 16px 42px rgba(0, 0, 0, 0.18);
+      text-decoration: none;
+      color: #f2f5ff;
+      min-height: 170px;
+      align-content: start;
+    }
+
+    .doctrine-strip::before,
+    .path-card::before {
+      content: "";
+      position: absolute;
+      left: 0;
+      top: 18px;
+      bottom: 18px;
+      width: 2px;
+      background: linear-gradient(180deg, rgba(142, 168, 255, 0.28), rgba(234, 215, 170, 0.16));
+    }
+
+    .doctrine-strip span,
+    .path-card span {
+      font-size: 0.72rem;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--blue-soft);
+      padding-left: 0.35rem;
+    }
+
+    .doctrine-strip h3,
+    .path-card h3 {
+      margin: 0;
+      font-size: 1.04rem;
+      line-height: 1.3;
+      color: #ffffff;
+      padding-left: 0.35rem;
+    }
+
+    .doctrine-strip p,
+    .path-card p {
+      margin: 0;
+      color: rgba(226, 232, 255, 0.78);
+      line-height: 1.55;
+      font-size: 0.93rem;
+      padding-left: 0.35rem;
+    }
+
+    .path-track {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 1rem;
+    }
+
+    .path-card:hover {
+      transform: translateY(-2px);
+      transition: transform 0.2s ease, background 0.2s ease;
+      background:
+        linear-gradient(180deg, rgba(21, 28, 45, 0.9), rgba(12, 18, 32, 0.98));
+    }
+
+    .entry-band {
+      position: relative;
+      padding: 1.25rem 0.2rem 0.25rem;
+      display: grid;
+      justify-items: center;
+    }
+
+    .entry-band::before,
+    .entry-band::after {
+      content: "";
+      position: absolute;
+      left: 0;
+      right: 0;
+      height: 1px;
+      background: linear-gradient(90deg, transparent, rgba(234, 215, 170, 0.18), transparent);
+    }
+
+    .entry-band::before {
+      top: 0;
+    }
+
+    .entry-band::after {
+      bottom: 0;
+    }
+
+    .entry-frame {
+      width: min(520px, 100%);
+      display: grid;
+      gap: 0.85rem;
+      justify-items: center;
+      text-align: center;
+      padding: 1.25rem 1.1rem 1.15rem;
+      position: relative;
+      border: 1px solid rgba(142, 168, 255, 0.14);
+      background:
+        linear-gradient(180deg, rgba(18, 24, 40, 0.92), rgba(10, 15, 28, 0.98)),
+        radial-gradient(circle at center, rgba(47, 85, 188, 0.12), transparent 58%);
+      box-shadow: var(--shadow-lg);
+      clip-path: polygon(
+        18px 0,
+        calc(100% - 18px) 0,
+        100% 18px,
+        100% calc(100% - 18px),
+        calc(100% - 18px) 100%,
+        18px 100%,
+        0 calc(100% - 18px),
+        0 18px
+      );
+    }
+
+    .entry-kicker {
+      font-size: 0.74rem;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: var(--blue-soft);
+    }
+
+    .entry-frame h2 {
+      margin: 0;
+      color: #ffffff;
+      font-size: 1.35rem;
+    }
+
+    .entry-frame p {
+      margin: 0;
+      color: rgba(228, 234, 255, 0.82);
+      line-height: 1.6;
+      max-width: 430px;
+    }
+
+    .entry-actions {
+      display: flex;
+      justify-content: center;
+      gap: 0.75rem;
+      flex-wrap: wrap;
+      width: 100%;
+    }
+
+    .session-note {
+      min-height: 1.35rem;
+      color: rgba(226, 232, 255, 0.78);
+      line-height: 1.55;
+      font-size: 0.94rem;
+      margin: -0.1rem 0 0;
+    }
+
+    @media (max-width: 980px) {
+      .doctrine-track {
+        grid-template-columns: 1fr;
+      }
+
+      .path-track {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    @media (max-width: 720px) {
+      .lore-page {
+        width: min(100% - 1rem, 1240px);
+        margin-top: 1rem;
+      }
+
+      .lore-hero-band {
+        min-height: 260px;
+        padding: 1.2rem 1rem;
+        border-radius: 14px;
+      }
+
+      .chronicle-sanctum,
+      .entry-frame {
+        width: 100%;
+        padding: 1.1rem 1rem 1rem;
+      }
+
+      .entry-actions {
+        flex-direction: column;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="cloud-layer"></div>
+  <div class="rune-layer"></div>
+  <div class="lightning-flash"></div>
+
+  <nav>
+    <a href="/index.html">Home</a>
+    <a href="/lore.html" class="active">Lore</a>
+
+    <div class="nav-session-links" id="nav-session-links">
+      <a href="/dashboard.html" id="nav-dashboard-link">Dashboard</a>
+      <a href="/login.html" id="nav-logout-link">Logout</a>
+    </div>
+  </nav>
+
+  <main class="lore-page">
+    <section class="lore-hero-band">
+      <div class="lore-hero-content">
+        <span class="lore-eyebrow">The World of Ascension</span>
+        <h1 class="lore-title">The Lore of The Ascendant Path</h1>
+        <div class="lore-kanji">昇天世界之录</div>
+        <p class="lore-subtitle">
+          In this world, cultivation is the sacred art of refining the body, spirit, and soul
+          beyond mortal limitation. Through meditation, trials, discipline, and battle, a person
+          may awaken the power within and begin the long ascent toward immortality.
+        </p>
+      </div>
+    </section>
+
+    <section class="chronicle-sanctum-band">
+      <div class="chronicle-sanctum">
+        <span class="sanctum-label">Central Chronicle</span>
+        <h2 class="sanctum-title">The Story So Far</h2>
+        <p class="sanctum-copy">
+          Long before the rise of great sects and ancient clans, mortals lived short and fragile
+          lives beneath silent heavens, unaware that spiritual energy flowed through all things.
+          But a rare few began to sense it — hidden in breath, blood, flame, storm, stillness,
+          and will. These first seekers discovered that the mortal body was not a prison, but a gate.
+        </p>
+        <p class="sanctum-copy">
+          Through meditation and struggle, they learned to refine that hidden power and break beyond
+          the boundaries of ordinary life. Their discoveries became the first foundations of cultivation.
+          Over time, those teachings spread across the world, forming sacred traditions, rival lineages,
+          ancient clans, and legends whose names echoed through the ages.
+        </p>
+        <p class="sanctum-copy">
+          But power never grows in peace for long. Cultivators began to clash over honour, territory,
+          spiritual knowledge, rare resources, and destiny itself. Some chose to walk the road alone,
+          trusting only their own discipline and inner strength. Others cultivated beside a partner,
+          drawing harmony, devotion, and deeper power from a bond forged through shared trials.
+        </p>
+        <p class="sanctum-copy">
+          Now a new age begins. The world is restless, rivals gather, and the road to ascension opens
+          once again. Whether you walk alone or with a partner at your side, your story begins as a
+          mortal — but it does not need to end as one.
+        </p>
+      </div>
+    </section>
+
+    <section class="doctrine-band">
+      <div class="band-head">
+        <span class="band-label">Core Doctrine</span>
+        <h2>Three Laws of the World</h2>
+        <p>The path is shaped by refinement, purpose, and the dream that waits beyond mortality.</p>
+      </div>
+
+      <div class="doctrine-track">
+        <article class="doctrine-strip">
+          <span>Cultivation</span>
+          <h3>What Cultivation Means</h3>
+          <p>
+            Cultivation is the process of gathering spiritual energy and shaping it into strength,
+            awareness, resilience, and transcendence. It is not simply training to fight. It is
+            the path of transforming your very existence.
+          </p>
+          <p>
+            A cultivator tempers mind, body, and soul through meditation, hardship, breakthroughs,
+            and willpower. Each realm reached is more than a rise in power — it is proof that the
+            mortal self is slowly being left behind.
+          </p>
+        </article>
+
+        <article class="doctrine-strip">
+          <span>Purpose</span>
+          <h3>The Final Goal</h3>
+          <p>
+            Some walk this path for strength. Others seek purpose, protection, revenge, love,
+            enlightenment, or legacy. Yet above all these desires stands one final dream shared
+            by cultivators across the world: immortality.
+          </p>
+          <p>
+            To cultivate is to challenge fate itself, to defy the limits of flesh and time, and
+            to prove that your will is greater than death.
+          </p>
+        </article>
+
+        <article class="doctrine-strip">
+          <span>Transcendence</span>
+          <h3>The Pursuit of Immortality</h3>
+          <p>
+            At the end of all struggle lies the dream that has driven cultivators for generations:
+            immortality. Not merely endless life, but true transcendence — to surpass mortal weakness,
+            conquer the fear of death, and become something greater than human.
+          </p>
+          <p>
+            Many will fall. Some will turn back. Others will lose themselves on the journey. But those
+            with unwavering discipline, fierce spirit, and the courage to continue may one day step
+            beyond the mortal realm and claim their place among the eternal.
+          </p>
+        </article>
+      </div>
+    </section>
+
+    <section class="path-band">
+      <div class="band-head">
+        <span class="band-label">Paths of the World</span>
+        <h2>How Cultivators Move Through the Age</h2>
+        <p>Every ascent is shaped by choice, conflict, and the trials that refine a name into legend.</p>
+      </div>
+
+      <div class="path-track">
+        <article class="path-card">
+          <span>Journey</span>
+          <h3>Your Journey</h3>
+          <p>
+            Every cultivator walks a different road. Some choose solitude, sharpening themselves
+            through patience, self-mastery, and relentless discipline. Others choose to cultivate
+            with a partner, growing stronger together through trust, balance, and shared purpose.
+          </p>
+          <p>
+            However your story begins, the path ahead is filled with trials, breakthroughs, rivals,
+            and choices that will shape the legend you become.
+          </p>
+        </article>
+
+        <article class="path-card">
+          <span>Conflict</span>
+          <h3>Battle and Rivalry</h3>
+          <p>
+            Cultivation is not a peaceful journey. Strength must be tested. Rival cultivators will
+            challenge your honour, your skill, your alliances, and your right to rise above them.
+          </p>
+          <p>
+            Fight other players, defend your name, overcome trials, and prove that your spirit deserves
+            ascension. Every victory refines you. Every defeat teaches you.
+          </p>
+        </article>
+      </div>
+    </section>
+
+    <section class="entry-band">
+      <div class="entry-frame">
+        <span class="entry-kicker">Your Beginning</span>
+        <h2 id="entry-title">Loading your archive entry...</h2>
+        <p id="entry-copy">
+          Verifying your session and restoring your place on the path.
+        </p>
+
+        <p class="session-note" id="session-note"></p>
+
+        <div class="entry-actions">
+          <a href="/dashboard.html" class="primary" id="entry-primary-link">Return to Dashboard</a>
+          <a href="/index.html" class="secondary">Return Home</a>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    The Ascendant Path • Refine the mortal self • Rise beyond the heavens
+  </footer>
+
+  <script>
+    const LOGIN_URL = "/login.html";
+    const VERIFY_SESSION_URL = "/.netlify/functions/verify-session";
+    const LOGOUT_URL = "/.netlify/functions/logout";
+    const DASHBOARD_STATE_URL = "/.netlify/functions/load-dashboard-state";
+
+    const CLIENT_SESSION_KEYS = [
+      "sl_username",
+      "slUsername",
+      "avatar_key",
+      "avatarKey",
+      "member_id",
+      "memberId",
+      "session_token",
+      "sessionToken",
+      "cultivation_session",
+      "cultivationSession",
+      "ascendant_session",
+      "ascendantSession"
+    ];
+
+    let csrfToken = "";
+
+    function safeText(value, fallback = "") {
+      const text = String(value ?? "").trim();
+      return text || fallback;
+    }
+
+    function clearClientSessionArtifacts() {
+      try {
+        sessionStorage.clear();
+      } catch (error) {
+        console.warn("Failed to clear sessionStorage:", error);
+      }
+
+      try {
+        CLIENT_SESSION_KEYS.forEach((key) => localStorage.removeItem(key));
+      } catch (error) {
+        console.warn("Failed to clear localStorage session artifacts:", error);
+      }
+    }
+
+    function redirectToLogin() {
+      clearClientSessionArtifacts();
+      window.location.replace(LOGIN_URL);
+    }
+
+    async function readJsonSafely(response) {
+      try {
+        return await response.json();
+      } catch (error) {
+        return {};
+      }
+    }
+
+    function extractCsrfToken(payload) {
+      return safeText(
+        payload?.csrf_token ||
+        payload?.csrfToken ||
+        payload?.session?.csrf_token ||
+        payload?.session?.csrfToken ||
+        payload?.viewer?.csrf_token ||
+        payload?.viewer?.csrfToken ||
+        "",
+        ""
+      );
+    }
+
+    async function verifySessionOrRedirect() {
+      try {
+        const response = await fetch(VERIFY_SESSION_URL, {
+          method: "GET",
+          credentials: "include",
+          headers: {
+            "Accept": "application/json",
+            "Cache-Control": "no-store"
+          }
+        });
+
+        const data = await readJsonSafely(response);
+
+        if (!response.ok || data?.success === false) {
+          redirectToLogin();
+          return null;
+        }
+
+        csrfToken = extractCsrfToken(data);
+        return data;
+      } catch (error) {
+        console.error("Session verification failed:", error);
+        redirectToLogin();
+        return null;
+      }
+    }
+
+    async function authenticatedFetch(url, options = {}) {
+      const method = safeText(options.method || "GET", "GET").toUpperCase();
+      const headers = new Headers(options.headers || {});
+      headers.set("Accept", "application/json");
+
+      if (!headers.has("Content-Type") && method !== "GET" && method !== "HEAD" && options.body) {
+        headers.set("Content-Type", "application/json");
+      }
+
+      if (csrfToken) {
+        headers.set("X-CSRF-Token", csrfToken);
+        headers.set("X-Session-CSRF", csrfToken);
+      }
+
+      const response = await fetch(url, {
+        ...options,
+        method,
+        credentials: "include",
+        cache: "no-store",
+        headers
+      });
+
+      if (response.status === 401 || response.status === 403) {
+        redirectToLogin();
+        throw new Error("Your session has expired. Redirecting to login.");
+      }
+
+      return response;
+    }
+
+    async function handleLogout(event) {
+      if (event) event.preventDefault();
+
+      try {
+        await authenticatedFetch(LOGOUT_URL, {
+          method: "POST"
+        });
+      } catch (error) {
+        console.warn("Logout request failed:", error);
+      } finally {
+        redirectToLogin();
+      }
+    }
+
+    function formatRealmLabel(value) {
+      const text = safeText(value, "Mortal Realm");
+      const lowered = text.toLowerCase();
+
+      const map = {
+        "mortal": "Mortal Realm",
+        "mortal realm": "Mortal Realm",
+        "qi gathering": "Qi Gathering Realm",
+        "qi gathering realm": "Qi Gathering Realm",
+        "foundation": "Foundation Realm",
+        "foundation realm": "Foundation Realm",
+        "core formation": "Core Formation Realm",
+        "core formation realm": "Core Formation Realm",
+        "nascent soul": "Nascent Soul Realm",
+        "nascent soul realm": "Nascent Soul Realm",
+        "soul transformation": "Soul Transformation Realm",
+        "soul transformation realm": "Soul Transformation Realm",
+        "void refinement": "Void Refinement Realm",
+        "void refinement realm": "Void Refinement Realm",
+        "body integration": "Body Integration Realm",
+        "body integration realm": "Body Integration Realm",
+        "mahayana": "Mahayana Realm",
+        "mahayana realm": "Mahayana Realm",
+        "tribulation": "Tribulation Realm",
+        "tribulation realm": "Tribulation Realm"
+      };
+
+      return map[lowered] || text;
+    }
+
+    function setLoggedInView(member) {
+      const displayName =
+        safeText(member.character_name) ||
+        safeText(member.display_name) ||
+        safeText(member.sl_username) ||
+        "Cultivator";
+
+      const username = safeText(member.sl_username);
+      const realmName = formatRealmLabel(
+        safeText(member.realm_display_name) || safeText(member.realm_name, "Mortal Realm")
+      );
+
+      const sessionNote = document.getElementById("session-note");
+      const entryTitle = document.getElementById("entry-title");
+      const entryCopy = document.getElementById("entry-copy");
+      const entryPrimaryLink = document.getElementById("entry-primary-link");
+
+      entryTitle.textContent = "The archive already knows your name";
+      entryCopy.textContent =
+        "Your session is active. Return to your dashboard and continue your cultivation journey through the world you have now entered.";
+
+      sessionNote.textContent = username
+        ? `Signed in as ${displayName} • @${username} • ${realmName}`
+        : `Signed in as ${displayName} • ${realmName}`;
+
+      entryPrimaryLink.href = "/dashboard.html";
+      entryPrimaryLink.textContent = "Return to Dashboard";
+    }
+
+    async function loadLoreState() {
+      try {
+        const response = await authenticatedFetch(DASHBOARD_STATE_URL, {
+          method: "GET"
+        });
+
+        const data = await readJsonSafely(response);
+
+        if (!response.ok || !data.success || !data.member) {
+          throw new Error(data.message || data.error || "Failed to load lore session state.");
+        }
+
+        setLoggedInView(data.member);
+      } catch (error) {
+        console.error("Lore state load error:", error);
+        if (!/Redirecting to login/i.test(String(error?.message || ""))) {
+          redirectToLogin();
+        }
+      }
+    }
+
+    async function init() {
+      document.getElementById("nav-logout-link").addEventListener("click", handleLogout);
+
+      const verified = await verifySessionOrRedirect();
+      if (!verified) return;
+
+      await loadLoreState();
+    }
+
+    window.addEventListener("DOMContentLoaded", init);
+  </script>
+</body>
+</html>

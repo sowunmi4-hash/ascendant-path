@@ -1,0 +1,1696 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Breath of Celestial | The Ascendant Path</title>
+  <link rel="stylesheet" href="style.css" />
+  <style>
+    .celestial-page {
+      width: min(1240px, calc(100% - 2rem));
+      margin: 1.35rem auto 4rem;
+      display: grid;
+      gap: 1.1rem;
+      position: relative;
+      z-index: 3;
+    }
+
+    .celestial-hero {
+      position: relative;
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 1.1rem;
+      align-items: stretch;
+      padding: 1.45rem;
+      border-radius: var(--radius-lg);
+      border: 1px solid var(--border-soft);
+      background:
+        linear-gradient(180deg, rgba(11, 16, 28, 0.82), rgba(8, 12, 22, 0.96)),
+        radial-gradient(circle at 15% 18%, rgba(234, 215, 170, 0.08), transparent 22%),
+        radial-gradient(circle at 82% 12%, rgba(142, 168, 255, 0.12), transparent 24%);
+      box-shadow: var(--shadow-lg);
+      overflow: hidden;
+      isolation: isolate;
+    }
+
+    .celestial-hero::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      pointer-events: none;
+      opacity: 0.75;
+      background:
+        linear-gradient(
+          90deg,
+          rgba(6, 9, 16, 0.82) 0%,
+          rgba(6, 9, 16, 0.36) 48%,
+          rgba(6, 9, 16, 0.74) 100%
+        );
+    }
+
+    .celestial-hero::after {
+      content: "";
+      position: absolute;
+      inset: auto 0 0;
+      height: 140px;
+      pointer-events: none;
+      background: linear-gradient(180deg, transparent, rgba(6, 9, 16, 0.52));
+    }
+
+    .celestial-hero-copy {
+      position: relative;
+      z-index: 1;
+      display: grid;
+      gap: 0.85rem;
+      align-content: start;
+      padding: 0.25rem 0.15rem;
+      max-width: 860px;
+    }
+
+    .celestial-eyebrow {
+      display: inline-block;
+      font-size: 0.74rem;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+      color: var(--blue-soft);
+    }
+
+    .celestial-title {
+      margin: 0;
+      font-size: clamp(2.35rem, 5vw, 4rem);
+      line-height: 0.98;
+      color: #ffffff;
+    }
+
+    .celestial-title-subline {
+      margin: -0.15rem 0 0;
+      font-size: 1.05rem;
+      line-height: 1.85;
+      color: rgba(241, 244, 255, 0.86);
+      max-width: 760px;
+    }
+
+    .celestial-hero-actions {
+      display: flex;
+      gap: 0.75rem;
+      flex-wrap: wrap;
+      margin-top: 0.2rem;
+    }
+
+    .celestial-omen-link {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 44px;
+      padding: 0 1rem;
+      border-radius: 999px;
+      border: 1px solid rgba(142, 168, 255, 0.18);
+      background:
+        linear-gradient(180deg, rgba(20, 30, 52, 0.92), rgba(12, 18, 34, 0.98));
+      color: #ffffff;
+      text-decoration: none;
+      font-weight: 600;
+      letter-spacing: 0.02em;
+      box-shadow: var(--shadow-sm);
+      transition:
+        transform 0.25s ease,
+        border-color 0.25s ease,
+        box-shadow 0.25s ease,
+        background 0.25s ease;
+    }
+
+    .celestial-omen-link:hover {
+      transform: translateY(-2px);
+      border-color: rgba(234, 215, 170, 0.26);
+      box-shadow: var(--shadow-md);
+      background:
+        linear-gradient(180deg, rgba(24, 36, 62, 0.94), rgba(13, 21, 38, 0.98));
+    }
+
+    .celestial-hero-note {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.55rem;
+      width: fit-content;
+      min-height: 38px;
+      padding: 0.55rem 0.9rem;
+      border-radius: 999px;
+      border: 1px solid rgba(234, 215, 170, 0.14);
+      background: rgba(234, 215, 170, 0.06);
+      color: rgba(243, 238, 229, 0.88);
+      font-size: 0.86rem;
+      line-height: 1.4;
+    }
+
+    .celestial-hero-note strong {
+      color: var(--gold-soft);
+      font-weight: 700;
+    }
+
+    .celestial-report-strip {
+      position: relative;
+      overflow: hidden;
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      padding: 0.95rem 1.1rem;
+      border-radius: var(--radius-md);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      background:
+        linear-gradient(90deg, rgba(255, 255, 255, 0.05), rgba(255, 255, 255, 0.02)),
+        rgba(10, 15, 28, 0.82);
+      box-shadow: var(--shadow-sm);
+    }
+
+    .celestial-report-label {
+      flex: 0 0 auto;
+      font-size: 0.75rem;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+      color: var(--gold-soft);
+      font-weight: 700;
+    }
+
+    .celestial-report-track {
+      position: relative;
+      overflow: hidden;
+      width: 100%;
+    }
+
+    .celestial-report-text {
+      display: inline-block;
+      min-width: 100%;
+      white-space: nowrap;
+      color: rgba(243, 238, 229, 0.9);
+      animation: celestialTicker 30s linear infinite;
+      will-change: transform;
+    }
+
+    .celestial-loading,
+    .celestial-error {
+      padding: 1rem 1.1rem;
+      border-radius: var(--radius-md);
+      box-shadow: var(--shadow-sm);
+      border: 1px solid var(--border-soft);
+    }
+
+    .celestial-loading {
+      background: rgba(14, 19, 32, 0.76);
+      color: var(--text);
+    }
+
+    .celestial-error {
+      background: linear-gradient(180deg, rgba(44, 27, 18, 0.82), rgba(24, 17, 14, 0.92));
+      border-color: rgba(200, 169, 106, 0.24);
+      color: var(--gold-soft);
+      white-space: pre-wrap;
+      word-break: break-word;
+    }
+
+    .celestial-hidden {
+      display: none !important;
+    }
+
+    .celestial-content {
+      display: grid;
+      gap: 1rem;
+    }
+
+    .celestial-chamber {
+      position: relative;
+      display: grid;
+      grid-template-columns: minmax(220px, 1fr) minmax(380px, 540px) minmax(220px, 1fr);
+      gap: 1rem;
+      align-items: center;
+      padding: 1.45rem 1.2rem 1.3rem;
+      border-radius: 34px;
+      border: 1px solid rgba(142, 168, 255, 0.12);
+      background:
+        linear-gradient(180deg, rgba(16, 22, 36, 0.94), rgba(9, 14, 26, 0.98)),
+        radial-gradient(circle at 50% 8%, rgba(142, 168, 255, 0.08), transparent 22%),
+        radial-gradient(circle at 50% 86%, rgba(234, 215, 170, 0.06), transparent 24%);
+      box-shadow: var(--shadow-lg);
+      overflow: hidden;
+      isolation: isolate;
+    }
+
+    .celestial-chamber::before {
+      content: "";
+      position: absolute;
+      inset: 12px;
+      border: 1px solid rgba(255, 255, 255, 0.04);
+      border-radius: 28px;
+      pointer-events: none;
+    }
+
+    .celestial-chamber::after {
+      content: "";
+      position: absolute;
+      inset: -6%;
+      pointer-events: none;
+      opacity: 0.35;
+      background:
+        radial-gradient(circle at 18% 30%, rgba(255,255,255,0.06), transparent 18%),
+        radial-gradient(circle at 78% 18%, rgba(255,255,255,0.04), transparent 18%);
+      animation: skyDrift 16s ease-in-out infinite alternate;
+    }
+
+    .chamber-column {
+      position: relative;
+      z-index: 1;
+      display: grid;
+      gap: 1rem;
+    }
+
+    .chamber-card {
+      position: relative;
+      overflow: hidden;
+      padding: 1.05rem 1.1rem 1rem;
+      border-radius: 22px;
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      background:
+        linear-gradient(180deg, rgba(18, 24, 40, 0.9), rgba(11, 16, 28, 0.96));
+      box-shadow: var(--shadow-sm);
+      min-height: 160px;
+    }
+
+    .chamber-card::before {
+      content: "";
+      position: absolute;
+      width: 136px;
+      height: 136px;
+      right: -54px;
+      top: -54px;
+      border-radius: 50%;
+      background: radial-gradient(circle, rgba(142, 168, 255, 0.08), transparent 70%);
+      pointer-events: none;
+    }
+
+    .chamber-card-label {
+      display: inline-block;
+      font-size: 0.72rem;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: var(--blue-soft);
+      margin-bottom: 0.55rem;
+    }
+
+    .chamber-card h2,
+    .chamber-card h3 {
+      margin: 0 0 0.55rem;
+      color: #ffffff;
+      font-size: 1.08rem;
+      line-height: 1.28;
+    }
+
+    .chamber-card p {
+      margin: 0;
+      color: rgba(226, 232, 255, 0.8);
+      line-height: 1.7;
+      font-size: 0.95rem;
+    }
+
+    .chamber-card-value {
+      color: #ffffff;
+      font-size: 1.18rem;
+      line-height: 1.3;
+      font-weight: 700;
+    }
+
+    .chamber-card-subtext {
+      margin-top: 0.55rem;
+      color: rgba(226, 232, 255, 0.72);
+      line-height: 1.65;
+      font-size: 0.92rem;
+    }
+
+    .celestial-core-wrap {
+      position: relative;
+      z-index: 1;
+      display: grid;
+      justify-items: center;
+      align-items: center;
+      padding: 0.3rem 0;
+    }
+
+    .celestial-core-ring {
+      position: relative;
+      width: min(520px, 88vw);
+      aspect-ratio: 1 / 1;
+      border-radius: 50%;
+      display: grid;
+      place-items: center;
+      padding: 18px;
+      background:
+        radial-gradient(circle at 50% 28%, rgba(255, 255, 255, 0.16), transparent 22%),
+        conic-gradient(
+          from 180deg,
+          rgba(142, 168, 255, 0.92),
+          rgba(95, 208, 255, 0.68),
+          rgba(234, 215, 170, 0.70),
+          rgba(142, 168, 255, 0.92)
+        );
+      box-shadow:
+        0 0 0 2px rgba(255, 235, 192, 0.08),
+        0 0 44px rgba(94, 160, 255, 0.16),
+        inset 0 0 40px rgba(255, 255, 255, 0.06);
+      animation:
+        celestialPulse 10s ease-in-out infinite,
+        coreFloat 14s ease-in-out infinite;
+      isolation: isolate;
+    }
+
+    .celestial-core-ring::before {
+      content: "";
+      position: absolute;
+      inset: 8%;
+      border-radius: 50%;
+      border: 1px dashed rgba(234, 215, 170, 0.18);
+      opacity: 0.8;
+      animation: coreHalo 18s linear infinite;
+    }
+
+    .celestial-core-ring::after {
+      content: "";
+      position: absolute;
+      inset: 0;
+      border-radius: 50%;
+      pointer-events: none;
+      background:
+        radial-gradient(circle at center, rgba(255,255,255,0), rgba(255,255,255,0) 58%, rgba(255,255,255,0.04) 72%, rgba(255,255,255,0) 78%);
+      animation: dialAura 18s linear infinite;
+      mix-blend-mode: screen;
+      z-index: 3;
+    }
+
+    .celestial-core-orbit {
+      position: absolute;
+      inset: 8%;
+      border-radius: 50%;
+      border: 1px solid rgba(255, 255, 255, 0.07);
+      pointer-events: none;
+      z-index: 1;
+    }
+
+    .celestial-core-orbit.is-outer {
+      inset: 4%;
+      animation: orbitSpin 28s linear infinite;
+    }
+
+    .celestial-core-orbit.is-middle {
+      inset: 12%;
+      animation: orbitSpinReverse 22s linear infinite;
+    }
+
+    .celestial-core-orbit.is-inner {
+      inset: 20%;
+      animation: orbitSpin 16s linear infinite;
+      opacity: 0.8;
+    }
+
+    .orbit-dot {
+      position: absolute;
+      top: -7px;
+      left: 50%;
+      width: 14px;
+      height: 14px;
+      margin-left: -7px;
+      border-radius: 50%;
+      background: radial-gradient(circle, rgba(255,255,255,0.95), rgba(234,215,170,0.72) 70%, rgba(234,215,170,0) 100%);
+      box-shadow:
+        0 0 14px rgba(255, 236, 194, 0.24),
+        0 0 30px rgba(142, 168, 255, 0.18);
+    }
+
+    .orbit-dot-b {
+      width: 10px;
+      height: 10px;
+      margin-left: -5px;
+      top: auto;
+      bottom: -5px;
+      left: 22%;
+      background: radial-gradient(circle, rgba(255,255,255,0.95), rgba(142,168,255,0.74) 70%, rgba(142,168,255,0) 100%);
+    }
+
+    .orbit-dot-c {
+      width: 8px;
+      height: 8px;
+      margin-left: -4px;
+      top: 18%;
+      left: auto;
+      right: -4px;
+      background: radial-gradient(circle, rgba(255,255,255,0.95), rgba(169,230,255,0.72) 70%, rgba(169,230,255,0) 100%);
+    }
+
+    .celestial-core-sparkles {
+      position: absolute;
+      inset: 0;
+      border-radius: 50%;
+      pointer-events: none;
+      z-index: 1;
+      opacity: 0.34;
+      background:
+        radial-gradient(circle at 28% 32%, rgba(255,255,255,0.20), transparent 2.2%),
+        radial-gradient(circle at 67% 26%, rgba(255,255,255,0.14), transparent 2%),
+        radial-gradient(circle at 74% 64%, rgba(255,255,255,0.18), transparent 2.2%),
+        radial-gradient(circle at 36% 74%, rgba(255,255,255,0.12), transparent 2%);
+      animation: sparkleDrift 12s ease-in-out infinite alternate;
+    }
+
+    .celestial-core {
+      width: 100%;
+      height: 100%;
+      border-radius: 50%;
+      display: grid;
+      place-items: center;
+      padding: 1.45rem;
+      text-align: center;
+      background:
+        radial-gradient(circle at 50% 28%, rgba(169, 230, 255, 0.16), transparent 18%),
+        radial-gradient(circle at center, rgba(14, 30, 66, 0.94), rgba(4, 9, 20, 0.98) 72%);
+      border: 1px solid rgba(190, 216, 255, 0.14);
+      box-shadow:
+        inset 0 0 30px rgba(142, 168, 255, 0.18),
+        inset 0 -30px 50px rgba(0, 0, 0, 0.42);
+      position: relative;
+      overflow: hidden;
+      z-index: 2;
+    }
+
+    .celestial-core::before {
+      content: "";
+      position: absolute;
+      inset: 6%;
+      border-radius: 50%;
+      border: 1px solid rgba(142, 168, 255, 0.12);
+      pointer-events: none;
+    }
+
+    .celestial-core::after {
+      content: "";
+      position: absolute;
+      inset: -10%;
+      border-radius: 50%;
+      pointer-events: none;
+      opacity: 0.22;
+      background:
+        radial-gradient(circle at 35% 34%, rgba(255,255,255,0.16), transparent 10%),
+        radial-gradient(circle at 65% 58%, rgba(255,255,255,0.10), transparent 12%);
+      animation: mistPulse 12s ease-in-out infinite;
+    }
+
+    .celestial-core-content {
+      position: relative;
+      z-index: 1;
+      display: grid;
+      gap: 0.9rem;
+      width: 100%;
+      max-width: 320px;
+    }
+
+    .celestial-core-label {
+      font-size: 0.72rem;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+      color: var(--gold-soft);
+    }
+
+    .celestial-core-phase {
+      font-size: clamp(1.6rem, 3vw, 2.15rem);
+      line-height: 1.06;
+      font-weight: 700;
+      color: #ffffff;
+    }
+
+    .celestial-core-divider {
+      width: 100%;
+      height: 1px;
+      background: linear-gradient(90deg, transparent, rgba(234, 215, 170, 0.22), transparent);
+    }
+
+    .celestial-core-line {
+      display: grid;
+      gap: 0.18rem;
+    }
+
+    .celestial-core-line span {
+      font-size: 0.68rem;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: rgba(196, 208, 255, 0.72);
+    }
+
+    .celestial-core-line strong {
+      font-size: 1rem;
+      line-height: 1.35;
+      color: #ffffff;
+      font-weight: 600;
+    }
+
+    .celestial-bias-pill {
+      justify-self: center;
+      display: inline-flex;
+      align-items: center;
+      min-height: 36px;
+      padding: 0.55rem 0.9rem;
+      border-radius: 999px;
+      border: 1px solid rgba(142, 168, 255, 0.18);
+      background: rgba(142, 168, 255, 0.07);
+      color: var(--text);
+      font-size: 0.84rem;
+      letter-spacing: 0.04em;
+    }
+
+    .celestial-ledger {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 0.85rem;
+    }
+
+    .ledger-cell {
+      position: relative;
+      overflow: hidden;
+      padding: 1rem 1rem 0.95rem;
+      border-radius: 22px;
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      background:
+        linear-gradient(180deg, rgba(18, 24, 40, 0.92), rgba(11, 16, 28, 0.97));
+      box-shadow: var(--shadow-sm);
+      text-align: center;
+    }
+
+    .ledger-cell::before {
+      content: "";
+      position: absolute;
+      inset: auto 0 0;
+      height: 2px;
+      background: linear-gradient(90deg, rgba(142,168,255,0.12), rgba(234,215,170,0.24), rgba(142,168,255,0.12));
+    }
+
+    .ledger-cell span {
+      display: block;
+      font-size: 0.68rem;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--blue-soft);
+      margin-bottom: 0.35rem;
+    }
+
+    .ledger-cell strong {
+      display: block;
+      color: #ffffff;
+      font-size: 1rem;
+      line-height: 1.45;
+      font-weight: 600;
+    }
+
+    .celestial-footer-actions {
+      display: flex;
+      justify-content: flex-start;
+      align-items: center;
+      gap: 0.8rem;
+      flex-wrap: wrap;
+    }
+
+    .celestial-timestamp {
+      color: rgba(226, 232, 255, 0.7);
+      font-size: 0.92rem;
+      line-height: 1.55;
+    }
+
+    .celestial-omen-flash {
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      z-index: 2;
+      opacity: 0;
+      background:
+        radial-gradient(circle at 52% 20%, rgba(255,255,255,0.16), transparent 16%),
+        radial-gradient(circle at 48% 12%, rgba(142,168,255,0.12), transparent 20%);
+    }
+
+    body.state-omen-flash .celestial-omen-flash {
+      animation: omenFlash 15s ease-in-out infinite;
+    }
+
+    body.state-yang .celestial-hero,
+    body.state-yang .celestial-chamber,
+    body.state-yang .ledger-cell {
+      box-shadow: 0 28px 60px rgba(120, 94, 42, 0.22);
+    }
+
+    body.state-yin .celestial-hero,
+    body.state-yin .celestial-chamber,
+    body.state-yin .ledger-cell {
+      box-shadow: 0 28px 60px rgba(52, 62, 108, 0.22);
+    }
+
+    body.state-taiji .celestial-hero,
+    body.state-taiji .celestial-chamber,
+    body.state-taiji .ledger-cell {
+      box-shadow: 0 28px 60px rgba(74, 88, 120, 0.22);
+    }
+
+    body.state-yang .celestial-core-ring {
+      filter: saturate(1.08) brightness(1.06);
+    }
+
+    body.state-yin .celestial-core-ring {
+      filter: saturate(0.94) brightness(0.96);
+    }
+
+    body.state-taiji .celestial-core-ring {
+      filter: saturate(1) brightness(1.02);
+    }
+
+    body.state-yang .celestial-core-orbit .orbit-dot {
+      box-shadow:
+        0 0 18px rgba(255, 226, 154, 0.32),
+        0 0 34px rgba(234, 215, 170, 0.24);
+    }
+
+    body.state-yin .celestial-core-orbit .orbit-dot {
+      box-shadow:
+        0 0 16px rgba(160, 186, 255, 0.24),
+        0 0 30px rgba(95, 208, 255, 0.14);
+    }
+
+    body.state-mist .celestial-chamber::after {
+      opacity: 0.48;
+      background:
+        radial-gradient(circle at 18% 36%, rgba(255,255,255,0.08), transparent 16%),
+        radial-gradient(circle at 56% 46%, rgba(255,255,255,0.06), transparent 18%),
+        radial-gradient(circle at 82% 24%, rgba(255,255,255,0.05), transparent 16%);
+      animation: mistDrift 18s ease-in-out infinite alternate;
+    }
+
+    body.state-mist .celestial-core::after {
+      opacity: 0.34;
+      animation-duration: 8s;
+    }
+
+    body.state-clear .celestial-hero::after {
+      background: linear-gradient(180deg, transparent, rgba(255, 224, 170, 0.10));
+    }
+
+    body.state-clear .celestial-core-ring::after {
+      opacity: 0.36;
+    }
+
+    body.state-storm .celestial-core-ring {
+      animation-duration: 7s, 10s;
+      filter: saturate(1.08) brightness(1.02);
+    }
+
+    body.state-storm .celestial-core-orbit.is-outer {
+      animation-duration: 18s;
+    }
+
+    body.state-storm .celestial-core-orbit.is-middle {
+      animation-duration: 14s;
+    }
+
+    body.state-storm .celestial-omen-flash {
+      animation: omenFlash 8s ease-in-out infinite;
+    }
+
+    @keyframes celestialTicker {
+      0% { transform: translateX(100%); }
+      100% { transform: translateX(-100%); }
+    }
+
+    @keyframes celestialPulse {
+      0%, 100% {
+        transform: scale(1);
+        box-shadow:
+          0 0 0 2px rgba(255, 235, 192, 0.08),
+          0 0 44px rgba(94, 160, 255, 0.16),
+          inset 0 0 40px rgba(255, 255, 255, 0.06);
+      }
+      50% {
+        transform: scale(1.02);
+        box-shadow:
+          0 0 0 2px rgba(255, 235, 192, 0.1),
+          0 0 58px rgba(94, 160, 255, 0.24),
+          inset 0 0 48px rgba(255, 255, 255, 0.08);
+      }
+    }
+
+    @keyframes coreFloat {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-6px); }
+    }
+
+    @keyframes dialAura {
+      0% { transform: rotate(0deg); opacity: 0.18; }
+      50% { opacity: 0.32; }
+      100% { transform: rotate(360deg); opacity: 0.18; }
+    }
+
+    @keyframes coreHalo {
+      0% { transform: rotate(0deg); opacity: 0.65; }
+      50% { opacity: 0.9; }
+      100% { transform: rotate(360deg); opacity: 0.65; }
+    }
+
+    @keyframes orbitSpin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+
+    @keyframes orbitSpinReverse {
+      0% { transform: rotate(360deg); }
+      100% { transform: rotate(0deg); }
+    }
+
+    @keyframes mistPulse {
+      0%, 100% { transform: scale(1); opacity: 0.18; }
+      50% { transform: scale(1.05); opacity: 0.34; }
+    }
+
+    @keyframes sparkleDrift {
+      0% { transform: rotate(0deg) scale(1); opacity: 0.22; }
+      100% { transform: rotate(10deg) scale(1.04); opacity: 0.4; }
+    }
+
+    @keyframes skyDrift {
+      0% { transform: translate3d(-1%, 0, 0) scale(1); }
+      100% { transform: translate3d(1.5%, -1%, 0) scale(1.03); }
+    }
+
+    @keyframes mistDrift {
+      0% { transform: translate3d(-2%, 0, 0) scale(1); }
+      100% { transform: translate3d(2%, -1.2%, 0) scale(1.05); }
+    }
+
+    @keyframes omenFlash {
+      0%, 100% { opacity: 0; }
+      3% { opacity: 0.08; }
+      5% { opacity: 0.22; }
+      7% { opacity: 0.05; }
+      12% { opacity: 0; }
+      62% { opacity: 0; }
+      64% { opacity: 0.06; }
+      66% { opacity: 0.16; }
+      68% { opacity: 0.04; }
+      72% { opacity: 0; }
+    }
+
+    @media (max-width: 1100px) {
+      .celestial-chamber {
+        grid-template-columns: 1fr;
+      }
+
+      .chamber-column {
+        grid-template-columns: 1fr 1fr;
+      }
+    }
+
+    @media (max-width: 760px) {
+      .celestial-page {
+        width: min(100% - 1rem, 1240px);
+        margin-top: 1rem;
+      }
+
+      .celestial-hero {
+        padding: 1rem;
+      }
+
+      .chamber-column {
+        grid-template-columns: 1fr;
+      }
+
+      .celestial-ledger {
+        grid-template-columns: 1fr 1fr;
+      }
+
+      .celestial-hero-actions .primary,
+      .celestial-omen-link {
+        width: 100%;
+      }
+    }
+
+    @media (max-width: 560px) {
+      .celestial-ledger {
+        grid-template-columns: 1fr;
+      }
+
+      .celestial-footer-actions {
+        flex-direction: column;
+        align-items: stretch;
+      }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      .celestial-report-text,
+      .celestial-core-ring,
+      .celestial-core-ring::before,
+      .celestial-core-ring::after,
+      .celestial-core::after,
+      .celestial-core-orbit,
+      .celestial-core-sparkles,
+      .celestial-chamber::after,
+      .celestial-omen-flash {
+        animation: none !important;
+      }
+    }
+  </style>
+</head>
+<body class="state-taiji">
+  <div class="cloud-layer"></div>
+  <div class="rune-layer"></div>
+  <div class="lightning-flash"></div>
+  <div class="celestial-omen-flash"></div>
+
+  <nav>
+    <a href="/index.html">Home</a>
+    <a href="/lore.html">Lore</a>
+
+    <div class="nav-session-links is-visible">
+      <a href="/dashboard.html">Dashboard</a>
+      <a href="/breath-of-celestial.html" class="active">Celestial</a>
+      <a href="/login.html" id="logout-button">Logout</a>
+    </div>
+  </nav>
+
+  <main class="celestial-page">
+    <section class="celestial-hero">
+      <div class="celestial-hero-copy">
+        <span class="celestial-eyebrow">Global Heavens Chamber</span>
+        <h1 class="celestial-title">Breath of Celestial</h1>
+        <p class="celestial-title-subline">
+          Read the current world weather, see what sky shift approaches next,
+          and follow the latest heavenly forecast in Second Life Time.
+        </p>
+
+        <div class="celestial-hero-note">
+          <strong>SLT Only</strong>
+          <span>All celestial readings and forecast lines follow Second Life Time.</span>
+        </div>
+
+        <div class="celestial-hero-actions">
+          <button type="button" class="primary" id="refreshCelestialButton">Refresh Sky</button>
+          <a href="/celestial-omen.html" class="celestial-omen-link">Celestial Omen</a>
+        </div>
+      </div>
+    </section>
+
+    <section class="celestial-report-strip" aria-label="Celestial Report Forecast">
+      <div class="celestial-report-label">Celestial Report</div>
+      <div class="celestial-report-track">
+        <div id="celestialReportText" class="celestial-report-text">
+          Reading the latest heavenly forecast...
+        </div>
+      </div>
+    </section>
+
+    <div id="celestialLoading" class="celestial-loading">
+      Loading celestial state...
+    </div>
+
+    <div id="celestialError" class="celestial-error celestial-hidden">
+      Unable to load the Breath of Celestial.
+    </div>
+
+    <section id="celestialContent" class="celestial-content celestial-hidden">
+      <section class="celestial-chamber">
+        <div class="chamber-column">
+          <article class="chamber-card">
+            <span class="chamber-card-label">Current Sky Reading</span>
+            <h2 id="currentReadingTitle">--</h2>
+            <p id="currentReadingText">--</p>
+          </article>
+
+          <article class="chamber-card">
+            <span class="chamber-card-label">Forecast Horizon</span>
+            <h3 id="forecastCardTitle">--</h3>
+            <p id="forecastCardText">--</p>
+          </article>
+        </div>
+
+        <div class="celestial-core-wrap">
+          <div class="celestial-core-ring">
+            <div class="celestial-core-orbit is-outer">
+              <span class="orbit-dot orbit-dot-a"></span>
+            </div>
+            <div class="celestial-core-orbit is-middle">
+              <span class="orbit-dot orbit-dot-b"></span>
+            </div>
+            <div class="celestial-core-orbit is-inner">
+              <span class="orbit-dot orbit-dot-c"></span>
+            </div>
+            <div class="celestial-core-sparkles"></div>
+
+            <div class="celestial-core">
+              <div class="celestial-core-content">
+                <div class="celestial-core-label">Celestial Core</div>
+
+                <div id="corePhaseName" class="celestial-core-phase">--</div>
+
+                <div class="celestial-core-divider"></div>
+
+                <div class="celestial-core-line">
+                  <span>Nature Force</span>
+                  <strong id="coreForceName">--</strong>
+                </div>
+
+                <div class="celestial-core-line">
+                  <span>Active Phenomenon</span>
+                  <strong id="corePhenomenonName">--</strong>
+                </div>
+
+                <div class="celestial-bias-pill" id="coreBiasPill">
+                  Effective Bias: --
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="chamber-column">
+          <article class="chamber-card">
+            <span class="chamber-card-label">Celestial Year</span>
+            <div id="yearPanelValue" class="chamber-card-value">--</div>
+            <div id="yearPanelSubtext" class="chamber-card-subtext">--</div>
+          </article>
+
+          <article class="chamber-card">
+            <span class="chamber-card-label">Heavenly Decree</span>
+            <h3 id="decreeTitle">--</h3>
+            <p id="decreeText">--</p>
+          </article>
+        </div>
+      </section>
+
+      <section class="celestial-ledger">
+        <div class="ledger-cell">
+          <span>Era</span>
+          <strong id="ledgerEra">--</strong>
+        </div>
+
+        <div class="ledger-cell">
+          <span>Year Title</span>
+          <strong id="ledgerYearTitle">--</strong>
+        </div>
+
+        <div class="ledger-cell">
+          <span>Phenomenon</span>
+          <strong id="ledgerPhenomenon">--</strong>
+        </div>
+
+        <div class="ledger-cell">
+          <span>SLT Reading</span>
+          <strong id="ledgerSlt">--</strong>
+        </div>
+      </section>
+
+      <div class="celestial-footer-actions">
+        <div class="celestial-timestamp" id="celestialTimestamp">
+          Last heavenly reading: --
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    The Ascendant Path • The Heavens Shift, The World Answers
+  </footer>
+
+  <script>
+    const LOGIN_PAGE_URL = "/login.html";
+    const VERIFY_SESSION_URL = "/.netlify/functions/verify-session";
+    const LOGOUT_URL = "/.netlify/functions/logout";
+    const CELESTIAL_WORLD_ENDPOINT = "/.netlify/functions/load-world-celestial-state";
+
+    const PHASE_ORDER = [
+      { key: "moon_grave_silence", name: "Moon Grave Silence", startHour: 0 },
+      { key: "veil_of_first_breath", name: "Veil of First Breath", startHour: 4 },
+      { key: "golden_meridian", name: "Golden Meridian", startHour: 8 },
+      { key: "zenith_of_heaven", name: "Zenith of Heaven", startHour: 12 },
+      { key: "ashen_descent", name: "Ashen Descent", startHour: 16 },
+      { key: "night_tide_omen", name: "Night Tide Omen", startHour: 20 }
+    ];
+
+    const pageState = {
+      member: null,
+      refreshInterval: null,
+      refreshInFlight: false
+    };
+
+    function safeText(value, fallback = "--") {
+      const text = String(value ?? "").trim();
+      return text || fallback;
+    }
+
+    function normalizeKey(value) {
+      return String(value ?? "")
+        .trim()
+        .toLowerCase()
+        .replace(/[^a-z0-9]+/g, "_")
+        .replace(/^_+|_+$/g, "");
+    }
+
+    function clearClientSessionArtifacts() {
+      const keysToRemove = [
+        "session",
+        "sessionToken",
+        "session_token",
+        "websiteSession",
+        "website_session",
+        "member",
+        "memberState",
+        "member_state",
+        "user",
+        "user_state",
+        "sl_username",
+        "slUsername",
+        "avatar_key",
+        "avatarKey",
+        "selected_partnership_uuid",
+        "selectedPartnershipUuid"
+      ];
+
+      for (const key of keysToRemove) {
+        try { localStorage.removeItem(key); } catch (_) {}
+        try { sessionStorage.removeItem(key); } catch (_) {}
+      }
+    }
+
+    function redirectToLogin() {
+      clearClientSessionArtifacts();
+      window.location.href = LOGIN_PAGE_URL;
+    }
+
+    async function authFetch(url, options = {}) {
+      const response = await fetch(url, {
+        ...options,
+        credentials: "include",
+        cache: "no-store",
+        headers: {
+          Accept: "application/json",
+          ...(options.headers || {})
+        }
+      });
+
+      if (response.status === 401 || response.status === 403) {
+        redirectToLogin();
+        throw new Error("Your session has expired. Please sign in again.");
+      }
+
+      return response;
+    }
+
+    async function verifySession() {
+      const response = await authFetch(VERIFY_SESSION_URL, {
+        method: "GET"
+      });
+
+      const rawText = await response.text();
+      let payload = null;
+
+      try {
+        payload = rawText ? JSON.parse(rawText) : null;
+      } catch {
+        payload = null;
+      }
+
+      if (!response.ok || !payload?.success) {
+        redirectToLogin();
+        throw new Error(payload?.message || "Unable to verify session.");
+      }
+
+      pageState.member = payload.member || payload.session?.member || payload.user || null;
+      return payload;
+    }
+
+    async function logoutUser() {
+      try {
+        await fetch(LOGOUT_URL, {
+          method: "POST",
+          credentials: "include"
+        });
+      } catch (error) {
+        console.error("Logout request error:", error);
+      } finally {
+        clearClientSessionArtifacts();
+        window.location.href = LOGIN_PAGE_URL;
+      }
+    }
+
+    function displayBias(value) {
+      const key = normalizeKey(value);
+
+      if (key === "yin") return "Yin";
+      if (key === "yang") return "Yang";
+      if (key === "balance" || key === "balanced" || key === "taiji") return "Taiji";
+
+      return safeText(value);
+    }
+
+    function normalizePathShiftLabel(value) {
+      const key = normalizeKey(value);
+
+      if (!key) return "--";
+      if (key === "yin_to_balance") return "Yin to Taiji";
+      if (key === "yang_to_balance") return "Yang to Taiji";
+      if (key === "balance_to_yin") return "Taiji to Yin";
+      if (key === "balance_to_yang") return "Taiji to Yang";
+      if (key === "yin_to_taiji") return "Yin to Taiji";
+      if (key === "yang_to_taiji") return "Yang to Taiji";
+      if (key === "taiji_to_yin") return "Taiji to Yin";
+      if (key === "taiji_to_yang") return "Taiji to Yang";
+
+      return key
+        .split("_")
+        .map(part => part.charAt(0).toUpperCase() + part.slice(1))
+        .join(" ");
+    }
+
+    function celestialMonthName(monthNumber) {
+      const months = [
+        "Dawnveil",
+        "Jadeblossom",
+        "Suncrest",
+        "Ashveil",
+        "Goldleaf",
+        "Stormtide",
+        "Emberwake",
+        "Moonrest",
+        "Silvershade",
+        "Frostmere",
+        "Nightbloom",
+        "Starfall"
+      ];
+
+      return months[Number(monthNumber) - 1] || "";
+    }
+
+    function parseWallClockParts(value) {
+      if (value == null) return null;
+
+      const raw = String(value).trim();
+      if (!raw) return null;
+
+      const match = raw.match(
+        /^(\d{4})-(\d{2})-(\d{2})(?:[T\s](\d{2}):(\d{2})(?::(\d{2}))?)?/
+      );
+
+      if (!match) return null;
+
+      return {
+        year: Number(match[1]),
+        month: Number(match[2]),
+        day: Number(match[3]),
+        hour: Number(match[4] ?? 0),
+        minute: Number(match[5] ?? 0),
+        second: Number(match[6] ?? 0)
+      };
+    }
+
+    function getSltParts(world) {
+      if (world?.slt_parts && world.slt_parts.year && world.slt_parts.month && world.slt_parts.day) {
+        return {
+          year: Number(world.slt_parts.year),
+          month: Number(world.slt_parts.month),
+          day: Number(world.slt_parts.day),
+          hour: Number(world.slt_parts.hour ?? 0),
+          minute: Number(world.slt_parts.minute ?? 0),
+          second: Number(world.slt_parts.second ?? 0)
+        };
+      }
+
+      return parseWallClockParts(world?.slt_now);
+    }
+
+    function formatHour(hour) {
+      return `${String(Number(hour)).padStart(2, "0")}:00 SLT`;
+    }
+
+    function getCurrentSltHour(world) {
+      const parts = getSltParts(world);
+      return parts ? Number(parts.hour ?? 0) : null;
+    }
+
+    function inferCurrentPhaseByHour(hour) {
+      if (hour == null || Number.isNaN(hour)) return null;
+
+      for (let i = PHASE_ORDER.length - 1; i >= 0; i -= 1) {
+        if (hour >= PHASE_ORDER[i].startHour) {
+          return PHASE_ORDER[i];
+        }
+      }
+
+      return PHASE_ORDER[0];
+    }
+
+    function getNextPhase(world) {
+      if (world?.next_phase_name) {
+        return {
+          name: world.next_phase_name,
+          startHour:
+            world.next_phase_start_hour != null
+              ? Number(world.next_phase_start_hour)
+              : null
+        };
+      }
+
+      const currentKey = normalizeKey(world?.phase_key || world?.phase_name);
+      const currentIndex = PHASE_ORDER.findIndex(phase => phase.key === currentKey);
+
+      if (currentIndex >= 0) {
+        return PHASE_ORDER[(currentIndex + 1) % PHASE_ORDER.length];
+      }
+
+      const inferred = inferCurrentPhaseByHour(getCurrentSltHour(world));
+      if (!inferred) return null;
+
+      const inferredIndex = PHASE_ORDER.findIndex(phase => phase.key === inferred.key);
+      return PHASE_ORDER[(inferredIndex + 1) % PHASE_ORDER.length];
+    }
+
+    function setText(id, value, fallback = "--") {
+      const element = document.getElementById(id);
+      if (!element) return;
+      element.textContent = safeText(value, fallback);
+    }
+
+    function lastDayOfMonth(year, month) {
+      return new Date(year, month, 0).getDate();
+    }
+
+    function nextMonthParts(year, month) {
+      if (month === 12) {
+        return { year: year + 1, month: 1 };
+      }
+      return { year, month: month + 1 };
+    }
+
+    function getDateSortKey(parts) {
+      return (parts.year * 10000) + (parts.month * 100) + parts.day;
+    }
+
+    function formatCalendarLabel(parts, world) {
+      if (!parts) return "--";
+
+      const monthText = celestialMonthName(parts.month);
+      const yearText = safeText(world?.year_title, "");
+
+      return yearText
+        ? `${parts.day} ${monthText} • ${yearText}`
+        : `${parts.day} ${monthText}`;
+    }
+
+    function buildSolarEvent(currentParts) {
+      const nextMonth = nextMonthParts(currentParts.year, currentParts.month);
+      const parts = { year: nextMonth.year, month: nextMonth.month, day: 1 };
+
+      return {
+        label: "Solar Ascendance",
+        parts,
+        sortKey: getDateSortKey(parts)
+      };
+    }
+
+    function buildLunarEvent(currentParts) {
+      const currentMonthLastDay = lastDayOfMonth(currentParts.year, currentParts.month);
+
+      if (currentParts.day < currentMonthLastDay) {
+        const parts = {
+          year: currentParts.year,
+          month: currentParts.month,
+          day: currentMonthLastDay
+        };
+
+        return {
+          label: "Lunar Descent",
+          parts,
+          sortKey: getDateSortKey(parts)
+        };
+      }
+
+      const nextMonth = nextMonthParts(currentParts.year, currentParts.month);
+      const parts = {
+        year: nextMonth.year,
+        month: nextMonth.month,
+        day: lastDayOfMonth(nextMonth.year, nextMonth.month)
+      };
+
+      return {
+        label: "Lunar Descent",
+        parts,
+        sortKey: getDateSortKey(parts)
+      };
+    }
+
+    function buildConvergenceEvent(currentParts, world) {
+      const explicitKeys = [
+        "next_convergence_at",
+        "next_convergence_slt",
+        "next_celestial_year_at",
+        "next_celestial_year_slt",
+        "next_year_shift_at",
+        "next_year_shift_slt"
+      ];
+
+      for (const key of explicitKeys) {
+        if (!world[key]) continue;
+
+        const parsed = parseWallClockParts(world[key]);
+        if (parsed) {
+          const parts = {
+            year: parsed.year,
+            month: parsed.month,
+            day: parsed.day
+          };
+
+          return {
+            label: "Convergence of the Twin Currents",
+            parts,
+            sortKey: getDateSortKey(parts)
+          };
+        }
+      }
+
+      const quarterStarts = [1, 4, 7, 10];
+      const currentKey = getDateSortKey(currentParts);
+
+      for (const month of quarterStarts) {
+        const parts = { year: currentParts.year, month, day: 1 };
+        if (getDateSortKey(parts) > currentKey) {
+          return {
+            label: "Convergence of the Twin Currents",
+            parts,
+            sortKey: getDateSortKey(parts)
+          };
+        }
+      }
+
+      const nextYearParts = { year: currentParts.year + 1, month: 1, day: 1 };
+      return {
+        label: "Convergence of the Twin Currents",
+        parts: nextYearParts,
+        sortKey: getDateSortKey(nextYearParts)
+      };
+    }
+
+    function getUpcomingCelestialEvents(world) {
+      const currentParts = getSltParts(world);
+      if (!currentParts) return [];
+
+      const events = [
+        buildSolarEvent(currentParts),
+        buildLunarEvent(currentParts),
+        buildConvergenceEvent(currentParts, world)
+      ];
+
+      return events
+        .filter(Boolean)
+        .sort((a, b) => a.sortKey - b.sortKey);
+    }
+
+    function buildForecastTicker(world) {
+      if (world.forecast_strip_text) {
+        return world.forecast_strip_text;
+      }
+
+      if (Array.isArray(world.forecast_items) && world.forecast_items.length) {
+        return world.forecast_items
+          .map(item => safeText(item))
+          .filter(Boolean)
+          .join(" • ");
+      }
+
+      const items = [];
+      const nextPhase = getNextPhase(world);
+      const events = getUpcomingCelestialEvents(world);
+
+      items.push(`Now: ${safeText(world.phase_name)} with ${safeText(world.force_name)}.`);
+
+      if (world.has_active_phenomenon && world.phenomenon_name) {
+        items.push(`${world.phenomenon_name} remains active.`);
+      } else if (world.phase_omen_text) {
+        items.push(`${world.phase_omen_text}`);
+      }
+
+      if (nextPhase?.name) {
+        const nextPhaseText = nextPhase.startHour != null
+          ? `Next sky shift: ${nextPhase.name} at ${formatHour(nextPhase.startHour)}.`
+          : `Next sky shift: ${nextPhase.name}.`;
+        items.push(nextPhaseText);
+      }
+
+      if (events[0]) {
+        items.push(`Next omen: ${events[0].label} on ${formatCalendarLabel(events[0].parts, world)}.`);
+      }
+
+      return `Celestial Report — ${items.join(" • ")}`;
+    }
+
+    function buildYearPanel(world) {
+      const pieces = [];
+
+      if (world.era_name) pieces.push(world.era_name);
+      if (world.absolute_year_number) pieces.push(`Absolute Year ${world.absolute_year_number}`);
+      if (world.year_in_era) pieces.push(`Year ${world.year_in_era} in Era`);
+
+      return {
+        title: safeText(world.year_title),
+        detail: pieces.join(" • ") || "--"
+      };
+    }
+
+    function buildForecastCard(world) {
+      const nextPhase = getNextPhase(world);
+      const nextPhaseLine = nextPhase?.name
+        ? nextPhase.startHour != null
+          ? `${nextPhase.name} follows at ${formatHour(nextPhase.startHour)}.`
+          : `${nextPhase.name} follows next.`
+        : "The next sky shift is still forming.";
+
+      const omenLine = world.has_active_phenomenon && world.phenomenon_name
+        ? `${world.phenomenon_name} is shaping the immediate heavens.`
+        : world.phase_omen_text
+          ? world.phase_omen_text
+          : "The sky remains steady for now.";
+
+      return {
+        title: nextPhase?.name ? "Next Weather Turn" : "Immediate Outlook",
+        text: `${omenLine} ${nextPhaseLine}`.trim()
+      };
+    }
+
+    function buildDecreeText(world) {
+      const pieces = [];
+
+      if (world.dashboard_effect_summary) {
+        pieces.push(world.dashboard_effect_summary);
+      } else if (world.force_description) {
+        pieces.push(`${safeText(world.force_name)} governs the world current.`);
+      }
+
+      if (world.path_shift_key) {
+        pieces.push(`Path movement: ${normalizePathShiftLabel(world.path_shift_key)}.`);
+      }
+
+      if (world.has_active_phenomenon && world.phenomenon_omen_text) {
+        pieces.push(world.phenomenon_omen_text);
+      }
+
+      return pieces.length
+        ? pieces.join(" ")
+        : "The heavens are moving in measured silence.";
+    }
+
+    function applySkyState(world) {
+      const body = document.body;
+      body.classList.remove(
+        "state-yin",
+        "state-yang",
+        "state-taiji",
+        "state-mist",
+        "state-storm",
+        "state-clear",
+        "state-omen-flash"
+      );
+
+      const bias = normalizeKey(world.effective_bias || world.phase_bias);
+      const forceKey = normalizeKey(world.force_key || world.force_name);
+      const forceVisual = normalizeKey(world.force_visual_family);
+
+      if (bias === "yin") {
+        body.classList.add("state-yin");
+      } else if (bias === "yang") {
+        body.classList.add("state-yang");
+      } else {
+        body.classList.add("state-taiji");
+      }
+
+      if (forceVisual === "mist" || forceKey.includes("fog") || forceKey.includes("mist")) {
+        body.classList.add("state-mist");
+      }
+
+      if (forceKey.includes("storm") || forceKey.includes("thunder")) {
+        body.classList.add("state-storm");
+      }
+
+      if (forceKey.includes("sunlit") || forceKey.includes("clearance") || forceVisual.includes("light")) {
+        body.classList.add("state-clear");
+      }
+
+      if (world.has_active_phenomenon || forceKey.includes("storm") || forceKey.includes("thunder")) {
+        body.classList.add("state-omen-flash");
+      }
+    }
+
+    function renderWorld(world) {
+      applySkyState(world);
+
+      const forecastCard = buildForecastCard(world);
+      const yearPanel = buildYearPanel(world);
+
+      setText("celestialReportText", buildForecastTicker(world));
+
+      setText("currentReadingTitle", safeText(world.phase_name, "Current Sky"));
+      setText(
+        "currentReadingText",
+        world.phase_omen_text || world.dashboard_effect_summary || "The heavens hold their reading in silence."
+      );
+
+      setText("forecastCardTitle", forecastCard.title);
+      setText("forecastCardText", forecastCard.text);
+
+      setText("corePhaseName", world.phase_name);
+      setText("coreForceName", world.force_name);
+      setText(
+        "corePhenomenonName",
+        world.has_active_phenomenon ? world.phenomenon_name : "Dormant"
+      );
+      setText("coreBiasPill", `Effective Bias: ${displayBias(world.effective_bias || world.phase_bias)}`);
+
+      setText("yearPanelValue", yearPanel.title);
+      setText("yearPanelSubtext", yearPanel.detail);
+
+      setText(
+        "decreeTitle",
+        world.has_active_phenomenon && world.phenomenon_name
+          ? world.phenomenon_name
+          : safeText(world.dashboard_effect_label, "Heavenly Decree")
+      );
+      setText("decreeText", buildDecreeText(world));
+
+      setText("ledgerEra", world.era_name);
+      setText("ledgerYearTitle", world.year_title);
+      setText(
+        "ledgerPhenomenon",
+        world.has_active_phenomenon ? world.phenomenon_name : "None Active"
+      );
+      setText("ledgerSlt", `${safeText(world.slt_time_text)} SLT`);
+
+      setText(
+        "celestialTimestamp",
+        world.slt_datetime_text
+          ? `Last heavenly reading: ${world.slt_datetime_text} SLT`
+          : "Last heavenly reading: --"
+      );
+    }
+
+    async function loadBreathOfCelestial(options = {}) {
+      const { silent = false } = options;
+
+      const loadingEl = document.getElementById("celestialLoading");
+      const errorEl = document.getElementById("celestialError");
+      const contentEl = document.getElementById("celestialContent");
+
+      if (!silent) {
+        loadingEl.classList.remove("celestial-hidden");
+        errorEl.classList.add("celestial-hidden");
+        contentEl.classList.add("celestial-hidden");
+      }
+
+      try {
+        const response = await authFetch(CELESTIAL_WORLD_ENDPOINT, {
+          method: "GET"
+        });
+
+        const rawText = await response.text();
+        let payload = null;
+
+        try {
+          payload = rawText ? JSON.parse(rawText) : null;
+        } catch {
+          payload = null;
+        }
+
+        if (!response.ok || !payload?.success || !payload?.world) {
+          throw new Error(
+            payload?.details ||
+            payload?.error ||
+            payload?.message ||
+            `HTTP ${response.status} ${response.statusText}`
+          );
+        }
+
+        renderWorld(payload.world);
+
+        if (!silent) {
+          loadingEl.classList.add("celestial-hidden");
+          errorEl.classList.add("celestial-hidden");
+          contentEl.classList.remove("celestial-hidden");
+        }
+      } catch (error) {
+        console.error("Breath of Celestial load error:", error);
+
+        if (!silent && !/session has expired/i.test(safeText(error.message, ""))) {
+          loadingEl.classList.add("celestial-hidden");
+          errorEl.textContent = `Unable to load the Breath of Celestial: ${error.message}`;
+          errorEl.classList.remove("celestial-hidden");
+        }
+      }
+    }
+
+    function startAutoRefresh() {
+      if (pageState.refreshInterval) {
+        clearInterval(pageState.refreshInterval);
+      }
+
+      pageState.refreshInterval = setInterval(async () => {
+        if (pageState.refreshInFlight) return;
+
+        pageState.refreshInFlight = true;
+        try {
+          await loadBreathOfCelestial({ silent: true });
+        } finally {
+          pageState.refreshInFlight = false;
+        }
+      }, 60000);
+    }
+
+    async function boot() {
+      try {
+        await verifySession();
+        await loadBreathOfCelestial({ silent: false });
+        startAutoRefresh();
+      } catch (error) {
+        console.error("Breath of Celestial boot error:", error);
+      }
+    }
+
+    document.getElementById("refreshCelestialButton").addEventListener("click", async () => {
+      await loadBreathOfCelestial({ silent: false });
+    });
+
+    document.getElementById("logout-button").addEventListener("click", async (event) => {
+      event.preventDefault();
+      await logoutUser();
+    });
+
+    document.addEventListener("DOMContentLoaded", boot);
+
+    window.addEventListener("beforeunload", () => {
+      if (pageState.refreshInterval) {
+        clearInterval(pageState.refreshInterval);
+      }
+    });
+  </script>
+</body>
+</html>

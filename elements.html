@@ -1,0 +1,1607 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Elements | The Ascendant Path</title>
+  <link rel="stylesheet" href="style.css" />
+  <style>
+  @import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@400;500;600;700&family=Cinzel+Decorative:wght@400;700&family=EB+Garamond:ital,wght@0,400;0,500;1,400&display=swap');
+
+  html, body {
+    background: #070910;
+    min-height: 100%;
+  }
+
+  /* ── PAGE SHELL ─────────────────────────────────────── */
+  .elements-shell {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 2rem 1.5rem 5rem;
+    display: flex;
+    flex-direction: column;
+    gap: 2rem;
+    position: relative;
+    z-index: 1;
+  }
+
+  /* ── HERO ────────────────────────────────────────────── */
+  .elements-hero-band {
+    position: relative;
+    border-radius: var(--radius-xl);
+    overflow: hidden;
+    background: linear-gradient(135deg, #0a0f1e 0%, #06080f 60%, #0d1525 100%);
+    border: 1px solid rgba(200,169,106,0.2);
+    padding: 3rem 2.5rem 2.5rem;
+    box-shadow: 0 0 80px rgba(200,169,106,0.06), var(--shadow-lg);
+    animation: heroReveal 0.9s cubic-bezier(0.22,1,0.36,1) both;
+  }
+
+  .elements-hero-band::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background:
+      radial-gradient(ellipse 60% 40% at 80% 50%, rgba(200,169,106,0.07) 0%, transparent 70%),
+      radial-gradient(ellipse 40% 60% at 20% 80%, rgba(142,168,255,0.05) 0%, transparent 60%);
+    pointer-events: none;
+  }
+
+  .elements-hero-band::after {
+    content: '';
+    position: absolute;
+    bottom: 0; left: 0; right: 0;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, rgba(200,169,106,0.4), transparent);
+  }
+
+  .elements-hero-main {
+    position: relative;
+    z-index: 1;
+  }
+
+  .hero-eyebrow {
+    font-family: 'Cinzel', serif;
+    font-size: 0.65rem;
+    letter-spacing: 0.3em;
+    text-transform: uppercase;
+    color: var(--gold);
+    opacity: 0.7;
+    display: block;
+    margin-bottom: 0.6rem;
+  }
+
+  .hero-name {
+    font-family: 'Cinzel Decorative', serif;
+    font-size: clamp(1.4rem, 3vw, 2.2rem);
+    font-weight: 700;
+    color: var(--gold-soft);
+    line-height: 1.15;
+    margin: 0 0 0.4rem;
+    text-shadow: 0 0 40px rgba(200,169,106,0.3);
+  }
+
+  .hero-username {
+    font-family: 'Cinzel', serif;
+    font-size: 0.72rem;
+    letter-spacing: 0.15em;
+    color: var(--muted);
+    opacity: 0.6;
+    margin: 0 0 1.2rem;
+  }
+
+  .hero-meta-row {
+    display: flex;
+    align-items: center;
+    gap: 1.5rem;
+    flex-wrap: wrap;
+    padding-top: 1rem;
+    border-top: 1px solid rgba(200,169,106,0.1);
+    margin-top: 0.5rem;
+  }
+
+  .hero-meta-item {
+    display: flex;
+    flex-direction: column;
+    gap: 0.2rem;
+  }
+
+  .hero-meta-item .label {
+    font-family: 'Cinzel', serif;
+    font-size: 0.58rem;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--muted);
+    opacity: 0.5;
+  }
+
+  .hero-meta-item .value {
+    font-family: 'Cinzel', serif;
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: var(--gold-soft);
+  }
+
+  /* Element badges */
+  .element-badge-row {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    flex-wrap: wrap;
+    margin-top: 1.2rem;
+  }
+
+  .element-badge-label {
+    font-family: 'Cinzel', serif;
+    font-size: 0.6rem;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--muted);
+    opacity: 0.45;
+    margin-right: 0.3rem;
+  }
+
+  .el-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
+    padding: 0.28rem 0.75rem;
+    border-radius: var(--radius-pill);
+    font-family: 'Cinzel', serif;
+    font-size: 0.68rem;
+    letter-spacing: 0.08em;
+    font-weight: 600;
+    border: 1px solid;
+    animation: badgeGlow 3s ease-in-out infinite;
+  }
+
+  .el-badge.primary   { background: rgba(200,169,106,0.1); border-color: rgba(200,169,106,0.4); color: var(--gold-soft); }
+  .el-badge.secondary { background: rgba(142,168,255,0.08); border-color: rgba(142,168,255,0.3); color: var(--blue-soft); animation-delay: 0.5s; }
+  .el-badge.derived   { background: rgba(127,179,155,0.08); border-color: rgba(127,179,155,0.3); color: var(--jade); animation-delay: 1s; }
+  .el-badge.third     { background: rgba(180,130,255,0.08); border-color: rgba(180,130,255,0.3); color: #c9a8ff; animation-delay: 1.5s; }
+  .el-badge.empty     { background: rgba(255,255,255,0.03); border-color: rgba(255,255,255,0.1); color: var(--muted); opacity: 0.4; animation: none; }
+
+  .el-badge-dot {
+    width: 5px; height: 5px;
+    border-radius: 50%;
+    background: currentColor;
+    opacity: 0.7;
+    flex-shrink: 0;
+  }
+
+  /* ── ELEMENT SANCTUM ─────────────────────────────────── */
+  .element-sanctum-band {
+    background: #1a2540;
+    border: 1px solid rgba(200,169,106,0.35);
+    border-radius: var(--radius-xl);
+    overflow: hidden;
+    animation: slideUp 0.7s cubic-bezier(0.22,1,0.36,1) 0.1s both;
+    box-shadow: var(--shadow-md);
+  }
+
+  .element-sanctum {
+    padding: 1.5rem 2rem 2rem;
+  }
+
+  .sanctum-label {
+    font-family: 'Cinzel', serif;
+    font-size: 0.72rem;
+    letter-spacing: 0.25em;
+    text-transform: uppercase;
+    color: var(--gold);
+    display: block;
+    margin-bottom: 1.5rem;
+  }
+
+  .element-core-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 1rem;
+  }
+
+  .element-core-card {
+    background: var(--surface-2);
+    border: 1px solid var(--border-soft);
+    border-radius: var(--radius-lg);
+    padding: 1.2rem 1.4rem;
+    position: relative;
+    transition: border-color 0.3s, box-shadow 0.3s;
+    border-top: 2px solid var(--gold);
+  }
+
+  .element-core-card:nth-child(2) { border-top-color: var(--blue-soft); }
+  .element-core-card:nth-child(3) { border-top-color: var(--jade); }
+  .element-core-card:nth-child(4) { border-top-color: #c9a8ff; }
+
+  .element-core-card:hover {
+    border-color: rgba(200,169,106,0.2);
+    box-shadow: 0 8px 24px rgba(0,0,0,0.15);
+  }
+
+  .element-core-card > span:first-child {
+    font-family: 'Cinzel', serif;
+    font-size: 0.58rem;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--muted);
+    opacity: 0.55;
+    display: block;
+    margin-bottom: 0.5rem;
+  }
+
+  .element-core-card h3 {
+    font-family: 'Cinzel Decorative', serif;
+    font-size: 1.2rem;
+    font-weight: 700;
+    color: var(--gold-soft);
+    margin: 0 0 0.5rem;
+    line-height: 1.2;
+  }
+
+  .element-core-card:nth-child(2) h3 { color: var(--blue-soft); }
+  .element-core-card:nth-child(3) h3 { color: var(--jade); }
+  .element-core-card:nth-child(4) h3 { color: #c9a8ff; }
+
+  .status-line {
+    font-family: 'Cinzel', serif;
+    font-size: 0.6rem;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    padding: 0.2rem 0.6rem;
+    border-radius: var(--radius-pill);
+    display: inline-block;
+    margin-bottom: 0.6rem;
+    background: rgba(200,169,106,0.1);
+    color: var(--gold);
+    border: 1px solid rgba(200,169,106,0.2);
+  }
+
+  .element-core-card p {
+    font-family: 'EB Garamond', serif;
+    font-size: 0.85rem;
+    color: var(--muted-soft);
+    line-height: 1.5;
+    margin: 0;
+    opacity: 0.75;
+  }
+
+  .third-actions {
+    margin-top: 0.8rem;
+    display: flex;
+    gap: 0.5rem;
+    flex-wrap: wrap;
+  }
+
+  .ritual-button {
+    font-family: 'Cinzel', serif;
+    font-size: 0.62rem;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    font-weight: 600;
+    padding: 0.5rem 1.2rem;
+    border-radius: var(--radius-pill);
+    cursor: pointer;
+    border: 1px solid;
+    transition: all 0.25s;
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+  }
+
+  .ritual-button.hidden { display: none; }
+
+  .ritual-button.secondary {
+    background: transparent;
+    border-color: rgba(200,169,106,0.3);
+    color: var(--gold);
+  }
+
+  .ritual-button.secondary:hover {
+    background: rgba(200,169,106,0.08);
+    border-color: var(--gold);
+  }
+
+  /* ── ROOT BALANCE ────────────────────────────────────── */
+  .root-hall {
+    background: #1a2540;
+    border: 1px solid rgba(200,169,106,0.35);
+    border-radius: var(--radius-xl);
+    padding: 2rem;
+    animation: slideUp 0.7s cubic-bezier(0.22,1,0.36,1) 0.2s both;
+  }
+
+  .band-head {
+    margin-bottom: 1.5rem;
+  }
+
+  .band-head > span {
+    font-family: 'Cinzel', serif;
+    font-size: 0.72rem;
+    letter-spacing: 0.25em;
+    text-transform: uppercase;
+    color: var(--gold);
+    display: block;
+    margin-bottom: 0.4rem;
+  }
+
+  .band-head h2 {
+    font-family: 'Cinzel', serif;
+    font-size: 1rem;
+    font-weight: 600;
+    color: var(--text);
+    margin: 0 0 0.4rem;
+  }
+
+  .band-head p {
+    font-family: 'EB Garamond', serif;
+    font-size: 0.9rem;
+    color: var(--muted-soft);
+    margin: 0;
+    opacity: 0.7;
+    line-height: 1.5;
+  }
+
+  .root-pillars {
+    display: flex;
+    flex-direction: column;
+    gap: 0.8rem;
+  }
+
+  .root-pillar {
+    display: grid;
+    grid-template-columns: 70px 1fr 40px;
+    align-items: center;
+    gap: 1rem;
+  }
+
+  .root-pillar-name {
+    font-family: 'Cinzel', serif;
+    font-size: 0.68rem;
+    letter-spacing: 0.1em;
+    color: var(--muted);
+    text-align: right;
+  }
+
+  .root-pillar-bar {
+    height: 8px;
+    background: rgba(255,255,255,0.06);
+    border-radius: 4px;
+    overflow: hidden;
+  }
+
+  .root-pillar-fill {
+    height: 100%;
+    border-radius: 4px;
+    background: linear-gradient(90deg, var(--gold), var(--gold-soft));
+    transition: width 0.8s cubic-bezier(0.22,1,0.36,1);
+    width: 0%;
+  }
+
+  .root-pillar-value {
+    font-family: 'Cinzel', serif;
+    font-size: 0.68rem;
+    color: var(--gold-soft);
+    font-weight: 600;
+  }
+
+  /* ── ROOT LEDGER ─────────────────────────────────────── */
+  .root-breakdown-wrap {
+    animation: slideUp 0.7s cubic-bezier(0.22,1,0.36,1) 0.3s both;
+  }
+
+  .root-breakdown-band {
+    background: #1a2540;
+    border: 1px solid rgba(200,169,106,0.35);
+    border-radius: var(--radius-xl);
+    padding: 2rem;
+  }
+
+  .root-meta-strip {
+    display: flex;
+    gap: 0.5rem;
+    flex-wrap: wrap;
+    margin-bottom: 1.5rem;
+  }
+
+  .meta-pill {
+    font-family: 'Cinzel', serif;
+    font-size: 0.6rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    padding: 0.25rem 0.7rem;
+    border-radius: var(--radius-pill);
+    background: var(--surface-2);
+    border: 1px solid var(--border-soft);
+    color: var(--muted);
+  }
+
+  .root-ledger-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 1rem;
+  }
+
+  .root-ledger-card {
+    background: var(--surface-2);
+    border: 1px solid var(--border-soft);
+    border-radius: var(--radius-lg);
+    padding: 1.2rem;
+    border-left: 3px solid var(--gold);
+  }
+
+  .root-ledger-card:nth-child(2) { border-left-color: var(--blue-soft); }
+  .root-ledger-card:nth-child(3) { border-left-color: var(--jade); }
+  .root-ledger-card:nth-child(4) { border-left-color: #c9a8ff; }
+
+  .root-ledger-card > span {
+    font-family: 'Cinzel', serif;
+    font-size: 0.58rem;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--muted);
+    opacity: 0.5;
+    display: block;
+    margin-bottom: 0.3rem;
+  }
+
+  .root-ledger-card h3 {
+    font-family: 'Cinzel', serif;
+    font-size: 0.75rem;
+    font-weight: 600;
+    color: var(--gold-soft);
+    margin: 0 0 0.8rem;
+  }
+
+  .root-ledger-card:nth-child(2) h3 { color: var(--blue-soft); }
+  .root-ledger-card:nth-child(3) h3 { color: var(--jade); }
+  .root-ledger-card:nth-child(4) h3 { color: #c9a8ff; }
+
+  .root-ledger-card p {
+    font-family: 'EB Garamond', serif;
+    font-size: 0.8rem;
+    color: var(--muted-soft);
+    margin: 0 0 0.8rem;
+    opacity: 0.65;
+    line-height: 1.4;
+  }
+
+  .root-ledger-list {
+    display: flex;
+    flex-direction: column;
+    gap: 0.35rem;
+  }
+
+  .root-ledger-line {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-family: 'Cinzel', serif;
+    font-size: 0.65rem;
+    padding: 0.25rem 0;
+    border-bottom: 1px solid rgba(255,255,255,0.04);
+  }
+
+  .root-ledger-line:last-child { border-bottom: none; }
+
+  .root-ledger-line span {
+    color: var(--muted);
+    letter-spacing: 0.08em;
+  }
+
+  .root-ledger-line strong {
+    color: var(--gold-soft);
+    font-weight: 600;
+  }
+
+  /* ── STATUS / MESSAGES ───────────────────────────────── */
+  .login-error {
+    text-align: center;
+    padding: 3rem;
+    font-family: 'EB Garamond', serif;
+    color: var(--muted);
+  }
+
+  .is-hidden { display: none \!important; }
+
+  /* ── ANIMATIONS ──────────────────────────────────────── */
+  @keyframes heroReveal {
+    from { opacity: 0; transform: translateY(-16px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+
+  @keyframes slideUp {
+    from { opacity: 0; transform: translateY(24px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+
+  @keyframes badgeGlow {
+    0%, 100% { box-shadow: 0 0 0 rgba(200,169,106,0); }
+    50%       { box-shadow: 0 0 12px rgba(200,169,106,0.2); }
+  }
+
+  /* ── PARTICLE SYSTEM ─────────────────────────────────── */
+  .qi-particles {
+    position: fixed;
+    inset: 0;
+    pointer-events: none;
+    z-index: 0;
+    overflow: hidden;
+  }
+
+  .qi-particle {
+    position: absolute;
+    bottom: -10px;
+    width: 3px;
+    height: 3px;
+    border-radius: 50%;
+    background: radial-gradient(circle, rgba(200,169,106,0.9), rgba(200,169,106,0));
+    animation: qiFloat linear infinite;
+    filter: blur(0.5px);
+  }
+
+  @keyframes qiFloat {
+    0%   { transform: translateY(0) translateX(0) scale(1); opacity: 0; }
+    10%  { opacity: 1; }
+    90%  { opacity: 0.6; }
+    100% { transform: translateY(-110vh) translateX(var(--drift)) scale(0.3); opacity: 0; }
+  }
+
+  /* ── HERO NAME SHIMMER ───────────────────────────────── */
+  .hero-name {
+    background: linear-gradient(
+      90deg,
+      var(--gold-soft) 0%,
+      #fff8e7 40%,
+      var(--gold-soft) 50%,
+      var(--gold) 60%,
+      var(--gold-soft) 100%
+    );
+    background-size: 200% auto;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    animation: heroShimmer 4s linear infinite, heroReveal 0.9s cubic-bezier(0.22,1,0.36,1) both;
+  }
+
+  @keyframes heroShimmer {
+    0%   { background-position: 200% center; }
+    100% { background-position: -200% center; }
+  }
+
+  /* ── ELEMENT CARD HOVER SWEEP ────────────────────────── */
+  .element-core-card {
+    overflow: hidden;
+  }
+
+  .element-core-card::before {
+    content: '';
+    position: absolute;
+    top: -100%;
+    left: -100%;
+    width: 60%;
+    height: 300%;
+    background: linear-gradient(
+      105deg,
+      transparent 40%,
+      rgba(255,255,255,0.04) 50%,
+      transparent 60%
+    );
+    transform: skewX(-15deg);
+    transition: none;
+    pointer-events: none;
+  }
+
+  .element-core-card:hover::before {
+    animation: cardSweep 0.6s ease forwards;
+  }
+
+  @keyframes cardSweep {
+    0%   { left: -100%; top: -100%; }
+    100% { left: 200%; top: -100%; }
+  }
+
+  /* ── ROOT BAR ANIMATED FILL ──────────────────────────── */
+  @keyframes barFill {
+    from { width: 0% !important; }
+    to   { width: var(--target-width); }
+  }
+
+  .root-pillar-fill.animated {
+    animation: barFill 1.2s cubic-bezier(0.22,1,0.36,1) forwards;
+  }
+
+  /* ── SCROLL REVEAL ───────────────────────────────────── */
+  .reveal-on-scroll {
+    opacity: 0;
+    transform: translateY(30px);
+    transition: opacity 0.7s cubic-bezier(0.22,1,0.36,1), transform 0.7s cubic-bezier(0.22,1,0.36,1);
+  }
+
+  .reveal-on-scroll.revealed {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  /* ── FLOATING RUNE ───────────────────────────────────── */
+  .hero-rune {
+    position: absolute;
+    right: 2rem;
+    top: 50%;
+    transform: translateY(-50%);
+    font-size: 6rem;
+    color: rgba(200,169,106,0.06);
+    font-family: serif;
+    pointer-events: none;
+    animation: runeFloat 8s ease-in-out infinite, runeSpin 20s linear infinite;
+    user-select: none;
+    z-index: 0;
+  }
+
+  @keyframes runeFloat {
+    0%, 100% { transform: translateY(-50%) translateY(0px); }
+    50%       { transform: translateY(-50%) translateY(-12px); }
+  }
+
+  @keyframes runeSpin {
+    from { rotate: 0deg; }
+    to   { rotate: 360deg; }
+  }
+
+  /* ── TOKEN COUNT UP ──────────────────────────────────── */
+  @keyframes tokenPop {
+    0%   { transform: scale(0.8); opacity: 0; }
+    60%  { transform: scale(1.1); }
+    100% { transform: scale(1); opacity: 1; }
+  }
+
+  .hero-meta-item .value.popped {
+    animation: tokenPop 0.5s cubic-bezier(0.22,1,0.36,1) both;
+  }
+
+  /* ── BADGE ENTRANCE ──────────────────────────────────── */
+  @keyframes badgeEntrance {
+    from { opacity: 0; transform: scale(0.6) translateY(8px); }
+    to   { opacity: 1; transform: scale(1) translateY(0); }
+  }
+
+  .el-badge:not(.empty) {
+    animation: badgeEntrance 0.4s cubic-bezier(0.22,1,0.36,1) both, badgeGlow 3s ease-in-out infinite;
+  }
+
+  .el-badge:not(.empty):nth-child(2) { animation-delay: 0.1s, 0s; }
+  .el-badge:not(.empty):nth-child(3) { animation-delay: 0.2s, 0.5s; }
+  .el-badge:not(.empty):nth-child(4) { animation-delay: 0.3s, 1s; }
+  .el-badge:not(.empty):nth-child(5) { animation-delay: 0.4s, 1.5s; }
+
+
+  /* ── RESPONSIVE ──────────────────────────────────────── */
+  @media (max-width: 900px) {
+    .element-core-grid { grid-template-columns: repeat(2, 1fr); }
+    .root-ledger-grid  { grid-template-columns: repeat(2, 1fr); }
+  }
+
+  @media (max-width: 600px) {
+    .elements-shell { padding: 1rem 1rem 4rem; }
+    .elements-hero-band { padding: 2rem 1.5rem; }
+    .hero-name { font-size: 1.3rem; }
+    .element-core-grid { grid-template-columns: 1fr; }
+    .root-ledger-grid  { grid-template-columns: 1fr; }
+    .element-sanctum, .root-hall, .root-breakdown-band { padding: 1.2rem; }
+  }
+</style>
+</head>
+<body>
+  <div class="cloud-layer"></div>
+  <div class="rune-layer"></div>
+  <div class="lightning-flash"></div>
+
+  <nav>
+    <a href="/index.html">Home</a>
+    <a href="/lore.html">Lore</a>
+    <a href="/dashboard.html">Dashboard</a>
+    <a href="/elements.html" class="active">Elements</a>
+    <a href="/login.html" id="logout-button">Logout</a>
+  </nav>
+
+  <main class="elements-shell">
+
+  <div class="qi-particles" id="qi-particles"></div>
+
+  <section class="elements-hero-band">
+    <article class="elements-hero-main">
+      <span class="hero-eyebrow">Ascendant Path · Spiritual Profile</span>
+      <h1 class="hero-name" id="hero-character-name">Loading…</h1>
+      <p class="hero-username" id="hero-username"></p>
+
+      <div class="hero-meta-row">
+        <div class="hero-meta-item">
+          <span class="label">Realm</span>
+          <span class="value" id="hero-realm-line">—</span>
+        </div>
+        <div class="hero-meta-item">
+          <span class="label">Spirit Root Profile</span>
+          <span class="value" id="hero-profile-line">—</span>
+        </div>
+        <div class="hero-meta-item">
+          <span class="label">Ascension Tokens</span>
+          <span class="value" id="hero-tokens-line">—</span>
+        </div>
+      </div>
+
+      <div class="element-badge-row">
+        <span class="element-badge-label">Elements</span>
+        <span class="el-badge primary empty" id="badge-primary"><span class="el-badge-dot"></span><span id="badge-primary-val">—</span></span>
+        <span class="el-badge secondary empty" id="badge-secondary"><span class="el-badge-dot"></span><span id="badge-secondary-val">—</span></span>
+        <span class="el-badge derived empty" id="badge-derived"><span class="el-badge-dot"></span><span id="badge-derived-val">—</span></span>
+        <span class="el-badge third empty" id="badge-third"><span class="el-badge-dot"></span><span id="badge-third-val">—</span></span>
+      </div>
+      <span class="hero-rune" aria-hidden="true">靈</span>
+    </article>
+  </section>
+
+  <section class="element-sanctum-band">
+    <div class="element-sanctum">
+      <span class="sanctum-label">Central Element Sanctum</span>
+      <div class="element-core-grid">
+
+        <article class="element-core-card" id="primary-element-panel">
+          <span>Primary Base</span>
+          <h3 id="primary-element">—</h3>
+          <div class="status-line" id="primary-element-status">—</div>
+          <p id="primary-element-copy"></p>
+        </article>
+
+        <article class="element-core-card" id="secondary-element-panel">
+          <span>Secondary Base</span>
+          <h3 id="secondary-element">—</h3>
+          <div class="status-line" id="secondary-element-status">—</div>
+          <p id="secondary-element-copy"></p>
+        </article>
+
+        <article class="element-core-card" id="path-element-panel">
+          <span>Derived Path</span>
+          <h3 id="path-element">—</h3>
+          <div class="status-line" id="path-element-status">—</div>
+          <p id="path-element-copy"></p>
+        </article>
+
+        <article class="element-core-card" id="third-element-panel">
+          <span>Third Seal</span>
+          <h3 id="third-element">—</h3>
+          <div class="status-line" id="third-element-status">—</div>
+          <p id="third-element-copy"></p>
+          <div class="third-actions">
+            <button class="ritual-button hidden" id="unlock-third-button" type="button">Unlock</button>
+            <a class="ritual-button secondary" href="/element-request.html" id="third-chamber-link">Petition Chamber</a>
+          </div>
+        </article>
+
+      </div>
+    </div>
+  </section>
+
+  <section class="root-hall">
+    <div class="band-head">
+      <span>Five Root Hall</span>
+      <h2>Root Balance</h2>
+      <p id="roots-copy">Your effective root balance after all elemental pressures are applied.</p>
+    </div>
+    <div class="root-pillars" id="root-pillars">
+      <article class="root-pillar">
+        <span class="root-pillar-name">Metal</span>
+        <div class="root-pillar-bar"><div class="root-pillar-fill" id="root-bar-metal"></div></div>
+        <span class="root-pillar-value" id="root-val-metal">—</span>
+      </article>
+      <article class="root-pillar">
+        <span class="root-pillar-name">Wood</span>
+        <div class="root-pillar-bar"><div class="root-pillar-fill" id="root-bar-wood"></div></div>
+        <span class="root-pillar-value" id="root-val-wood">—</span>
+      </article>
+      <article class="root-pillar">
+        <span class="root-pillar-name">Water</span>
+        <div class="root-pillar-bar"><div class="root-pillar-fill" id="root-bar-water"></div></div>
+        <span class="root-pillar-value" id="root-val-water">—</span>
+      </article>
+      <article class="root-pillar">
+        <span class="root-pillar-name">Fire</span>
+        <div class="root-pillar-bar"><div class="root-pillar-fill" id="root-bar-fire"></div></div>
+        <span class="root-pillar-value" id="root-val-fire">—</span>
+      </article>
+      <article class="root-pillar">
+        <span class="root-pillar-name">Earth</span>
+        <div class="root-pillar-bar"><div class="root-pillar-fill" id="root-bar-earth"></div></div>
+        <span class="root-pillar-value" id="root-val-earth">—</span>
+      </article>
+    </div>
+  </section>
+
+  <section class="root-breakdown-wrap">
+    <div class="root-breakdown-band">
+      <div class="band-head">
+        <span>Root Ledger</span>
+        <h2>Root Balance Breakdown</h2>
+        <p id="root-breakdown-copy">Base investment, primary pressure, path pressure and third pressure combined.</p>
+      </div>
+
+      <div class="root-meta-strip">
+        <div class="meta-pill" id="root-source-pill">Source: Ledger</div>
+        <div class="meta-pill" id="root-path-pill">Path: —</div>
+        <div class="meta-pill" id="root-rebalanced-pill">Rebalanced: —</div>
+      </div>
+
+      <div class="root-ledger-grid">
+        <article class="root-ledger-card">
+          <span>Foundation</span>
+          <h3>Persistent Base</h3>
+          <p>Stable root investment underlying all elemental influence.</p>
+          <div class="root-ledger-list" id="base-modifier-list"></div>
+        </article>
+        <article class="root-ledger-card">
+          <span>Primary Element</span>
+          <h3>First Element Pressure</h3>
+          <p>Root shift from your primary base element.</p>
+          <div class="root-ledger-list" id="primary-modifier-list"></div>
+        </article>
+        <article class="root-ledger-card">
+          <span>Derived Path</span>
+          <h3>Derived Path Pressure</h3>
+          <p>Root shift from your derived path element.</p>
+          <div class="root-ledger-list" id="path-modifier-list"></div>
+        </article>
+        <article class="root-ledger-card">
+          <span>Third Seal</span>
+          <h3>Third Seal Pressure</h3>
+          <p>Root shift from your awakened third element.</p>
+          <div class="root-ledger-list" id="third-modifier-list"></div>
+        </article>
+      </div>
+    </div>
+  </section>
+
+</main>
+
+  <footer>
+    The Ascendant Path • Begin as Mortal, Ascend to Immortality
+  </footer>
+
+  <script>
+    const LOGIN_URL = "/login.html";
+    const VERIFY_SESSION_URL = "/.netlify/functions/verify-session";
+    const LOGOUT_URL = "/.netlify/functions/logout";
+
+    const CLIENT_SESSION_KEYS = [
+      "sl_username",
+      "slUsername",
+      "avatar_key",
+      "avatarKey",
+      "member_id",
+      "memberId",
+      "session_token",
+      "sessionToken",
+      "cultivation_session",
+      "cultivationSession",
+      "ascendant_session",
+      "ascendantSession"
+    ];
+
+    let latestState = null;
+    let unlockInFlight = false;
+    let csrfToken = "";
+
+    function safeText(value, fallback = "Unknown") {
+      if (value === null || value === undefined) return fallback;
+      const text = String(value).trim();
+      return text ? text : fallback;
+    }
+
+    function safeLower(value) {
+      return safeText(value, "").toLowerCase();
+    }
+
+    function safeNumber(value, fallback = 0) {
+      const number = Number(value);
+      return Number.isFinite(number) ? number : fallback;
+    }
+
+    function clampPercent(value, maxValue) {
+      const num = safeNumber(value, 0);
+      const max = Math.max(1, safeNumber(maxValue, 1));
+      return Math.max(0, Math.min(100, (num / max) * 100));
+    }
+
+    function setHidden(elementId, shouldHide) {
+      const el = document.getElementById(elementId);
+      if (!el) return;
+      el.classList.toggle("hidden", Boolean(shouldHide));
+    }
+
+    function setButtonBusy(button, busy, busyText, idleText) {
+      if (!button) return;
+      button.disabled = busy;
+      button.classList.toggle("is-disabled", Boolean(busy));
+      button.textContent = busy ? busyText : idleText;
+    }
+
+    function setText(id, value) {
+      const el = document.getElementById(id);
+      if (el) el.textContent = value;
+    }
+
+    function formatNumber(value) {
+      const num = safeNumber(value, 0);
+      return num.toLocaleString();
+    }
+
+    function clearClientSessionArtifacts() {
+      try {
+        sessionStorage.clear();
+      } catch (error) {
+        console.warn("Failed to clear sessionStorage:", error);
+      }
+
+      try {
+        CLIENT_SESSION_KEYS.forEach((key) => localStorage.removeItem(key));
+      } catch (error) {
+        console.warn("Failed to clear localStorage session artifacts:", error);
+      }
+    }
+
+    function redirectToLogin() {
+      clearClientSessionArtifacts();
+      window.location.replace(LOGIN_URL);
+    }
+
+    async function readJsonSafely(response) {
+      try {
+        return await response.json();
+      } catch (error) {
+        return {};
+      }
+    }
+
+    function extractCsrfToken(payload) {
+      return safeText(
+        payload?.csrf_token ||
+        payload?.csrfToken ||
+        payload?.session?.csrf_token ||
+        payload?.session?.csrfToken ||
+        payload?.viewer?.csrf_token ||
+        payload?.viewer?.csrfToken ||
+        "",
+        ""
+      );
+    }
+
+    async function verifySessionOrRedirect() {
+      try {
+        const response = await fetch(VERIFY_SESSION_URL, {
+          method: "GET",
+          credentials: "include",
+          headers: {
+            "Accept": "application/json",
+            "Cache-Control": "no-store"
+          }
+        });
+
+        const data = await readJsonSafely(response);
+
+        if (!response.ok || data?.success === false) {
+          redirectToLogin();
+          return null;
+        }
+
+        csrfToken = extractCsrfToken(data);
+        return data;
+      } catch (error) {
+        console.error("Session verification failed:", error);
+        redirectToLogin();
+        return null;
+      }
+    }
+
+    async function authenticatedFetch(url, options = {}) {
+      const method = safeText(options.method || "GET", "GET").toUpperCase();
+      const headers = new Headers(options.headers || {});
+      headers.set("Accept", "application/json");
+
+      if (!headers.has("Content-Type") && method !== "GET" && method !== "HEAD" && options.body) {
+        headers.set("Content-Type", "application/json");
+      }
+
+      if (csrfToken) {
+        headers.set("X-CSRF-Token", csrfToken);
+        headers.set("X-Session-CSRF", csrfToken);
+      }
+
+      const response = await fetch(url, {
+        ...options,
+        method,
+        credentials: "include",
+        cache: "no-store",
+        headers
+      });
+
+      if (response.status === 401 || response.status === 403) {
+        redirectToLogin();
+        throw new Error("Your session has expired. Redirecting to login.");
+      }
+
+      return response;
+    }
+
+    async function handleLogout(event) {
+      if (event) event.preventDefault();
+
+      try {
+        await authenticatedFetch(LOGOUT_URL, {
+          method: "POST"
+        });
+      } catch (error) {
+        console.warn("Logout request failed:", error);
+      } finally {
+        redirectToLogin();
+      }
+    }
+
+    function formatRequestTarget(target) {
+      const lowered = safeLower(target);
+
+      if (lowered === "primary") return "Primary Petition";
+      if (lowered === "secondary") return "Secondary Petition";
+      if (lowered === "third") return "Third Petition";
+      if (lowered === "root_minor") return "Minor Root Petition";
+      if (lowered === "root_major") return "Major Root Petition";
+
+      return "Pending Petition";
+    }
+
+    function formatElementLabel(value) {
+      const text = safeText(value, "");
+      if (!text) return "";
+      return text
+        .toLowerCase()
+        .split(" ")
+        .filter(Boolean)
+        .map((part) => part.charAt(0).toUpperCase() + part.slice(1))
+        .join(" ");
+    }
+
+    function formatRealmLabel(value) {
+      const lowered = safeLower(value);
+
+      const map = {
+        mortal: "Mortal Realm",
+        "mortal realm": "Mortal Realm",
+        "qi gathering": "Qi Gathering Realm",
+        "qi gathering realm": "Qi Gathering Realm",
+        foundation: "Foundation Realm",
+        "foundation realm": "Foundation Realm",
+        "core formation": "Core Formation Realm",
+        "core formation realm": "Core Formation Realm",
+        "nascent soul": "Nascent Soul Realm",
+        "nascent soul realm": "Nascent Soul Realm",
+        "soul transformation": "Soul Transformation Realm",
+        "soul transformation realm": "Soul Transformation Realm",
+        "void refinement": "Void Refinement Realm",
+        "void refinement realm": "Void Refinement Realm",
+        "body integration": "Body Integration Realm",
+        "body integration realm": "Body Integration Realm",
+        mahayana: "Mahayana Realm",
+        "mahayana realm": "Mahayana Realm",
+        tribulation: "Tribulation Realm",
+        "tribulation realm": "Tribulation Realm"
+      };
+
+      return map[lowered] || safeText(value, "Mortal Realm");
+    }
+
+    function formatSignedValue(value) {
+      const number = safeNumber(value, 0);
+      if (number > 0) return `+${number}`;
+      if (number < 0) return `${number}`;
+      return "0";
+    }
+
+    function getRealmLabel(member) {
+      if (member.realm_display_name) {
+        return formatRealmLabel(member.realm_display_name);
+      }
+
+      return formatRealmLabel(member.realm_name);
+    }
+
+    function getPrimaryLabel(member) {
+      return formatElementLabel(member.primary_element || member.current_primary_element || "");
+    }
+
+    function getSecondaryLabel(member) {
+      return formatElementLabel(member.secondary_element || member.current_secondary_element || "");
+    }
+
+    function getPathLabel(member) {
+      return formatElementLabel(
+        member.path_element ||
+        member.current_path_element ||
+        member.current_path_label ||
+        ""
+      );
+    }
+
+    function getThirdLabel(member) {
+      return formatElementLabel(member.third_element || member.current_third_element || "");
+    }
+
+    function describeActiveRequest(activeRequest) {
+      if (!activeRequest) return "";
+
+      const target = safeLower(activeRequest.request_target);
+
+      if (target === "root_minor" || target === "root_major") {
+        const increaseRoot = safeText(activeRequest.increase_root, "Unknown");
+        const decreaseRoot = safeText(activeRequest.decrease_root, "Unknown");
+        const shiftAmount = safeNumber(activeRequest.shift_amount, 0);
+
+        return `${formatRequestTarget(target)} pending: +${shiftAmount} ${increaseRoot}, -${shiftAmount} ${decreaseRoot}.`;
+      }
+
+      const requestedElement = formatElementLabel(activeRequest.requested_element || "Unknown");
+      return `${formatRequestTarget(target)} pending: ${requestedElement}.`;
+    }
+
+    function getHeroSummary(member, activeRequest) {
+      if (activeRequest) {
+        return `${describeActiveRequest(activeRequest)} Creator review is still pending.`;
+      }
+
+      const realmIndex = safeNumber(member.realm_index, 1);
+      const thirdStatus = safeLower(member.third_status);
+
+      if (thirdStatus === "unlocked") {
+        return "Your elemental structure is fully awakened across primary base, secondary base, derived path, and third seal. Future changes now pass through formal petition.";
+      }
+
+
+      if (realmIndex < 2) {
+        return "You remain in the Mortal Realm. Your five roots are visible, but all element slots remain sealed until Qi Gathering Realm.";
+      }
+
+      if (realmIndex === 2) {
+        return "Qi Gathering Realm has awakened your primary base element. Secondary base and derived path remain sealed until Foundation Realm.";
+      }
+
+      if (realmIndex >= 3 && realmIndex < 5) {
+        return "Foundation Realm has awakened your secondary base and the derived path resolved from primary plus secondary. The third seal remains closed until Nascent Soul Realm.";
+      }
+
+      return "Your path is still progressing through its stage-gated elemental awakenings.";
+    }
+
+    function getSealStatusText(member, activeRequest) {
+      if (activeRequest) {
+        return "Petition under review";
+      }
+
+      const realmIndex = safeNumber(member.realm_index, 1);
+      const thirdStatus = safeLower(member.third_status);
+
+      if (thirdStatus === "unlocked") {
+        return "Third seal awakened";
+      }
+
+
+      if (realmIndex < 2) {
+        return "Mortal roots recorded";
+      }
+
+      if (realmIndex === 2) {
+        return "Primary base awakened";
+      }
+
+      if (realmIndex >= 3 && realmIndex < 5) {
+        return "Secondary base and path awakened";
+      }
+
+      return "Element structure recognized";
+    }
+
+    function getPrimaryCardState(member) {
+      const status = safeLower(member.primary_status);
+      const unlocked = Boolean(member.primary_element_unlocked);
+      const label = getPrimaryLabel(member);
+
+      if (!unlocked || status === "sealed") {
+        return {
+          title: "Sealed",
+          status: "Sealed Until Qi Gathering Realm",
+          copy: "Your primary base element remains sealed in Mortal Realm. It first awakens when you enter Qi Gathering Realm."
+        };
+      }
+
+      return {
+        title: label || "Undetermined",
+        status: "Unlocked",
+        copy: "Your primary base element is now active and contributes its own modifier layer to the final effective root balance."
+      };
+    }
+
+    function getSecondaryCardState(member) {
+      const status = safeLower(member.secondary_status);
+      const unlocked = Boolean(member.secondary_element_unlocked);
+      const label = getSecondaryLabel(member);
+
+      if (!unlocked || status === "sealed") {
+        return {
+          title: "Sealed",
+          status: "Sealed Until Foundation Realm",
+          copy: "Your secondary base element is locked until Foundation Realm. It is a base slot, not the derived path."
+        };
+      }
+
+      return {
+        title: label || "Undetermined",
+        status: "Unlocked",
+        copy: "Your secondary base element is now active. Together with primary base, it determines the derived path."
+      };
+    }
+
+    function getPathCardState(member) {
+      const secondaryUnlocked = Boolean(member.secondary_element_unlocked);
+      const label = getPathLabel(member);
+
+      if (!secondaryUnlocked) {
+        return {
+          title: "Sealed",
+          status: "Sealed Until Foundation Realm",
+          copy: "Your path is not chosen directly. It resolves from Primary + Secondary once Foundation Realm is reached."
+        };
+      }
+
+      if (!label) {
+        return {
+          title: "Resolving",
+          status: "Awaiting Path Resolution",
+          copy: "Your path should be derived from your primary and secondary base elements. The backend is expected to return that resolved path."
+        };
+      }
+
+      return {
+        title: label,
+        status: "Derived Path Active",
+        copy: "Your path is derived from your primary and secondary base elements and now contributes its own modifier layer to the root balance."
+      };
+    }
+
+    function getThirdCardState(member) {
+      const thirdUnlocked = member.third_element_unlocked || member.third_status === "unlocked";
+      const thirdValue    = getThirdLabel(member);
+
+      if (thirdUnlocked && thirdValue) {
+        return {
+          title:  thirdValue,
+          status: "Unlocked",
+          copy:   "Your third seal has been revealed. This element forms the final layer of your spiritual composition."
+        };
+      }
+
+      if (thirdUnlocked && !thirdValue) {
+        return {
+          title:  "Pending",
+          status: "Awaiting Assignment",
+          copy:   "Your third seal is unlocked. A definition will be assigned soon."
+        };
+      }
+
+      return {
+        title:  "Sealed",
+        status: "Sealed",
+        copy:   "The third seal unlocks at Soul Transformation Realm. Continue your cultivation path to reveal what lies within."
+      };
+    }
+
+    function renderRoots(member) {
+      const rootBarMax = 60;
+      const roots = member.effective_root_map || {};
+      const rootKeys = ["metal", "wood", "water", "fire", "earth"];
+
+      rootKeys.forEach(root => {
+        const val = safeNumber(roots[root], 0);
+        const pct = Math.min(100, Math.round((val / rootBarMax) * 100));
+        const bar = document.getElementById("root-bar-" + root);
+        const valEl = document.getElementById("root-val-" + root);
+        if (bar) bar.style.width = pct + "%";
+        if (valEl) valEl.textContent = val;
+      });
+    }
+
+    function renderRootLedgerLines(containerId, map, signed = false) {
+      const container = document.getElementById(containerId);
+      if (!container) return;
+
+      const order = [
+        ["Metal", "metal"],
+        ["Wood", "wood"],
+        ["Water", "water"],
+        ["Fire", "fire"],
+        ["Earth", "earth"]
+      ];
+
+      container.innerHTML = order
+        .map(([label, key]) => {
+          const rawValue = safeNumber(map?.[key], 0);
+          const displayValue = signed ? formatSignedValue(rawValue) : rawValue.toLocaleString();
+          return `
+            <div class="root-ledger-line">
+              <span>${label}</span>
+              <strong>${displayValue}</strong>
+            </div>
+          `;
+        })
+        .join("");
+    }
+
+    function renderRootBreakdown(member) {
+      const pathModifierMap =
+        member.modifier_breakdown?.path ||
+        member.modifier_breakdown?.secondary ||
+        {};
+
+      renderRootLedgerLines("base-root-list", member.base_root_map || {}, false);
+      renderRootLedgerLines("primary-modifier-list", member.modifier_breakdown?.primary || {}, true);
+      renderRootLedgerLines("path-modifier-list", pathModifierMap, true);
+      renderRootLedgerLines("third-modifier-list", member.modifier_breakdown?.third || {}, true);
+
+      const source = safeText(member.root_balance_meta?.source, "unknown");
+      const pathLabel = getPathLabel(member) || "Sealed";
+      const rebalancedAt = safeText(member.root_balance_meta?.last_rebalanced_at, "Not recorded");
+
+      document.getElementById("root-source-pill").textContent =
+        `Source: ${source === "member_root_balances" ? "Ledger" : "Traits Fallback"}`;
+
+      document.getElementById("root-path-pill").textContent = `Path: ${pathLabel}`;
+      document.getElementById("root-rebalanced-pill").textContent =
+        `Rebalanced: ${rebalancedAt === "Not recorded" ? "Awaiting" : "Recorded"}`;
+
+      document.getElementById("root-breakdown-copy").textContent =
+        source === "member_root_balances"
+          ? "The final roots above are coming from the dedicated root-balance ledger, where base investment, primary pressure, path pressure, and third pressure are combined."
+          : "The final roots above are currently falling back to the older trait record because a dedicated root-balance ledger row was not found yet.";
+    }
+
+    function renderGateway(data) {
+      const member = data.member || {};
+      const petitions = data.petitions || {};
+      const activeRequest = data.active_request || null;
+      const pricing = data.petition_pricing || {};
+      const wallet = data.wallet || {};
+
+      const heading = document.getElementById("petition-gateway-heading");
+      const copy = document.getElementById("petition-gateway-copy");
+      const status = document.getElementById("petition-gateway-status");
+      let headingText = "Open Petition Chamber";
+      let copyText = "Visit the request chamber to manage petitions, token costs, and unlock flow.";
+      const statusLines = [];
+
+      if (activeRequest) {
+        headingText = "Petition Under Review";
+        copyText = "You already have a pending petition. New petitions and third-seal actions stay blocked until the current review is finished.";
+        statusLines.push(describeActiveRequest(activeRequest));
+      } else if (petitions.root_petition_allowed) {
+        headingText = "Mortal Root Petitions Open";
+        copyText = "You are still in the Mortal Realm, so root reallocation petitions are open. Minor petitions cost 50 and major petitions cost 100.";
+        statusLines.push("Root petitions are Mortal-only.");
+        statusLines.push(`Minor root petition: ${safeNumber(pricing.root_minor, 50)} Ascension Tokens.`);
+        statusLines.push(`Major root petition: ${safeNumber(pricing.root_major, 100)} Ascension Tokens.`);
+      } else if (Boolean(member.third_element_unlocked)) {
+        headingText = "Third Path Petition Chamber";
+        copyText = "All four layers are now active: primary base, secondary base, derived path, and third seal. The chamber now handles change petitions for awakened elements.";
+        statusLines.push(`Primary petition: ${safeNumber(pricing.primary, 50)} tokens.`);
+        statusLines.push(`Secondary petition: ${safeNumber(pricing.secondary, 100)} tokens.`);
+        statusLines.push(`Third petition: ${safeNumber(pricing.third, 200)} tokens.`);
+      } else if (Boolean(member.secondary_element_unlocked)) {
+        headingText = "Secondary Base and Path Open";
+        copyText = "Your secondary base is active and the derived path has resolved. Continue advancing until Nascent Soul Realm to make the third seal available.";
+        statusLines.push(`Primary petition: ${safeNumber(pricing.primary, 50)} tokens.`);
+        statusLines.push(`Secondary petition: ${safeNumber(pricing.secondary, 100)} tokens.`);
+      } else if (Boolean(member.primary_element_unlocked)) {
+        headingText = "Primary Base Open";
+        copyText = "Your primary base element is awakened. Secondary base and derived path remain locked until Foundation Realm.";
+        statusLines.push(`Primary petition: ${safeNumber(pricing.primary, 50)} tokens.`);
+      } else {
+        headingText = "Sealed Petition Chamber";
+        copyText = "Your elements are still sealed. In Mortal Realm, only root reallocation petitions can be made before Qi Gathering Realm.";
+        statusLines.push("Primary awakens at Qi Gathering Realm.");
+        statusLines.push("Secondary and Path awaken at Foundation Realm.");
+        statusLines.push("Third becomes available at Nascent Soul Realm.");
+      }
+
+      statusLines.push(`Ascension Tokens available: ${safeNumber(wallet.ascension_tokens_balance, 0).toLocaleString()}.`);
+
+      heading.textContent = headingText;
+      copy.textContent = copyText;
+      status.innerHTML = statusLines.map((line) => `<div>${line}</div>`).join("");
+
+    }
+
+    function renderElements(data) {
+      latestState = data;
+
+      const member      = data.member         || {};
+      const requests    = data.requests       || [];
+      const wallet      = data.wallet         || {};
+      const rootBal     = data.root_balances  || member.modifier_breakdown || {};
+      const pathDeltas  = data.path_deltas    || member.modifier_breakdown?.path || {};
+
+      // ── Hero ──────────────────────────────────────────────────────
+      const charName = member.character_name || member.sl_username || "—";
+      setText("hero-character-name", charName);
+      setText("hero-username", member.sl_username ? "@" + member.sl_username : "");
+      setText("hero-realm-line", member.realm_display_name || "—");
+      setText("hero-profile-line", member.spirit_root_profile || "—");
+      setText("hero-tokens-line", formatNumber(safeNumber(wallet.ascension_tokens_balance, 0)) + " tokens");
+
+      // Element badges
+      const badgeSlots = [
+        { id: "badge-primary",   valId: "badge-primary-val",   key: "current_primary_element",   cls: "primary" },
+        { id: "badge-secondary", valId: "badge-secondary-val", key: "current_secondary_element", cls: "secondary" },
+        { id: "badge-derived",   valId: "badge-derived-val",   key: "current_path_element",      cls: "derived" },
+        { id: "badge-third",     valId: "badge-third-val",     key: "current_third_element",     cls: "third" },
+      ];
+      badgeSlots.forEach(slot => {
+        const badge = document.getElementById(slot.id);
+        const valEl = document.getElementById(slot.valId);
+        if (!badge || !valEl) return;
+        const val = member[slot.key];
+        if (val) {
+          valEl.textContent = val;
+          badge.className = "el-badge " + slot.cls;
+        } else {
+          valEl.textContent = "—";
+          badge.className = "el-badge " + slot.cls + " empty";
+        }
+      });
+
+      // ── Element cards ───────────────────────────────────────────────────
+      const primaryState   = getPrimaryCardState(member);
+      const secondaryState = getSecondaryCardState(member);
+      const pathState      = getPathCardState(member);
+      const thirdState     = getThirdCardState(member);
+
+      setCardState("primary-element",   primaryState);
+      setCardState("secondary-element", secondaryState);
+      setCardState("path-element",      pathState);
+      setCardState("third-element",     thirdState);
+
+      setHidden("unlock-third-button", true);
+
+      // ── Roots ─────────────────────────────────────────────────────────────────
+      renderRoots(member);
+
+      // ── Root ledger ────────────────────────────────────────────────────────────
+      // Use modifier_breakdown directly if root_balances is missing
+      const breakdown = member.modifier_breakdown || {};
+      const baseMap   = member.base_root_map || {};
+      renderRootLedgerLines("base-modifier-list",    baseMap,                   false);
+      renderRootLedgerLines("primary-modifier-list", breakdown.primary  || {}, true);
+      renderRootLedgerLines("path-modifier-list",    breakdown.path     || {}, true);
+      renderRootLedgerLines("third-modifier-list",   breakdown.third    || {}, true);
+
+      setText("root-path-pill", "Path: " + (member.current_path_element || "—"));
+      const meta = member.root_balance_meta || {};
+      setText("root-rebalanced-pill", meta.last_rebalanced_at ? "Rebalanced: " + new Date(meta.last_rebalanced_at).toLocaleDateString() : "Rebalanced: —");
+    }
+
+    function setCardState(prefix, cardState) {
+      setText(prefix, cardState.title || "—");
+      setText(prefix + "-status", cardState.status || "");
+      setText(prefix + "-copy", cardState.copy || "");
+    }
+
+
+    async function loadElementsState() {
+      try {
+        const response = await authenticatedFetch("/.netlify/functions/load-elements-state", {
+          method: "GET"
+        });
+
+        const data = await readJsonSafely(response);
+
+        if (!response.ok || !data.success) {
+          throw new Error(data.message || data.error || "Failed to load elements state.");
+        }
+
+        renderElements(data);
+      } catch (error) {
+        console.error("Elements load error:", error);
+        if (!/Redirecting to login/i.test(String(error?.message || ""))) {
+          redirectToLogin();
+        }
+      }
+    }
+
+    async function init() {
+      document.getElementById("logout-button").addEventListener("click", handleLogout);
+
+      const verified = await verifySessionOrRedirect();
+      if (!verified) return;
+
+      await loadElementsState();
+    }
+
+    window.addEventListener("DOMContentLoaded", init);
+
+    // ── PARTICLE SYSTEM ──────────────────────────────────────
+    function spawnParticles() {
+      const container = document.getElementById('qi-particles');
+      if (!container) return;
+      const count = 25;
+      for (let i = 0; i < count; i++) {
+        const p = document.createElement('div');
+        p.className = 'qi-particle';
+        const size = Math.random() * 3 + 1.5;
+        const left = Math.random() * 100;
+        const duration = Math.random() * 12 + 8;
+        const delay = Math.random() * 10;
+        const drift = (Math.random() - 0.5) * 80;
+        p.style.cssText = `
+          left: ${left}%;
+          width: ${size}px;
+          height: ${size}px;
+          animation-duration: ${duration}s;
+          animation-delay: -${delay}s;
+          --drift: ${drift}px;
+          opacity: 0;
+        `;
+        container.appendChild(p);
+      }
+    }
+    spawnParticles();
+
+    // ── SCROLL REVEAL ────────────────────────────────────────
+    function initScrollReveal() {
+      const sections = document.querySelectorAll('.element-sanctum-band, .root-hall, .root-breakdown-wrap');
+      sections.forEach(el => el.classList.add('reveal-on-scroll'));
+      const observer = new IntersectionObserver((entries) => {
+        entries.forEach((entry, i) => {
+          if (entry.isIntersecting) {
+            setTimeout(() => entry.target.classList.add('revealed'), i * 100);
+            observer.unobserve(entry.target);
+          }
+        });
+      }, { threshold: 0.1 });
+      sections.forEach(el => observer.observe(el));
+    }
+    initScrollReveal();
+
+    // ── ANIMATED ROOT BARS ───────────────────────────────────
+    function animateRootBars() {
+      document.querySelectorAll('.root-pillar-fill').forEach(bar => {
+        const currentWidth = bar.style.width || '0%';
+        bar.style.setProperty('--target-width', currentWidth);
+        bar.style.width = '0%';
+        setTimeout(() => {
+          bar.classList.add('animated');
+          bar.style.width = currentWidth;
+        }, 300);
+      });
+    }
+
+    // ── TOKEN POP ────────────────────────────────────────────
+    function animateTokens() {
+      const tokenEl = document.getElementById('hero-tokens-line');
+      if (tokenEl) {
+        tokenEl.classList.add('popped');
+        setTimeout(() => tokenEl.classList.remove('popped'), 600);
+      }
+    }
+
+    // Hook into renderElements to trigger animations after data loads
+    const _origRenderElements = renderElements;
+    renderElements = function(data) {
+      _origRenderElements(data);
+      setTimeout(() => {
+        animateRootBars();
+        animateTokens();
+      }, 100);
+    };
+  </script>
+</body>

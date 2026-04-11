@@ -1,0 +1,1899 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Partnership Record | The Ascendant Path</title>
+  <link rel="stylesheet" href="style.css" />
+  <style>
+    .partnership-record-page {
+      width: min(1280px, calc(100% - 2rem));
+      margin: 1.5rem auto 4rem;
+      display: grid;
+      gap: 1.15rem;
+      position: relative;
+      z-index: 3;
+    }
+
+    .glass-card {
+      position: relative;
+      overflow: hidden;
+      border-radius: 20px;
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      background:
+        linear-gradient(180deg, rgba(14, 20, 34, 0.96), rgba(8, 12, 22, 0.98)),
+        radial-gradient(circle at top right, rgba(90, 130, 255, 0.10), transparent 28%);
+      box-shadow: 0 18px 48px rgba(0, 0, 0, 0.28);
+    }
+
+    .hero-card {
+      min-height: 250px;
+      padding: 1.5rem;
+      display: grid;
+      gap: 0.75rem;
+      align-content: end;
+      background:
+        linear-gradient(180deg, rgba(6, 9, 16, 0.22), rgba(6, 9, 16, 0.84)),
+        radial-gradient(circle at 18% 20%, rgba(234, 215, 170, 0.10), transparent 24%),
+        radial-gradient(circle at 80% 18%, rgba(111, 151, 255, 0.14), transparent 24%);
+    }
+
+    .hero-eyebrow,
+    .section-label {
+      display: inline-block;
+      font-size: 0.74rem;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: var(--blue-soft, #9ab6ff);
+    }
+
+    .hero-title {
+      margin: 0;
+      font-size: clamp(2.15rem, 4vw, 3.7rem);
+      line-height: 1;
+      color: #fff;
+    }
+
+    .hero-subtitle,
+    .section-copy {
+      margin: 0;
+      line-height: 1.7;
+      color: rgba(241, 244, 255, 0.86);
+    }
+
+    .hero-line {
+      color: rgba(210, 220, 255, 0.78);
+      font-size: 0.95rem;
+      letter-spacing: 0.03em;
+    }
+
+    .page-message {
+      padding: 0.95rem 1rem;
+      border-radius: 14px;
+      border: 1px solid rgba(142, 168, 255, 0.18);
+      background: rgba(40, 57, 102, 0.22);
+      color: rgba(232, 238, 255, 0.92);
+      line-height: 1.6;
+    }
+
+    .page-message.is-hidden {
+      display: none;
+    }
+
+    .bond-core-card {
+      padding: 1.15rem;
+      display: grid;
+      gap: 1rem;
+      background:
+        linear-gradient(180deg, rgba(17, 24, 40, 0.98), rgba(8, 12, 22, 1)),
+        radial-gradient(circle at center, rgba(118, 156, 255, 0.10), transparent 46%);
+    }
+
+    .section-head {
+      display: grid;
+      gap: 0.25rem;
+    }
+
+    .section-title {
+      margin: 0;
+      color: #fff;
+      font-size: 1.2rem;
+    }
+
+    .tri-ring-shell {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) minmax(220px, 280px) minmax(0, 1fr);
+      gap: 1rem;
+      align-items: center;
+      position: relative;
+      min-height: 260px;
+    }
+
+    .tri-ring-node {
+      display: grid;
+      justify-items: center;
+      gap: 0.7rem;
+      text-align: center;
+    }
+
+    .tri-ring-copy strong {
+      display: block;
+      color: #fff;
+      font-size: 1rem;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+    }
+
+    .tri-ring-copy div {
+      margin-top: 0.22rem;
+      color: rgba(209, 219, 255, 0.74);
+      font-size: 0.84rem;
+      line-height: 1.55;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+    }
+
+    .tri-ring-outer {
+      width: 100px;
+      aspect-ratio: 1 / 1;
+      border-radius: 50%;
+      display: grid;
+      place-items: center;
+      border: 4px solid rgba(255,255,255,0.16);
+      background: rgba(255,255,255,0.04);
+      box-shadow: 0 0 0 8px rgba(255,255,255,0.03);
+      transition: 0.25s ease;
+    }
+
+    .tri-ring-inner {
+      width: 68px;
+      height: 68px;
+      border-radius: 50%;
+      display: grid;
+      place-items: center;
+      background: rgba(7, 12, 26, 0.96);
+      border: 1px solid rgba(255,255,255,0.12);
+      color: #fff;
+      font-size: 0.78rem;
+      font-weight: 700;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      text-align: center;
+      line-height: 1.2;
+      padding: 0.5rem;
+    }
+
+    .tri-ring-self.is-live .tri-ring-outer {
+      border-color: rgba(56, 189, 248, 0.88);
+      background: rgba(14, 116, 144, 0.20);
+      box-shadow: 0 0 0 8px rgba(56, 189, 248, 0.10), 0 0 24px rgba(56, 189, 248, 0.16);
+    }
+
+    .tri-ring-self.is-paused .tri-ring-outer,
+    .tri-ring-partner.is-paused .tri-ring-outer,
+    .tri-ring-core.is-paused {
+      opacity: 0.82;
+      filter: saturate(0.7);
+    }
+
+    .tri-ring-self.is-waiting .tri-ring-outer,
+    .tri-ring-partner.is-waiting .tri-ring-outer {
+      border-color: rgba(255, 211, 109, 0.88);
+      background: rgba(135, 92, 0, 0.16);
+      box-shadow: 0 0 0 8px rgba(255, 211, 109, 0.08);
+    }
+
+    .tri-ring-self.is-idle .tri-ring-outer,
+    .tri-ring-partner.is-idle .tri-ring-outer {
+      border-color: rgba(255,255,255,0.18);
+      background: rgba(255,255,255,0.03);
+      box-shadow: 0 0 0 8px rgba(255,255,255,0.02);
+      opacity: 0.76;
+    }
+
+    .tri-ring-partner.is-live .tri-ring-outer {
+      border-color: rgba(244, 114, 182, 0.88);
+      background: rgba(157, 23, 77, 0.18);
+      box-shadow: 0 0 0 8px rgba(244, 114, 182, 0.10), 0 0 24px rgba(244, 114, 182, 0.16);
+    }
+
+    .tri-ring-core-zone {
+      position: relative;
+      display: grid;
+      place-items: center;
+      min-height: 230px;
+    }
+
+    .tri-ring-connector {
+      position: absolute;
+      top: 50%;
+      left: -140px;
+      right: -140px;
+      height: 8px;
+      transform: translateY(-50%);
+      border-radius: 999px;
+      background: rgba(255,255,255,0.08);
+      transition: 0.25s ease;
+    }
+
+    .tri-ring-connector.is-live {
+      background: linear-gradient(90deg, rgba(56, 189, 248, 0.88), rgba(230, 236, 255, 0.94), rgba(244, 114, 182, 0.88));
+      box-shadow: 0 0 18px rgba(255,255,255,0.08);
+    }
+
+    .tri-ring-connector.is-paused {
+      background: linear-gradient(90deg, rgba(56, 189, 248, 0.48), rgba(255,255,255,0.30), rgba(255,255,255,0.16));
+    }
+
+    .tri-ring-connector.is-idle {
+      background: rgba(255,255,255,0.06);
+    }
+
+    .tri-ring-core {
+      width: min(210px, 100%);
+      aspect-ratio: 1 / 1;
+      border-radius: 50%;
+      display: grid;
+      place-items: center;
+      padding: 12px;
+      background:
+        radial-gradient(circle at 50% 40%, rgba(255,255,255,0.10), transparent 24%),
+        conic-gradient(
+          from 180deg,
+          rgba(142, 168, 255, 0.94),
+          rgba(95, 208, 255, 0.82),
+          rgba(234, 215, 170, 0.62),
+          rgba(142, 168, 255, 0.94)
+        );
+      box-shadow:
+        0 0 0 2px rgba(255, 235, 192, 0.08),
+        0 0 38px rgba(94, 160, 255, 0.18),
+        inset 0 0 40px rgba(255, 255, 255, 0.08);
+      transition: 0.25s ease;
+      position: relative;
+      z-index: 1;
+    }
+
+    .tri-ring-core.is-live {
+      box-shadow:
+        0 0 0 2px rgba(255, 235, 192, 0.10),
+        0 0 44px rgba(94, 160, 255, 0.24),
+        inset 0 0 40px rgba(255, 255, 255, 0.10);
+    }
+
+    .tri-ring-core.is-paused {
+      filter: saturate(0.72);
+    }
+
+    .tri-ring-core.is-idle {
+      opacity: 0.86;
+      filter: saturate(0.55);
+    }
+
+    .tri-ring-core-inner {
+      width: 100%;
+      height: 100%;
+      border-radius: 50%;
+      display: grid;
+      place-items: center;
+      text-align: center;
+      background:
+        radial-gradient(circle at center, rgba(14, 30, 66, 0.94), rgba(4, 9, 20, 0.98) 70%);
+      border: 1px solid rgba(190, 216, 255, 0.16);
+      box-shadow:
+        inset 0 0 30px rgba(142, 168, 255, 0.16),
+        inset 0 -30px 50px rgba(0, 0, 0, 0.45);
+      padding: 1rem;
+    }
+
+    .tri-ring-core-inner strong {
+      display: block;
+      color: #fff;
+      font-size: 2rem;
+      line-height: 1;
+      letter-spacing: 0.06em;
+    }
+
+    .tri-ring-core-inner span {
+      display: block;
+      margin-top: 0.4rem;
+      color: rgba(196, 208, 255, 0.80);
+      font-size: 0.8rem;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+    }
+
+    .tri-ring-core-inner em {
+      display: block;
+      margin-top: 0.45rem;
+      color: rgba(222, 229, 255, 0.72);
+      font-size: 0.74rem;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      font-style: normal;
+    }
+
+    .core-quick-strip {
+      display: grid;
+      gap: 0.8rem;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+
+    .quick-card,
+    .info-card,
+    .identity-card,
+    .action-panel,
+    .note-panel,
+    .empty-panel {
+      padding: 0.95rem;
+      border-radius: 16px;
+      background: rgba(255,255,255,0.035);
+      border: 1px solid rgba(255,255,255,0.06);
+      display: grid;
+      gap: 0.35rem;
+    }
+
+    .quick-card small,
+    .info-card small,
+    .identity-card small,
+    .note-panel small,
+    .empty-panel small {
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: rgba(188, 203, 248, 0.7);
+      font-size: 0.72rem;
+    }
+
+    .quick-card strong,
+    .info-card strong,
+    .identity-card strong,
+    .empty-panel strong {
+      color: #fff;
+      font-size: 1.05rem;
+      line-height: 1.35;
+    }
+
+    .quick-card div,
+    .info-card div,
+    .identity-card div,
+    .note-panel div,
+    .empty-panel div {
+      color: rgba(226, 232, 255, 0.78);
+      line-height: 1.55;
+      font-size: 0.93rem;
+    }
+
+    .record-section {
+      padding: 0;
+      overflow: hidden;
+    }
+
+    .record-fold {
+      border: none;
+      margin: 0;
+      background: transparent;
+    }
+
+    .record-fold summary {
+      list-style: none;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 0.75rem;
+      padding: 1rem 1.15rem;
+      color: #fff;
+      font-weight: 700;
+      letter-spacing: 0.04em;
+      user-select: none;
+      background: rgba(255,255,255,0.03);
+      border-bottom: 1px solid rgba(255,255,255,0.06);
+    }
+
+    .record-fold summary::-webkit-details-marker {
+      display: none;
+    }
+
+    .record-fold summary::after {
+      content: "Open Chamber";
+      color: rgba(154, 182, 255, 0.86);
+      font-size: 0.76rem;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      font-weight: 700;
+    }
+
+    .record-fold[open] summary::after {
+      content: "Close Chamber";
+    }
+
+    .record-fold-body {
+      padding: 1rem 1.15rem 1.15rem;
+      display: grid;
+      gap: 1rem;
+    }
+
+    .info-grid,
+    .identity-grid,
+    .ledger-grid {
+      display: grid;
+      gap: 0.8rem;
+    }
+
+    .info-grid {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+
+    .identity-grid {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .ledger-grid {
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+    }
+
+    .action-layout {
+      display: grid;
+      gap: 1rem;
+      grid-template-columns: minmax(0, 1fr) minmax(260px, 340px);
+    }
+
+    .button-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.7rem;
+    }
+
+    .action-button {
+      appearance: none;
+      border: 1px solid rgba(142, 168, 255, 0.18);
+      background: rgba(76, 104, 184, 0.2);
+      color: #fff;
+      padding: 0.85rem 1rem;
+      border-radius: 12px;
+      cursor: pointer;
+      text-decoration: none;
+      font: inherit;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      transition: 0.2s ease;
+    }
+
+    .action-button:hover {
+      transform: translateY(-1px);
+      background: rgba(96, 126, 214, 0.26);
+    }
+
+    .action-button.is-danger {
+      background: rgba(156, 52, 52, 0.22);
+      border-color: rgba(216, 118, 118, 0.22);
+    }
+
+    .action-button.is-ghost {
+      background: rgba(255,255,255,0.05);
+      border-color: rgba(255,255,255,0.10);
+    }
+
+    .action-button:disabled {
+      opacity: 0.55;
+      cursor: not-allowed;
+      transform: none;
+    }
+
+    nav {
+      width: min(1280px, calc(100% - 2rem));
+      margin: 1rem auto 0;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.75rem;
+    }
+
+    nav a,
+    nav button {
+      color: rgba(230, 236, 255, 0.88);
+      text-decoration: none;
+      padding: 0.7rem 0.95rem;
+      border-radius: 12px;
+      background: rgba(255,255,255,0.04);
+      border: 1px solid rgba(255,255,255,0.07);
+      font: inherit;
+    }
+
+    nav button {
+      cursor: pointer;
+    }
+
+    footer {
+      width: min(1280px, calc(100% - 2rem));
+      margin: 2rem auto;
+      color: rgba(206, 216, 248, 0.7);
+      text-align: center;
+      font-size: 0.92rem;
+    }
+
+    .is-hidden {
+      display: none !important;
+    }
+
+    @media (max-width: 1100px) {
+      .info-grid,
+      .ledger-grid,
+      .core-quick-strip {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+
+      .action-layout {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    @media (max-width: 900px) {
+      .tri-ring-shell,
+      .identity-grid,
+      .info-grid,
+      .ledger-grid,
+      .core-quick-strip {
+        grid-template-columns: 1fr;
+      }
+
+      .tri-ring-core-zone {
+        min-height: auto;
+      }
+
+      .tri-ring-connector {
+        display: none;
+      }
+    }
+
+    @media (max-width: 760px) {
+      .partnership-record-page,
+      nav,
+      footer {
+        width: min(100% - 1rem, 1280px);
+      }
+
+      .hero-card,
+      .bond-core-card {
+        padding: 1rem;
+      }
+
+      .record-fold summary,
+      .record-fold-body {
+        padding-left: 1rem;
+        padding-right: 1rem;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="cloud-layer"></div>
+  <div class="rune-layer"></div>
+  <div class="lightning-flash"></div>
+
+  <nav>
+    <a href="/index.html">Home</a>
+    <a href="/dashboard.html">Dashboard</a>
+    <a href="/elements.html">Elements</a>
+    <a href="/partnership.html">Partnership Hall</a>
+    <button type="button" id="logout-button">Logout</button>
+  </nav>
+
+  <main class="partnership-record-page">
+    <section class="glass-card hero-card">
+      <span class="hero-eyebrow">Partnership Record</span>
+      <h1 class="hero-title" id="record-title">The Chamber of Bound Echoes</h1>
+      <div class="hero-line" id="record-subtitle">@loading</div>
+      <p class="hero-subtitle" id="record-summary">Loading selected partnership record...</p>
+      <div class="hero-line" id="record-focus-line">Current Record: Loading...</div>
+    </section>
+
+    <div class="page-message is-hidden" id="page-message"></div>
+
+    <section class="glass-card bond-core-card">
+      <div class="section-head">
+        <span class="section-label">Bond Core Chamber</span>
+        <h2 class="section-title">Live Tri-Ring Bond Core</h2>
+        <p class="section-copy">
+          The two outer rings reflect each side of the chosen bond. The center ring reflects the current shared state of this selected partnership.
+        </p>
+      </div>
+
+      <div class="tri-ring-shell">
+        <div class="tri-ring-node tri-ring-self is-idle" id="self-ring-shell">
+          <div class="tri-ring-outer">
+            <div class="tri-ring-inner">You</div>
+          </div>
+          <div class="tri-ring-copy">
+            <strong id="self-ring-state">Idle</strong>
+            <div id="self-ring-note">Awaiting record state</div>
+          </div>
+        </div>
+
+        <div class="tri-ring-core-zone">
+          <div class="tri-ring-connector is-idle" id="tri-ring-connector" aria-hidden="true"></div>
+          <div class="tri-ring-core is-idle" id="core-ring-shell">
+            <div class="tri-ring-core-inner">
+              <strong id="core-bond-percent">0.00%</strong>
+              <span id="core-bond-stage">Bond Seed</span>
+              <em id="core-bond-live">Idle</em>
+            </div>
+          </div>
+        </div>
+
+        <div class="tri-ring-node tri-ring-partner is-idle" id="partner-ring-shell">
+          <div class="tri-ring-outer">
+            <div class="tri-ring-inner">Partner</div>
+          </div>
+          <div class="tri-ring-copy">
+            <strong id="partner-ring-state">Idle</strong>
+            <div id="partner-ring-note">Awaiting record state</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="core-quick-strip">
+        <div class="quick-card">
+          <small>Partner</small>
+          <strong id="core-partner-name">Unknown Partner</strong>
+          <div id="core-partner-realm">Realm: Unknown</div>
+        </div>
+
+        <div class="quick-card">
+          <small>Bond Status</small>
+          <strong id="core-bond-status">Unknown</strong>
+          <div id="core-bond-note">Loading...</div>
+        </div>
+
+        <div class="quick-card">
+          <small>Current Book</small>
+          <strong id="core-book-title">No Active Bond Book</strong>
+          <div id="core-book-note">Loading...</div>
+        </div>
+      </div>
+    </section>
+
+    <section class="glass-card record-section">
+      <details class="record-fold" open>
+        <summary>
+          <span>Bond State</span>
+        </summary>
+
+        <div class="record-fold-body">
+          <div class="info-grid">
+            <div class="info-card">
+              <small>Bond Title</small>
+              <strong id="bond-title-value">Unknown</strong>
+              <div>The named identity of this bond.</div>
+            </div>
+
+            <div class="info-card">
+              <small>Bond Stage</small>
+              <strong id="bond-stage-value">Bond Seed</strong>
+              <div>The current shared bond stage.</div>
+            </div>
+
+            <div class="info-card">
+              <small>Bond Percent</small>
+              <strong id="bond-percent-value">0.00%</strong>
+              <div>Current progress for this selected record.</div>
+            </div>
+
+            <div class="info-card">
+              <small>Vessel Mode</small>
+              <strong id="bond-vessel-mode">Unknown</strong>
+              <div>The current bond mode for this pair.</div>
+            </div>
+
+            <div class="info-card">
+              <small>Live Session State</small>
+              <strong id="bond-session-state">Idle</strong>
+              <div>The current runtime state of the bond.</div>
+            </div>
+
+            <div class="info-card">
+              <small>Last Record Update</small>
+              <strong id="bond-last-update">Unknown</strong>
+              <div>The most recent visible record movement.</div>
+            </div>
+
+            <div class="info-card">
+              <small>Partnership UUID</small>
+              <strong id="bond-partnership-uuid">Unknown</strong>
+              <div>The UUID identity of this selected partnership record.</div>
+            </div>
+
+            <div class="info-card">
+              <small>Partnership ID</small>
+              <strong id="bond-partnership-id">Unknown</strong>
+              <div>The legacy/internal partnership record number if available.</div>
+            </div>
+          </div>
+        </div>
+      </details>
+    </section>
+
+    <section class="glass-card record-section">
+      <details class="record-fold">
+        <summary>
+          <span>Partner Presence + Identity</span>
+        </summary>
+
+        <div class="record-fold-body">
+          <div class="identity-grid">
+            <div class="identity-card">
+              <small>Your Side</small>
+              <strong id="your-name">Unknown</strong>
+              <div id="your-identity-line">Realm: Unknown • Path: Unknown</div>
+              <div id="your-member-id-line">Member ID: Unknown</div>
+              <div id="your-resources-line">CP: 0 • Qi: 0 / 0 • Tokens: 0 • Mortal Energy: 0</div>
+              <div id="your-presence-line">Meditation: Unknown</div>
+            </div>
+
+            <div class="identity-card">
+              <small>Partner Side</small>
+              <strong id="partner-name">Unknown</strong>
+              <div id="partner-identity-line">Realm: Unknown • Path: Unknown</div>
+              <div id="partner-member-id-line">Member ID: Unknown</div>
+              <div id="partner-resources-line">CP: 0 • Qi: 0 / 0 • Tokens: 0 • Mortal Energy: 0</div>
+              <div id="partner-presence-line">Presence: Unknown</div>
+            </div>
+          </div>
+        </div>
+      </details>
+    </section>
+
+    <section class="glass-card record-section">
+      <details class="record-fold">
+        <summary>
+          <span>Session / Book / Ledger</span>
+        </summary>
+
+        <div class="record-fold-body">
+          <div class="info-grid">
+            <div class="info-card">
+              <small>Current Volume</small>
+              <strong id="ledger-volume">Unknown</strong>
+              <div>The current shared bond volume for this record.</div>
+            </div>
+
+            <div class="info-card">
+              <small>Current Book</small>
+              <strong id="ledger-book">Unknown</strong>
+              <div>The current shared bond book tied to this record.</div>
+            </div>
+
+            <div class="info-card">
+              <small>Shared Time Thread</small>
+              <strong id="ledger-time-thread">Unknown</strong>
+              <div>The accumulated shared cultivation time shown for this record.</div>
+            </div>
+
+            <div class="info-card">
+              <small>Pause Reason</small>
+              <strong id="ledger-pause-reason">None</strong>
+              <div>The current pause or inactivity reason, if any.</div>
+            </div>
+          </div>
+
+          <div class="ledger-grid">
+            <div class="info-card">
+              <small>Shared CP</small>
+              <strong id="ledger-shared-cp">0</strong>
+              <div id="ledger-shared-cp-note">Combined cultivation points.</div>
+            </div>
+
+            <div class="info-card">
+              <small>Shared Tokens</small>
+              <strong id="ledger-shared-tokens">0</strong>
+              <div id="ledger-shared-tokens-note">Combined ascension tokens.</div>
+            </div>
+
+            <div class="info-card">
+              <small>Shared Qi Pool</small>
+              <strong id="ledger-shared-qi">0 / 0</strong>
+              <div id="ledger-shared-qi-note">Combined current and maximum Qi.</div>
+            </div>
+
+            <div class="info-card">
+              <small>Pair Mortal Energy</small>
+              <strong id="ledger-pair-energy">0 • 0</strong>
+              <div id="ledger-pair-energy-note">You and partner mortal energy values.</div>
+            </div>
+          </div>
+        </div>
+      </details>
+    </section>
+
+    <section class="glass-card record-section">
+      <details class="record-fold">
+        <summary>
+          <span>Actions / Management</span>
+        </summary>
+
+        <div class="record-fold-body">
+          <div class="action-layout">
+            <div class="action-panel">
+              <div class="button-row">
+                <button type="button" class="action-button" id="set-focus-button">
+                  Set As Current Focus
+                </button>
+
+                <a href="/bond-book.html" class="action-button" id="open-bond-book-link">
+                  Open Shared Bond Book
+                </a>
+
+                <a href="/partnership.html" class="action-button is-ghost">
+                  Return to Partnership Hall
+                </a>
+
+                <button type="button" class="action-button is-danger" id="remove-partnership-button">
+                  Remove Partnership
+                </button>
+              </div>
+
+              <div class="button-row" id="pending-action-row">
+                <button type="button" class="action-button is-hidden" id="accept-request-button">
+                  Accept Request
+                </button>
+                <button type="button" class="action-button is-danger is-hidden" id="deny-request-button">
+                  Deny Request
+                </button>
+              </div>
+            </div>
+
+            <div class="note-panel">
+              <small>Management Note</small>
+              <div id="management-note">
+                This chamber manages only the currently selected partnership record. Remove actions affect this specific record only.
+              </div>
+            </div>
+          </div>
+        </div>
+      </details>
+    </section>
+  </main>
+
+  <footer>
+    The Ascendant Path • Partnership Record Chamber
+  </footer>
+
+<script>
+  const LOGIN_PAGE_URL = "/login.html";
+
+  const state = {
+    payload: null,
+    refreshInterval: null,
+    isBusy: false,
+    sessionVerified: false
+  };
+
+  function safeText(value, fallback = "Unknown") {
+    if (value === null || value === undefined) return fallback;
+    const text = String(value).trim();
+    return text ? text : fallback;
+  }
+
+  function safeNumber(value, fallback = 0) {
+    const number = Number(value);
+    return Number.isFinite(number) ? number : fallback;
+  }
+
+  function safeBoolean(value) {
+    if (typeof value === "boolean") return value;
+    if (typeof value === "number") return value === 1;
+    const text = safeText(value, "").toLowerCase();
+    return ["true", "1", "yes", "y", "on", "active"].includes(text);
+  }
+
+  function normalizeLower(value) {
+    return safeText(value, "").toLowerCase();
+  }
+
+  function sameValue(a, b) {
+    return normalizeLower(a) === normalizeLower(b);
+  }
+
+  function formatNumber(value) {
+    return safeNumber(value, 0).toLocaleString();
+  }
+
+  function formatPercent(value, digits = 2) {
+    return `${safeNumber(value, 0).toFixed(digits)}%`;
+  }
+
+  function formatDate(value) {
+    if (!value) return "Unknown";
+    const date = new Date(value);
+    if (!Number.isFinite(date.getTime())) return "Unknown";
+    return date.toLocaleString();
+  }
+
+  function normalizeStatus(value) {
+    return safeText(value, "none").toLowerCase();
+  }
+
+  function formatStatus(value) {
+    const text = normalizeStatus(value);
+
+    if (text === "active") return "Active";
+    if (text === "accepted") return "Active";
+    if (text === "pending_incoming") return "Pending Incoming";
+    if (text === "pending_outgoing") return "Pending Outgoing";
+    if (text === "pending") return "Pending";
+    if (text === "removed") return "Removed";
+    if (text === "denied") return "Denied";
+    if (text === "historical") return "Historical";
+    if (text === "closed") return "Closed";
+    if (text === "idle") return "Idle";
+    if (text === "paused") return "Paused";
+    if (text === "ready_to_start") return "Ready To Start";
+    if (text === "ready_for_offering") return "Ready For Offering";
+    if (text === "waiting_for_partner_offering") return "Waiting For Partner Offering";
+    if (text === "awaiting_partner_completion") return "Awaiting Partner Completion";
+    if (text === "pair_completed") return "Pair Completed";
+
+    return text ? text.replaceAll("_", " ").replace(/\b\w/g, (m) => m.toUpperCase()) : "Unknown";
+  }
+
+  function formatPresence(value) {
+    const text = safeText(value, "").toLowerCase();
+    if (!text) return "Unknown";
+    return text.replaceAll("_", " ").replace(/\b\w/g, (m) => m.toUpperCase());
+  }
+
+  function formatPartnerPresenceReason(reason, distanceMeters) {
+    const text = safeText(reason, "").toLowerCase();
+
+    if (text === "partner_in_range") {
+      if (distanceMeters !== null && distanceMeters !== undefined) {
+        return `Partner is within the 20m bond range at ${safeNumber(distanceMeters, 0).toFixed(2)}m.`;
+      }
+      return "Partner is in range and the bond line is stable.";
+    }
+
+    if (text === "partner_hud_inactive") {
+      return "Partner HUD is not currently active.";
+    }
+
+    if (text === "partner_other_region") {
+      return "Partner is not in the same region.";
+    }
+
+    if (text === "partner_out_of_range") {
+      if (distanceMeters !== null && distanceMeters !== undefined) {
+        return `Partner is outside the 20m bond range at ${safeNumber(distanceMeters, 0).toFixed(2)}m.`;
+      }
+      return "Partner is beyond the 20m bond range.";
+    }
+
+    if (text === "partner_missing_position") {
+      return "Partner live position is not available.";
+    }
+
+    if (text === "missing_current_position") {
+      return "Your live position is not available yet.";
+    }
+
+    if (text === "no_partner_member") {
+      return "No linked partner member could be resolved.";
+    }
+
+    if (text === "no_active_partnership") {
+      return "Presence only matters once an active bond exists.";
+    }
+
+    return "The live bond presence is currently inactive.";
+  }
+
+  function formatMinutes(totalMinutes) {
+    const minutes = safeNumber(totalMinutes, 0);
+    if (!minutes) return "0 minutes";
+
+    const hours = Math.floor(minutes / 60);
+    const remaining = minutes % 60;
+
+    if (!hours) return `${minutes} minute${minutes === 1 ? "" : "s"}`;
+    if (!remaining) return `${hours} hour${hours === 1 ? "" : "s"}`;
+    return `${hours} hour${hours === 1 ? "" : "s"} ${remaining} minute${remaining === 1 ? "" : "s"}`;
+  }
+
+  function getUrlContext() {
+    const params = new URLSearchParams(window.location.search);
+    const partnershipUuid = safeText(params.get("partnership_uuid"), "");
+    const rawId = safeText(params.get("partnership_id"), "");
+    const partnershipId = rawId ? Number(rawId) : null;
+
+    return {
+      partnershipUuid,
+      partnershipId: Number.isFinite(partnershipId) ? partnershipId : null
+    };
+  }
+
+  function getMember(payload) {
+    return payload?.member || {};
+  }
+
+  function getPartner(payload) {
+    return payload?.partner || {};
+  }
+
+  function getPartnership(payload) {
+    return payload?.partnership || {};
+  }
+
+  function getBond(payload) {
+    return payload?.bond || null;
+  }
+
+  function getBondSession(payload) {
+    return payload?.bond_session || null;
+  }
+
+  function getSelectedPartnershipUuid(payload) {
+    return safeText(
+      payload?.selected_partnership_uuid ||
+      payload?.computed?.selected_partnership_uuid ||
+      "",
+      ""
+    );
+  }
+
+  function getCurrentRecordPartnershipUuid(payload) {
+    return safeText(
+      payload?.current_record_partnership_uuid ||
+      payload?.partnership?.partnership_uuid ||
+      payload?.partnership?.id ||
+      payload?.computed?.current_record_partnership_uuid ||
+      "",
+      ""
+    );
+  }
+
+  function getCurrentRecordPartnershipId(payload) {
+    const raw =
+      payload?.current_record_partnership_id ??
+      payload?.partnership?.partnership_id ??
+      null;
+
+    if (raw === null || raw === undefined || raw === "") return null;
+
+    const parsed = Number(raw);
+    return Number.isFinite(parsed) ? parsed : null;
+  }
+
+  function isCurrentFocus(payload) {
+    if (typeof payload?.is_current_focus === "boolean") {
+      return payload.is_current_focus;
+    }
+
+    if (typeof payload?.partnership?.is_current_focus === "boolean") {
+      return payload.partnership.is_current_focus;
+    }
+
+    const selectedUuid = getSelectedPartnershipUuid(payload);
+    const currentRecordUuid = getCurrentRecordPartnershipUuid(payload);
+
+    return Boolean(selectedUuid && currentRecordUuid && sameValue(selectedUuid, currentRecordUuid));
+  }
+
+  function getPartnerUsername(payload) {
+    const partner = getPartner(payload);
+    return safeText(partner?.sl_username, "unknown");
+  }
+
+  function getPartnerName(payload) {
+    const partner = getPartner(payload);
+    return safeText(
+      partner?.character_name ||
+      partner?.display_name ||
+      partner?.sl_username,
+      "Unknown Partner"
+    );
+  }
+
+  function getRecordStatus(payload) {
+    const partnership = getPartnership(payload);
+    return normalizeStatus(partnership?.status || payload?.computed?.partnership_status || "none");
+  }
+
+  function getUiStatus(payload) {
+    const status = getRecordStatus(payload);
+    const role = safeText(getPartnership(payload)?.member_role, "").toLowerCase();
+
+    if (status === "pending") {
+      return role === "recipient" ? "pending_incoming" : "pending_outgoing";
+    }
+
+    return status;
+  }
+
+  function getBondPercent(payload) {
+    const bond = getBond(payload);
+    return safeNumber(
+      bond?.bond_percent ??
+      bond?.percent,
+      0
+    );
+  }
+
+  function getBondStage(payload) {
+    const bond = getBond(payload);
+    return safeText(
+      bond?.current_stage_name ||
+      bond?.stage_name,
+      "Bond Seed"
+    );
+  }
+
+  function getBondTitle(payload) {
+    return getBondStage(payload);
+  }
+
+  function getSessionState(payload) {
+    const bondSession = getBondSession(payload);
+    const bond = getBond(payload);
+
+    return safeText(
+      bondSession?.status ||
+      bond?.status ||
+      "Idle"
+    );
+  }
+
+  function getActiveVolumeLabel(payload) {
+    const session = getBondSession(payload);
+    const number = safeNumber(session?.bond_volume_number, 0);
+    return number ? `Volume ${number}` : "No Active Volume";
+  }
+
+  function getActiveBookLabel(payload) {
+    const session = getBondSession(payload);
+    const number = safeNumber(session?.bond_book_number, 0);
+    return number ? `Book ${number}` : "No Active Book";
+  }
+
+  function showPageMessage(message) {
+    const el = document.getElementById("page-message");
+    el.textContent = safeText(message, "");
+    el.classList.remove("is-hidden");
+  }
+
+  function clearPageMessage() {
+    const el = document.getElementById("page-message");
+    el.textContent = "";
+    el.classList.add("is-hidden");
+  }
+
+  function clearClientSessionArtifacts() {
+    const keysToRemove = [
+      "session",
+      "sessionToken",
+      "session_token",
+      "websiteSession",
+      "website_session",
+      "member",
+      "memberState",
+      "member_state",
+      "user",
+      "user_state",
+      "sl_username",
+      "slUsername",
+      "avatar_key",
+      "avatarKey",
+      "selected_partnership_uuid",
+      "selectedPartnershipUuid"
+    ];
+
+    for (const key of keysToRemove) {
+      try { localStorage.removeItem(key); } catch (_) {}
+      try { sessionStorage.removeItem(key); } catch (_) {}
+    }
+  }
+
+  function redirectToLogin() {
+    clearClientSessionArtifacts();
+    window.location.href = LOGIN_PAGE_URL;
+  }
+
+  function redirectIfAuthError(error) {
+    if (error?.status === 401 || error?.status === 403) {
+      redirectToLogin();
+      return true;
+    }
+    return false;
+  }
+
+  async function authFetch(url, options = {}) {
+    const headers = {
+      Accept: "application/json",
+      ...(options.headers || {})
+    };
+
+    const response = await fetch(url, {
+      ...options,
+      headers,
+      credentials: "include",
+      cache: "no-store"
+    });
+
+    if (response.status === 401 || response.status === 403) {
+      redirectToLogin();
+      throw {
+        status: response.status,
+        message: "Your session has expired. Please sign in again."
+      };
+    }
+
+    return response;
+  }
+
+  async function parseJsonResponse(response, fallbackMessage) {
+    let data = null;
+
+    try {
+      data = await response.json();
+    } catch {
+      throw {
+        status: response.status,
+        message: fallbackMessage
+      };
+    }
+
+    if (!response.ok || !data?.success) {
+      throw {
+        status: response.status,
+        message: data?.message || fallbackMessage
+      };
+    }
+
+    return data;
+  }
+
+  async function verifySession() {
+    const response = await authFetch("/.netlify/functions/verify-session", {
+      method: "GET"
+    });
+
+    const data = await parseJsonResponse(
+      response,
+      "Unable to verify your session."
+    );
+
+    state.sessionVerified = true;
+    return data;
+  }
+
+  async function logoutUser() {
+    try {
+      await fetch("/.netlify/functions/logout", {
+        method: "POST",
+        credentials: "include"
+      });
+    } catch (error) {
+      console.error("Logout request error:", error);
+    } finally {
+      clearClientSessionArtifacts();
+      window.location.href = LOGIN_PAGE_URL;
+    }
+  }
+
+  function updateActionButtonsAvailability(payload = state.payload) {
+    const setFocusButton = document.getElementById("set-focus-button");
+    const removeButton = document.getElementById("remove-partnership-button");
+    const acceptButton = document.getElementById("accept-request-button");
+    const denyButton = document.getElementById("deny-request-button");
+
+    const partnership = getPartnership(payload);
+    const focused = isCurrentFocus(payload);
+    const hasRecordUuid = Boolean(getCurrentRecordPartnershipUuid(payload));
+
+    setFocusButton.disabled = state.isBusy || focused || !hasRecordUuid;
+    removeButton.disabled = state.isBusy || !Boolean(partnership?.can_remove);
+    acceptButton.disabled = state.isBusy || !Boolean(partnership?.can_accept);
+    denyButton.disabled = state.isBusy || !Boolean(partnership?.can_deny);
+  }
+
+  function setBusy(isBusy) {
+    state.isBusy = isBusy;
+    updateActionButtonsAvailability();
+  }
+
+  async function loadPartnershipRecord() {
+    const { partnershipUuid, partnershipId } = getUrlContext();
+
+    const params = new URLSearchParams();
+    if (partnershipUuid) params.set("partnership_uuid", partnershipUuid);
+    if (partnershipId) params.set("partnership_id", String(partnershipId));
+
+    const url = params.toString()
+      ? `/.netlify/functions/load-partnership-record?${params.toString()}`
+      : "/.netlify/functions/load-partnership-record";
+
+    const response = await authFetch(url, {
+      method: "GET"
+    });
+
+    const data = await parseJsonResponse(
+      response,
+      "Invalid server response from partnership record loader."
+    );
+
+    renderAll(data);
+    return data;
+  }
+
+  async function setSelectedPartnership(partnershipUuid, partnershipId) {
+    const body = {};
+    if (partnershipUuid) body.partnership_uuid = partnershipUuid;
+    if (partnershipId) body.partnership_id = partnershipId;
+
+    const response = await authFetch("/.netlify/functions/set-selected-partnership", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(body)
+    });
+
+    return parseJsonResponse(
+      response,
+      "Invalid server response while selecting partnership."
+    );
+  }
+
+  async function acceptPartnerRequest(partnershipUuid, partnershipId) {
+    const response = await authFetch("/.netlify/functions/accept-partner-request", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        ...(partnershipUuid ? { partnership_uuid: partnershipUuid } : {}),
+        ...(partnershipId ? { partnership_id: partnershipId } : {})
+      })
+    });
+
+    return parseJsonResponse(
+      response,
+      "Invalid server response while accepting partner request."
+    );
+  }
+
+  async function denyPartnerRequest(partnershipUuid, partnershipId) {
+    const response = await authFetch("/.netlify/functions/deny-partner-request", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        ...(partnershipUuid ? { partnership_uuid: partnershipUuid } : {}),
+        ...(partnershipId ? { partnership_id: partnershipId } : {})
+      })
+    });
+
+    return parseJsonResponse(
+      response,
+      "Invalid server response while denying partner request."
+    );
+  }
+
+  async function removePartnership(partnershipUuid, partnershipId) {
+    const response = await authFetch("/.netlify/functions/remove-partnership", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        ...(partnershipUuid ? { partnership_uuid: partnershipUuid } : {}),
+        ...(partnershipId ? { partnership_id: partnershipId } : {})
+      })
+    });
+
+    return parseJsonResponse(
+      response,
+      "Invalid server response while removing partnership."
+    );
+  }
+
+  function setRingVisualState(el, stateName) {
+    if (!el) return;
+    el.classList.remove("is-live", "is-paused", "is-waiting", "is-idle");
+    el.classList.add(`is-${stateName}`);
+  }
+
+  function getRingStateFromBookStatus(status) {
+    const text = normalizeStatus(status);
+    if (text === "active") return "live";
+    if (text === "paused") return "paused";
+    if (
+      text === "ready_for_offering" ||
+      text === "waiting_for_partner_offering" ||
+      text === "ready_to_start"
+    ) return "waiting";
+    return "idle";
+  }
+
+  function renderHero(payload) {
+    const member = getMember(payload);
+    const partnerName = getPartnerName(payload);
+    const uiStatus = getUiStatus(payload);
+    const bondStage = getBondStage(payload);
+    const bondPercent = getBondPercent(payload);
+    const focused = isCurrentFocus(payload);
+
+    document.getElementById("record-subtitle").textContent =
+      `@${safeText(member?.sl_username, "member")}`;
+
+    document.getElementById("record-summary").textContent =
+      uiStatus === "active"
+        ? `This chamber is bound to ${partnerName}. The selected record is active and the tri-ring core reflects the current shared bond state.`
+        : uiStatus === "pending_incoming"
+          ? `This chamber is bound to ${partnerName}. The selected record is waiting for your answer before the bond fully awakens.`
+          : uiStatus === "pending_outgoing"
+            ? `This chamber is bound to ${partnerName}. The selected record is waiting for the other member to answer the request.`
+            : `This chamber is bound to ${partnerName}. The selected record remains visible here as a single focused partnership page.`;
+
+    document.getElementById("record-focus-line").textContent =
+      uiStatus === "active"
+        ? `Current Record: ${partnerName} • ${bondStage} • ${formatPercent(bondPercent)} • ${focused ? "Current Focus" : "Not Current Focus"}`
+        : `Current Record: ${partnerName} • ${formatStatus(uiStatus)} • ${focused ? "Current Focus" : "Not Current Focus"}`;
+  }
+
+  function renderBondCore(payload) {
+    const member = getMember(payload);
+    const partner = getPartner(payload);
+    const bondSession = getBondSession(payload);
+    const uiStatus = getUiStatus(payload);
+
+    const partnerRealm = safeText(
+      partner?.realm_display_name,
+      partner?.realm_name || "Unknown"
+    );
+
+    const selfMeditating = member?.v2_cultivation_status === 'cultivating';
+    const partnerMeditating = partner?.v2_cultivation_status === 'cultivating';
+    const partnerPresenceActive = Boolean(payload?.partner_presence_active);
+    const partnerPresenceStatus = formatPresence(payload?.partner_presence_status || "Unknown");
+    const partnerPresenceNote = formatPartnerPresenceReason(
+      payload?.partner_presence_reason,
+      payload?.partner_distance_meters
+    );
+
+    const sessionState = formatStatus(getSessionState(payload));
+    const bondPercent = getBondPercent(payload);
+    const bondStage = getBondStage(payload);
+    const activeBook = getActiveBookLabel(payload);
+
+    let selfStateName = "idle";
+    let selfStateText = "Idle";
+    let selfNote = "Awaiting record state";
+
+    let partnerStateName = "idle";
+    let partnerStateText = "Idle";
+    let partnerNote = "Awaiting record state";
+
+    let coreStateName = "idle";
+    let connectorStateName = "idle";
+
+    if (uiStatus === "active") {
+      const selfBookStatus = safeText(bondSession?.self_status, "");
+      const partnerBookStatus = safeText(bondSession?.partner_status, "");
+      const sessionStateRaw = normalizeStatus(getSessionState(payload));
+
+      selfStateName = getRingStateFromBookStatus(selfBookStatus || sessionStateRaw);
+      partnerStateName = getRingStateFromBookStatus(partnerBookStatus || sessionStateRaw);
+
+      selfStateText = formatStatus(selfBookStatus || (selfMeditating ? "active" : "idle"));
+      partnerStateText = formatStatus(partnerBookStatus || (partnerMeditating ? "active" : "idle"));
+
+      selfNote = selfMeditating ? "Your side is spiritually engaged." : "You are not meditating right now.";
+      partnerNote = partnerPresenceNote;
+
+      if (sessionStateRaw === "paused" || !partnerPresenceActive) {
+        coreStateName = "paused";
+        connectorStateName = "paused";
+      } else {
+        coreStateName = "live";
+        connectorStateName = "live";
+      }
+    } else if (uiStatus === "pending_incoming" || uiStatus === "pending_outgoing" || uiStatus === "pending") {
+      selfStateName = "waiting";
+      selfStateText = "Waiting";
+      selfNote = "Pending record";
+
+      partnerStateName = "waiting";
+      partnerStateText = "Waiting";
+      partnerNote = "Pending record";
+
+      coreStateName = "paused";
+      connectorStateName = "paused";
+    }
+
+    document.getElementById("self-ring-state").textContent = selfStateText;
+    document.getElementById("self-ring-note").textContent = selfNote;
+    document.getElementById("partner-ring-state").textContent = partnerStateText;
+    document.getElementById("partner-ring-note").textContent = partnerNote;
+
+    document.getElementById("core-bond-percent").textContent = formatPercent(bondPercent);
+    document.getElementById("core-bond-stage").textContent = bondStage;
+    document.getElementById("core-bond-live").textContent = sessionState;
+
+    document.getElementById("core-partner-name").textContent = getPartnerName(payload);
+    document.getElementById("core-partner-realm").textContent = `Realm: ${partnerRealm}`;
+    document.getElementById("core-bond-status").textContent = formatStatus(uiStatus);
+    document.getElementById("core-bond-note").textContent =
+      uiStatus === "active"
+        ? `Presence: ${partnerPresenceStatus}. ${partnerPresenceNote}`
+        : uiStatus === "pending_incoming"
+          ? "This selected record is waiting for your answer."
+          : uiStatus === "pending_outgoing"
+            ? "This selected record is waiting for their answer."
+            : "This selected record is not currently live.";
+
+    document.getElementById("core-book-title").textContent = activeBook;
+    document.getElementById("core-book-note").textContent =
+      uiStatus === "active"
+        ? `${getActiveVolumeLabel(payload)} • ${activeBook}`
+        : "No live shared book is feeding the bond core right now.";
+
+    setRingVisualState(document.getElementById("self-ring-shell"), selfStateName);
+    setRingVisualState(document.getElementById("partner-ring-shell"), partnerStateName);
+    setRingVisualState(document.getElementById("core-ring-shell"), coreStateName);
+
+    const connector = document.getElementById("tri-ring-connector");
+    connector.classList.remove("is-live", "is-paused", "is-idle");
+    connector.classList.add(`is-${connectorStateName}`);
+  }
+
+  function renderBondState(payload) {
+    const partnership = getPartnership(payload);
+
+    document.getElementById("bond-title-value").textContent = getBondTitle(payload);
+    document.getElementById("bond-stage-value").textContent = getBondStage(payload);
+    document.getElementById("bond-percent-value").textContent = formatPercent(getBondPercent(payload));
+    document.getElementById("bond-vessel-mode").textContent = formatStatus(payload?.vessel_mode || "Unknown");
+    document.getElementById("bond-session-state").textContent = formatStatus(getSessionState(payload));
+    document.getElementById("bond-last-update").textContent = formatDate(
+      payload?.bond_session?.updated_at ||
+      payload?.bond?.updated_at ||
+      partnership?.updated_at
+    );
+
+    document.getElementById("bond-partnership-uuid").textContent =
+      safeText(
+        getCurrentRecordPartnershipUuid(payload) ||
+        partnership?.partnership_uuid,
+        "Unknown"
+      );
+
+    const partnershipId = getCurrentRecordPartnershipId(payload);
+    document.getElementById("bond-partnership-id").textContent =
+      partnershipId === null ? "Not Set" : String(partnershipId);
+  }
+
+  function renderIdentity(payload) {
+    const member = getMember(payload);
+    const partner = getPartner(payload);
+
+    const yourName =
+      safeText(member?.character_name, "") ||
+      safeText(member?.display_name, "") ||
+      safeText(member?.sl_username, "Unknown");
+
+    const partnerName =
+      safeText(partner?.character_name, "") ||
+      safeText(partner?.display_name, "") ||
+      getPartnerName(payload);
+
+    const yourRealm = safeText(member?.realm_display_name, member?.realm_name || "Unknown");
+    const partnerRealm = safeText(partner?.realm_display_name, partner?.realm_name || "Unknown");
+
+    const yourPath = safeText(member?.path_type, "Unknown");
+    const partnerPath = safeText(partner?.path_type, "Unknown");
+
+    const yourMemberId = safeText(member?.member_id, "Unknown");
+    const partnerMemberId = safeText(partner?.member_id, "Unknown");
+
+    const yourCP = safeNumber(payload?.personal_cultivation_points, 0);
+    const partnerCP = safeNumber(payload?.partner_cultivation_points, 0);
+
+    const yourQiCurrent = safeNumber(payload?.personal_qi_current, 0);
+    const yourQiMax = safeNumber(payload?.personal_qi_maximum, 0);
+
+    const partnerQiCurrent = safeNumber(payload?.partner_qi_current, 0);
+    const partnerQiMax = safeNumber(payload?.partner_qi_maximum, 0);
+
+    const yourTokens = safeNumber(payload?.personal_ascension_tokens, 0);
+    const partnerTokens = safeNumber(payload?.partner_ascension_tokens, 0);
+
+    const yourEnergy = safeNumber(payload?.partner_1_mortal_energy, 0);
+    const partnerEnergy = safeNumber(payload?.partner_2_mortal_energy, 0);
+
+    document.getElementById("your-name").textContent = yourName;
+    document.getElementById("your-identity-line").textContent = `Realm: ${yourRealm} • Path: ${yourPath}`;
+    document.getElementById("your-member-id-line").textContent = `Member ID: ${yourMemberId}`;
+    document.getElementById("your-resources-line").textContent =
+      `CP: ${formatNumber(yourCP)} • Qi: ${formatNumber(yourQiCurrent)} / ${formatNumber(yourQiMax)} • Tokens: ${formatNumber(yourTokens)} • Mortal Energy: ${formatNumber(yourEnergy)}`;
+    document.getElementById("your-presence-line").textContent =
+      `Meditation: ${member?.v2_cultivation_status === 'cultivating' ? "Active" : "Inactive"} • HUD Sync: ${member?.last_hud_sync_at ? formatDate(member.last_hud_sync_at) : "Unknown"}`;
+
+    document.getElementById("partner-name").textContent = partnerName;
+    document.getElementById("partner-identity-line").textContent = `Realm: ${partnerRealm} • Path: ${partnerPath}`;
+    document.getElementById("partner-member-id-line").textContent = `Member ID: ${partnerMemberId}`;
+    document.getElementById("partner-resources-line").textContent =
+      `CP: ${formatNumber(partnerCP)} • Qi: ${formatNumber(partnerQiCurrent)} / ${formatNumber(partnerQiMax)} • Tokens: ${formatNumber(partnerTokens)} • Mortal Energy: ${formatNumber(partnerEnergy)}`;
+    document.getElementById("partner-presence-line").textContent =
+      `Presence: ${formatPresence(payload?.partner_presence_status || "Unknown")} • ${formatPartnerPresenceReason(payload?.partner_presence_reason, payload?.partner_distance_meters)}`;
+  }
+
+  function renderLedger(payload) {
+    const bond = getBond(payload);
+
+    const personalCP = safeNumber(payload?.personal_cultivation_points, 0);
+    const partnerCP = safeNumber(payload?.partner_cultivation_points, 0);
+    const sharedCP = safeNumber(payload?.shared_cultivation_points, personalCP + partnerCP);
+
+    const personalTokens = safeNumber(payload?.personal_ascension_tokens, 0);
+    const partnerTokens = safeNumber(payload?.partner_ascension_tokens, 0);
+    const sharedTokens = safeNumber(payload?.shared_ascension_tokens, personalTokens + partnerTokens);
+
+    const sharedQiCurrent = safeNumber(payload?.shared_qi_current, 0);
+    const sharedQiMaximum = safeNumber(payload?.shared_qi_maximum, 0);
+
+    const personalEnergy = safeNumber(payload?.partner_1_mortal_energy, 0);
+    const partnerEnergy = safeNumber(payload?.partner_2_mortal_energy, 0);
+
+    document.getElementById("ledger-volume").textContent = getActiveVolumeLabel(payload);
+    document.getElementById("ledger-book").textContent = getActiveBookLabel(payload);
+    document.getElementById("ledger-time-thread").textContent = formatMinutes(bond?.total_shared_minutes || 0);
+    document.getElementById("ledger-pause-reason").textContent =
+      safeText(payload?.bond_session?.pause_reason, safeText(bond?.pause_reason, "None")).replaceAll("_", " ");
+
+    document.getElementById("ledger-shared-cp").textContent = formatNumber(sharedCP);
+    document.getElementById("ledger-shared-cp-note").textContent =
+      `You: ${formatNumber(personalCP)} • Partner: ${formatNumber(partnerCP)}`;
+
+    document.getElementById("ledger-shared-tokens").textContent = formatNumber(sharedTokens);
+    document.getElementById("ledger-shared-tokens-note").textContent =
+      `You: ${formatNumber(personalTokens)} • Partner: ${formatNumber(partnerTokens)}`;
+
+    document.getElementById("ledger-shared-qi").textContent =
+      `${formatNumber(sharedQiCurrent)} / ${formatNumber(sharedQiMaximum)}`;
+    document.getElementById("ledger-shared-qi-note").textContent =
+      "Combined current and maximum Qi for the selected pair.";
+
+    document.getElementById("ledger-pair-energy").textContent =
+      `${formatNumber(personalEnergy)} • ${formatNumber(partnerEnergy)}`;
+    document.getElementById("ledger-pair-energy-note").textContent =
+      `You: ${formatNumber(personalEnergy)} • Partner: ${formatNumber(partnerEnergy)}`;
+  }
+
+  function renderActions(payload) {
+    const partnership = getPartnership(payload);
+    const uiStatus = getUiStatus(payload);
+    const uuid = getCurrentRecordPartnershipUuid(payload) || getUrlContext().partnershipUuid;
+    const partnershipId = getCurrentRecordPartnershipId(payload) || getUrlContext().partnershipId;
+    const focused = isCurrentFocus(payload);
+
+    const openBondBookLink = document.getElementById("open-bond-book-link");
+    const setFocusButton = document.getElementById("set-focus-button");
+    const removeButton = document.getElementById("remove-partnership-button");
+    const acceptButton = document.getElementById("accept-request-button");
+    const denyButton = document.getElementById("deny-request-button");
+    const managementNote = document.getElementById("management-note");
+
+    openBondBookLink.href = uuid
+      ? `/bond-book.html?partnership_uuid=${encodeURIComponent(uuid)}`
+      : partnershipId
+        ? `/bond-book.html?partnership_id=${encodeURIComponent(partnershipId)}`
+        : "/bond-book.html";
+
+    setFocusButton.dataset.partnershipUuid = uuid || "";
+    setFocusButton.dataset.partnershipId = partnershipId || "";
+
+    removeButton.dataset.partnershipUuid = uuid || "";
+    removeButton.dataset.partnershipId = partnershipId || "";
+
+    acceptButton.dataset.partnershipUuid = uuid || "";
+    acceptButton.dataset.partnershipId = partnershipId || "";
+
+    denyButton.dataset.partnershipUuid = uuid || "";
+    denyButton.dataset.partnershipId = partnershipId || "";
+
+    const canAccept = Boolean(partnership?.can_accept);
+    const canDeny = Boolean(partnership?.can_deny);
+
+    acceptButton.classList.toggle("is-hidden", !canAccept);
+    denyButton.classList.toggle("is-hidden", !canDeny);
+
+    removeButton.textContent =
+      uiStatus === "pending_outgoing" ? "Cancel Request" : "Remove Partnership";
+
+    setFocusButton.textContent = focused ? "Current Focus" : "Set As Current Focus";
+
+    if (focused) {
+      managementNote.textContent =
+        "This partnership record is your current selected focus, so the dashboard and related bond pages should follow this pair.";
+    } else if (uiStatus === "active") {
+      managementNote.textContent =
+        "This selected record is active. Removing it will close this specific partnership record.";
+    } else if (uiStatus === "pending_incoming") {
+      managementNote.textContent =
+        "This selected record is waiting for your answer. You can accept, deny, or leave the request pending.";
+    } else if (uiStatus === "pending_outgoing") {
+      managementNote.textContent =
+        "This selected record is waiting for the other member to answer. You can cancel the request from here.";
+    } else {
+      managementNote.textContent =
+        "This selected chamber remains tied to one specific partnership record only.";
+    }
+
+    updateActionButtonsAvailability(payload);
+  }
+
+  function renderAll(payload) {
+    state.payload = payload;
+    clearPageMessage();
+    renderHero(payload);
+    renderBondCore(payload);
+    renderBondState(payload);
+    renderIdentity(payload);
+    renderLedger(payload);
+    renderActions(payload);
+  }
+
+  async function handleSetFocus(button) {
+    const partnershipUuid = safeText(button.dataset.partnershipUuid, "");
+    const rawId = safeText(button.dataset.partnershipId, "");
+    const partnershipId = rawId ? Number(rawId) : null;
+
+    if (isCurrentFocus(state.payload)) {
+      showPageMessage("This record is already your current focus.");
+      return;
+    }
+
+    setBusy(true);
+
+    try {
+      const data = await setSelectedPartnership(partnershipUuid, partnershipId);
+
+      const currentRecordUuid = getCurrentRecordPartnershipUuid(state.payload) || partnershipUuid;
+      if (state.payload && currentRecordUuid && sameValue(currentRecordUuid, partnershipUuid)) {
+        const optimisticPayload = {
+          ...state.payload,
+          selected_partnership_uuid: partnershipUuid,
+          current_record_partnership_uuid: currentRecordUuid,
+          is_current_focus: true,
+          partnership: {
+            ...state.payload.partnership,
+            is_current_focus: true
+          },
+          computed: {
+            ...(state.payload.computed || {}),
+            selected_partnership_uuid: partnershipUuid,
+            current_record_partnership_uuid: currentRecordUuid,
+            is_current_focus: true
+          }
+        };
+
+        renderAll(optimisticPayload);
+      }
+
+      showPageMessage(data.message || "Current focus updated.");
+      await loadPartnershipRecord();
+    } catch (error) {
+      console.error("set focus error:", error);
+      if (redirectIfAuthError(error)) return;
+      showPageMessage(error?.message || "Failed to set current focus.");
+    } finally {
+      setBusy(false);
+    }
+  }
+
+  async function handleAccept(button) {
+    const partnershipUuid = safeText(button.dataset.partnershipUuid, "");
+    const rawId = safeText(button.dataset.partnershipId, "");
+    const partnershipId = rawId ? Number(rawId) : null;
+
+    setBusy(true);
+    try {
+      const data = await acceptPartnerRequest(partnershipUuid, partnershipId);
+      showPageMessage(data.message || "Partner request accepted.");
+      await loadPartnershipRecord();
+    } catch (error) {
+      console.error("accept partnership error:", error);
+      if (redirectIfAuthError(error)) return;
+      showPageMessage(error?.message || "Failed to accept request.");
+    } finally {
+      setBusy(false);
+    }
+  }
+
+  async function handleDeny(button) {
+    const partnershipUuid = safeText(button.dataset.partnershipUuid, "");
+    const rawId = safeText(button.dataset.partnershipId, "");
+    const partnershipId = rawId ? Number(rawId) : null;
+
+    setBusy(true);
+    try {
+      const data = await denyPartnerRequest(partnershipUuid, partnershipId);
+      showPageMessage(data.message || "Partner request denied.");
+      setTimeout(() => {
+        window.location.href = "/partnership.html";
+      }, 900);
+    } catch (error) {
+      console.error("deny partnership error:", error);
+      if (redirectIfAuthError(error)) return;
+      showPageMessage(error?.message || "Failed to deny request.");
+    } finally {
+      setBusy(false);
+    }
+  }
+
+  async function handleRemove(button) {
+    const partnershipUuid = safeText(button.dataset.partnershipUuid, "");
+    const rawId = safeText(button.dataset.partnershipId, "");
+    const partnershipId = rawId ? Number(rawId) : null;
+
+    setBusy(true);
+    try {
+      const data = await removePartnership(partnershipUuid, partnershipId);
+      showPageMessage(data.message || "Partnership record removed.");
+      setTimeout(() => {
+        window.location.href = "/partnership.html";
+      }, 900);
+    } catch (error) {
+      console.error("remove partnership error:", error);
+      if (redirectIfAuthError(error)) return;
+      showPageMessage(error?.message || "Failed to remove partnership.");
+    } finally {
+      setBusy(false);
+    }
+  }
+
+  function bindEvents() {
+    document.getElementById("set-focus-button").addEventListener("click", async function () {
+      await handleSetFocus(this);
+    });
+
+    document.getElementById("accept-request-button").addEventListener("click", async function () {
+      await handleAccept(this);
+    });
+
+    document.getElementById("deny-request-button").addEventListener("click", async function () {
+      await handleDeny(this);
+    });
+
+    document.getElementById("remove-partnership-button").addEventListener("click", async function () {
+      await handleRemove(this);
+    });
+
+    document.getElementById("logout-button").addEventListener("click", async function () {
+      await logoutUser();
+    });
+  }
+
+  async function boot() {
+    try {
+      bindEvents();
+      await verifySession();
+      await loadPartnershipRecord();
+
+      state.refreshInterval = setInterval(async () => {
+        try {
+          await loadPartnershipRecord();
+        } catch (error) {
+          console.error("Partnership record refresh error:", error);
+          if (redirectIfAuthError(error)) return;
+        }
+      }, 7000);
+    } catch (error) {
+      console.error("Partnership record load error:", error);
+      if (redirectIfAuthError(error)) return;
+      showPageMessage(error?.message || "Failed to load partnership record.");
+    }
+  }
+
+  boot();
+
+  window.addEventListener("beforeunload", function () {
+    if (state.refreshInterval) {
+      clearInterval(state.refreshInterval);
+    }
+  });
+</script>
+</body>
+</html>

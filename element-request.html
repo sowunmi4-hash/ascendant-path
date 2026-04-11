@@ -1,0 +1,1938 @@
+<!DOCTYPE html>
+<html lang="en" style="--token-crest-url: url('/images/ascension-token-crest.png');">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Element Request Chamber | The Ascendant Path</title>
+  <link rel="stylesheet" href="style.css" />
+  <style>
+  @import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@400;500;600;700&family=Cinzel+Decorative:wght@400;700&family=EB+Garamond:ital,wght@0,400;0,500;1,400&display=swap');
+
+  /* ── PAGE SHELL ─────────────────────────────────────── */
+  .rune-layer {
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  .request-page {
+    position: relative;
+    z-index: 1;
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 2rem 1.5rem 5rem;
+    display: flex;
+    flex-direction: column;
+    gap: 2rem;
+  }
+
+  /* ── HERO HEADER ─────────────────────────────────────── */
+  .request-header {
+    position: relative;
+    border-radius: var(--radius-xl);
+    overflow: hidden;
+    background: linear-gradient(135deg, #0a0f1e 0%, #06080f 60%, #0d1525 100%);
+    border: 1px solid rgba(200,169,106,0.2);
+    padding: 3rem 2.5rem 2.5rem;
+    box-shadow: 0 0 80px rgba(200,169,106,0.06), var(--shadow-lg);
+    animation: heroReveal 0.9s cubic-bezier(0.22,1,0.36,1) both;
+  }
+
+  .request-header::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background:
+      radial-gradient(ellipse 60% 40% at 80% 50%, rgba(200,169,106,0.07) 0%, transparent 70%),
+      radial-gradient(ellipse 40% 60% at 20% 80%, rgba(142,168,255,0.05) 0%, transparent 60%);
+    pointer-events: none;
+  }
+
+  .request-header::after {
+    content: '';
+    position: absolute;
+    bottom: 0; left: 0; right: 0;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, rgba(200,169,106,0.4), transparent);
+  }
+
+  .request-header-main {
+    position: relative;
+    z-index: 1;
+  }
+
+  .request-eyebrow {
+    font-family: 'Cinzel', serif;
+    font-size: 0.65rem;
+    letter-spacing: 0.3em;
+    text-transform: uppercase;
+    color: var(--gold);
+    opacity: 0.7;
+    margin-bottom: 0.6rem;
+  }
+
+  .request-header h1 {
+    font-family: 'Cinzel Decorative', serif;
+    font-size: clamp(1.6rem, 3vw, 2.4rem);
+    font-weight: 700;
+    color: var(--gold-soft);
+    line-height: 1.15;
+    margin: 0 0 0.8rem;
+    text-shadow: 0 0 40px rgba(200,169,106,0.3);
+  }
+
+  .request-session-line {
+    font-family: 'Cinzel', serif;
+    font-size: 0.72rem;
+    letter-spacing: 0.15em;
+    color: var(--muted);
+    opacity: 0.6;
+    margin-bottom: 1rem;
+  }
+
+  .request-copy {
+    font-family: 'EB Garamond', serif;
+    font-size: 1.05rem;
+    color: var(--muted-soft);
+    line-height: 1.7;
+    max-width: 600px;
+  }
+
+  /* ── ELEMENT IDENTITY STRIP ──────────────────────────── */
+  .element-identity-strip {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    flex-wrap: wrap;
+    margin-top: 1.5rem;
+    padding-top: 1.5rem;
+    border-top: 1px solid rgba(200,169,106,0.1);
+  }
+
+  .element-identity-label {
+    font-family: 'Cinzel', serif;
+    font-size: 0.62rem;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--muted);
+    opacity: 0.5;
+    margin-right: 0.5rem;
+  }
+
+  .element-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    padding: 0.3rem 0.8rem;
+    border-radius: var(--radius-pill);
+    font-family: 'Cinzel', serif;
+    font-size: 0.7rem;
+    letter-spacing: 0.1em;
+    font-weight: 600;
+    border: 1px solid;
+    animation: badgeGlow 3s ease-in-out infinite;
+  }
+
+  .element-badge.primary   { background: rgba(200,169,106,0.1); border-color: rgba(200,169,106,0.4); color: var(--gold-soft); }
+  .element-badge.secondary { background: rgba(142,168,255,0.08); border-color: rgba(142,168,255,0.3); color: var(--blue-soft); animation-delay: 0.5s; }
+  .element-badge.derived   { background: rgba(127,179,155,0.08); border-color: rgba(127,179,155,0.3); color: var(--jade); animation-delay: 1s; }
+  .element-badge.third     { background: rgba(180,130,255,0.08); border-color: rgba(180,130,255,0.3); color: #c9a8ff; animation-delay: 1.5s; }
+  .element-badge.slot-empty { background: rgba(255,255,255,0.03); border-color: rgba(255,255,255,0.1); color: var(--muted); opacity: 0.5; animation: none; }
+
+  .element-badge-dot {
+    width: 6px; height: 6px;
+    border-radius: 50%;
+    background: currentColor;
+    opacity: 0.7;
+    flex-shrink: 0;
+  }
+
+  /* ── SUMMARY STRIP ───────────────────────────────────── */
+  .summary-strip {
+    background: var(--surface-1);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg);
+    padding: 1.5rem 2rem;
+    animation: slideUp 0.7s cubic-bezier(0.22,1,0.36,1) 0.1s both;
+  }
+
+  .summary-strip .panel-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 1.2rem;
+  }
+
+  .summary-strip .panel-header h2 {
+    font-family: 'Cinzel', serif;
+    font-size: 0.75rem;
+    letter-spacing: 0.25em;
+    text-transform: uppercase;
+    color: var(--gold);
+    margin: 0;
+  }
+
+  .summary-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+    gap: 1rem;
+  }
+
+  .summary-card {
+    background: var(--surface-2);
+    border: 1px solid var(--border-soft);
+    border-radius: var(--radius-md);
+    padding: 1rem 1.2rem;
+    border-left: 3px solid var(--gold);
+    transition: border-color 0.3s, box-shadow 0.3s;
+  }
+
+  .summary-card:hover {
+    border-left-color: var(--gold-soft);
+    box-shadow: -4px 0 16px rgba(200,169,106,0.12);
+  }
+
+  .summary-card .label {
+    font-family: 'Cinzel', serif;
+    font-size: 0.6rem;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--muted);
+    opacity: 0.6;
+    margin-bottom: 0.4rem;
+  }
+
+  .summary-card .value {
+    font-family: 'Cinzel', serif;
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: var(--gold-soft);
+  }
+
+  .summary-card .value.can-afford { color: #7fb39b; }
+  .summary-card .value.cannot-afford { color: #e07070; }
+
+  /* ── TABBED CHAMBER ──────────────────────────────────── */
+  .dual-chamber-shell {
+    background: var(--surface-1);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-xl);
+    overflow: hidden;
+    animation: slideUp 0.7s cubic-bezier(0.22,1,0.36,1) 0.2s both;
+    box-shadow: var(--shadow-md);
+  }
+
+  .dual-chamber-shell .panel-header {
+    padding: 1.5rem 2rem 0;
+    border-bottom: 1px solid var(--border-soft);
+  }
+
+  .dual-chamber-shell .panel-header h2 {
+    font-family: 'Cinzel', serif;
+    font-size: 0.75rem;
+    letter-spacing: 0.25em;
+    text-transform: uppercase;
+    color: var(--gold);
+    margin: 0 0 1.2rem;
+  }
+
+  /* Tab navigation */
+  .chamber-tabs {
+    display: flex;
+    gap: 0;
+    border-bottom: none;
+  }
+
+  .chamber-tab {
+    padding: 0.7rem 1.8rem;
+    font-family: 'Cinzel', serif;
+    font-size: 0.7rem;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--muted);
+    background: transparent;
+    border: none;
+    border-bottom: 2px solid transparent;
+    cursor: pointer;
+    transition: color 0.25s, border-color 0.25s;
+    white-space: nowrap;
+  }
+
+  .chamber-tab:hover { color: var(--gold-soft); }
+
+  .chamber-tab.active {
+    color: var(--gold-soft);
+    border-bottom-color: var(--gold);
+  }
+
+  /* Tab panels */
+  .chamber-panel {
+    display: none;
+    padding: 2rem;
+    animation: fadeIn 0.35s ease both;
+  }
+
+  .chamber-panel.active { display: block; }
+
+  /* Treasury panel inside tab */
+  .treasury-panel {
+    background: var(--surface-2);
+    border: 1px solid var(--border-soft);
+    border-radius: var(--radius-lg);
+    padding: 1.5rem;
+    margin-bottom: 1.5rem;
+    display: flex;
+    align-items: center;
+    gap: 1.5rem;
+  }
+
+  .token-crest-wrap {
+    flex-shrink: 0;
+  }
+
+  .token-crest-frame {
+    width: 56px; height: 56px;
+    border-radius: 50%;
+    background: var(--gold-faint);
+    border: 1px solid rgba(200,169,106,0.3);
+    display: flex; align-items: center; justify-content: center;
+    overflow: hidden;
+    animation: crownPulse 4s ease-in-out infinite;
+  }
+
+  .token-crest-frame img {
+    width: 40px; height: 40px;
+    object-fit: contain;
+  }
+
+  .token-balance-block {
+    flex: 1;
+  }
+
+  .token-balance-block .balance-label {
+    font-family: 'Cinzel', serif;
+    font-size: 0.6rem;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--muted);
+    opacity: 0.6;
+    margin-bottom: 0.3rem;
+  }
+
+  .token-balance-block .balance-value {
+    font-family: 'Cinzel', serif;
+    font-size: 1.6rem;
+    font-weight: 700;
+    color: var(--gold-soft);
+    line-height: 1;
+    text-shadow: 0 0 20px rgba(200,169,106,0.3);
+    animation: balancePulse 3s ease-in-out infinite;
+  }
+
+  /* ── PETITION FORM ───────────────────────────────────── */
+  .petition-hall { width: 100%; }
+
+  .form-panel {
+    background: var(--surface-2);
+    border: 1px solid var(--border-soft);
+    border-radius: var(--radius-lg);
+    padding: 1.5rem;
+    margin-bottom: 1rem;
+  }
+
+  .form-panel h3 {
+    font-family: 'Cinzel', serif;
+    font-size: 0.7rem;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--gold);
+    margin: 0 0 1.2rem;
+    padding-bottom: 0.8rem;
+    border-bottom: 1px solid var(--border-soft);
+  }
+
+  .form-group {
+    margin-bottom: 1.2rem;
+  }
+
+  .form-group label {
+    display: block;
+    font-family: 'Cinzel', serif;
+    font-size: 0.62rem;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-bottom: 0.5rem;
+  }
+
+  .form-group select,
+  .form-group input {
+    width: 100%;
+    background: var(--field-bg);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+    padding: 0.7rem 1rem;
+    color: var(--text);
+    font-family: 'EB Garamond', serif;
+    font-size: 1rem;
+    transition: border-color 0.2s, box-shadow 0.2s;
+    box-sizing: border-box;
+  }
+
+  .form-group select:focus,
+  .form-group input:focus {
+    outline: none;
+    border-color: var(--field-border-strong);
+    background: var(--field-bg-focus);
+    box-shadow: 0 0 0 3px rgba(200,169,106,0.08);
+  }
+
+  /* ── COST REVEAL CARD ────────────────────────────────── */
+  .cost-reveal {
+    overflow: hidden;
+    max-height: 0;
+    opacity: 0;
+    pointer-events: none;
+    transition: max-height 0.4s cubic-bezier(0.22,1,0.36,1), opacity 0.3s ease;
+  }
+
+  .cost-reveal.visible {
+    max-height: 300px;
+    opacity: 1;
+    pointer-events: auto;
+  }
+
+  .cost-card {
+    background: linear-gradient(135deg, rgba(200,169,106,0.06), rgba(142,168,255,0.04));
+    border: 1px solid rgba(200,169,106,0.2);
+    border-radius: var(--radius-md);
+    padding: 1.2rem 1.4rem;
+    margin-bottom: 1rem;
+    border-left: 3px solid var(--gold);
+  }
+
+  .cost-card-title {
+    font-family: 'Cinzel', serif;
+    font-size: 0.62rem;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--gold);
+    opacity: 0.7;
+    margin-bottom: 0.8rem;
+  }
+
+  .cost-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0.5rem 1.5rem;
+  }
+
+  .mini-card {
+    display: flex;
+    flex-direction: column;
+    gap: 0.2rem;
+  }
+
+  .mini-card .label {
+    font-family: 'Cinzel', serif;
+    font-size: 0.58rem;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--muted);
+    opacity: 0.55;
+  }
+
+  .mini-card .value {
+    font-family: 'Cinzel', serif;
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: var(--gold-soft);
+  }
+
+  .mini-card .value.refund { color: var(--jade); }
+  .mini-card .value.total  { color: var(--gold-soft); font-size: 1.1rem; }
+
+  .cascade-note {
+    margin-top: 0.8rem;
+    padding-top: 0.8rem;
+    border-top: 1px solid rgba(255,255,255,0.06);
+    font-family: 'EB Garamond', serif;
+    font-size: 0.85rem;
+    font-style: italic;
+    color: var(--muted-soft);
+    opacity: 0.7;
+    line-height: 1.5;
+  }
+
+  /* ── FORM ACTIONS ────────────────────────────────────── */
+  .form-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 0.8rem;
+    margin-top: 1rem;
+  }
+
+  .ritual-button {
+    font-family: 'Cinzel', serif;
+    font-size: 0.72rem;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    font-weight: 600;
+    padding: 0.75rem 2rem;
+    border-radius: var(--radius-pill);
+    cursor: pointer;
+    border: 1px solid;
+    transition: all 0.25s;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .ritual-button.primary-action {
+    background: linear-gradient(135deg, var(--gold-btn-top), var(--gold-btn-bottom));
+    border-color: var(--gold-btn-border);
+    color: #1a0f00;
+  }
+
+  .ritual-button.primary-action::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(135deg, rgba(255,255,255,0.15), transparent);
+    opacity: 0;
+    transition: opacity 0.25s;
+  }
+
+  .ritual-button.primary-action:hover::before { opacity: 1; }
+
+  .ritual-button.primary-action:hover {
+    box-shadow: 0 0 24px rgba(200,169,106,0.35);
+    transform: translateY(-1px);
+  }
+
+  .ritual-button.secondary-action {
+    background: transparent;
+    border-color: var(--border);
+    color: var(--muted);
+  }
+
+  .ritual-button.secondary-action:hover {
+    border-color: var(--gold);
+    color: var(--gold-soft);
+  }
+
+  .ritual-button:disabled {
+    opacity: 0.4;
+    cursor: not-allowed;
+    transform: none !important;
+    box-shadow: none !important;
+  }
+
+  /* ── ROOT GUIDE ──────────────────────────────────────── */
+  .root-guide-shell {
+    background: var(--surface-1);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-xl);
+    padding: 2rem;
+    animation: slideUp 0.7s cubic-bezier(0.22,1,0.36,1) 0.3s both;
+  }
+
+  .root-guide-shell .panel-header {
+    margin-bottom: 1.5rem;
+  }
+
+  .root-guide-shell .panel-header h2 {
+    font-family: 'Cinzel', serif;
+    font-size: 0.75rem;
+    letter-spacing: 0.25em;
+    text-transform: uppercase;
+    color: var(--gold);
+    margin: 0;
+  }
+
+  .root-guide-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1.5rem;
+  }
+
+  .guide-stack {
+    background: var(--surface-2);
+    border: 1px solid var(--border-soft);
+    border-radius: var(--radius-lg);
+    padding: 1.2rem 1.4rem;
+  }
+
+  .guide-stack h4 {
+    font-family: 'Cinzel', serif;
+    font-size: 0.65rem;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--gold);
+    opacity: 0.7;
+    margin: 0 0 1rem;
+  }
+
+  .root-bar-item {
+    display: flex;
+    align-items: center;
+    gap: 0.8rem;
+    margin-bottom: 0.7rem;
+  }
+
+  .root-bar-label {
+    font-family: 'Cinzel', serif;
+    font-size: 0.65rem;
+    letter-spacing: 0.1em;
+    color: var(--muted);
+    width: 50px;
+    flex-shrink: 0;
+  }
+
+  .root-bar-track {
+    flex: 1;
+    height: 6px;
+    background: rgba(255,255,255,0.06);
+    border-radius: 3px;
+    overflow: hidden;
+  }
+
+  .root-bar-fill {
+    height: 100%;
+    border-radius: 3px;
+    background: linear-gradient(90deg, var(--gold), var(--gold-soft));
+    transition: width 0.6s cubic-bezier(0.22,1,0.36,1);
+  }
+
+  .root-bar-value {
+    font-family: 'Cinzel', serif;
+    font-size: 0.65rem;
+    color: var(--gold-soft);
+    width: 36px;
+    text-align: right;
+    flex-shrink: 0;
+  }
+
+  .map-list {
+    list-style: none;
+    padding: 0; margin: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+
+  .map-list li {
+    font-family: 'EB Garamond', serif;
+    font-size: 0.9rem;
+    color: var(--muted-soft);
+    padding: 0.4rem 0;
+    border-bottom: 1px solid rgba(255,255,255,0.04);
+    line-height: 1.4;
+  }
+
+  .map-list li:last-child { border-bottom: none; }
+
+  /* ── STATUS / MESSAGES ───────────────────────────────── */
+  .summary {
+    font-family: 'EB Garamond', serif;
+    font-size: 0.95rem;
+    padding: 0.8rem 1.2rem;
+    border-radius: var(--radius-sm);
+    margin-top: 0.5rem;
+    line-height: 1.5;
+  }
+
+  .summary.success { background: rgba(127,179,155,0.12); border: 1px solid rgba(127,179,155,0.3); color: var(--jade); }
+  .summary.error   { background: rgba(220,100,100,0.1);  border: 1px solid rgba(220,100,100,0.3); color: #e07070; }
+  .summary.info    { background: var(--blue-faint);       border: 1px solid var(--border-blue);    color: var(--blue-soft); }
+
+  .login-error {
+    text-align: center;
+    padding: 3rem;
+    font-family: 'EB Garamond', serif;
+    color: var(--muted);
+  }
+
+  .is-hidden { display: none !important; }
+
+  /* ── ANIMATIONS ──────────────────────────────────────── */
+  @keyframes heroReveal {
+    from { opacity: 0; transform: translateY(-16px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+
+  @keyframes slideUp {
+    from { opacity: 0; transform: translateY(24px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+
+  @keyframes fadeIn {
+    from { opacity: 0; }
+    to   { opacity: 1; }
+  }
+
+  @keyframes badgeGlow {
+    0%, 100% { box-shadow: 0 0 0 rgba(200,169,106,0); }
+    50%       { box-shadow: 0 0 12px rgba(200,169,106,0.2); }
+  }
+
+  @keyframes balancePulse {
+    0%, 100% { text-shadow: 0 0 20px rgba(200,169,106,0.3); }
+    50%       { text-shadow: 0 0 35px rgba(200,169,106,0.55); }
+  }
+
+  @keyframes crownPulse {
+    0%, 100% { box-shadow: 0 0 0 rgba(200,169,106,0); }
+    50%       { box-shadow: 0 0 18px rgba(200,169,106,0.25); }
+  }
+
+  @keyframes submitFlash {
+    0%   { opacity: 0; }
+    15%  { opacity: 0.6; }
+    100% { opacity: 0; }
+  }
+
+  .lightning-flash.flash-active {
+    animation: submitFlash 0.8s ease-out forwards;
+  }
+
+  /* ── RESPONSIVE ──────────────────────────────────────── */
+  @media (max-width: 900px) {
+    .root-guide-grid { grid-template-columns: 1fr; }
+    .chamber-tab { padding: 0.6rem 1.2rem; font-size: 0.65rem; }
+  }
+
+  @media (max-width: 600px) {
+    .request-page { padding: 1rem 1rem 4rem; }
+    .request-header { padding: 2rem 1.5rem; }
+    .request-header h1 { font-size: 1.4rem; }
+    .dual-chamber-shell .panel-header,
+    .chamber-panel { padding: 1.2rem; }
+    .cost-grid { grid-template-columns: 1fr; }
+    .element-identity-strip { gap: 0.4rem; }
+  }
+</style>
+
+</head>
+<body>
+  <div class="cloud-layer"></div>
+  <div class="rune-layer"></div>
+  <div class="lightning-flash" id="lightning-flash"></div>
+
+  <nav>
+    <a href="/dashboard.html">Dashboard</a>
+    <a href="/elements.html">Elements</a>
+    <a href="/store.html">Store</a>
+    <a href="/element-request.html" class="active">Petitions</a>
+    <a href="/login.html" id="logout-button">Logout</a>
+  </nav>
+
+  <main class="request-page">
+
+    <!-- HERO HEADER -->
+    <section class="request-header">
+      <div class="request-header-main">
+        <p class="request-eyebrow">Ascendant Path · Petition Chamber</p>
+        <h1>Element &amp; Root Petitions</h1>
+        <p class="request-session-line" id="session-line">Loading cultivator record…</p>
+        <p class="request-copy">Submit a formal petition to realign your spiritual roots, attune a new element, or shift your derived path. Each petition carries a cost — and the heavens may deny what is not yet destined.</p>
+
+        <!-- Live element identity badges -->
+        <div class="element-identity-strip" id="element-identity-strip">
+          <span class="element-identity-label">Current</span>
+          <span class="element-badge primary slot-empty" id="badge-primary"><span class="element-badge-dot"></span><span id="badge-primary-text">—</span></span>
+          <span class="element-badge secondary slot-empty" id="badge-secondary"><span class="element-badge-dot"></span><span id="badge-secondary-text">—</span></span>
+          <span class="element-badge derived slot-empty" id="badge-derived"><span class="element-badge-dot"></span><span id="badge-derived-text">—</span></span>
+          <span class="element-badge third slot-empty" id="badge-third"><span class="element-badge-dot"></span><span id="badge-third-text">—</span></span>
+        </div>
+      </div>
+    </section>
+
+    <!-- SUMMARY STRIP -->
+    <section class="summary-strip">
+      <div class="panel-header">
+        <h2>Cultivator Status</h2>
+      </div>
+      <div class="summary-grid" id="summary-grid">
+        <div class="summary-card">
+          <div class="label">Ascension Tokens</div>
+          <div class="value" id="token-balance-display">—</div>
+        </div>
+        <div class="summary-card">
+          <div class="label">Petition Status</div>
+          <div class="value" id="petition-status-display">—</div>
+        </div>
+        <div class="summary-card">
+          <div class="label">Spirit Root Profile</div>
+          <div class="value" id="root-profile-display">—</div>
+        </div>
+        <div class="summary-card">
+          <div class="label">Realm</div>
+          <div class="value" id="realm-display">—</div>
+        </div>
+      </div>
+      <div id="page-message-area"></div>
+    </section>
+
+    <!-- TABBED PETITION CHAMBER -->
+    <section class="dual-chamber-shell">
+      <div class="panel-header">
+        <h2>Petition Chamber</h2>
+        <div class="chamber-tabs" role="tablist">
+          <button class="chamber-tab active" role="tab" data-tab="element-tab" id="tab-element">Element Petition</button>
+          <button class="chamber-tab" role="tab" data-tab="root-tab" id="tab-root">Root Petition</button>
+        </div>
+      </div>
+
+      <!-- ELEMENT PETITION TAB -->
+      <div class="chamber-panel active" id="element-tab" role="tabpanel">
+
+        <!-- Treasury -->
+        <div class="treasury-panel">
+          <div class="token-crest-wrap">
+            <div class="token-crest-frame">
+              <img src="/images/ascension-token-crest.png" alt="Ascension Token" onerror="this.style.display='none'" />
+            </div>
+          </div>
+          <div class="token-balance-block">
+            <div class="balance-label">Available Tokens</div>
+            <div class="balance-value" id="element-token-balance">—</div>
+          </div>
+        </div>
+
+        <!-- Active request notice -->
+        <div id="element-active-request-notice" class="is-hidden">
+          <div class="summary info" id="element-active-request-message"></div>
+        </div>
+
+        <!-- Petition form -->
+        <div class="petition-hall" id="element-petition-hall">
+          <form class="petition-form" id="element-petition-form" autocomplete="off">
+            <div class="form-panel">
+              <h3>Element Attunement Request</h3>
+
+              <div class="form-group">
+                <label for="element-request-target">Petition Type</label>
+                <select id="element-request-target" name="request_target" required>
+                  <option value="">— Select petition type —</option>
+                  <option value="primary">Primary Element</option>
+                  <option value="secondary">Secondary Element</option>
+                  <option value="derived">Derived Path Element</option>
+                  <option value="third">Third Element</option>
+                </select>
+              </div>
+
+              <div class="form-group">
+                <label for="requested-element">Requested Element</label>
+                <input type="text" id="requested-element" name="requested_element" placeholder="e.g. Lightning, Ice, Sound…" required />
+              </div>
+
+              <!-- Cost reveal -->
+              <div class="cost-reveal" id="element-cost-reveal">
+                <div class="cost-card">
+                  <div class="cost-card-title">Petition Cost Breakdown</div>
+                  <div class="cost-grid">
+                    <div class="mini-card">
+                      <span class="label">Submission</span>
+                      <span class="value" id="el-cost-submission">—</span>
+                    </div>
+                    <div class="mini-card">
+                      <span class="label">Attunement</span>
+                      <span class="value" id="el-cost-attunement">—</span>
+                    </div>
+                    <div class="mini-card">
+                      <span class="label">Total Cost</span>
+                      <span class="value total" id="el-cost-total">—</span>
+                    </div>
+                    <div class="mini-card">
+                      <span class="label">Refund if Denied</span>
+                      <span class="value refund" id="el-cost-refund">—</span>
+                    </div>
+                  </div>
+                  <div class="cascade-note" id="el-cascade-note"></div>
+                </div>
+              </div>
+
+              <div id="element-form-message"></div>
+
+              <div class="form-actions">
+                <button type="button" class="ritual-button secondary-action" id="reset-element-request-button">Clear</button>
+                <button type="submit" class="ritual-button primary-action" id="element-submit-btn">Submit Petition</button>
+              </div>
+            </div>
+          </form>
+        </div>
+      </div>
+
+      <!-- ROOT PETITION TAB -->
+      <div class="chamber-panel" id="root-tab" role="tabpanel">
+
+        <!-- Treasury -->
+        <div class="treasury-panel">
+          <div class="token-crest-wrap">
+            <div class="token-crest-frame">
+              <img src="/images/ascension-token-crest.png" alt="Ascension Token" onerror="this.style.display='none'" />
+            </div>
+          </div>
+          <div class="token-balance-block">
+            <div class="balance-label">Available Tokens</div>
+            <div class="balance-value" id="root-token-balance">—</div>
+          </div>
+        </div>
+
+        <!-- Active request notice -->
+        <div id="root-active-request-notice" class="is-hidden">
+          <div class="summary info" id="root-active-request-message"></div>
+        </div>
+
+        <!-- Root petition form -->
+        <div class="petition-hall" id="root-petition-hall">
+          <form class="petition-form" id="root-petition-form" autocomplete="off">
+            <div class="form-panel">
+              <h3>Root Realignment Request</h3>
+
+              <div class="form-group">
+                <label for="root-request-target">Petition Type</label>
+                <select id="root-request-target" name="request_target" required>
+                  <option value="">— Select petition type —</option>
+                  <option value="root_minor">Root Minor Shift (50 tokens)</option>
+                  <option value="root_major">Root Major Overhaul (100 tokens)</option>
+                </select>
+              </div>
+
+              <div class="form-group">
+                <label for="increase-root">Root to Strengthen</label>
+                <select id="increase-root" name="increase_root">
+                  <option value="">— Select root —</option>
+                  <option value="Metal">Metal</option>
+                  <option value="Wood">Wood</option>
+                  <option value="Water">Water</option>
+                  <option value="Fire">Fire</option>
+                  <option value="Earth">Earth</option>
+                </select>
+              </div>
+
+              <div class="form-group">
+                <label for="decrease-root">Root to Weaken</label>
+                <select id="decrease-root" name="decrease_root">
+                  <option value="">— Select root —</option>
+                  <option value="Metal">Metal</option>
+                  <option value="Wood">Wood</option>
+                  <option value="Water">Water</option>
+                  <option value="Fire">Fire</option>
+                  <option value="Earth">Earth</option>
+                </select>
+              </div>
+
+              <div class="form-group">
+                <label for="shift-amount">Shift Amount (%)</label>
+                <input type="number" id="shift-amount" name="shift_amount" min="1" max="100" placeholder="e.g. 10" />
+              </div>
+
+              <!-- Cost reveal -->
+              <div class="cost-reveal" id="root-cost-reveal">
+                <div class="cost-card">
+                  <div class="cost-card-title">Petition Cost Breakdown</div>
+                  <div class="cost-grid">
+                    <div class="mini-card">
+                      <span class="label">Submission</span>
+                      <span class="value" id="root-cost-submission">—</span>
+                    </div>
+                    <div class="mini-card">
+                      <span class="label">Attunement</span>
+                      <span class="value" id="root-cost-attunement">—</span>
+                    </div>
+                    <div class="mini-card">
+                      <span class="label">Total Cost</span>
+                      <span class="value total" id="root-cost-total">—</span>
+                    </div>
+                    <div class="mini-card">
+                      <span class="label">Refund if Denied</span>
+                      <span class="value refund" id="root-cost-refund">—</span>
+                    </div>
+                  </div>
+                  <div class="cascade-note" id="root-cascade-note"></div>
+                </div>
+              </div>
+
+              <div id="root-form-message"></div>
+
+              <div class="form-actions">
+                <button type="button" class="ritual-button secondary-action" id="reset-root-request-button">Clear</button>
+                <button type="submit" class="ritual-button primary-action" id="root-submit-btn">Submit Petition</button>
+              </div>
+            </div>
+          </form>
+        </div>
+      </div>
+
+    </section>
+
+    <!-- ROOT GUIDE -->
+    <section class="root-guide-shell">
+      <div class="panel-header">
+        <h2>Root Balance Guide</h2>
+      </div>
+      <div class="root-guide-grid" id="root-guide-grid">
+        <div class="guide-stack" id="current-root-guide">
+          <h4>Current Root Balance</h4>
+          <div id="current-root-bars"></div>
+        </div>
+        <div class="guide-stack" id="projected-root-guide">
+          <h4>Projected After Shift</h4>
+          <div id="projected-root-bars"></div>
+          <ul class="map-list" id="root-guide-notes"></ul>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+
+  <footer>
+    The Ascendant Path • Petition Hall • Base element changes and Mortal root reallocation
+  </footer>
+
+  <script>
+    const LOGIN_URL = "/login.html";
+    const VERIFY_SESSION_URL = "/.netlify/functions/verify-session";
+    const LOGOUT_URL = "/.netlify/functions/logout";
+
+    const CLIENT_SESSION_KEYS = [
+      "sl_username",
+      "slUsername",
+      "avatar_key",
+      "avatarKey",
+      "member_id",
+      "memberId",
+      "session_token",
+      "sessionToken",
+      "cultivation_session",
+      "cultivationSession",
+      "ascendant_session",
+      "ascendantSession"
+    ];
+
+    const BASE_ELEMENT_OPTIONS = ["Metal", "Wood", "Water", "Fire", "Earth"];
+    const ROOT_OPTIONS = ["Metal", "Wood", "Water", "Fire", "Earth"];
+
+    const PATH_ELEMENT_MAP = {
+      "metal|wood": "Sound",
+      "metal|water": "Ice",
+      "metal|fire": "Lightning",
+      "metal|earth": "Gravity",
+      "wood|water": "Wind",
+      "wood|fire": "Light",
+      "wood|earth": "Poison",
+      "water|fire": "Thunder",
+      "water|earth": "Darkness",
+      "fire|earth": "Shadow"
+    };
+
+    const THIRD_POOL_MAP = {
+      "metal|sound": ["Will", "Mind"],
+      "metal|ice": ["Pure Yin", "Moon"],
+      "metal|lightning": ["Yang", "Calamity"],
+      "metal|gravity": ["Space", "Fortune"],
+
+      "wood|sound": ["Soul", "Destiny"],
+      "wood|wind": ["Time", "Destiny"],
+      "wood|light": ["Creation", "Life"],
+      "wood|poison": ["Demon", "Death"],
+
+      "water|ice": ["Pure Yin", "Moon"],
+      "water|wind": ["Time", "Void"],
+      "water|thunder": ["Dragon", "Karma"],
+      "water|darkness": ["Pure Yin", "Void"],
+
+      "fire|lightning": ["Yang", "Sun"],
+      "fire|light": ["Sun", "Creation"],
+      "fire|thunder": ["Dragon", "Phoenix"],
+      "fire|shadow": ["Chaos", "Demon"],
+
+      "earth|gravity": ["Space", "Fortune"],
+      "earth|poison": ["Death", "Demon"],
+      "earth|darkness": ["Pure Yin", "Death"],
+      "earth|shadow": ["Demon", "Chaos"]
+    };
+
+    const state = {
+      session: null,
+      viewer: null,
+      member: null,
+      wallet: null,
+      activeRequest: null,
+      petitions: null,
+      pricing: null,
+      csrfToken: ""
+    };
+
+    function safeText(value, fallback = "") {
+      const text = String(value ?? "").trim();
+      return text || fallback;
+    }
+
+    function safeLower(value) {
+      return safeText(value).toLowerCase();
+    }
+
+    function safeNumber(value, fallback = 0) {
+      const num = Number(value);
+      return Number.isFinite(num) ? num : fallback;
+    }
+
+    function formatNumber(value) {
+      return safeNumber(value, 0).toLocaleString();
+    }
+
+    function escapeHtml(value) {
+      return safeText(value)
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;")
+        .replace(/'/g, "&#39;");
+    }
+
+    function formatDateTime(value) {
+      if (!value) return "Unknown";
+      const date = new Date(value);
+      if (Number.isNaN(date.getTime())) return "Unknown";
+      return date.toLocaleString();
+    }
+
+    function titleCase(value) {
+      return safeText(value)
+        .replace(/_/g, " ")
+        .toLowerCase()
+        .split(" ")
+        .filter(Boolean)
+        .map((part) => part.charAt(0).toUpperCase() + part.slice(1))
+        .join(" ");
+    }
+
+    function formatRealmLabel(value) {
+      const lowered = safeLower(value);
+
+      const map = {
+        "mortal": "Mortal Realm",
+        "mortal realm": "Mortal Realm",
+        "qi gathering": "Qi Gathering Realm",
+        "qi gathering realm": "Qi Gathering Realm",
+        "foundation": "Foundation Realm",
+        "foundation realm": "Foundation Realm",
+        "core formation": "Core Formation Realm",
+        "core formation realm": "Core Formation Realm",
+        "nascent soul": "Nascent Soul Realm",
+        "nascent soul realm": "Nascent Soul Realm",
+        "soul transformation": "Soul Transformation Realm",
+        "soul transformation realm": "Soul Transformation Realm",
+        "void refinement": "Void Refinement Realm",
+        "void refinement realm": "Void Refinement Realm",
+        "body integration": "Body Integration Realm",
+        "body integration realm": "Body Integration Realm",
+        "mahayana": "Mahayana Realm",
+        "mahayana realm": "Mahayana Realm",
+        "tribulation": "Tribulation Realm",
+        "tribulation realm": "Tribulation Realm"
+      };
+
+      return map[lowered] || safeText(value, "Mortal Realm");
+    }
+
+    function formatElementLabel(value, fallback = "") {
+      return titleCase(safeText(value, fallback));
+    }
+
+    function setPageMessage(text, tone = "info") {
+      const area = document.getElementById("page-message-area");
+      if (!area) return;
+      if (!text) { area.innerHTML = ""; return; }
+      const cls = tone === "error"   ? "summary error"
+                : tone === "success" ? "summary success"
+                :                      "summary info";
+      area.innerHTML = `<div class="${cls}">${escapeHtml(text)}</div>`;
+    }
+
+    function clearClientSessionArtifacts() {
+      try {
+        sessionStorage.clear();
+      } catch (error) {
+        console.warn("Failed to clear sessionStorage:", error);
+      }
+
+      try {
+        CLIENT_SESSION_KEYS.forEach((key) => localStorage.removeItem(key));
+      } catch (error) {
+        console.warn("Failed to clear localStorage session artifacts:", error);
+      }
+    }
+
+    function redirectToLogin() {
+      clearClientSessionArtifacts();
+      window.location.replace(LOGIN_URL);
+    }
+
+    async function readJsonSafely(response) {
+      try {
+        return await response.json();
+      } catch (error) {
+        return {};
+      }
+    }
+
+    function extractCsrfToken(payload) {
+      return safeText(
+        payload?.csrf_token ||
+        payload?.csrfToken ||
+        payload?.session?.csrf_token ||
+        payload?.session?.csrfToken ||
+        payload?.viewer?.csrf_token ||
+        payload?.viewer?.csrfToken ||
+        ""
+      );
+    }
+
+    async function verifySessionOrRedirect() {
+      try {
+        const response = await fetch(VERIFY_SESSION_URL, {
+          method: "GET",
+          credentials: "include",
+          headers: {
+            "Accept": "application/json",
+            "Cache-Control": "no-store"
+          }
+        });
+
+        const data = await readJsonSafely(response);
+
+        if (!response.ok || data?.success === false) {
+          redirectToLogin();
+          return null;
+        }
+
+        state.session = data;
+        state.viewer = data.viewer || state.viewer || {};
+        state.csrfToken = extractCsrfToken(data);
+
+        return data;
+      } catch (error) {
+        console.error("Session verification failed:", error);
+        redirectToLogin();
+        return null;
+      }
+    }
+
+    async function authenticatedFetch(url, options = {}) {
+      const method = safeText(options.method || "GET", "GET").toUpperCase();
+      const headers = new Headers(options.headers || {});
+      headers.set("Accept", "application/json");
+
+      if (!headers.has("Content-Type") && method !== "GET" && method !== "HEAD" && options.body) {
+        headers.set("Content-Type", "application/json");
+      }
+
+      if (state.csrfToken) {
+        headers.set("X-CSRF-Token", state.csrfToken);
+        headers.set("X-Session-CSRF", state.csrfToken);
+      }
+
+      const response = await fetch(url, {
+        ...options,
+        method,
+        credentials: "include",
+        cache: "no-store",
+        headers
+      });
+
+      if (response.status === 401 || response.status === 403) {
+        redirectToLogin();
+        throw new Error("Your session has expired. Redirecting to login.");
+      }
+
+      return response;
+    }
+
+    async function handleLogout(event) {
+      if (event) event.preventDefault();
+
+      try {
+        await authenticatedFetch(LOGOUT_URL, {
+          method: "POST"
+        });
+      } catch (error) {
+        console.warn("Logout request failed:", error);
+      } finally {
+        redirectToLogin();
+      }
+    }
+
+    function hasPendingRequest() {
+      return Boolean(state.activeRequest && safeLower(state.activeRequest.status) === "pending");
+    }
+
+    function getEffectivePrimary(member) {
+      return formatElementLabel(member?.current_primary_element || member?.primary_element || "");
+    }
+
+    function getEffectiveSecondary(member) {
+      return formatElementLabel(member?.current_secondary_element || member?.secondary_element || "");
+    }
+
+    function getEffectivePath(member) {
+      return formatElementLabel(member?.current_path_element || member?.path_element || member?.current_path_label || "");
+    }
+
+    function getEffectiveThird(member) {
+      return formatElementLabel(member?.current_third_element || member?.third_element || "");
+    }
+
+    function getCurrentPathLabel(member) {
+      return getEffectivePath(member) || "No Active Path";
+    }
+
+    function getRealmLabel(member) {
+      return formatRealmLabel(member?.realm_display_name || member?.realm_name || "Mortal Realm");
+    }
+
+    function getActiveRequestSummary(request) {
+      if (!request) {
+        return {
+          title: "No Active Petition",
+          copy: "No petition is currently under review."
+        };
+      }
+
+      const target = safeLower(request.request_target);
+      const createdAt = formatDateTime(request.created_at);
+
+      if (target === "root_minor" || target === "root_major") {
+        const increaseRoot = safeText(request.increase_root, "Unknown");
+        const decreaseRoot = safeText(request.decrease_root, "Unknown");
+        const shiftAmount = safeNumber(request.shift_amount, 0);
+
+        return {
+          title: `${titleCase(target)} Pending`,
+          copy: `Submitted ${createdAt}. +${shiftAmount} ${increaseRoot}, -${shiftAmount} ${decreaseRoot}.`
+        };
+      }
+
+      if (target === "third") {
+        return {
+          title: "Third Petition Pending",
+          copy: `Submitted ${createdAt}. Requested third seal: ${safeText(request.requested_element, "Unknown")}. Third petitions must stay inside the locked Primary + Path pool.`
+        };
+      }
+
+      return {
+        title: `${titleCase(target)} Petition Pending`,
+        copy: `Submitted ${createdAt}. Requested element: ${safeText(request.requested_element, "Unknown")}.`
+      };
+    }
+
+    function describeThirdState(member) {
+      const thirdStatus = safeLower(member?.third_status);
+      const thirdValue = getEffectiveThird(member);
+
+      if (thirdStatus === "unlocked") {
+        return {
+          title: thirdValue || "Unlocked",
+          copy: "Third slot is already awakened and may only be petitioned within the locked 2-option Primary + Path pool."
+        };
+      }
+
+      if (thirdStatus === "unlock_available" || Boolean(member?.third_unlock_available)) {
+        return {
+          title: "Unlock Available",
+          copy: "Third awakening is ready, but it must be performed from the Elements page using the locked 2-option Primary + Path pool."
+        };
+      }
+
+      return {
+        title: "Sealed",
+        copy: "Third slot remains sealed until Nascent Soul Realm."
+      };
+    }
+
+    function getElementTargetOptions() {
+      const member = state.member || {};
+      const options = [];
+
+      options.push({ value: "primary", label: "Primary Element Change" });
+
+      if (member.secondary_element_unlocked || member.current_secondary_element) {
+        options.push({ value: "secondary", label: "Secondary Element Change" });
+      }
+
+      if (member.secondary_element_unlocked || member.current_path_element) {
+        options.push({ value: "derived", label: "Derived Path Element Change" });
+      }
+
+      if (member.third_element_unlocked || member.current_third_element) {
+        options.push({ value: "third", label: "Third Element Change" });
+      }
+
+      return options;
+    }
+
+    function getRootTargetOptions() {
+      const petitions = state.petitions || {};
+
+      if (!Boolean(petitions.root_petition_allowed)) {
+        return [];
+      }
+
+      return [
+        { value: "root_minor", label: "Minor Root Petition" },
+        { value: "root_major", label: "Major Root Petition" }
+      ];
+    }
+
+    function getThirdPoolOptions(member) {
+      const primary = safeLower(getEffectivePrimary(member));
+      const path = safeLower(getEffectivePath(member));
+      const currentThird = safeLower(getEffectiveThird(member));
+      const pool = THIRD_POOL_MAP[`${primary}|${path}`] || [];
+
+      return pool.filter((value) => safeLower(value) !== currentThird);
+    }
+
+    function getElementOptionsForTarget(target) {
+      const member = state.member || {};
+      const normalizedTarget = safeLower(target);
+      const currentPrimary = safeLower(getEffectivePrimary(member));
+      const currentSecondary = safeLower(getEffectiveSecondary(member));
+
+      if (normalizedTarget === "primary") {
+        return BASE_ELEMENT_OPTIONS.filter((value) => {
+          const lowered = safeLower(value);
+          return lowered !== currentPrimary && lowered !== currentSecondary;
+        });
+      }
+
+      if (normalizedTarget === "secondary") {
+        return BASE_ELEMENT_OPTIONS.filter((value) => {
+          const lowered = safeLower(value);
+          return lowered !== currentSecondary && lowered !== currentPrimary;
+        });
+      }
+
+      if (normalizedTarget === "third") {
+        return getThirdPoolOptions(member);
+      }
+
+      return [];
+    }
+
+    function getPricing(target) {
+      const pricing = state.pricing || {};
+      const member = state.member || {};
+      const hasElements = !!(member.current_primary_element);
+
+      // Use elevated pricing for root changes when elements are already assigned
+      if (hasElements && target === "root_minor" && pricing["root_minor_with_elements"]) {
+        return pricing["root_minor_with_elements"];
+      }
+      if (hasElements && target === "root_major" && pricing["root_major_with_elements"]) {
+        return pricing["root_major_with_elements"];
+      }
+
+      return pricing[target] || null;
+    }
+
+    function normalizePairKey(a, b) {
+      return [safeLower(a), safeLower(b)].sort().join("|");
+    }
+
+    function derivePathElementFromRoots(primaryRoot, secondRoot) {
+      return PATH_ELEMENT_MAP[normalizePairKey(primaryRoot, secondRoot)] || "Unknown";
+    }
+
+    function getCurrentRootMap() {
+      const rootMap = state.member?.effective_root_map || state.member?.spirit_root_map || {};
+      return {
+        metal: safeNumber(rootMap.metal, 0),
+        wood: safeNumber(rootMap.wood, 0),
+        water: safeNumber(rootMap.water, 0),
+        fire: safeNumber(rootMap.fire, 0),
+        earth: safeNumber(rootMap.earth, 0)
+      };
+    }
+
+    function rankRoots(rootMap) {
+      return ROOT_OPTIONS.map((rootName, index) => ({
+        root: rootName,
+        value: safeNumber(rootMap[safeLower(rootName)], 0),
+        order: index
+      })).sort((a, b) => {
+        if (b.value !== a.value) return b.value - a.value;
+        return a.order - b.order;
+      });
+    }
+
+    function getProjectedRootMap() {
+      const currentRoots = getCurrentRootMap();
+      const rootTarget = safeLower(document.getElementById("root-request-target").value);
+      const increaseRoot = safeText(document.getElementById("increase-root").value);
+      const decreaseRoot = safeText(document.getElementById("decrease-root").value);
+      const shiftAmount = safeNumber(document.getElementById("shift-amount").value, 0);
+
+      if (!rootTarget || !increaseRoot || !decreaseRoot || shiftAmount <= 0) {
+        return null;
+      }
+
+      if (safeLower(increaseRoot) === safeLower(decreaseRoot)) {
+        return null;
+      }
+
+      const increaseKey = safeLower(increaseRoot);
+      const decreaseKey = safeLower(decreaseRoot);
+
+      const projected = { ...currentRoots };
+      projected[increaseKey] = safeNumber(projected[increaseKey], 0) + shiftAmount;
+      projected[decreaseKey] = safeNumber(projected[decreaseKey], 0) - shiftAmount;
+
+      return projected;
+    }
+
+    function populateElementTargetOptions() {
+      const select = document.getElementById("element-request-target");
+      const previousValue = safeLower(select.value);
+      const options = getElementTargetOptions();
+
+      select.innerHTML = `<option value="">Select a petition target</option>`;
+
+      options.forEach((item) => {
+        const option = document.createElement("option");
+        option.value = item.value;
+        option.textContent = item.label;
+        select.appendChild(option);
+      });
+
+      if (options.some((item) => item.value === previousValue)) {
+        select.value = previousValue;
+      } else if (options.length === 1) {
+        select.value = options[0].value;
+      }
+    }
+
+    function populateRootPetitionOptions() {
+      const select = document.getElementById("root-request-target");
+      if (!select) return;
+      const member = state.member || {};
+      const hasElements = !!(member.current_primary_element);
+      const minorCost = hasElements ? 150 : 50;
+      const majorCost = hasElements ? 250 : 100;
+      const previousValue = select.value;
+
+      select.innerHTML = `<option value="">— Select petition type —</option>
+    <option value="root_minor">Root Minor Shift (${minorCost} tokens)</option>
+    <option value="root_major">Root Major Overhaul (${majorCost} tokens)</option>`;
+
+      if (previousValue) select.value = previousValue;
+    }
+
+    function syncElementPricingUI() {
+      const target = document.getElementById("element-request-target")?.value;
+      const reveal = document.getElementById("element-cost-reveal");
+      if (!target || !reveal) return;
+
+      const pricing = getPricing(target);
+      if (!pricing) { reveal.classList.remove("visible"); return; }
+
+      document.getElementById("el-cost-submission").textContent  = formatNumber(pricing.submission_cost) + " tokens";
+      document.getElementById("el-cost-attunement").textContent  = formatNumber(pricing.attunement_cost) + " tokens";
+      document.getElementById("el-cost-total").textContent       = formatNumber(pricing.total_cost) + " tokens";
+      document.getElementById("el-cost-refund").textContent      = formatNumber(pricing.refund_if_denied) + " tokens";
+      const cascadeNote = document.getElementById("el-cascade-note");
+      if (cascadeNote) cascadeNote.textContent = pricing.cascade_note || pricing.description || "";
+      reveal.classList.add("visible");
+    }
+
+    function syncRootPricingUI() {
+      const target = document.getElementById("root-request-target")?.value;
+      const reveal = document.getElementById("root-cost-reveal");
+      if (!target || !reveal) return;
+
+      const pricing = getPricing(target);
+      if (!pricing) { reveal.classList.remove("visible"); return; }
+
+      document.getElementById("root-cost-submission").textContent  = formatNumber(pricing.submission_cost) + " tokens";
+      document.getElementById("root-cost-attunement").textContent  = formatNumber(pricing.attunement_cost) + " tokens";
+      document.getElementById("root-cost-total").textContent       = formatNumber(pricing.total_cost) + " tokens";
+      document.getElementById("root-cost-refund").textContent      = formatNumber(pricing.refund_if_denied) + " tokens";
+      const cascadeNote = document.getElementById("root-cascade-note");
+      if (cascadeNote) cascadeNote.textContent = pricing.cascade_note || pricing.description || "";
+      reveal.classList.add("visible");
+    }
+
+    function renderSummary() {
+      const balance = safeNumber(state.wallet?.ascension_tokens_balance, 0);
+      const member = state.member || {};
+
+      // Token balance displays
+      const balanceFormatted = formatNumber(balance);
+      const elBalance = document.getElementById("element-token-balance");
+      const rootBalance = document.getElementById("root-token-balance");
+      const tokenDisplay = document.getElementById("token-balance-display");
+      if (elBalance) elBalance.textContent = balanceFormatted;
+      if (rootBalance) rootBalance.textContent = balanceFormatted;
+      if (tokenDisplay) {
+        tokenDisplay.textContent = balanceFormatted;
+        const canAffordMin = balance >= 50;
+        tokenDisplay.className = "value " + (canAffordMin ? "can-afford" : "cannot-afford");
+      }
+
+      // Session line
+      const sessionLine = document.getElementById("session-line");
+      if (sessionLine && member.sl_username) {
+        sessionLine.textContent = member.sl_username + " · " + (member.current_realm_display || member.realm_display_name || "");
+      }
+
+      // Summary cards
+      const petitionEl = document.getElementById("petition-status-display");
+      if (petitionEl) {
+        petitionEl.textContent = state.activeRequest ? "Petition Pending" : "No Active Petition";
+      }
+
+      const rootProfileEl = document.getElementById("root-profile-display");
+      if (rootProfileEl) {
+        rootProfileEl.textContent = member.spirit_root_profile || "—";
+      }
+
+      const realmEl = document.getElementById("realm-display");
+      if (realmEl) {
+        realmEl.textContent = member.current_realm_display || member.realm_display_name || "—";
+      }
+
+      // Element identity badges
+      updateElementBadges(member);
+    }
+
+    function updateElementBadges(member) {
+      const traits = member || state.member || {};
+      const slots = [
+        { id: "badge-primary",   textId: "badge-primary-text",   key: "current_primary_element",   cls: "primary" },
+        { id: "badge-secondary", textId: "badge-secondary-text", key: "current_secondary_element", cls: "secondary" },
+        { id: "badge-derived",   textId: "badge-derived-text",   key: "current_path_element",      cls: "derived" },
+        { id: "badge-third",     textId: "badge-third-text",     key: "current_third_element",     cls: "third" },
+      ];
+
+      slots.forEach(slot => {
+        const badge = document.getElementById(slot.id);
+        const text  = document.getElementById(slot.textId);
+        if (!badge || !text) return;
+        const val = traits?.[slot.key];
+        if (val) {
+          text.textContent = val;
+          badge.className = "element-badge " + slot.cls;
+        } else {
+          text.textContent = "—";
+          badge.className = "element-badge " + slot.cls + " slot-empty";
+        }
+      });
+    }
+
+    function renderTreasury() {
+      const pending = hasPendingRequest();
+      const summary = pending ? getActiveRequestSummary(state.activeRequest) : null;
+      const target  = pending ? safeLower(state.activeRequest?.request_target) : "";
+
+      // Element tab notice
+      const elNotice  = document.getElementById("element-active-request-notice");
+      const elMsg     = document.getElementById("element-active-request-message");
+      if (elNotice && elMsg) {
+        const isElPetition = pending && target !== "root_minor" && target !== "root_major";
+        if (isElPetition) {
+          elMsg.textContent = summary?.copy || "An element petition is currently pending review.";
+          elNotice.classList.remove("is-hidden");
+        } else {
+          elNotice.classList.add("is-hidden");
+        }
+      }
+
+      // Root tab notice
+      const rootNotice = document.getElementById("root-active-request-notice");
+      const rootMsg    = document.getElementById("root-active-request-message");
+      if (rootNotice && rootMsg) {
+        const isRootPetition = pending && (target === "root_minor" || target === "root_major");
+        if (isRootPetition) {
+          rootMsg.textContent = summary?.copy || "A root petition is currently pending review.";
+          rootNotice.classList.remove("is-hidden");
+        } else {
+          rootNotice.classList.add("is-hidden");
+        }
+      }
+    }
+
+    function renderElementChamber() {
+      populateElementTargetOptions();
+      const pending = hasPendingRequest();
+      const options = getElementTargetOptions();
+      const canUse = !pending && options.length > 0;
+      const select = document.getElementById("element-request-target");
+      const submitBtn = document.getElementById("element-submit-btn");
+      if (select) select.disabled = !canUse;
+      if (submitBtn) submitBtn.disabled = !canUse;
+      syncElementPricingUI();
+    }
+
+    function renderRootChamber() {
+      populateRootPetitionOptions();
+      syncRootPricingUI();
+    }
+
+    function renderRootBars(containerId, rootMap, maxValue) {
+      const container = document.getElementById(containerId);
+      if (!container) return;
+      const roots = ["Metal", "Wood", "Water", "Fire", "Earth"];
+      const max = maxValue > 0 ? maxValue : 1;
+      container.innerHTML = roots.map(root => {
+        const val = safeNumber(rootMap?.[root.toLowerCase()], 0);
+        const pct = Math.min(100, (val / max) * 100).toFixed(1);
+        return `<div class="root-bar-item">
+          <span class="root-bar-label">${root}</span>
+          <div class="root-bar-track"><div class="root-bar-fill" style="width:${pct}%"></div></div>
+          <span class="root-bar-value">${val}</span>
+        </div>`;
+      }).join("");
+    }
+
+    function renderRootGuide() {
+      const currentRoots  = getCurrentRootMap();
+      const projected     = getProjectedRootMap();
+      const allVals       = Object.values(currentRoots);
+      const projVals      = projected ? Object.values(projected) : [];
+      const maxVal        = Math.max(...allVals, ...projVals, 1);
+
+      renderRootBars("current-root-bars", currentRoots, maxVal);
+
+      const notesEl = document.getElementById("root-guide-notes");
+
+      if (!projected) {
+        renderRootBars("projected-root-bars", currentRoots, maxVal);
+        if (notesEl) notesEl.innerHTML =
+          `<li>Select petition type, increase root, decrease root, and shift amount to preview changes.</li>`;
+        return;
+      }
+
+      const invalidBelowZero = Object.values(projected).some(v => safeNumber(v, 0) < 0);
+      if (invalidBelowZero) {
+        renderRootBars("projected-root-bars", currentRoots, maxVal);
+        if (notesEl) notesEl.innerHTML =
+          `<li>Invalid: the selected decrease root would fall below 0. Choose a smaller shift or a different root.</li>`;
+        return;
+      }
+
+      renderRootBars("projected-root-bars", projected, maxVal);
+
+      if (notesEl) {
+        const currRanked = rankRoots(currentRoots);
+        const projRanked = rankRoots(projected);
+        const currPath   = derivePathElementFromRoots(currRanked[0]?.root, currRanked[1]?.root);
+        const projPath   = derivePathElementFromRoots(projRanked[0]?.root, projRanked[1]?.root);
+        const notes = [];
+        if (projRanked[0]?.root !== currRanked[0]?.root)
+          notes.push(`Primary root shifts: ${currRanked[0]?.root} → ${projRanked[0]?.root}`);
+        if (projRanked[1]?.root !== currRanked[1]?.root)
+          notes.push(`Secondary root shifts: ${currRanked[1]?.root} → ${projRanked[1]?.root}`);
+        if (projPath !== currPath)
+          notes.push(`Derived path shifts: ${currPath} → ${projPath}`);
+        if (!notes.length)
+          notes.push("Root order unchanged after this shift.");
+        notesEl.innerHTML = notes.map(n => `<li>${escapeHtml(n)}</li>`).join("");
+      }
+    }
+
+    async function loadAllState() {
+      try {
+        const response = await authenticatedFetch("/.netlify/functions/load-elements-state", {
+          method: "GET"
+        });
+
+        const data = await readJsonSafely(response);
+
+        if (!response.ok || !data.success) {
+          throw new Error(data.message || data.error || "Failed to load element request state.");
+        }
+
+        state.viewer = data.member || state.viewer || {};
+        state.member = data.member || {};
+        state.traits = data.member?.traits || {};
+        state.wallet = data.wallet || {};
+        state.activeRequest = data.pending_request || null;
+        state.petitions = data.requests || {};
+        state.pricing = data.petition_pricing || {};
+
+        renderSummary();
+        renderTreasury();
+        renderElementChamber();
+        renderRootChamber();
+        renderRootGuide();
+      } catch (error) {
+        console.error("Element request page load error:", error);
+        setPageMessage(error.message || "Failed to load petition chamber.", "error");
+      }
+    }
+
+    async function submitElementPetition(event) {
+      event.preventDefault();
+      setPageMessage("");
+
+      const requestTarget = safeLower(document.getElementById("element-request-target").value);
+      const requestedElement = safeText(document.getElementById("requested-element").value);
+
+      if (!requestTarget) {
+        setPageMessage("Please select an element petition target.", "error");
+        return;
+      }
+
+      if (!requestedElement) {
+        setPageMessage("Please select a requested element from the dropdown.", "error");
+        return;
+      }
+
+      try {
+        const response = await authenticatedFetch("/.netlify/functions/create-element-request", {
+          method: "POST",
+          body: JSON.stringify({
+            request_target: requestTarget,
+            requested_element: requestedElement
+          })
+        });
+
+        const data = await readJsonSafely(response);
+
+        if (!response.ok || !data.success) {
+          throw new Error(data.message || data.error || "Failed to submit element petition.");
+        }
+
+        setPageMessage(data.message || "Element petition submitted successfully.");
+        document.getElementById("lightning-flash")?.classList.add("flash-active");
+        setTimeout(() => document.getElementById("lightning-flash")?.classList.remove("flash-active"), 800);
+
+        document.getElementById("element-petition-form").reset();
+
+        await loadAllState();
+      } catch (error) {
+        console.error("Element petition submit error:", error);
+        setPageMessage(error.message || "Failed to submit element petition.", "error");
+      }
+    }
+
+    async function submitRootPetition(event) {
+      event.preventDefault();
+      setPageMessage("");
+
+      const requestTarget = safeLower(document.getElementById("root-request-target").value);
+      const increaseRoot = safeText(document.getElementById("increase-root").value);
+      const decreaseRoot = safeText(document.getElementById("decrease-root").value);
+      const shiftAmount = safeNumber(document.getElementById("shift-amount").value, 0);
+
+      if (!requestTarget) {
+        setPageMessage("Please select a root petition target.", "error");
+        return;
+      }
+
+      if (!increaseRoot || !decreaseRoot) {
+        setPageMessage("Please choose both an increase root and a decrease root.", "error");
+        return;
+      }
+
+      if (safeLower(increaseRoot) === safeLower(decreaseRoot)) {
+        setPageMessage("Increase root and decrease root cannot be the same.", "error");
+        return;
+      }
+
+      if (!Number.isInteger(shiftAmount) || shiftAmount <= 0) {
+        setPageMessage("Shift amount must be a whole number greater than 0.", "error");
+        return;
+      }
+
+      try {
+        const response = await authenticatedFetch("/.netlify/functions/create-element-request", {
+          method: "POST",
+          body: JSON.stringify({
+            request_target: requestTarget,
+            increase_root: increaseRoot,
+            decrease_root: decreaseRoot,
+            shift_amount: shiftAmount
+          })
+        });
+
+        const data = await readJsonSafely(response);
+
+        if (!response.ok || !data.success) {
+          throw new Error(data.message || data.error || "Failed to submit root petition.");
+        }
+
+        setPageMessage(data.message || "Root petition submitted successfully.");
+        document.getElementById("lightning-flash")?.classList.add("flash-active");
+        setTimeout(() => document.getElementById("lightning-flash")?.classList.remove("flash-active"), 800);
+
+        document.getElementById("root-petition-form").reset();
+        await loadAllState();
+      } catch (error) {
+        console.error("Root petition submit error:", error);
+        setPageMessage(error.message || "Failed to submit root petition.", "error");
+      }
+    }
+
+    function resetElementForm() {
+      document.getElementById("element-petition-form").reset();
+      const el = document.getElementById("requested-element");
+      if (el) el.value = "";
+      const reveal = document.getElementById("element-cost-reveal");
+      if (reveal) reveal.classList.remove("visible");
+      setPageMessage("");
+    }
+
+    function resetRootForm() {
+      document.getElementById("root-petition-form").reset();
+      populateRootPetitionOptions();
+      syncRootPricingUI();
+      setPageMessage("");
+    }
+
+    function wireEvents() {
+      document.getElementById("logout-button")?.addEventListener("click", handleLogout);
+
+      // Tab switching
+      document.querySelectorAll(".chamber-tab").forEach(tab => {
+        tab.addEventListener("click", function() {
+          document.querySelectorAll(".chamber-tab").forEach(t => t.classList.remove("active"));
+          document.querySelectorAll(".chamber-panel").forEach(p => p.classList.remove("active"));
+          this.classList.add("active");
+          document.getElementById(this.dataset.tab).classList.add("active");
+        });
+      });
+
+      document.getElementById("element-petition-form").addEventListener("submit", submitElementPetition);
+      document.getElementById("root-petition-form").addEventListener("submit", submitRootPetition);
+      document.getElementById("reset-element-request-button").addEventListener("click", resetElementForm);
+      document.getElementById("reset-root-request-button").addEventListener("click", resetRootForm);
+
+      document.getElementById("element-request-target").addEventListener("change", function() {
+        syncElementPricingUI();
+      });
+
+      document.getElementById("root-request-target").addEventListener("change", function() {
+        syncRootPricingUI();
+      });
+
+      document.getElementById("increase-root").addEventListener("change", renderRootGuide);
+      document.getElementById("decrease-root").addEventListener("change", renderRootGuide);
+      document.getElementById("shift-amount").addEventListener("input", renderRootGuide);
+    }
+
+    async function init() {
+      wireEvents();
+
+      const verified = await verifySessionOrRedirect();
+      if (!verified) return;
+
+      await loadAllState();
+    }
+
+    window.addEventListener("DOMContentLoaded", init);
+  </script>
+</body>
+</html>

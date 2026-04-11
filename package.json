@@ -1,0 +1,7 @@
+{
+  "name": "ascendant-path",
+  "private": true,
+  "dependencies": {
+    "@supabase/supabase-js": "^2.102.1"
+  }
+}

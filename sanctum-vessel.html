@@ -1,0 +1,458 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Sanctum Vessel</title>
+<style>
+* { margin:0; padding:0; box-sizing:border-box; }
+body { background:#060810; display:flex; justify-content:center; align-items:center; min-height:100vh; }
+canvas { width:min(1024px,98vw); height:min(1024px,98vw); }
+</style>
+</head>
+<body>
+<canvas id="vessel" width="1024" height="1024"></canvas>
+<script>
+function getFigureFile(gender, vesselMode) {
+  if (vesselMode === 'dual' || vesselMode === 'hybrid') return 'DUAL_TWO_FIGURE';
+  return gender === 'female' ? 'female-figure.svg' : 'figure.svg';
+}
+
+function getColors(gender, vesselMode) {
+  if (vesselMode === 'hybrid') return { solid: '#7a5a28', glow: '#c8a060', bright: '#f0c87a' };
+  if (vesselMode === 'dual') return { solid: '#6b3a2a', glow: '#c87941', bright: '#f0b06a' };
+  if (gender === 'female') return { solid: '#6b2a40', glow: '#c86890', bright: '#f0a0b8' };
+  return { solid: '#8a6a20', glow: '#c8a96a', bright: '#ffe090' };
+}
+
+function getDualColors() {
+  return {
+    male:   { solid: '#8a6a20', glow: '#c8a96a', bright: '#ffe090' },
+    female: { solid: '#6b2a40', glow: '#c86890', bright: '#f0a0b8' }
+  };
+}
+
+function drawYinYang(ctx, W, H, opacity, rotation, pulsePhase) {
+  if (opacity <= 0.01) return;
+  if (!drawYinYang._img) {
+    const svg = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100">
+      <circle cx="50" cy="50" r="50" fill="#111"/>
+      <path d="M50,0 A50,50 0 0,1 50,100 A25,25 0 0,1 50,50 A25,25 0 0,0 50,0Z" fill="#f0e6c8"/>
+      <circle cx="50" cy="25" r="12.5" fill="#f0e6c8"/>
+      <circle cx="50" cy="75" r="12.5" fill="#111"/>
+      <circle cx="50" cy="25" r="5" fill="#111"/>
+      <circle cx="50" cy="75" r="5" fill="#f0e6c8"/>
+      <circle cx="50" cy="50" r="50" fill="none" stroke="#c8a96a" stroke-width="2" opacity="0.6"/>
+    </svg>`;
+    const blob = new Blob([svg], {type: 'image/svg+xml'});
+    const url = URL.createObjectURL(blob);
+    const img = new Image();
+    img.onload = () => { drawYinYang._img = img; };
+    img.src = url;
+    return;
+  }
+  const cx = W / 2;
+  const cy = H / 2;
+  const baseR = W * 0.11;
+  const r = baseR + Math.sin(pulsePhase) * baseR * 0.04;
+  // Outer glow
+  ctx.save();
+  ctx.globalAlpha = opacity * (0.35 + Math.sin(pulsePhase) * 0.12);
+  const grd = ctx.createRadialGradient(cx, cy, r * 0.3, cx, cy, r * 1.8);
+  grd.addColorStop(0, 'rgba(200,169,106,0.55)');
+  grd.addColorStop(0.5, 'rgba(200,104,144,0.25)');
+  grd.addColorStop(1, 'rgba(0,0,0,0)');
+  ctx.beginPath();
+  ctx.arc(cx, cy, r * 1.8, 0, Math.PI * 2);
+  ctx.fillStyle = grd;
+  ctx.fill();
+  ctx.restore();
+  // Rotating yin-yang
+  ctx.save();
+  ctx.globalAlpha = opacity;
+  ctx.translate(cx, cy);
+  ctx.rotate(rotation);
+  ctx.drawImage(drawYinYang._img, -r, -r, r * 2, r * 2);
+  ctx.restore();
+}
+
+const member = (typeof window \!== 'undefined' && window.dashboardData && window.dashboardData.member) || {};
+const gender = member.gender || 'male';
+const vesselMode = member.vessel_mode || member.path_type || 'single';
+const qiCurrent = (window.dashboardData && window.dashboardData.qi_current) ? window.dashboardData.qi_current : 0;
+const qiMax     = (window.dashboardData && window.dashboardData.qi_maximum) ? window.dashboardData.qi_maximum : 1;
+const pathCurrent = (window.dashboardData && window.dashboardData.path_current) ? window.dashboardData.path_current : 'default';
+const figureFile = getFigureFile(gender, vesselMode);
+const colors = getColors(gender, vesselMode);
+const toImg = svg => new Promise(res => {
+  const img = new Image();
+  img.onload = () => res(img);
+  img.src = URL.createObjectURL(new Blob([svg],{type:'image/svg+xml'}));
+});
+const stripSvg = txt => txt.replace(/<path[^>]*\/>/gi, m => {
+  const fm = m.match(/fill="(#[0-9A-Fa-f]{6})"/i);
+  if (!fm) return m;
+  const hex=fm[1], r=parseInt(hex.slice(1,3),16), g=parseInt(hex.slice(3,5),16), b=parseInt(hex.slice(5,7),16);
+  return (r<50&&g<50&&b<50)?m:'';
+}).replace(/<rect[^>]*\/>/gi,'');
+if (figureFile === 'DUAL_TWO_FIGURE') {
+  const dc = getDualColors();
+  Promise.all([
+    fetch('figure.svg').then(r => r.text()),
+    fetch('female-figure.svg').then(r => r.text())
+  ]).then(([mtxt, ftxt]) => {
+    const mStr = stripSvg(mtxt);
+    const fStr = stripSvg(ftxt);
+    const mS=mStr.replace(/fill="#[0-9A-Fa-f]{6}"/gi,`fill="${dc.male.solid}"`);
+    const mG=mStr.replace(/fill="#[0-9A-Fa-f]{6}"/gi,`fill="${dc.male.glow}"`);
+    const mB=mStr.replace(/fill="#[0-9A-Fa-f]{6}"/gi,`fill="${dc.male.bright}"`);
+    const fS=fStr.replace(/fill="#[0-9A-Fa-f]{6}"/gi,`fill="${dc.female.solid}"`);
+    const fG=fStr.replace(/fill="#[0-9A-Fa-f]{6}"/gi,`fill="${dc.female.glow}"`);
+    const fB=fStr.replace(/fill="#[0-9A-Fa-f]{6}"/gi,`fill="${dc.female.bright}"`);
+    Promise.all([toImg(mS),toImg(mG),toImg(mB),toImg(fS),toImg(fG),toImg(fB)]).then(([ms,mg,mb,fs,fg,fb]) => {
+      run(ms,mg,mb,fs,fg,fb);
+    });
+  });
+} else {
+  fetch(figureFile)
+    .then(r => r.text())
+    .then(txt => {
+      const stripped = stripSvg(txt);
+      const solid  = stripped.replace(/fill="#[0-9A-Fa-f]{6}"/gi, 'fill="' + colors.solid + '"');
+      const glow   = stripped.replace(/fill="#[0-9A-Fa-f]{6}"/gi, 'fill="' + colors.glow + '"');
+      const bright = stripped.replace(/fill="#[0-9A-Fa-f]{6}"/gi, 'fill="' + colors.bright + '"');
+      Promise.all([toImg(solid), toImg(glow), toImg(bright)]).then(([solidImg, glowImg, brightImg]) => {
+        run(solidImg, glowImg, brightImg);
+      });
+    });
+}
+
+function getAlignmentColors(pathCurrent) {
+  const p = (pathCurrent || '').toLowerCase();
+  if (p === 'yin') return {
+    fillA:  'rgba(140,180,220,0.7)',
+    fillB:  'rgba(80,120,200,0.3)',
+    glow:   'rgba(140,180,255,0.35)',
+    wave:   'rgba(180,210,255,0.6)',
+    type:   'yin'
+  };
+  if (p === 'yang') return {
+    fillA:  'rgba(240,160,40,0.75)',
+    fillB:  'rgba(200,80,20,0.3)',
+    glow:   'rgba(255,160,40,0.4)',
+    wave:   'rgba(255,200,80,0.7)',
+    type:   'yang'
+  };
+  if (p === 'taiji') return {
+    fillA:  'rgba(200,169,106,0.7)',
+    fillB:  'rgba(200,104,144,0.3)',
+    glow:   'rgba(200,169,106,0.3)',
+    wave:   'rgba(255,220,140,0.6)',
+    type:   'taiji'
+  };
+  // default gold
+  return {
+    fillA:  'rgba(200,169,106,0.7)',
+    fillB:  'rgba(160,120,60,0.3)',
+    glow:   'rgba(200,169,106,0.3)',
+    wave:   'rgba(255,220,140,0.6)',
+    type:   'default'
+  };
+}
+function run(solidImg, glowImg, brightImg, fSolidImg, fGlowImg, fBrightImg) {
+  const canvas = document.getElementById('vessel');
+  const ctx = canvas.getContext('2d');
+  const W = 1024, H = 1024;
+  let t = 0, flicker = 1;
+  let yyOpacity = 0, yyTargetOpacity = 0, yyRotation = 0, yyPulse = 0;
+  const pct = Math.min(1, qiCurrent / qiMax);
+  const realmIndex = 6;
+  const maxRealm = 10;
+  const S  = 0.50 + 0.50 * ((realmIndex - 1) / (maxRealm - 1));
+  const FW = 1024*S;
+  const FH = 1024*S;
+  const TX = (W - FW) / 2;
+  const TY = (H - FH) / 2;
+  const figTop    = TY;
+  const figBottom = TY + FH;
+  const dual = !!fSolidImg;
+  const FW2 = dual ? FW*0.65 : FW;
+  const FH2 = dual ? FH*0.65 : FH;
+  const TY2 = dual ? TY + (FH-FH2)/2 : TY;
+  const TX_m = dual ? W/4 - FW2/2 : TX;
+  const TX_f = dual ? 3*W/4 - FW2/2 : TX;
+  const particleCount = Math.round(6 + (realmIndex / maxRealm) * 16);
+  const off  = document.createElement('canvas'); off.width=W; off.height=H;
+  const octx = off.getContext('2d');
+
+  function draw() {
+    ctx.clearRect(0,0,W,H);
+    t += 0.009;
+    if (Math.random() < 0.018) flicker = 0.55 + Math.random()*0.45;
+    else flicker = Math.min(1, flicker + 0.04);
+    const b = Math.sin(t)*0.5+0.5;
+
+    const bg = ctx.createRadialGradient(W/2,H/2,0,W/2,H/2,480);
+    bg.addColorStop(0,`rgba(40,28,8,${(0.25+0.1*b)*flicker})`);
+    bg.addColorStop(1,'transparent');
+    ctx.fillStyle=bg; ctx.fillRect(0,0,W,H);
+
+    const innerR=160, outerR=490;
+    const ringStep=(outerR-innerR)/(maxRealm-1);
+    for(let ri=0;ri<maxRealm;ri++){
+      const r=innerR+ri*ringStep;
+      const reached=(ri+1)<=realmIndex;
+      const isCurrent=(ri+1)===realmIndex;
+      ctx.save(); ctx.translate(W/2,H/2);
+      if(isCurrent){
+        ctx.rotate(t*0.08);
+        ctx.globalAlpha=(0.55+0.35*b)*flicker;
+        ctx.beginPath(); ctx.arc(0,0,r,0,Math.PI*2);
+        ctx.strokeStyle='rgba(255,220,100,1)'; ctx.lineWidth=2; ctx.setLineDash([14,6]); ctx.stroke();
+        ctx.rotate(-t*0.16);
+        ctx.globalAlpha=(0.2+0.2*b)*flicker;
+        ctx.beginPath(); ctx.arc(0,0,r+10,0,Math.PI*2);
+        ctx.strokeStyle='rgba(255,200,60,1)'; ctx.lineWidth=1; ctx.setLineDash([5,10]); ctx.stroke();
+      } else if(reached){
+        ctx.rotate(t*(0.03+ri*0.005)*(ri%2===0?1:-1));
+        ctx.globalAlpha=(0.12+0.1*(ri/maxRealm))*flicker;
+        ctx.beginPath(); ctx.arc(0,0,r,0,Math.PI*2);
+        ctx.strokeStyle='rgba(200,169,106,1)'; ctx.lineWidth=0.8; ctx.setLineDash([8+ri,6+ri]); ctx.stroke();
+      } else {
+        ctx.globalAlpha=0.05*flicker;
+        ctx.beginPath(); ctx.arc(0,0,r,0,Math.PI*2);
+        ctx.strokeStyle='rgba(150,140,120,1)'; ctx.lineWidth=0.5; ctx.setLineDash([4,10]); ctx.stroke();
+      }
+      ctx.restore();
+    }
+
+    for(let s=0;s<3;s++){
+      ctx.save();
+      ctx.globalAlpha=0.07*pct*flicker*(0.5+0.5*Math.sin(t*0.9+s));
+      ctx.beginPath();
+      const r=210+s*44;
+      for(let p=0;p<=60;p++){
+        const a=(p/60)*Math.PI*2;
+        const w=Math.sin(a*4+t*1.4+s)*18;
+        const rx=W/2+(r+w)*Math.cos(a+t*0.14*(s%2===0?1:-1));
+        const ry=H/2+(r+w)*0.55*Math.sin(a+t*0.14*(s%2===0?1:-1));
+        p===0?ctx.moveTo(rx,ry):ctx.lineTo(rx,ry);
+      }
+      ctx.closePath();
+      ctx.strokeStyle='rgba(200,169,106,0.8)'; ctx.lineWidth=1.2; ctx.stroke();
+      ctx.restore();
+    }
+
+    const bw=20+12*pct;
+    ctx.save(); ctx.globalAlpha=(0.07+0.05*b)*flicker;
+    const beam=ctx.createLinearGradient(W/2,H/2-100,W/2,10);
+    beam.addColorStop(0,'rgba(220,180,80,0)');
+    beam.addColorStop(0.4,`rgba(220,180,80,${0.8+0.2*b})`);
+    beam.addColorStop(1,'rgba(220,180,80,0)');
+    ctx.fillStyle=beam;
+    ctx.beginPath();
+    ctx.moveTo(W/2-bw,H/2-100); ctx.lineTo(W/2+bw,H/2-100);
+    ctx.lineTo(W/2+bw*0.06,10); ctx.lineTo(W/2-bw*0.06,10);
+    ctx.closePath(); ctx.fill(); ctx.restore();
+
+    // Gentle floating animation
+    const floatY_m = Math.sin(t * 0.8) * 10;
+    const floatY_f = Math.sin(t * 0.8 + 1.2) * 10;
+    const floatY   = Math.sin(t * 0.8) * 10;
+
+    if (dual) {
+      // Male figure — left half, floating
+      ctx.save();
+      ctx.beginPath(); ctx.rect(0, 0, W/2, H); ctx.clip();
+      ctx.globalAlpha = (0.9 + 0.08 * b) * flicker;
+      ctx.drawImage(solidImg, TX_m, TY2 + floatY_m, FW2, FH2);
+      ctx.restore();
+      // Glow layer
+      ctx.save();
+      ctx.beginPath(); ctx.rect(0, 0, W/2, H); ctx.clip();
+      ctx.globalAlpha = (0.18 + 0.10 * b) * flicker;
+      ctx.drawImage(glowImg, TX_m - 8, TY2 + floatY_m - 8, FW2 + 16, FH2 + 16);
+      ctx.restore();
+      // Female figure — right half, floating (offset phase)
+      ctx.save();
+      ctx.beginPath(); ctx.rect(W/2, 0, W/2, H); ctx.clip();
+      ctx.globalAlpha = (0.9 + 0.08 * b) * flicker;
+      ctx.drawImage(fSolidImg, TX_f, TY2 + floatY_f, FW2, FH2);
+      ctx.restore();
+      // Glow layer
+      ctx.save();
+      ctx.beginPath(); ctx.rect(W/2, 0, W/2, H); ctx.clip();
+      ctx.globalAlpha = (0.18 + 0.10 * b) * flicker;
+      ctx.drawImage(fGlowImg, TX_f - 8, TY2 + floatY_f - 8, FW2 + 16, FH2 + 16);
+      ctx.restore();
+    } else {
+      // Single figure — floating
+      ctx.save();
+      ctx.globalAlpha = (0.9 + 0.08 * b) * flicker;
+      ctx.drawImage(solidImg, TX, TY + floatY, FW, FH);
+      ctx.restore();
+      // Glow layer
+      ctx.save();
+      ctx.globalAlpha = (0.18 + 0.10 * b) * flicker;
+      ctx.drawImage(glowImg, TX - 8, TY + floatY - 8, FW + 16, FH + 16);
+      ctx.restore();
+    }
+
+    // Qi aura rings — layered living aura
+    const ac = getAlignmentColors(pathCurrent);
+    if (typeof draw._displayPct === 'undefined') draw._displayPct = pct;
+    draw._displayPct += (pct - draw._displayPct) * 0.012;
+    const dp = draw._displayPct;
+    const start = -Math.PI / 2;
+
+    function drawQiAura(cx, cy, baseR, pct, c1, c2, pulse) {
+      if (pct <= 0) return;
+      const end = start + Math.PI * 2 * pct;
+
+      // Layer 1 — soft breathing halo
+      const haloR = baseR + 28 + Math.sin(t * 0.8) * 8;
+      const halo = ctx.createRadialGradient(cx, cy, baseR * 0.3, cx, cy, haloR);
+      halo.addColorStop(0, 'rgba(0,0,0,0)');
+      halo.addColorStop(0.5, c1 + '33');
+      halo.addColorStop(1, 'rgba(0,0,0,0)');
+      ctx.save();
+      ctx.beginPath(); ctx.arc(cx, cy, haloR, 0, Math.PI * 2);
+      ctx.fillStyle = halo; ctx.globalAlpha = 1; ctx.fill();
+      ctx.restore();
+
+      // Layer 2 — background track
+      ctx.save();
+      ctx.beginPath(); ctx.arc(cx, cy, baseR, 0, Math.PI * 2);
+      ctx.strokeStyle = 'rgba(255,255,255,0.06)'; ctx.lineWidth = 14; ctx.stroke();
+      ctx.restore();
+
+      // Layer 3 — thick soft outer glow arc
+      ctx.save();
+      ctx.beginPath(); ctx.arc(cx, cy, baseR, start, end);
+      ctx.strokeStyle = c1; ctx.lineWidth = 22;
+      ctx.globalAlpha = 0.18 + Math.sin(t * 1.2) * 0.06;
+      ctx.lineCap = 'round'; ctx.stroke();
+      ctx.restore();
+
+      // Layer 4 — mid colour arc
+      ctx.save();
+      ctx.beginPath(); ctx.arc(cx, cy, baseR, start, end);
+      ctx.strokeStyle = c2; ctx.lineWidth = 12;
+      ctx.globalAlpha = 0.35 + Math.sin(t * 1.5) * 0.1;
+      ctx.lineCap = 'round'; ctx.stroke();
+      ctx.restore();
+
+      // Layer 5 — sharp bright core arc
+      ctx.save();
+      ctx.beginPath(); ctx.arc(cx, cy, baseR, start, end);
+      ctx.strokeStyle = c1; ctx.lineWidth = 4;
+      ctx.globalAlpha = 0.92; ctx.lineCap = 'round'; ctx.stroke();
+      ctx.restore();
+
+      // Layer 6 — inner secondary ring, slightly offset
+      const innerR = baseR - 18;
+      const innerEnd = start + Math.PI * 2 * pct * 0.95 + Math.sin(t * 0.4) * 0.08;
+      ctx.save();
+      ctx.beginPath(); ctx.arc(cx, cy, innerR, start, innerEnd);
+      ctx.strokeStyle = c2; ctx.lineWidth = 2.5;
+      ctx.globalAlpha = 0.5 + Math.sin(t * 2) * 0.2;
+      ctx.lineCap = 'round'; ctx.stroke();
+      ctx.restore();
+
+      // Layer 7 — energy particles orbiting along arc
+      const particleCount = Math.floor(pct * 14) + 3;
+      for (let i = 0; i < particleCount; i++) {
+        const phase = (i / particleCount) * pct * Math.PI * 2 + t * (0.4 + i * 0.02);
+        const drift = Math.sin(t * 2 + i * 1.3) * 7;
+        const px = cx + Math.cos(start + phase) * (baseR + drift);
+        const py = cy + Math.sin(start + phase) * (baseR + drift);
+        const pSize = 1.5 + Math.sin(t * 3 + i) * 1;
+        const pAlpha = 0.4 + Math.sin(t * 2.5 + i * 0.7) * 0.4;
+        ctx.save();
+        ctx.beginPath(); ctx.arc(px, py, pSize, 0, Math.PI * 2);
+        ctx.fillStyle = i % 2 === 0 ? c1 : c2;
+        ctx.globalAlpha = pAlpha; ctx.fill();
+        ctx.restore();
+      }
+
+      // Layer 8 — bright rippling tip dot
+      const tipX = cx + Math.cos(end) * baseR;
+      const tipY = cy + Math.sin(end) * baseR;
+      const ripple = Math.sin(t * 4) * 0.5 + 0.5;
+      ctx.save();
+      ctx.beginPath(); ctx.arc(tipX, tipY, 10 + ripple * 5, 0, Math.PI * 2);
+      ctx.fillStyle = c1; ctx.globalAlpha = 0.12 * ripple; ctx.fill();
+      ctx.restore();
+      ctx.save();
+      ctx.beginPath(); ctx.arc(tipX, tipY, 5, 0, Math.PI * 2);
+      ctx.fillStyle = '#ffffff'; ctx.globalAlpha = 0.9; ctx.fill();
+      ctx.restore();
+      ctx.save();
+      ctx.beginPath(); ctx.arc(tipX, tipY, 3, 0, Math.PI * 2);
+      ctx.fillStyle = c1; ctx.globalAlpha = 1; ctx.fill();
+      ctx.restore();
+    }
+
+    const pulse = Math.sin(t * 2) * 0.5 + 0.5;
+
+    if (dual) {
+      const cxM = TX_m + FW2 / 2;
+      const cyM = TY2 + FH2 / 2 + floatY_m;
+      const cxF = TX_f + FW2 / 2;
+      const cyF = TY2 + FH2 / 2 + floatY_f;
+      const arcR = FW2 * 0.52;
+      if (ac.type === 'taiji') {
+        drawQiAura(cxM, cyM, arcR, dp, '#c8a96a', '#ffe090', pulse);
+        drawQiAura(cxF, cyF, arcR, dp, '#c86890', '#f0a0b8', pulse);
+      } else if (ac.type === 'yin') {
+        drawQiAura(cxM, cyM, arcR, dp, '#a0c8f0', '#6090e0', pulse);
+        drawQiAura(cxF, cyF, arcR, dp, '#a0c8f0', '#6090e0', pulse);
+      } else if (ac.type === 'yang') {
+        drawQiAura(cxM, cyM, arcR, dp, '#e8a840', '#ff6820', pulse);
+        drawQiAura(cxF, cyF, arcR, dp, '#e8a840', '#ff6820', pulse);
+      } else {
+        drawQiAura(cxM, cyM, arcR, dp, '#c8a96a', '#ffe090', pulse);
+        drawQiAura(cxF, cyF, arcR, dp, '#c86890', '#f0a0b8', pulse);
+      }
+    } else {
+      const cxS = TX + FW / 2;
+      const cyS = TY + FH / 2 + floatY;
+      const arcR = FW * 0.52;
+      if (ac.type === 'yin') {
+        drawQiAura(cxS, cyS, arcR, dp, '#a0c8f0', '#6090e0', pulse);
+      } else if (ac.type === 'yang') {
+        drawQiAura(cxS, cyS, arcR, dp, '#e8a840', '#ff6820', pulse);
+      } else {
+        drawQiAura(cxS, cyS, arcR, dp, '#c8a96a', '#ffe090', pulse);
+      }
+    }
+
+    octx.clearRect(0,0,W,H);
+    octx.drawImage(solidImg,dual?TX_m:TX,dual?TY2:TY,dual?FW2:FW,dual?FH2:FH);
+    octx.globalCompositeOperation='source-in';
+    for(let y=figTop;y<figBottom;y+=8){
+      octx.globalAlpha=0.04*(0.3+0.7*Math.sin(y*0.15+t*7));
+      octx.strokeStyle='rgba(240,200,100,1)'; octx.lineWidth=1;
+      octx.beginPath(); octx.moveTo(0,y); octx.lineTo(W,y); octx.stroke();
+    }
+    octx.globalCompositeOperation='source-over';
+    ctx.save(); ctx.globalAlpha=flicker; ctx.drawImage(off,0,0); ctx.restore();
+
+    for(let p=0;p<particleCount;p++){
+      const ph=(t*0.3+p*0.6)%1;
+      if(ph<0.88){
+        const px=W/2+(p*58-420)+Math.sin(t*1.1+p)*26;
+        const py=figBottom-20-ph*(figBottom-figTop-40);
+        const pa=(ph<0.12?ph/0.12:ph>0.72?1-(ph-0.72)/0.16:0.9)*pct*flicker;
+        ctx.save(); ctx.globalAlpha=pa*0.75;
+        ctx.beginPath(); ctx.arc(px,py,3*(1-ph*0.5),0,Math.PI*2);
+        ctx.fillStyle='rgba(240,200,100,0.9)'; ctx.fill(); ctx.restore();
+      }
+    }
+
+    ctx.save(); ctx.translate(W/2,figBottom+24); ctx.scale(1,0.22);
+    ctx.globalAlpha=(0.16+0.08*b)*flicker;
+    ctx.beginPath(); ctx.arc(0,0,200,0,Math.PI*2);
+    ctx.strokeStyle='rgba(200,169,106,1)'; ctx.lineWidth=2; ctx.stroke();
+    ctx.restore();
+
+    yyTargetOpacity = vesselMode ===

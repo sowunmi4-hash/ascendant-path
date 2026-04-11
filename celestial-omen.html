@@ -1,0 +1,1398 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Celestial Omen | The Ascendant Path</title>
+  <link rel="stylesheet" href="style.css" />
+  <style>
+    :root {
+      --bg-1: #040814;
+      --bg-2: #081120;
+      --bg-3: #0c1730;
+      --panel: rgba(10, 16, 32, 0.78);
+      --panel-strong: rgba(14, 20, 40, 0.88);
+      --border: rgba(255, 255, 255, 0.09);
+      --text: #edf4ff;
+      --muted: #b7c4dc;
+      --gold: #e3c98a;
+      --silver: #c8d8ff;
+      --violet: #8b80ff;
+      --glow: 0 0 0 1px rgba(255,255,255,0.03), 0 18px 50px rgba(0,0,0,0.34);
+      --radius-xl: 30px;
+      --radius-lg: 24px;
+      --radius-md: 18px;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    html, body {
+      margin: 0;
+      padding: 0;
+      min-height: 100%;
+      background:
+        radial-gradient(circle at top, rgba(82, 99, 170, 0.22), transparent 38%),
+        radial-gradient(circle at 20% 20%, rgba(167, 196, 255, 0.08), transparent 24%),
+        linear-gradient(180deg, var(--bg-2) 0%, var(--bg-1) 42%, #03050d 100%);
+      color: var(--text);
+      font-family: "Inter", "Segoe UI", sans-serif;
+      overflow-x: hidden;
+    }
+
+    body::before,
+    body::after {
+      content: "";
+      position: fixed;
+      inset: -20%;
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    body::before {
+      background:
+        radial-gradient(circle at 15% 28%, rgba(210,226,255,0.09) 0 2px, transparent 2.2px),
+        radial-gradient(circle at 70% 12%, rgba(210,226,255,0.12) 0 1.8px, transparent 2px),
+        radial-gradient(circle at 82% 40%, rgba(255,255,255,0.09) 0 1.4px, transparent 1.6px),
+        radial-gradient(circle at 32% 78%, rgba(210,226,255,0.08) 0 1.7px, transparent 2px),
+        radial-gradient(circle at 56% 62%, rgba(233,214,163,0.11) 0 1.6px, transparent 1.8px);
+      animation: twinkleField 12s ease-in-out infinite alternate;
+      opacity: 0.85;
+    }
+
+    body::after {
+      background:
+        radial-gradient(45% 28% at 50% 0%, rgba(157,190,255,0.10), transparent 70%),
+        radial-gradient(38% 24% at 50% 100%, rgba(139,128,255,0.08), transparent 70%);
+      filter: blur(60px);
+      animation: breatheGlow 14s ease-in-out infinite;
+    }
+
+    .omen-shell {
+      position: relative;
+      z-index: 1;
+      width: min(1440px, calc(100% - 32px));
+      margin: 0 auto;
+      padding: 28px 0 60px;
+    }
+
+    .floating-mist,
+    .floating-mist::before,
+    .floating-mist::after {
+      position: absolute;
+      inset: auto;
+      border-radius: 999px;
+      filter: blur(40px);
+      pointer-events: none;
+    }
+
+    .floating-mist {
+      top: 120px;
+      left: -120px;
+      width: 360px;
+      height: 220px;
+      background: rgba(151,187,255,0.08);
+      animation: driftSlow 18s ease-in-out infinite alternate;
+    }
+
+    .floating-mist::before {
+      content: "";
+      top: 430px;
+      right: -1020px;
+      width: 460px;
+      height: 240px;
+      background: rgba(232,217,175,0.07);
+      animation: driftSlow 22s ease-in-out infinite alternate-reverse;
+    }
+
+    .floating-mist::after {
+      content: "";
+      top: 780px;
+      right: -720px;
+      width: 320px;
+      height: 200px;
+      background: rgba(168,180,255,0.09);
+      animation: driftSlow 20s ease-in-out infinite alternate;
+    }
+
+    .omen-topbar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      margin-bottom: 18px;
+      flex-wrap: wrap;
+    }
+
+    .omen-topbar-actions {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+
+    .omen-back-link,
+    .omen-logout-button {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      min-height: 44px;
+      padding: 0 16px;
+      border-radius: 999px;
+      text-decoration: none;
+      color: var(--text);
+      background: rgba(255,255,255,0.05);
+      border: 1px solid rgba(255,255,255,0.09);
+      box-shadow: 0 8px 22px rgba(0,0,0,0.18);
+      transition: transform 0.25s ease, border-color 0.25s ease, background 0.25s ease;
+      font: inherit;
+    }
+
+    .omen-logout-button {
+      cursor: pointer;
+    }
+
+    .omen-back-link:hover,
+    .omen-logout-button:hover {
+      transform: translateY(-2px);
+      border-color: rgba(255,255,255,0.16);
+      background: rgba(255,255,255,0.08);
+    }
+
+    .omen-topbar-note {
+      color: var(--muted);
+      font-size: 0.95rem;
+    }
+
+    .omen-hero {
+      position: relative;
+      overflow: hidden;
+      background:
+        linear-gradient(135deg, rgba(13, 20, 40, 0.94), rgba(10, 18, 36, 0.68)),
+        radial-gradient(circle at top right, rgba(229, 210, 157, 0.13), transparent 36%);
+      border: 1px solid var(--border);
+      border-radius: 36px;
+      padding: 34px 32px;
+      box-shadow: var(--glow);
+      margin-bottom: 24px;
+      isolation: isolate;
+    }
+
+    .omen-hero::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(120deg, transparent 0%, rgba(255,255,255,0.04) 42%, transparent 64%);
+      transform: translateX(-100%);
+      animation: sheenSweep 10s linear infinite;
+      z-index: 0;
+    }
+
+    .omen-hero::after {
+      content: "";
+      position: absolute;
+      inset: auto auto -42px -42px;
+      width: 220px;
+      height: 220px;
+      border-radius: 50%;
+      background: radial-gradient(circle, rgba(214,198,154,0.18), transparent 70%);
+      filter: blur(12px);
+      animation: breatheGlow 11s ease-in-out infinite;
+      z-index: 0;
+    }
+
+    .omen-hero-grid {
+      position: relative;
+      z-index: 1;
+      display: grid;
+      grid-template-columns: minmax(0, 1.35fr) minmax(240px, 0.9fr);
+      gap: 24px;
+      align-items: center;
+    }
+
+    .omen-kicker {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      padding: 8px 14px;
+      border-radius: 999px;
+      background: rgba(255,255,255,0.05);
+      border: 1px solid rgba(255,255,255,0.08);
+      color: var(--gold);
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      font-size: 0.76rem;
+      margin-bottom: 14px;
+    }
+
+    .omen-title {
+      margin: 0;
+      font-size: clamp(2.4rem, 4vw, 4.1rem);
+      line-height: 0.98;
+      letter-spacing: -0.03em;
+    }
+
+    .omen-subtitle {
+      margin: 14px 0 0;
+      max-width: 780px;
+      color: var(--muted);
+      font-size: 1rem;
+      line-height: 1.75;
+    }
+
+    .omen-hero-orb-panel {
+      position: relative;
+      min-height: 220px;
+      display: grid;
+      place-items: center;
+    }
+
+    .omen-hero-orb {
+      position: relative;
+      width: clamp(160px, 22vw, 250px);
+      aspect-ratio: 1 / 1;
+      border-radius: 50%;
+      display: grid;
+      place-items: center;
+      background:
+        radial-gradient(circle at 35% 30%, rgba(255,255,255,0.22), rgba(163,189,255,0.08) 32%, rgba(18,26,49,0.2) 58%, transparent 72%);
+      box-shadow:
+        0 0 0 1px rgba(255,255,255,0.08),
+        0 0 36px rgba(173,197,255,0.2),
+        inset 0 0 34px rgba(255,255,255,0.08);
+      animation: floatOrb 8s ease-in-out infinite;
+    }
+
+    .omen-hero-orb::before,
+    .omen-hero-orb::after {
+      content: "";
+      position: absolute;
+      inset: 14px;
+      border-radius: 50%;
+      border: 1px solid rgba(255,255,255,0.14);
+    }
+
+    .omen-hero-orb::before {
+      transform: rotate(18deg);
+      animation: rotateSlow 16s linear infinite;
+    }
+
+    .omen-hero-orb::after {
+      inset: -10px;
+      border-color: rgba(227,201,138,0.18);
+      animation: rotateSlowReverse 20s linear infinite;
+    }
+
+    .hero-orb-core {
+      width: 42%;
+      aspect-ratio: 1 / 1;
+      border-radius: 50%;
+      background:
+        radial-gradient(circle at 38% 34%, rgba(255,255,255,0.86), rgba(232,211,160,0.78) 20%, rgba(141,171,255,0.44) 52%, rgba(40,64,114,0.12) 82%);
+      box-shadow:
+        0 0 30px rgba(186,210,255,0.3),
+        inset 0 0 16px rgba(255,255,255,0.28);
+      animation: pulseCore 5s ease-in-out infinite;
+    }
+
+    .hero-orb-particle {
+      position: absolute;
+      width: 10px;
+      aspect-ratio: 1 / 1;
+      border-radius: 50%;
+      background: radial-gradient(circle, rgba(255,255,255,0.92), rgba(190,211,255,0.28));
+      box-shadow: 0 0 14px rgba(200,220,255,0.3);
+      opacity: 0.75;
+    }
+
+    .hero-orb-particle.p1 { top: 20%; left: 16%; animation: driftParticleA 9s linear infinite; }
+    .hero-orb-particle.p2 { top: 18%; right: 19%; animation: driftParticleB 11s linear infinite; }
+    .hero-orb-particle.p3 { bottom: 16%; left: 22%; animation: driftParticleB 10s linear infinite reverse; }
+    .hero-orb-particle.p4 { bottom: 14%; right: 18%; animation: driftParticleA 12s linear infinite reverse; }
+
+    .omen-summary-strip {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 16px;
+      margin-bottom: 24px;
+    }
+
+    .summary-card {
+      position: relative;
+      overflow: hidden;
+      background: var(--panel);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      box-shadow: var(--glow);
+      padding: 20px 18px;
+      backdrop-filter: blur(14px);
+      animation: fadeRise 0.7s ease both;
+    }
+
+    .summary-card::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(135deg, rgba(255,255,255,0.03), transparent 32%, transparent 70%, rgba(255,255,255,0.03));
+      pointer-events: none;
+    }
+
+    .summary-label {
+      position: relative;
+      z-index: 1;
+      font-size: 0.74rem;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--gold);
+      margin-bottom: 10px;
+    }
+
+    .summary-value {
+      position: relative;
+      z-index: 1;
+      font-size: 1.05rem;
+      line-height: 1.6;
+      color: var(--muted);
+    }
+
+    .summary-value strong {
+      color: #fff;
+      font-weight: 700;
+      letter-spacing: -0.01em;
+    }
+
+    .omen-board {
+      position: relative;
+      overflow: hidden;
+      background: linear-gradient(180deg, rgba(12,18,35,0.72), rgba(8,13,26,0.88));
+      border: 1px solid var(--border);
+      border-radius: 32px;
+      padding: 28px 24px 26px;
+      box-shadow: var(--glow);
+      backdrop-filter: blur(15px);
+    }
+
+    .omen-board::before {
+      content: "";
+      position: absolute;
+      inset: auto auto -60px -80px;
+      width: 220px;
+      height: 220px;
+      border-radius: 50%;
+      background: radial-gradient(circle, rgba(150,181,255,0.14), transparent 70%);
+      filter: blur(16px);
+      animation: breatheGlow 9s ease-in-out infinite;
+      pointer-events: none;
+    }
+
+    .section-head {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: end;
+      justify-content: space-between;
+      gap: 14px;
+      margin-bottom: 16px;
+    }
+
+    .section-title {
+      margin: 0;
+      font-size: clamp(1.55rem, 2.4vw, 2.2rem);
+      letter-spacing: -0.03em;
+    }
+
+    .section-subtitle {
+      margin: 8px 0 0;
+      color: var(--muted);
+      font-size: 0.98rem;
+      line-height: 1.7;
+      max-width: 760px;
+    }
+
+    .forecast-meta {
+      color: var(--gold);
+      font-size: 0.92rem;
+      margin-bottom: 14px;
+    }
+
+    .forecast-error {
+      display: none;
+      margin-bottom: 14px;
+      padding: 14px 16px;
+      border-radius: 16px;
+      background: rgba(163,52,68,0.16);
+      border: 1px solid rgba(255,122,141,0.26);
+      color: #ffd0d9;
+    }
+
+    .omen-cards-grid {
+      display: grid;
+      grid-template-columns: repeat(7, minmax(0, 1fr));
+      gap: 14px;
+      align-items: start;
+    }
+
+    .omen-loading {
+      grid-column: 1 / -1;
+      min-height: 220px;
+      border-radius: 26px;
+      background: rgba(255,255,255,0.035);
+      border: 1px solid rgba(255,255,255,0.08);
+      display: grid;
+      place-items: center;
+      gap: 16px;
+      text-align: center;
+      padding: 32px 18px;
+      color: var(--muted);
+    }
+
+    .omen-loading-orb {
+      width: 62px;
+      aspect-ratio: 1 / 1;
+      border-radius: 50%;
+      border: 2px solid rgba(255,255,255,0.08);
+      border-top-color: rgba(227,201,138,0.78);
+      border-right-color: rgba(176,198,255,0.68);
+      animation: rotateSlow 1.2s linear infinite;
+    }
+
+    .omen-card {
+      position: relative;
+      overflow: hidden;
+      background: rgba(255,255,255,0.04);
+      border: 1px solid rgba(255,255,255,0.08);
+      border-radius: 24px;
+      box-shadow: 0 12px 28px rgba(0,0,0,0.22);
+      animation: fadeRise 0.7s ease both;
+      transition:
+        transform 0.28s ease,
+        border-color 0.28s ease,
+        box-shadow 0.28s ease,
+        background 0.28s ease;
+    }
+
+    .omen-card:hover {
+      transform: translateY(-5px);
+      border-color: rgba(255,255,255,0.14);
+      box-shadow: 0 20px 42px rgba(0,0,0,0.28);
+    }
+
+    .omen-card.is-firm {
+      background:
+        linear-gradient(180deg, rgba(255,255,255,0.05), rgba(255,255,255,0.03)),
+        radial-gradient(circle at top, rgba(218,199,145,0.08), transparent 40%);
+    }
+
+    .omen-card.is-uncertain {
+      background:
+        linear-gradient(180deg, rgba(255,255,255,0.05), rgba(255,255,255,0.025)),
+        radial-gradient(circle at top, rgba(142,119,255,0.07), transparent 42%);
+    }
+
+    .omen-card-toggle {
+      position: relative;
+      width: 100%;
+      border: 0;
+      background: transparent;
+      color: inherit;
+      text-align: left;
+      padding: 18px 16px 14px;
+      cursor: pointer;
+      appearance: none;
+    }
+
+    .omen-card-sheen {
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(130deg, transparent 0%, rgba(255,255,255,0.055) 42%, transparent 70%);
+      transform: translateX(-115%);
+      animation: sheenSweep 8s linear infinite;
+      pointer-events: none;
+    }
+
+    .omen-card-top,
+    .omen-card-foot {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      position: relative;
+      z-index: 1;
+    }
+
+    .omen-card-day {
+      font-size: 1rem;
+      font-weight: 700;
+      letter-spacing: -0.02em;
+    }
+
+    .omen-card-date {
+      margin-top: 5px;
+      color: var(--muted);
+      font-size: 0.9rem;
+    }
+
+    .omen-card-state {
+      display: inline-flex;
+      align-items: center;
+      min-height: 30px;
+      padding: 0 12px;
+      border-radius: 999px;
+      font-size: 0.72rem;
+      letter-spacing: 0.07em;
+      text-transform: uppercase;
+      border: 1px solid rgba(255,255,255,0.1);
+      background: rgba(255,255,255,0.055);
+      color: var(--gold);
+      white-space: nowrap;
+    }
+
+    .omen-card-core {
+      position: relative;
+      z-index: 1;
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) 76px;
+      gap: 12px;
+      align-items: center;
+      margin: 18px 0 14px;
+    }
+
+    .omen-card-reading-label {
+      color: #96a7cc;
+      font-size: 0.74rem;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      margin-bottom: 7px;
+    }
+
+    .omen-card-reading-main {
+      min-height: 58px;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      align-items: center;
+      font-size: 0.95rem;
+      line-height: 1.4;
+    }
+
+    .omen-force-primary {
+      font-weight: 700;
+      color: #fff;
+      letter-spacing: -0.01em;
+    }
+
+    .omen-force-shadow {
+      color: #c6d4ef;
+      font-weight: 700;
+      letter-spacing: -0.01em;
+    }
+
+    .omen-force-divider {
+      color: rgba(255,255,255,0.45);
+      font-weight: 700;
+    }
+
+    .omen-card-ratio {
+      display: inline-flex;
+      align-items: center;
+      min-height: 28px;
+      padding: 0 10px;
+      border-radius: 999px;
+      margin-top: 9px;
+      font-size: 0.72rem;
+      letter-spacing: 0.07em;
+      text-transform: uppercase;
+      background: rgba(139,128,255,0.15);
+      border: 1px solid rgba(139,128,255,0.28);
+      color: #d7d3ff;
+      width: fit-content;
+    }
+
+    .omen-card-ratio.is-firm {
+      background: rgba(227,201,138,0.14);
+      border-color: rgba(227,201,138,0.24);
+      color: #f3dfb2;
+    }
+
+    .omen-card-orb-wrap {
+      display: grid;
+      place-items: center;
+    }
+
+    .omen-card-orb {
+      position: relative;
+      width: 62px;
+      aspect-ratio: 1 / 1;
+      border-radius: 50%;
+      display: grid;
+      place-items: center;
+      animation: floatOrb 7s ease-in-out infinite;
+    }
+
+    .omen-orb-core {
+      width: 34px;
+      aspect-ratio: 1 / 1;
+      border-radius: 50%;
+      background:
+        radial-gradient(circle at 35% 35%, rgba(255,255,255,0.9), rgba(225,206,164,0.78) 24%, rgba(120,147,232,0.35) 64%, rgba(255,255,255,0.08) 100%);
+      box-shadow: 0 0 22px rgba(185,205,255,0.26);
+    }
+
+    .omen-orb-ring {
+      position: absolute;
+      inset: 0;
+      border-radius: 50%;
+      border: 1px solid rgba(255,255,255,0.12);
+    }
+
+    .omen-orb-ring.ring-a { animation: rotateSlow 11s linear infinite; }
+    .omen-orb-ring.ring-b {
+      inset: -7px;
+      border-color: rgba(227,201,138,0.18);
+      animation: rotateSlowReverse 15s linear infinite;
+    }
+
+    .omen-card-advisory {
+      position: relative;
+      z-index: 1;
+      margin: 0 0 14px;
+      font-size: 0.92rem;
+      line-height: 1.66;
+      color: var(--muted);
+    }
+
+    .omen-card-foot {
+      position: relative;
+      z-index: 1;
+      color: #92a3c8;
+      font-size: 0.83rem;
+    }
+
+    .omen-card-chevron {
+      display: inline-block;
+      font-size: 1.2rem;
+      transition: transform 0.24s ease;
+    }
+
+    .omen-card.is-open .omen-card-chevron {
+      transform: rotate(180deg);
+    }
+
+    .omen-card-detail-panel {
+      overflow: hidden;
+      transition: max-height 0.26s ease, opacity 0.22s ease;
+      opacity: 1;
+    }
+
+    .omen-card-detail-panel[hidden] {
+      display: block;
+      opacity: 0;
+    }
+
+    .omen-card-detail-inner {
+      padding: 0 16px 16px;
+    }
+
+    .omen-card-detail-title {
+      margin: 0 0 12px;
+      padding-top: 4px;
+      font-size: 0.78rem;
+      color: var(--gold);
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+    }
+
+    .omen-phase-list {
+      display: grid;
+      gap: 10px;
+    }
+
+    .omen-phase-row {
+      display: grid;
+      gap: 6px;
+      padding: 11px 12px;
+      border-radius: 16px;
+      background: rgba(255,255,255,0.038);
+      border: 1px solid rgba(255,255,255,0.07);
+      animation: fadeRise 0.45s ease both;
+    }
+
+    .omen-phase-name {
+      font-size: 0.79rem;
+      color: #98a9ce;
+      letter-spacing: 0.07em;
+      text-transform: uppercase;
+    }
+
+    .omen-phase-values {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 6px;
+      font-size: 0.92rem;
+      line-height: 1.5;
+    }
+
+    .omen-phase-primary {
+      font-weight: 700;
+      color: #fff;
+    }
+
+    .omen-phase-shadow {
+      color: #c7d2ea;
+    }
+
+    .omen-phase-divider {
+      color: rgba(255,255,255,0.45);
+    }
+
+    .omen-phase-ratio {
+      display: inline-flex;
+      align-items: center;
+      min-height: 24px;
+      padding: 0 8px;
+      border-radius: 999px;
+      background: rgba(139,128,255,0.14);
+      border: 1px solid rgba(139,128,255,0.24);
+      color: #d7d3ff;
+      font-size: 0.68rem;
+      letter-spacing: 0.07em;
+      text-transform: uppercase;
+      margin-left: auto;
+    }
+
+    .omen-bottom-note {
+      margin-top: 18px;
+      text-align: center;
+      color: #93a5cb;
+      font-size: 0.94rem;
+      line-height: 1.7;
+    }
+
+    @keyframes driftSlow {
+      0% { transform: translate3d(0, 0, 0); }
+      100% { transform: translate3d(90px, -24px, 0); }
+    }
+
+    @keyframes pulseCore {
+      0%, 100% { transform: scale(0.96); }
+      50% { transform: scale(1.04); }
+    }
+
+    @keyframes breatheGlow {
+      0%, 100% { opacity: 0.56; transform: scale(0.98); }
+      50% { opacity: 0.9; transform: scale(1.04); }
+    }
+
+    @keyframes rotateSlow {
+      from { transform: rotate(0deg); }
+      to { transform: rotate(360deg); }
+    }
+
+    @keyframes rotateSlowReverse {
+      from { transform: rotate(360deg); }
+      to { transform: rotate(0deg); }
+    }
+
+    @keyframes floatOrb {
+      0%, 100% { transform: translateY(0px); }
+      50% { transform: translateY(-10px); }
+    }
+
+    @keyframes driftParticleA {
+      0% { transform: translate(0, 0) scale(0.9); opacity: 0.55; }
+      50% { transform: translate(12px, -16px) scale(1.04); opacity: 1; }
+      100% { transform: translate(0, -28px) scale(0.9); opacity: 0.6; }
+    }
+
+    @keyframes driftParticleB {
+      0% { transform: translate(0, 0) scale(0.85); opacity: 0.6; }
+      50% { transform: translate(-14px, 12px) scale(1.08); opacity: 1; }
+      100% { transform: translate(0, 22px) scale(0.9); opacity: 0.55; }
+    }
+
+    @keyframes sheenSweep {
+      from { transform: translateX(-110%); }
+      to { transform: translateX(110%); }
+    }
+
+    @keyframes fadeRise {
+      from {
+        opacity: 0;
+        transform: translateY(16px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    @keyframes twinkleField {
+      0% { opacity: 0.72; }
+      50% { opacity: 0.95; }
+      100% { opacity: 0.76; }
+    }
+
+    @media (max-width: 1280px) {
+      .omen-summary-strip {
+        grid-template-columns: 1fr;
+      }
+
+      .omen-cards-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+    }
+
+    @media (max-width: 980px) {
+      .omen-shell {
+        width: min(100% - 20px, 1200px);
+      }
+
+      .omen-hero-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .omen-cards-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .omen-card-core {
+        grid-template-columns: minmax(0, 1fr) 64px;
+      }
+    }
+
+    @media (max-width: 640px) {
+      .omen-hero,
+      .omen-board {
+        padding-left: 18px;
+        padding-right: 18px;
+      }
+
+      .omen-card-toggle,
+      .omen-card-detail-inner {
+        padding-left: 14px;
+        padding-right: 14px;
+      }
+
+      .omen-title {
+        font-size: 2.15rem;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="omen-shell">
+    <div class="floating-mist" aria-hidden="true"></div>
+
+    <div class="omen-topbar">
+      <div class="omen-topbar-actions">
+        <a class="omen-back-link" href="/breath-of-celestial.html">← Back to Breath of Celestial</a>
+        <button type="button" class="omen-logout-button" id="logoutButton">Logout</button>
+      </div>
+      <div class="omen-topbar-note">Projected sky reading for the next seven celestial days.</div>
+    </div>
+
+    <section class="omen-hero">
+      <div class="omen-hero-grid">
+        <div>
+          <div class="omen-kicker">Forecast Archive</div>
+          <h1 class="omen-title">Celestial Omen</h1>
+          <p class="omen-subtitle">
+            The living heavens do not reveal tomorrow with equal mercy. Near skies arrive as
+            firmer signs. Distant skies split into uncertain currents, where one omen may yet
+            overturn another before the phase is born.
+          </p>
+        </div>
+
+        <div class="omen-hero-orb-panel" aria-hidden="true">
+          <div class="omen-hero-orb">
+            <div class="hero-orb-core"></div>
+            <span class="hero-orb-particle p1"></span>
+            <span class="hero-orb-particle p2"></span>
+            <span class="hero-orb-particle p3"></span>
+            <span class="hero-orb-particle p4"></span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="omen-summary-strip">
+      <article class="summary-card">
+        <div class="summary-label">Reading Rule</div>
+        <div class="summary-value">
+          <strong>Today</strong> and <strong>Tomorrow</strong> arrive as firmer celestial readings.
+        </div>
+      </article>
+
+      <article class="summary-card">
+        <div class="summary-label">Distant Omen</div>
+        <div class="summary-value">
+          <strong>Day 3–7</strong> may split into dual skies, shown as a <strong>50/50</strong> reading.
+        </div>
+      </article>
+
+      <article class="summary-card">
+        <div class="summary-label">Interpretation</div>
+        <div class="summary-value">
+          Open a day card to reveal all <strong>6 phase readings</strong> beneath the surface omen.
+        </div>
+      </article>
+    </section>
+
+    <section class="omen-board">
+      <div class="section-head">
+        <div>
+          <h2 class="section-title">Seven-Day Celestial Reading</h2>
+          <p class="section-subtitle">
+            Each card holds a summary omen first. Open the card to reveal the six phase readings
+            beneath it. One card may stand open at a time.
+          </p>
+        </div>
+      </div>
+
+      <div id="forecastMeta" class="forecast-meta">Reading the seven skies...</div>
+      <div id="forecastError" class="forecast-error"></div>
+      <div id="forecastCards" class="omen-cards-grid"></div>
+
+      <div class="omen-bottom-note">
+        The farther the reading reaches, the more the heavens may turn before the phase arrives.
+      </div>
+    </section>
+  </div>
+
+  <script>
+    const LOGIN_PAGE_URL = "/login.html";
+    const VERIFY_SESSION_URL = "/.netlify/functions/verify-session";
+    const LOGOUT_URL = "/.netlify/functions/logout";
+    const CELESTIAL_FORECAST_URL = "/.netlify/functions/load-seven-day-celestial-forecast";
+
+    const FORECAST_PHASE_ORDER = [
+      "moon_grave_silence",
+      "veil_of_first_breath",
+      "golden_meridian",
+      "zenith_of_heaven",
+      "ashen_descent",
+      "night_tide_omen"
+    ];
+
+    const FORECAST_PHASE_LABELS = {
+      moon_grave_silence: "Moon Grave Silence",
+      veil_of_first_breath: "Veil of First Breath",
+      golden_meridian: "Golden Meridian",
+      zenith_of_heaven: "Zenith of Heaven",
+      ashen_descent: "Ashen Descent",
+      night_tide_omen: "Night Tide Omen"
+    };
+
+    function escapeHtml(value) {
+      return String(value ?? "")
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;")
+        .replace(/'/g, "&#39;");
+    }
+
+    function clearClientSessionArtifacts() {
+      const keysToRemove = [
+        "session",
+        "sessionToken",
+        "session_token",
+        "websiteSession",
+        "website_session",
+        "member",
+        "memberState",
+        "member_state",
+        "user",
+        "user_state",
+        "sl_username",
+        "slUsername",
+        "avatar_key",
+        "avatarKey",
+        "selected_partnership_uuid",
+        "selectedPartnershipUuid"
+      ];
+
+      for (const key of keysToRemove) {
+        try { localStorage.removeItem(key); } catch (_) {}
+        try { sessionStorage.removeItem(key); } catch (_) {}
+      }
+    }
+
+    function redirectToLogin() {
+      clearClientSessionArtifacts();
+      window.location.href = LOGIN_PAGE_URL;
+    }
+
+    async function authFetch(url, options = {}) {
+      const response = await fetch(url, {
+        ...options,
+        credentials: "include",
+        cache: "no-store",
+        headers: {
+          Accept: "application/json",
+          ...(options.headers || {})
+        }
+      });
+
+      if (response.status === 401 || response.status === 403) {
+        redirectToLogin();
+        throw new Error("Your session has expired. Please sign in again.");
+      }
+
+      return response;
+    }
+
+    async function verifySession() {
+      const response = await authFetch(VERIFY_SESSION_URL, {
+        method: "GET"
+      });
+
+      const rawText = await response.text();
+      let payload = null;
+
+      try {
+        payload = rawText ? JSON.parse(rawText) : null;
+      } catch {
+        payload = null;
+      }
+
+      if (!response.ok || !payload?.success) {
+        redirectToLogin();
+        throw new Error(payload?.message || "Unable to verify session.");
+      }
+
+      return payload;
+    }
+
+    async function logoutUser() {
+      try {
+        await fetch(LOGOUT_URL, {
+          method: "POST",
+          credentials: "include"
+        });
+      } catch (error) {
+        console.error("Logout request error:", error);
+      } finally {
+        clearClientSessionArtifacts();
+        window.location.href = LOGIN_PAGE_URL;
+      }
+    }
+
+    function getForecastElements() {
+      return {
+        cards: document.getElementById("forecastCards"),
+        meta: document.getElementById("forecastMeta"),
+        error: document.getElementById("forecastError")
+      };
+    }
+
+    function setForecastMeta(text) {
+      const { meta } = getForecastElements();
+      if (meta) meta.textContent = text || "";
+    }
+
+    function setForecastError(text) {
+      const { error } = getForecastElements();
+      if (!error) return;
+      error.textContent = text || "";
+      error.style.display = text ? "block" : "none";
+    }
+
+    function getOrderedPhaseEntries(day) {
+      const phases = day?.phases || {};
+
+      return FORECAST_PHASE_ORDER.map((phaseKey) => ({
+        key: phaseKey,
+        label: FORECAST_PHASE_LABELS[phaseKey] || phaseKey,
+        projected: phases?.[phaseKey]?.projected_force || "Unknown",
+        shadow: phases?.[phaseKey]?.shadow_force || null
+      }));
+    }
+
+    function pickLeadForce(day, mode = "projected") {
+      const ordered = getOrderedPhaseEntries(day);
+      const counts = new Map();
+
+      ordered.forEach((phase, index) => {
+        const value = mode === "shadow" ? phase.shadow : phase.projected;
+        if (!value) return;
+
+        if (!counts.has(value)) {
+          counts.set(value, { count: 1, firstIndex: index });
+        } else {
+          counts.get(value).count += 1;
+        }
+      });
+
+      let winner = null;
+
+      for (const [name, stats] of counts.entries()) {
+        if (
+          !winner ||
+          stats.count > winner.count ||
+          (stats.count === winner.count && stats.firstIndex < winner.firstIndex)
+        ) {
+          winner = { name, ...stats };
+        }
+      }
+
+      return winner?.name || null;
+    }
+
+    function buildLeadSummary(day) {
+      const projectedLead = pickLeadForce(day, "projected");
+      const shadowLead = pickLeadForce(day, "shadow");
+      const isFirm = day?.day_reading_type === "Firm reading";
+
+      if (isFirm || !shadowLead) {
+        return {
+          primary: projectedLead || "Unclear Reading",
+          secondary: null,
+          ratio: "Firm"
+        };
+      }
+
+      return {
+        primary: projectedLead || "Unclear Reading",
+        secondary: shadowLead,
+        ratio: "50/50"
+      };
+    }
+
+    function renderDetailRow(phase) {
+      const hasShadow = Boolean(phase.shadow);
+
+      return `
+        <div class="omen-phase-row ${hasShadow ? "is-uncertain" : ""}">
+          <div class="omen-phase-name">${escapeHtml(phase.label)}</div>
+          <div class="omen-phase-values">
+            <span class="omen-phase-primary">${escapeHtml(phase.projected)}</span>
+            ${
+              hasShadow
+                ? `
+                  <span class="omen-phase-divider">/</span>
+                  <span class="omen-phase-shadow">${escapeHtml(phase.shadow)}</span>
+                  <span class="omen-phase-ratio">50/50</span>
+                `
+                : ""
+            }
+          </div>
+        </div>
+      `;
+    }
+
+    function renderForecastCard(day, index) {
+      const isFirm = day?.day_reading_type === "Firm reading";
+      const lead = buildLeadSummary(day);
+      const orderedPhases = getOrderedPhaseEntries(day);
+      const detailId = `omen-detail-${index}`;
+
+      return `
+        <article class="omen-card ${isFirm ? "is-firm" : "is-uncertain"} ${index === 0 ? "is-open" : ""}" style="animation-delay:${index * 70}ms">
+          <button
+            type="button"
+            class="omen-card-toggle"
+            aria-expanded="${index === 0 ? "true" : "false"}"
+            aria-controls="${detailId}"
+          >
+            <div class="omen-card-sheen"></div>
+
+            <div class="omen-card-top">
+              <div>
+                <div class="omen-card-day">${escapeHtml(day.forecast_day_label)}</div>
+                <div class="omen-card-date">${escapeHtml(day.celestial_date_text)}</div>
+              </div>
+              <span class="omen-card-state">${escapeHtml(day.day_reading_type)}</span>
+            </div>
+
+            <div class="omen-card-core">
+              <div class="omen-card-reading">
+                <div class="omen-card-reading-label">Lead Omen</div>
+                <div class="omen-card-reading-main">
+                  <span class="omen-force-primary">${escapeHtml(lead.primary)}</span>
+                  ${
+                    lead.secondary
+                      ? `
+                        <span class="omen-force-divider">/</span>
+                        <span class="omen-force-shadow">${escapeHtml(lead.secondary)}</span>
+                      `
+                      : ""
+                  }
+                </div>
+                <div class="omen-card-ratio ${isFirm ? "is-firm" : ""}">
+                  ${escapeHtml(lead.ratio)}
+                </div>
+              </div>
+
+              <div class="omen-card-orb-wrap" aria-hidden="true">
+                <div class="omen-card-orb">
+                  <span class="omen-orb-ring ring-a"></span>
+                  <span class="omen-orb-ring ring-b"></span>
+                  <span class="omen-orb-core"></span>
+                </div>
+              </div>
+            </div>
+
+            <p class="omen-card-advisory">${escapeHtml(day.day_advisory)}</p>
+
+            <div class="omen-card-foot">
+              <span>Open reading</span>
+              <span class="omen-card-chevron">⌄</span>
+            </div>
+          </button>
+
+          <div id="${detailId}" class="omen-card-detail-panel" ${index === 0 ? "" : "hidden"}>
+            <div class="omen-card-detail-inner">
+              <div class="omen-card-detail-title">Phase Reading</div>
+              <div class="omen-phase-list">
+                ${orderedPhases.map(renderDetailRow).join("")}
+              </div>
+            </div>
+          </div>
+        </article>
+      `;
+    }
+
+    function closeAllCardsExcept(openCard) {
+      const cards = document.querySelectorAll(".omen-card");
+
+      cards.forEach((card) => {
+        const button = card.querySelector(".omen-card-toggle");
+        const panel = card.querySelector(".omen-card-detail-panel");
+        if (!button || !panel) return;
+
+        if (card === openCard) {
+          card.classList.add("is-open");
+          button.setAttribute("aria-expanded", "true");
+          panel.hidden = false;
+          panel.style.maxHeight = `${panel.scrollHeight}px`;
+        } else {
+          card.classList.remove("is-open");
+          button.setAttribute("aria-expanded", "false");
+          panel.style.maxHeight = "0px";
+          window.setTimeout(() => {
+            if (!card.classList.contains("is-open")) panel.hidden = true;
+          }, 220);
+        }
+      });
+    }
+
+    function initializeAccordion() {
+      const cards = document.querySelectorAll(".omen-card");
+
+      cards.forEach((card, index) => {
+        const button = card.querySelector(".omen-card-toggle");
+        const panel = card.querySelector(".omen-card-detail-panel");
+        if (!button || !panel) return;
+
+        if (index === 0) {
+          panel.hidden = false;
+          panel.style.maxHeight = `${panel.scrollHeight}px`;
+        } else {
+          panel.hidden = true;
+          panel.style.maxHeight = "0px";
+        }
+
+        button.addEventListener("click", () => {
+          const isOpen = card.classList.contains("is-open");
+
+          if (isOpen) {
+            card.classList.remove("is-open");
+            button.setAttribute("aria-expanded", "false");
+            panel.style.maxHeight = "0px";
+            window.setTimeout(() => {
+              if (!card.classList.contains("is-open")) panel.hidden = true;
+            }, 220);
+            return;
+          }
+
+          closeAllCardsExcept(card);
+        });
+      });
+    }
+
+    function renderForecast(forecast) {
+      const { cards } = getForecastElements();
+      if (!cards) return;
+
+      const days = Array.isArray(forecast?.days) ? forecast.days : [];
+      cards.innerHTML = days.map((day, index) => renderForecastCard(day, index)).join("");
+
+      initializeAccordion();
+
+      const firstDay = days[0];
+      setForecastMeta(
+        firstDay?.celestial_date_text
+          ? `Seven-day reading beginning ${firstDay.celestial_date_text}`
+          : "Seven-day reading loaded"
+      );
+    }
+
+    async function loadCelestialOmen() {
+      const { cards } = getForecastElements();
+      if (!cards) return;
+
+      setForecastError("");
+      setForecastMeta("Reading the seven skies...");
+      cards.innerHTML = `
+        <div class="omen-loading">
+          <div class="omen-loading-orb"></div>
+          <div class="omen-loading-text">The omens are being gathered from the celestial current...</div>
+        </div>
+      `;
+
+      try {
+        const response = await authFetch(CELESTIAL_FORECAST_URL, {
+          method: "GET"
+        });
+
+        const rawText = await response.text();
+        let payload = null;
+
+        try {
+          payload = rawText ? JSON.parse(rawText) : null;
+        } catch {
+          payload = null;
+        }
+
+        if (!response.ok || !payload?.success || !payload?.forecast) {
+          throw new Error(
+            payload?.details ||
+            payload?.error ||
+            payload?.message ||
+            `HTTP ${response.status} ${response.statusText}`
+          );
+        }
+
+        renderForecast(payload.forecast);
+      } catch (error) {
+        console.error("Celestial Omen load error:", error);
+        cards.innerHTML = "";
+        setForecastMeta("");
+        setForecastError(error.message || "Unable to read the celestial omen right now.");
+      }
+    }
+
+    function wireEvents() {
+      const logoutButton = document.getElementById("logoutButton");
+      if (logoutButton) {
+        logoutButton.addEventListener("click", async () => {
+          await logoutUser();
+        });
+      }
+    }
+
+    document.addEventListener("DOMContentLoaded", async () => {
+      wireEvents();
+
+      try {
+        await verifySession();
+        await loadCelestialOmen();
+      } catch (error) {
+        console.error("Celestial Omen boot error:", error);
+      }
+    });
+  </script>
+</body>
+</html>

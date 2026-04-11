@@ -1,0 +1,881 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Login | The Ascendant Path</title>
+  <link rel="stylesheet" href="style.css" />
+  <style>
+    .login-page {
+      width: min(1240px, calc(100% - 2rem));
+      margin: 1.5rem auto 4rem;
+      display: grid;
+      gap: 1.15rem;
+      position: relative;
+      z-index: 3;
+    }
+
+    .login-hero-band {
+      position: relative;
+      overflow: hidden;
+      min-height: 300px;
+      display: grid;
+      align-items: end;
+      padding: 1.75rem;
+      border: 1px solid var(--border-soft);
+      box-shadow: var(--shadow-lg);
+      background:
+        linear-gradient(180deg, rgba(7, 10, 18, 0.22), rgba(7, 10, 18, 0.82)),
+        radial-gradient(circle at 18% 20%, rgba(234, 215, 170, 0.10), transparent 24%),
+        radial-gradient(circle at 80% 18%, rgba(111, 151, 255, 0.14), transparent 24%),
+        url("https://images.unsplash.com/photo-1500530855697-b586d89ba3ee?auto=format&fit=crop&w=1800&q=80")
+          center 42% / cover no-repeat;
+      border-radius: 18px;
+    }
+
+    .login-hero-band::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background:
+        linear-gradient(
+          90deg,
+          rgba(6, 9, 16, 0.80) 0%,
+          rgba(6, 9, 16, 0.46) 48%,
+          rgba(6, 9, 16, 0.76) 100%
+        );
+      pointer-events: none;
+    }
+
+    .login-hero-band::after {
+      content: "";
+      position: absolute;
+      inset: auto 0 0;
+      height: 110px;
+      background: linear-gradient(180deg, transparent, rgba(6, 9, 16, 0.64));
+      pointer-events: none;
+    }
+
+    .login-hero-content {
+      position: relative;
+      z-index: 1;
+      display: grid;
+      gap: 0.7rem;
+      max-width: 720px;
+    }
+
+    .login-eyebrow {
+      display: inline-block;
+      font-size: 0.78rem;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+      color: var(--blue-soft);
+    }
+
+    .login-title {
+      margin: 0;
+      font-size: clamp(2.4rem, 5vw, 4.1rem);
+      line-height: 0.98;
+      color: #ffffff;
+      text-shadow: 0 6px 18px rgba(0, 0, 0, 0.28);
+    }
+
+    .login-kanji {
+      font-size: clamp(1.35rem, 3.6vw, 2.35rem);
+      letter-spacing: 0.18em;
+      color: rgba(224, 232, 255, 0.24);
+      margin-top: -0.1rem;
+    }
+
+    .login-subtitle {
+      margin: 0;
+      font-size: 1rem;
+      line-height: 1.75;
+      color: rgba(241, 244, 255, 0.88);
+      max-width: 640px;
+    }
+
+    .gate-band {
+      position: relative;
+      padding: 1.3rem 0.2rem 0.4rem;
+      display: grid;
+      justify-items: center;
+    }
+
+    .gate-band::before,
+    .gate-band::after {
+      content: "";
+      position: absolute;
+      left: 0;
+      right: 0;
+      height: 1px;
+      background: linear-gradient(90deg, transparent, rgba(234, 215, 170, 0.18), transparent);
+    }
+
+    .gate-band::before {
+      top: 0;
+    }
+
+    .gate-band::after {
+      bottom: 0;
+    }
+
+    .gate-frame {
+      position: relative;
+      width: min(540px, 100%);
+      display: grid;
+      gap: 0.95rem;
+      justify-items: center;
+      text-align: center;
+      padding: 1.45rem 1.25rem 1.25rem;
+      border: 1px solid rgba(142, 168, 255, 0.14);
+      background:
+        linear-gradient(180deg, rgba(18, 24, 40, 0.94), rgba(10, 15, 28, 0.98)),
+        radial-gradient(circle at center, rgba(47, 85, 188, 0.14), transparent 58%);
+      box-shadow: var(--shadow-lg);
+      clip-path: polygon(
+        18px 0,
+        calc(100% - 18px) 0,
+        100% 18px,
+        100% calc(100% - 18px),
+        calc(100% - 18px) 100%,
+        18px 100%,
+        0 calc(100% - 18px),
+        0 18px
+      );
+    }
+
+    .gate-frame::before,
+    .gate-frame::after {
+      content: "";
+      position: absolute;
+      width: 170px;
+      height: 170px;
+      border-radius: 50%;
+      pointer-events: none;
+    }
+
+    .gate-frame::before {
+      right: -64px;
+      top: -64px;
+      background: radial-gradient(circle, rgba(142, 168, 255, 0.09), transparent 70%);
+    }
+
+    .gate-frame::after {
+      left: -64px;
+      bottom: -64px;
+      background: radial-gradient(circle, rgba(234, 215, 170, 0.08), transparent 70%);
+    }
+
+    .gate-label {
+      position: relative;
+      z-index: 1;
+      display: inline-block;
+      font-size: 0.74rem;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: var(--blue-soft);
+    }
+
+    .gate-emblem {
+      position: relative;
+      z-index: 1;
+      width: min(172px, 48vw);
+      aspect-ratio: 1 / 1;
+      border-radius: 50%;
+      display: grid;
+      place-items: center;
+      padding: 14px;
+      background:
+        radial-gradient(circle at 50% 40%, rgba(255, 255, 255, 0.16), transparent 24%),
+        conic-gradient(
+          from 180deg,
+          rgba(142, 168, 255, 0.94),
+          rgba(95, 208, 255, 0.88),
+          rgba(142, 168, 255, 0.94)
+        );
+      box-shadow:
+        0 0 0 2px rgba(255, 235, 192, 0.10),
+        0 0 38px rgba(94, 160, 255, 0.22),
+        inset 0 0 40px rgba(255, 255, 255, 0.08);
+    }
+
+    .gate-emblem::before {
+      content: "";
+      position: absolute;
+      inset: 10%;
+      border-radius: 50%;
+      border: 1px dashed rgba(234, 215, 170, 0.20);
+      opacity: 0.75;
+    }
+
+    .gate-emblem-core {
+      width: 100%;
+      height: 100%;
+      border-radius: 50%;
+      display: grid;
+      place-items: center;
+      padding: 1rem;
+      background:
+        radial-gradient(circle at 50% 35%, rgba(169, 230, 255, 0.22), transparent 24%),
+        radial-gradient(circle at center, rgba(14, 30, 66, 0.94), rgba(4, 9, 20, 0.98) 70%);
+      border: 1px solid rgba(190, 216, 255, 0.16);
+      box-shadow:
+        inset 0 0 30px rgba(142, 168, 255, 0.2),
+        inset 0 -30px 50px rgba(0, 0, 0, 0.45);
+      text-align: center;
+    }
+
+    .gate-emblem-core strong {
+      display: block;
+      font-size: clamp(1.95rem, 4.8vw, 2.7rem);
+      line-height: 1;
+      letter-spacing: 0.16em;
+      color: #ffffff;
+    }
+
+    .gate-emblem-core span {
+      display: block;
+      margin-top: 0.45rem;
+      font-size: 0.72rem;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: rgba(196, 208, 255, 0.72);
+    }
+
+    .gate-title {
+      position: relative;
+      z-index: 1;
+      margin: 0;
+      font-size: 1.32rem;
+      color: #ffffff;
+    }
+
+    .gate-quote {
+      position: relative;
+      z-index: 1;
+      margin: 0;
+      max-width: 420px;
+      color: rgba(228, 234, 255, 0.80);
+      line-height: 1.72;
+      font-style: italic;
+    }
+
+    .gate-copy {
+      position: relative;
+      z-index: 1;
+      margin: 0;
+      max-width: 430px;
+      color: rgba(228, 234, 255, 0.82);
+      line-height: 1.65;
+    }
+
+    .session-note {
+      position: relative;
+      z-index: 1;
+      min-height: 1.35rem;
+      margin: -0.1rem 0 0;
+      color: rgba(226, 232, 255, 0.80);
+      line-height: 1.55;
+      font-size: 0.94rem;
+    }
+
+    .login-error {
+      position: relative;
+      z-index: 1;
+      width: 100%;
+      max-width: 420px;
+      padding: 0.8rem 0.95rem;
+      border-top: 1px solid rgba(218, 114, 114, 0.38);
+      border-bottom: 1px solid rgba(218, 114, 114, 0.22);
+      background: linear-gradient(180deg, rgba(90, 22, 22, 0.26), rgba(52, 14, 14, 0.18));
+      color: rgba(255, 222, 222, 0.92);
+      text-align: left;
+      line-height: 1.55;
+    }
+
+    .gate-form {
+      position: relative;
+      z-index: 1;
+      width: 100%;
+      max-width: 420px;
+      display: grid;
+      gap: 0.95rem;
+      text-align: left;
+    }
+
+    .gate-form .form-group {
+      display: grid;
+      gap: 0.45rem;
+    }
+
+    .gate-form label {
+      font-size: 0.8rem;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: rgba(205, 214, 248, 0.82);
+    }
+
+    .gate-form input {
+      width: 100%;
+    }
+
+    .gate-actions {
+      position: relative;
+      z-index: 1;
+      width: 100%;
+      max-width: 420px;
+      display: grid;
+      gap: 0.7rem;
+    }
+
+    .gate-actions .primary,
+    .gate-actions .secondary {
+      width: 100%;
+      justify-content: center;
+    }
+
+    .gate-note {
+      position: relative;
+      z-index: 1;
+      margin: 0;
+      color: rgba(196, 208, 255, 0.74);
+      font-size: 0.82rem;
+      line-height: 1.6;
+      letter-spacing: 0.04em;
+    }
+
+    .directive-band {
+      display: grid;
+      gap: 0.85rem;
+      padding-top: 0.2rem;
+    }
+
+    .directive-band > div:first-child {
+      display: grid;
+      gap: 0.35rem;
+    }
+
+    .directive-label {
+      display: inline-block;
+      font-size: 0.74rem;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: var(--blue-soft);
+    }
+
+    .directive-band h2 {
+      margin: 0;
+      font-size: 1.25rem;
+      color: #ffffff;
+    }
+
+    .directive-band p {
+      margin: 0;
+      color: rgba(228, 234, 255, 0.8);
+      line-height: 1.6;
+    }
+
+    .directive-track {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 0.9rem;
+    }
+
+    .directive-strip {
+      position: relative;
+      display: grid;
+      gap: 0.35rem;
+      padding: 0.8rem 0.95rem 0.85rem 1.05rem;
+      border-left: 2px solid rgba(142, 168, 255, 0.24);
+      background:
+        linear-gradient(90deg, rgba(255, 255, 255, 0.03), rgba(255, 255, 255, 0));
+    }
+
+    .directive-strip span {
+      font-size: 0.72rem;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--blue-soft);
+    }
+
+    .directive-strip h3 {
+      margin: 0;
+      font-size: 1.03rem;
+      line-height: 1.3;
+      color: #ffffff;
+    }
+
+    .directive-strip p {
+      margin: 0;
+      color: rgba(226, 232, 255, 0.78);
+      line-height: 1.55;
+      font-size: 0.93rem;
+    }
+
+    #return-action[hidden] {
+      display: none;
+    }
+
+    @media (max-width: 900px) {
+      .directive-track {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    @media (max-width: 720px) {
+      .login-page {
+        width: min(100% - 1rem, 1240px);
+        margin-top: 1rem;
+      }
+
+      .login-hero-band {
+        min-height: 270px;
+        padding: 1.2rem 1rem;
+        border-radius: 14px;
+      }
+
+      .gate-frame {
+        width: 100%;
+        padding: 1.15rem 1rem 1rem;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="cloud-layer"></div>
+  <div class="rune-layer"></div>
+  <div class="lightning-flash"></div>
+
+  <nav>
+    <a href="/index.html">Home</a>
+    <a href="/lore.html">Lore</a>
+
+    <div class="nav-session-links" id="nav-session-links">
+      <a href="/dashboard.html" id="nav-dashboard-link">Dashboard</a>
+      <a href="/login.html" id="nav-logout-link">Logout</a>
+    </div>
+  </nav>
+
+  <main class="login-page">
+    <section class="login-hero-band">
+      <div class="login-hero-content">
+        <span class="login-eyebrow">Gate of Entry</span>
+        <h1 class="login-title">Enter the Path</h1>
+        <div class="login-kanji">登天之門</div>
+        <p class="login-subtitle">
+          Present your name and seal before the archive. The gate does not answer to haste,
+          only to recognition, order, and the judgment of the path.
+        </p>
+      </div>
+    </section>
+
+    <section class="gate-band">
+      <div class="gate-frame">
+        <span class="gate-label" id="gate-label">Archive Access</span>
+
+        <div class="gate-emblem" aria-hidden="true">
+          <div class="gate-emblem-core">
+            <div>
+              <strong>TAP</strong>
+              <span id="gate-emblem-subtext">Gate Seal</span>
+            </div>
+          </div>
+        </div>
+
+        <h2 class="gate-title" id="gate-title">Sacred Entry</h2>
+
+        <p class="gate-quote">
+          “The gate does not open to the unprepared. Name yourself, present your seal, and let
+          the path judge whether you may step beyond the mortal threshold.”
+        </p>
+
+        <p class="gate-copy" id="gate-copy">
+          Access to the archive is granted through your Second Life username and a valid
+          HUD-generated login pin. Once verified, you may step beyond the mortal threshold and
+          enter your cultivator record.
+        </p>
+
+        <p class="session-note" id="session-note"></p>
+
+        <div class="login-error" id="login-error" role="alert" hidden></div>
+
+        <form
+          class="gate-form"
+          id="login-form"
+          action="/.netlify/functions/verify-login"
+          method="post"
+          novalidate
+        >
+          <div class="form-group">
+            <label for="sl-username">Second Life Username</label>
+            <input
+              type="text"
+              id="sl-username"
+              name="sl_username"
+              placeholder="Enter your username"
+              autocomplete="username"
+              required
+            />
+          </div>
+
+          <div class="form-group">
+            <label for="login-pin">Login Pin</label>
+            <input
+              type="text"
+              id="login-pin"
+              name="login_pin"
+              placeholder="Enter your pin"
+              inputmode="numeric"
+              autocomplete="one-time-code"
+              required
+            />
+          </div>
+
+          <div class="gate-actions">
+            <button type="submit" class="primary login-submit" id="login-submit">Submit</button>
+            <a href="/dashboard.html" class="secondary" id="return-action" hidden>Return to Dashboard</a>
+          </div>
+        </form>
+
+        <p class="gate-note">
+          Access is granted only after submission and verification.
+        </p>
+      </div>
+    </section>
+
+    <section class="directive-band">
+      <div>
+        <span class="directive-label">Entry Directives</span>
+        <h2>How the Gate Answers</h2>
+        <p>
+          The archive does not open through guesswork. Identity, verification, and recognition
+          must align before the path permits entry.
+        </p>
+      </div>
+
+      <div class="directive-track">
+        <article class="directive-strip">
+          <span>Identity</span>
+          <h3>Present your Second Life name</h3>
+          <p>Your username identifies the cultivator record the gate is being asked to inspect.</p>
+        </article>
+
+        <article class="directive-strip">
+          <span>Verification</span>
+          <h3>Offer the active HUD seal</h3>
+          <p>The login pin serves as the short-lived proof required to pass the threshold safely.</p>
+        </article>
+
+        <article class="directive-strip">
+          <span>Recognition</span>
+          <h3>Enter the archive once confirmed</h3>
+          <p>Once accepted, the path opens to your dashboard, records, and cultivation systems.</p>
+        </article>
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    The Ascendant Path • Begin as Mortal, Ascend to Immortality
+  </footer>
+
+  <script>
+    function safeText(value, fallback = "") {
+      const text = String(value ?? "").trim();
+      return text || fallback;
+    }
+
+    function setError(message) {
+      const errorBox = document.getElementById("login-error");
+      errorBox.textContent = message;
+      errorBox.hidden = !message;
+    }
+
+    function clearError() {
+      setError("");
+    }
+
+    function getCsrfToken() {
+      return sessionStorage.getItem("ap_csrf_token") || "";
+    }
+
+    function setCsrfToken(token) {
+      if (token) {
+        sessionStorage.setItem("ap_csrf_token", token);
+      }
+    }
+
+    function clearClientSessionArtifacts() {
+      sessionStorage.removeItem("ap_csrf_token");
+      localStorage.removeItem("session_token");
+    }
+
+    async function logoutCurrentSession() {
+      const csrfToken = getCsrfToken();
+
+      try {
+        await fetch("/.netlify/functions/logout", {
+          method: "POST",
+          credentials: "include",
+          headers: {
+            "Content-Type": "application/json",
+            ...(csrfToken ? { "X-CSRF-Token": csrfToken } : {})
+          },
+          body: JSON.stringify({})
+        });
+      } catch (error) {
+        console.error("Logout error:", error);
+      } finally {
+        clearClientSessionArtifacts();
+        window.location.href = "/login.html";
+      }
+    }
+
+    function setLoggedOutView() {
+      const navSessionLinks = document.getElementById("nav-session-links");
+      const sessionNote = document.getElementById("session-note");
+      const returnAction = document.getElementById("return-action");
+      const gateLabel = document.getElementById("gate-label");
+      const gateTitle = document.getElementById("gate-title");
+      const gateCopy = document.getElementById("gate-copy");
+      const gateEmblemSubtext = document.getElementById("gate-emblem-subtext");
+
+      navSessionLinks.classList.remove("is-visible");
+      sessionNote.textContent = "";
+      returnAction.hidden = true;
+
+      gateLabel.textContent = "Archive Access";
+      gateTitle.textContent = "Sacred Entry";
+      gateCopy.textContent =
+        "Access to the archive is granted through your Second Life username and a valid HUD-generated login pin. Once verified, you may step beyond the mortal threshold and enter your cultivator record.";
+      gateEmblemSubtext.textContent = "Gate Seal";
+    }
+
+    function setLoggedInView(member) {
+      const displayName =
+        safeText(member.character_name) ||
+        safeText(member.display_name) ||
+        safeText(member.sl_username) ||
+        "Cultivator";
+
+      const username = safeText(member.sl_username);
+      const realmName = safeText(member.realm_name, "Mortal Realm");
+
+      const navSessionLinks = document.getElementById("nav-session-links");
+      const sessionNote = document.getElementById("session-note");
+      const returnAction = document.getElementById("return-action");
+      const gateLabel = document.getElementById("gate-label");
+      const gateTitle = document.getElementById("gate-title");
+      const gateCopy = document.getElementById("gate-copy");
+      const gateEmblemSubtext = document.getElementById("gate-emblem-subtext");
+
+      navSessionLinks.classList.add("is-visible");
+      returnAction.hidden = false;
+
+      gateLabel.textContent = "Seal Recognized";
+      gateTitle.textContent = "Current Session Found";
+      gateCopy.textContent =
+        "A valid session is already active. You may return directly to your dashboard, or continue with the gate form if you intend to sign in again.";
+      gateEmblemSubtext.textContent = "Seal Active";
+
+      sessionNote.textContent = username
+        ? `Signed in as ${displayName} • @${username} • ${realmName}`
+        : `Signed in as ${displayName} • ${realmName}`;
+    }
+
+    async function loadMemberProfileFallback() {
+      try {
+        const response = await fetch("/.netlify/functions/load-dashboard-state", {
+          method: "GET",
+          credentials: "include",
+          headers: {
+            "Accept": "application/json"
+          }
+        });
+
+        const data = await response.json();
+
+        if (response.ok && data && data.success && data.member) {
+          return data.member;
+        }
+      } catch (error) {
+        console.error("Dashboard profile fallback error:", error);
+      }
+
+      return null;
+    }
+
+    async function loadLoginSession() {
+      setLoggedOutView();
+
+      try {
+        const response = await fetch("/.netlify/functions/verify-session", {
+          method: "GET",
+          credentials: "include",
+          headers: {
+            "Accept": "application/json"
+          }
+        });
+
+        if (!response.ok) {
+          return;
+        }
+
+        const data = await response.json();
+        if (!data || data.authenticated !== true) {
+          return;
+        }
+
+        const csrfToken =
+          data.csrf_token ||
+          data.csrfToken ||
+          data.session?.csrf_token ||
+          data.session?.csrfToken ||
+          "";
+
+        if (csrfToken) {
+          setCsrfToken(csrfToken);
+        }
+
+        const profile =
+          data.member ||
+          data.viewer ||
+          data.session ||
+          data.user ||
+          await loadMemberProfileFallback() || {
+            sl_username: data.sl_username || data.username || "",
+            display_name: data.display_name || "",
+            character_name: data.character_name || "",
+            realm_name: data.realm_name || "Mortal Realm"
+          };
+
+        setLoggedInView(profile);
+      } catch (error) {
+        console.error("Login session check error:", error);
+      }
+    }
+
+    async function handleLoginSubmit(event) {
+      event.preventDefault();
+      clearError();
+
+      const submitButton = document.getElementById("login-submit");
+      const usernameInput = document.getElementById("sl-username");
+      const pinInput = document.getElementById("login-pin");
+
+      const slUsername = safeText(usernameInput.value);
+      const loginPin = safeText(pinInput.value);
+
+      if (!slUsername || !loginPin) {
+        setError("Please enter both your Second Life username and your login pin.");
+        return;
+      }
+
+      submitButton.disabled = true;
+      submitButton.textContent = "Verifying...";
+
+      try {
+        const response = await fetch("/.netlify/functions/verify-login", {
+          method: "POST",
+          credentials: "include",
+          headers: {
+            "Content-Type": "application/json",
+            "Accept": "application/json"
+          },
+          body: JSON.stringify({
+            sl_username: slUsername,
+            login_pin: loginPin
+          })
+        });
+
+        let data = null;
+        try {
+          data = await response.json();
+        } catch (jsonError) {
+          data = null;
+        }
+
+        if (!response.ok || !data || data.success !== true) {
+          const errorCode = data?.error || data?.error_code || data?.code || "";
+          const errorMessages = {
+            missing_fields: "Please enter both your Second Life username and your login pin.",
+            no_account: "No account was found for that Second Life username.",
+            invalid_pin: "The login pin is invalid. Please check it and submit again.",
+            invalid_request: "The request could not be processed. Please submit the form again.",
+            server_error: "A gate disturbance has occurred. Please try again shortly."
+          };
+
+          setError(
+            errorMessages[errorCode] ||
+            data?.message ||
+            "The gate did not accept the seal. Please try again."
+          );
+          return;
+        }
+
+        const csrfToken =
+          data.csrf_token ||
+          data.csrfToken ||
+          data.csrf ||
+          "";
+
+        if (csrfToken) {
+          setCsrfToken(csrfToken);
+        }
+
+        setTimeout(() => {
+  window.location.href = data.redirect_to || "/dashboard.html";
+}, 200);
+      } catch (error) {
+        console.error("Login submit error:", error);
+        setError("A gate disturbance has occurred. Please try again shortly.");
+      } finally {
+        submitButton.disabled = false;
+        submitButton.textContent = "Submit";
+      }
+    }
+
+    function applyLegacyQueryErrors() {
+      const params = new URLSearchParams(window.location.search);
+      const error = params.get("error");
+      const username = params.get("user");
+
+      const usernameInput = document.getElementById("sl-username");
+
+      const errorMessages = {
+        missing_fields: "Please enter both your Second Life username and your login pin.",
+        no_account: "No account was found for that Second Life username.",
+        invalid_pin: "The login pin is invalid. Please check it and submit again.",
+        invalid_request: "The request could not be processed. Please submit the form again.",
+        server_error: "A gate disturbance has occurred. Please try again shortly."
+      };
+
+      if (username) {
+        usernameInput.value = username;
+      }
+
+      if (error && errorMessages[error]) {
+        setError(errorMessages[error]);
+      }
+    }
+
+    function bindLogoutLink() {
+      const logoutLink = document.getElementById("nav-logout-link");
+      if (!logoutLink) return;
+
+      logoutLink.addEventListener("click", async (event) => {
+        event.preventDefault();
+        await logoutCurrentSession();
+      });
+    }
+
+    window.addEventListener("DOMContentLoaded", () => {
+      applyLegacyQueryErrors();
+      bindLogoutLink();
+      document.getElementById("login-form").addEventListener("submit", handleLoginSubmit);
+      loadLoginSession();
+    });
+  </script>
+</body>
+</html>

@@ -1,0 +1,1903 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Cultivation | The Ascendant Path</title>
+  <link rel="stylesheet" href="style.css" />
+  <style>
+    :root {
+      --yin-glow: rgba(111, 151, 255, 0.72);
+      --yin-soft: rgba(111, 151, 255, 0.22);
+
+      --yang-glow: rgba(234, 215, 170, 0.86);
+      --yang-soft: rgba(234, 215, 170, 0.22);
+
+      --taiji-glow: rgba(216, 230, 255, 0.82);
+      --taiji-soft: rgba(216, 230, 255, 0.20);
+
+      --leader-glow: rgba(142, 168, 255, 0.30);
+    }
+
+    .temple-page {
+      width: min(1240px, calc(100% - 2rem));
+      margin: 1.5rem auto 4rem;
+      display: grid;
+      gap: 1.1rem;
+      position: relative;
+      z-index: 3;
+    }
+
+    .temple-header {
+      position: relative;
+      overflow: hidden;
+      min-height: 260px;
+      display: grid;
+      align-content: end;
+      gap: 0.5rem;
+      padding: 1.75rem;
+      border: 1px solid var(--border-soft);
+      box-shadow: var(--shadow-lg);
+      border-radius: 18px;
+      background:
+        linear-gradient(180deg, rgba(7, 10, 18, 0.22), rgba(7, 10, 18, 0.82)),
+        radial-gradient(circle at 18% 20%, rgba(234, 215, 170, 0.08), transparent 24%),
+        radial-gradient(circle at 82% 18%, rgba(111, 151, 255, 0.14), transparent 24%),
+        url("https://images.unsplash.com/photo-1500534314209-a25ddb2bd429?auto=format&fit=crop&w=1800&q=80")
+          center 46% / cover no-repeat;
+    }
+
+    .temple-header::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background:
+        linear-gradient(
+          90deg,
+          rgba(6, 9, 16, 0.82) 0%,
+          rgba(6, 9, 16, 0.46) 48%,
+          rgba(6, 9, 16, 0.78) 100%
+        );
+      pointer-events: none;
+    }
+
+    .temple-header::after {
+      content: "";
+      position: absolute;
+      inset: auto 0 0;
+      height: 110px;
+      background: linear-gradient(180deg, transparent, rgba(6, 9, 16, 0.64));
+      pointer-events: none;
+    }
+
+    .temple-header > * {
+      position: relative;
+      z-index: 1;
+    }
+
+    .temple-eyebrow {
+      display: inline-block;
+      font-size: 0.78rem;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+      color: var(--blue-soft);
+      margin-bottom: 0.15rem;
+    }
+
+    .temple-header h1 {
+      margin: 0;
+      font-size: clamp(2.15rem, 4vw, 3.2rem);
+      line-height: 1.02;
+      color: #ffffff;
+      text-shadow: 0 6px 18px rgba(0, 0, 0, 0.28);
+    }
+
+    .temple-header p {
+      margin: 0;
+      color: rgba(229, 235, 255, 0.84);
+      max-width: 760px;
+      line-height: 1.6;
+    }
+
+    .temple-message {
+      margin: 0;
+      text-align: center;
+    }
+
+    .login-error {
+      margin: 0;
+      padding: 0.85rem 1rem;
+      border-top: 1px solid rgba(218, 114, 114, 0.38);
+      border-bottom: 1px solid rgba(218, 114, 114, 0.22);
+      background: linear-gradient(180deg, rgba(90, 22, 22, 0.26), rgba(52, 14, 14, 0.18));
+      color: rgba(255, 222, 222, 0.92);
+      line-height: 1.55;
+    }
+
+    .orb-shrine {
+      position: relative;
+      overflow: hidden;
+      padding: 1.45rem 1.2rem 1.3rem;
+      display: grid;
+      justify-items: center;
+      text-align: center;
+      gap: 1rem;
+      border: 1px solid rgba(142, 168, 255, 0.14);
+      background:
+        linear-gradient(180deg, rgba(18, 24, 40, 0.94), rgba(10, 15, 28, 0.98)),
+        radial-gradient(circle at center, rgba(47, 85, 188, 0.14), transparent 58%);
+      box-shadow: var(--shadow-lg);
+      clip-path: polygon(
+        18px 0,
+        calc(100% - 18px) 0,
+        100% 18px,
+        100% calc(100% - 18px),
+        calc(100% - 18px) 100%,
+        18px 100%,
+        0 calc(100% - 18px),
+        0 18px
+      );
+    }
+
+    .orb-shrine::before,
+    .orb-shrine::after {
+      content: "";
+      position: absolute;
+      width: 170px;
+      height: 170px;
+      border-radius: 50%;
+      pointer-events: none;
+    }
+
+    .orb-shrine::before {
+      right: -64px;
+      top: -64px;
+      background: radial-gradient(circle, rgba(142, 168, 255, 0.09), transparent 70%);
+    }
+
+    .orb-shrine::after {
+      left: -64px;
+      bottom: -64px;
+      background: radial-gradient(circle, rgba(234, 215, 170, 0.08), transparent 70%);
+    }
+
+    .alignment-orb-stage {
+      position: relative;
+      z-index: 1;
+      width: min(980px, 100%);
+      display: grid;
+      gap: 1rem;
+      justify-items: center;
+      align-items: center;
+    }
+
+    .alignment-orb-shell {
+      position: relative;
+      width: min(420px, 84vw);
+      aspect-ratio: 1 / 1;
+      display: grid;
+      place-items: center;
+      isolation: isolate;
+    }
+
+    .alignment-orb-shell::before {
+      content: "";
+      position: absolute;
+      width: 470px;
+      height: 470px;
+      border-radius: 50%;
+      filter: blur(26px);
+      opacity: 0.22;
+      z-index: 0;
+      background: radial-gradient(circle, var(--leader-glow), transparent 64%);
+      animation: auraPulse 6s ease-in-out infinite;
+    }
+
+    .alignment-orb-shell.leader-yin {
+      --leader-glow: rgba(111, 151, 255, 0.34);
+    }
+
+    .alignment-orb-shell.leader-yang {
+      --leader-glow: rgba(234, 215, 170, 0.28);
+    }
+
+    .alignment-orb-shell.leader-taiji {
+      --leader-glow: rgba(216, 230, 255, 0.30);
+    }
+
+    .alignment-orbit-ring {
+      position: absolute;
+      left: 50%;
+      top: 50%;
+      border-radius: 50%;
+      border: 1px dashed rgba(255,255,255,0.08);
+      z-index: 1;
+      animation: orbitSpin 28s linear infinite;
+      pointer-events: none;
+    }
+
+    .alignment-orbit-ring.outer {
+      width: 360px;
+      height: 360px;
+      margin-left: -180px;
+      margin-top: -180px;
+      opacity: 0.7;
+    }
+
+    .alignment-orbit-ring.inner {
+      width: 288px;
+      height: 288px;
+      margin-left: -144px;
+      margin-top: -144px;
+      animation-direction: reverse;
+      animation-duration: 20s;
+      opacity: 0.45;
+    }
+
+    .alignment-orbit-ring::before,
+    .alignment-orbit-ring::after {
+      content: "";
+      position: absolute;
+      border-radius: 50%;
+      background: radial-gradient(circle, rgba(255,255,255,0.96), rgba(142,168,255,0.72) 70%, rgba(142,168,255,0) 100%);
+      box-shadow: 0 0 18px rgba(142, 168, 255, 0.22);
+    }
+
+    .alignment-orbit-ring.outer::before {
+      width: 12px;
+      height: 12px;
+      top: -6px;
+      left: 50%;
+      margin-left: -6px;
+    }
+
+    .alignment-orbit-ring.outer::after {
+      width: 10px;
+      height: 10px;
+      bottom: -5px;
+      left: 18%;
+      background: radial-gradient(circle, rgba(255,255,255,0.94), rgba(234,215,170,0.72) 70%, rgba(234,215,170,0) 100%);
+    }
+
+    .alignment-orbit-ring.inner::before {
+      width: 8px;
+      height: 8px;
+      top: 14%;
+      right: -4px;
+      background: radial-gradient(circle, rgba(255,255,255,0.94), rgba(216,230,255,0.78) 70%, rgba(216,230,255,0) 100%);
+    }
+
+    .alignment-orbit-ring.inner::after {
+      width: 8px;
+      height: 8px;
+      left: 8%;
+      bottom: 10%;
+      background: radial-gradient(circle, rgba(255,255,255,0.94), rgba(111,151,255,0.74) 70%, rgba(111,151,255,0) 100%);
+    }
+
+    .alignment-orb-ring {
+      position: relative;
+      z-index: 3;
+      width: min(330px, 74vw);
+      aspect-ratio: 1 / 1;
+      border-radius: 50%;
+      display: grid;
+      place-items: center;
+      background:
+        radial-gradient(circle at 50% 40%, rgba(255, 255, 255, 0.16), transparent 24%),
+        conic-gradient(
+          from 180deg,
+          rgba(142, 168, 255, 0.95),
+          rgba(95, 208, 255, 0.92),
+          rgba(234, 215, 170, 0.88),
+          rgba(216, 230, 255, 0.94),
+          rgba(142, 168, 255, 0.95)
+        );
+      padding: 18px;
+      box-shadow:
+        0 0 0 2px rgba(255, 235, 192, 0.10),
+        0 0 40px rgba(94, 160, 255, 0.24),
+        inset 0 0 40px rgba(255, 255, 255, 0.08);
+      transition: transform 0.2s ease, box-shadow 0.2s ease;
+    }
+
+    .alignment-orb-ring.meditating {
+      animation: pulse-orb 2.2s ease-in-out infinite;
+    }
+
+    .alignment-orb-ring.aligned-window {
+      box-shadow:
+        0 0 0 2px rgba(255, 235, 192, 0.16),
+        0 0 62px rgba(234, 215, 170, 0.22),
+        inset 0 0 54px rgba(255, 255, 255, 0.12);
+    }
+
+    .alignment-orb-core {
+      width: 100%;
+      height: 100%;
+      border-radius: 50%;
+      display: grid;
+      place-items: center;
+      text-align: center;
+      background:
+        radial-gradient(circle at 50% 35%, rgba(169, 230, 255, 0.18), transparent 24%),
+        radial-gradient(circle at center, rgba(14, 30, 66, 0.94), rgba(4, 9, 20, 0.98) 70%);
+      border: 1px solid rgba(190, 216, 255, 0.16);
+      box-shadow:
+        inset 0 0 30px rgba(142, 168, 255, 0.20),
+        inset 0 -30px 50px rgba(0, 0, 0, 0.45);
+      padding: 1.5rem;
+      position: relative;
+      overflow: hidden;
+      isolation: isolate;
+    }
+
+    .alignment-center-glow {
+      position: absolute;
+      inset: 22% 22%;
+      border-radius: 50%;
+      background: radial-gradient(circle, rgba(216,230,255,0.18), transparent 70%);
+      filter: blur(20px);
+      opacity: 0.9;
+      z-index: 1;
+      animation: coreBreath 5.6s ease-in-out infinite;
+      pointer-events: none;
+    }
+
+    .current-layer {
+      position: absolute;
+      border-radius: 50%;
+      filter: blur(8px);
+      mix-blend-mode: screen;
+      opacity: 0.4;
+      z-index: 1;
+      pointer-events: none;
+      transition: opacity 0.35s ease, transform 0.35s ease;
+    }
+
+    .current-layer.yin {
+      width: 62%;
+      height: 62%;
+      left: 10%;
+      top: 28%;
+      background:
+        radial-gradient(circle at 40% 40%, rgba(170, 196, 255, 0.55), rgba(111, 151, 255, 0.48) 45%, rgba(111, 151, 255, 0) 76%);
+      animation: currentDriftYin 9s ease-in-out infinite;
+    }
+
+    .current-layer.yang {
+      width: 58%;
+      height: 58%;
+      right: 8%;
+      top: 16%;
+      background:
+        radial-gradient(circle at 55% 40%, rgba(255, 241, 206, 0.58), rgba(234, 215, 170, 0.48) 44%, rgba(234, 215, 170, 0) 76%);
+      animation: currentDriftYang 8s ease-in-out infinite;
+    }
+
+    .current-layer.taiji {
+      width: 66%;
+      height: 66%;
+      left: 17%;
+      top: 12%;
+      background:
+        radial-gradient(circle at 50% 50%, rgba(232, 241, 255, 0.48), rgba(216, 230, 255, 0.34) 44%, rgba(216, 230, 255, 0) 76%);
+      animation: currentDriftTaiji 10s ease-in-out infinite;
+    }
+
+    .orb-status {
+      position: relative;
+      z-index: 3;
+      display: grid;
+      gap: 0.4rem;
+      align-content: center;
+    }
+
+    .orb-status span {
+      font-size: 0.82rem;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: rgba(197, 213, 255, 0.74);
+    }
+
+    .orb-status h2 {
+      margin: 0;
+      font-size: clamp(2rem, 4vw, 3rem);
+      line-height: 1;
+      color: #ffffff;
+    }
+
+    .orb-status p {
+      margin: 0;
+      color: rgba(224, 234, 255, 0.84);
+      font-size: 1rem;
+    }
+
+    .current-triad {
+      width: min(900px, 100%);
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 0.9rem;
+      align-items: stretch;
+    }
+
+    .current-mini-card {
+      position: relative;
+      overflow: hidden;
+      display: grid;
+      justify-items: center;
+      gap: 0.45rem;
+      padding: 0.95rem 0.8rem 0.9rem;
+      border-radius: 18px;
+      background:
+        linear-gradient(180deg, rgba(20, 27, 44, 0.92), rgba(10, 15, 28, 0.98));
+      border: 1px solid rgba(255,255,255,0.06);
+      box-shadow: 0 16px 34px rgba(0, 0, 0, 0.18);
+    }
+
+    .current-mini-card::before {
+      content: "";
+      position: absolute;
+      left: 0;
+      top: 18px;
+      bottom: 18px;
+      width: 2px;
+      background: linear-gradient(180deg, rgba(142, 168, 255, 0.28), rgba(234, 215, 170, 0.16));
+    }
+
+    .current-mini-card.yin {
+      border-color: rgba(111,151,255,0.16);
+    }
+
+    .current-mini-card.yang {
+      border-color: rgba(234,215,170,0.16);
+    }
+
+    .current-mini-card.taiji {
+      border-color: rgba(216,230,255,0.16);
+    }
+
+    .mini-orb {
+      position: relative;
+      overflow: hidden;
+      width: 82px;
+      height: 82px;
+      border-radius: 50%;
+      background:
+        linear-gradient(180deg, rgba(255,255,255,0.08), rgba(255,255,255,0.02)),
+        rgba(7, 10, 18, 0.76);
+      box-shadow:
+        0 0 0 1px rgba(255,255,255,0.08) inset,
+        0 0 24px rgba(0,0,0,0.28);
+      isolation: isolate;
+      animation: vesselFloat 6.5s ease-in-out infinite;
+    }
+
+    .mini-orb .mini-core {
+      position: absolute;
+      inset: 7px;
+      border-radius: inherit;
+      overflow: hidden;
+      background:
+        radial-gradient(circle at 30% 24%, rgba(255,255,255,0.16), transparent 28%),
+        rgba(4, 8, 16, 0.82);
+      box-shadow: 0 0 0 1px rgba(255,255,255,0.07) inset;
+    }
+
+    .mini-fill {
+      position: absolute;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      min-height: 8%;
+      border-radius: 44% 44% 0 0 / 20% 20% 0 0;
+      transition: height 0.45s ease;
+      overflow: hidden;
+      box-shadow: 0 -8px 22px rgba(255,255,255,0.08) inset;
+    }
+
+    .mini-fill::before,
+    .mini-fill::after {
+      content: "";
+      position: absolute;
+      left: -20%;
+      right: -20%;
+      height: 40px;
+      top: -16px;
+      opacity: 0.95;
+      border-radius: 46%;
+      animation: waveShift 7s linear infinite;
+      background: rgba(255,255,255,0.18);
+      filter: blur(1px);
+    }
+
+    .mini-fill::after {
+      top: -10px;
+      opacity: 0.45;
+      animation-duration: 11s;
+      animation-direction: reverse;
+    }
+
+    .mini-fill.yin {
+      background:
+        linear-gradient(180deg, rgba(216, 229, 255, 0.74), rgba(111, 151, 255, 0.94) 48%, rgba(58, 76, 120, 0.98));
+    }
+
+    .mini-fill.yang {
+      background:
+        linear-gradient(180deg, rgba(255, 245, 215, 0.74), rgba(234, 215, 170, 0.95) 48%, rgba(128, 108, 62, 0.98));
+    }
+
+    .mini-fill.taiji {
+      background:
+        linear-gradient(180deg, rgba(241, 246, 255, 0.78), rgba(216, 230, 255, 0.95) 48%, rgba(97, 113, 138, 0.98));
+    }
+
+    .mini-glow {
+      position: absolute;
+      inset: auto 8% -10% 8%;
+      height: 45%;
+      filter: blur(18px);
+      opacity: 0.42;
+      border-radius: 999px;
+    }
+
+    .mini-glow.yin {
+      background: rgba(111,151,255,0.40);
+    }
+
+    .mini-glow.yang {
+      background: rgba(234,215,170,0.42);
+    }
+
+    .mini-glow.taiji {
+      background: rgba(216,230,255,0.40);
+    }
+
+    .current-mini-label {
+      font-size: 0.72rem;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: rgba(196, 208, 255, 0.72);
+    }
+
+    .current-mini-value {
+      font-size: 1rem;
+      line-height: 1.2;
+      color: #ffffff;
+      font-weight: 700;
+    }
+
+    .current-mini-share {
+      font-size: 0.82rem;
+      color: rgba(226, 232, 255, 0.78);
+    }
+
+    .shrine-meta {
+      position: relative;
+      z-index: 1;
+      width: min(940px, 100%);
+      display: grid;
+      gap: 0.9rem;
+      justify-items: center;
+    }
+
+    .signal-grid {
+      width: 100%;
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 0.9rem;
+    }
+
+    .signal-card {
+      position: relative;
+      display: grid;
+      gap: 0.25rem;
+      padding: 0.95rem 1rem 0.95rem 1.1rem;
+      background:
+        linear-gradient(180deg, rgba(18, 24, 40, 0.82), rgba(11, 16, 28, 0.96));
+      border-top: 1px solid rgba(255, 255, 255, 0.07);
+      border-bottom: 1px solid rgba(255, 255, 255, 0.07);
+      box-shadow: 0 16px 42px rgba(0, 0, 0, 0.18);
+      min-height: 96px;
+    }
+
+    .signal-card::before {
+      content: "";
+      position: absolute;
+      left: 0;
+      top: 18px;
+      bottom: 18px;
+      width: 2px;
+      background: linear-gradient(180deg, rgba(142, 168, 255, 0.28), rgba(234, 215, 170, 0.16));
+    }
+
+    .signal-card span {
+      font-size: 0.72rem;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: rgba(196, 208, 255, 0.72);
+      padding-left: 0.35rem;
+    }
+
+    .signal-card strong {
+      font-size: 1.02rem;
+      color: #ffffff;
+      line-height: 1.35;
+      word-break: break-word;
+      margin: 0;
+      padding-left: 0.35rem;
+    }
+
+    .current-influence-panel {
+      width: 100%;
+      display: grid;
+      gap: 0.55rem;
+      padding: 1rem 1.1rem 1rem 1.15rem;
+      background:
+        linear-gradient(180deg, rgba(18, 24, 40, 0.82), rgba(11, 16, 28, 0.96));
+      border-top: 1px solid rgba(255, 255, 255, 0.07);
+      border-bottom: 1px solid rgba(255, 255, 255, 0.07);
+      box-shadow: 0 16px 42px rgba(0, 0, 0, 0.18);
+      text-align: left;
+      position: relative;
+    }
+
+    .current-influence-panel::before {
+      content: "";
+      position: absolute;
+      left: 0;
+      top: 18px;
+      bottom: 18px;
+      width: 2px;
+      background: linear-gradient(180deg, rgba(142, 168, 255, 0.28), rgba(234, 215, 170, 0.16));
+    }
+
+    .current-influence-label {
+      font-size: 0.72rem;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: rgba(196, 208, 255, 0.72);
+      padding-left: 0.35rem;
+    }
+
+    .current-influence-line {
+      margin: 0;
+      color: rgba(227, 234, 255, 0.84);
+      line-height: 1.58;
+      padding-left: 0.35rem;
+    }
+
+    .current-detail-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.55rem;
+      padding-left: 0.35rem;
+    }
+
+    .current-chip {
+      display: inline-flex;
+      align-items: center;
+      min-height: 34px;
+      padding: 0.42rem 0.72rem;
+      border-radius: 999px;
+      border: 1px solid rgba(255,255,255,0.08);
+      background: rgba(255,255,255,0.035);
+      color: rgba(227, 234, 255, 0.84);
+      font-size: 0.76rem;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+    }
+
+    .current-chip.success {
+      color: #9fe1b2;
+      border-color: rgba(159, 225, 178, 0.28);
+    }
+
+    .current-chip.warn {
+      color: #f1cd7a;
+      border-color: rgba(241, 205, 122, 0.28);
+    }
+
+    .current-chip.info {
+      color: #c7d7ff;
+      border-color: rgba(199, 215, 255, 0.24);
+    }
+
+    .shrine-line-group {
+      width: min(760px, 100%);
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 0.8rem;
+      text-align: center;
+    }
+
+    .shrine-line {
+      display: grid;
+      gap: 0.3rem;
+      text-align: center;
+      padding: 0.95rem 1rem;
+      background:
+        linear-gradient(180deg, rgba(18, 24, 40, 0.82), rgba(11, 16, 28, 0.96));
+      border-top: 1px solid rgba(255, 255, 255, 0.07);
+      border-bottom: 1px solid rgba(255, 255, 255, 0.07);
+      box-shadow: 0 16px 42px rgba(0, 0, 0, 0.18);
+      position: relative;
+    }
+
+    .shrine-line::before {
+      content: "";
+      position: absolute;
+      left: 0;
+      top: 18px;
+      bottom: 18px;
+      width: 2px;
+      background: linear-gradient(180deg, rgba(142, 168, 255, 0.28), rgba(234, 215, 170, 0.16));
+    }
+
+    .shrine-line span {
+      font-size: 0.74rem;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: rgba(197, 213, 255, 0.72);
+      padding-left: 0.35rem;
+    }
+
+    .shrine-line strong {
+      font-size: 1.08rem;
+      color: #ffffff;
+      font-weight: 700;
+      padding-left: 0.35rem;
+    }
+
+    .shrine-actions {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 0.8rem;
+      margin-top: 0.25rem;
+    }
+
+    .temple-link {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 54px;
+      padding: 0.95rem 1.35rem;
+      text-decoration: none;
+      font-weight: 700;
+      transition: 0.2s ease;
+      background:
+        linear-gradient(180deg, rgba(18, 24, 40, 0.82), rgba(11, 16, 28, 0.96));
+      border-top: 1px solid rgba(255, 255, 255, 0.07);
+      border-bottom: 1px solid rgba(255, 255, 255, 0.07);
+      color: #eef3ff;
+      box-shadow: 0 14px 30px rgba(0, 0, 0, 0.18);
+      position: relative;
+    }
+
+    .temple-link::before {
+      content: "";
+      position: absolute;
+      left: 0;
+      top: 12px;
+      bottom: 12px;
+      width: 2px;
+      background: linear-gradient(180deg, rgba(142, 168, 255, 0.28), rgba(234, 215, 170, 0.16));
+    }
+
+    .temple-link:hover {
+      transform: translateY(-1px);
+      background:
+        linear-gradient(180deg, rgba(21, 28, 45, 0.9), rgba(12, 18, 32, 0.98));
+    }
+
+    .action-subnote {
+      margin: 0;
+      color: rgba(227, 234, 255, 0.78);
+      text-align: center;
+      max-width: 720px;
+      line-height: 1.55;
+      position: relative;
+      z-index: 1;
+    }
+
+    .record-band {
+      position: relative;
+      display: grid;
+      gap: 0.95rem;
+      padding: 1rem 0;
+      border-top: 1px solid rgba(255, 255, 255, 0.05);
+      border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+      background:
+        linear-gradient(
+          90deg,
+          rgba(255, 255, 255, 0.02),
+          rgba(255, 255, 255, 0),
+          rgba(255, 255, 255, 0.02)
+        );
+    }
+
+    .record-band::before {
+      content: "";
+      position: absolute;
+      right: -64px;
+      top: -64px;
+      width: 170px;
+      height: 170px;
+      border-radius: 50%;
+      pointer-events: none;
+      background: radial-gradient(circle, rgba(142, 168, 255, 0.08), transparent 70%);
+    }
+
+    .band-header {
+      display: grid;
+      gap: 0.25rem;
+      padding: 0 0.15rem;
+    }
+
+    .band-header span {
+      font-size: 0.74rem;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: var(--blue-soft);
+    }
+
+    .band-header h2 {
+      margin: 0;
+      font-size: 1.25rem;
+      color: #ffffff;
+    }
+
+    .band-grid {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 1rem;
+    }
+
+    .band-card,
+    .path-card {
+      position: relative;
+      display: grid;
+      gap: 0.35rem;
+      padding: 0.95rem 1rem 0.95rem 1.1rem;
+      background:
+        linear-gradient(180deg, rgba(18, 24, 40, 0.82), rgba(11, 16, 28, 0.96));
+      border-top: 1px solid rgba(255, 255, 255, 0.07);
+      border-bottom: 1px solid rgba(255, 255, 255, 0.07);
+      box-shadow: 0 16px 42px rgba(0, 0, 0, 0.18);
+      min-height: 100px;
+    }
+
+    .band-card::before,
+    .path-card::before {
+      content: "";
+      position: absolute;
+      left: 0;
+      top: 18px;
+      bottom: 18px;
+      width: 2px;
+      background: linear-gradient(180deg, rgba(142, 168, 255, 0.28), rgba(234, 215, 170, 0.16));
+    }
+
+    .band-card span,
+    .path-card span {
+      font-size: 0.72rem;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: rgba(196, 208, 255, 0.72);
+      padding-left: 0.35rem;
+    }
+
+    .band-card strong,
+    .path-card h3 {
+      font-size: 1.02rem;
+      color: #ffffff;
+      line-height: 1.35;
+      word-break: break-word;
+      margin: 0;
+      padding-left: 0.35rem;
+    }
+
+    .path-links {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 1rem;
+    }
+
+    .path-card {
+      text-decoration: none;
+      color: #f2f5ff;
+      transition: transform 0.2s ease, background 0.2s ease;
+    }
+
+    .path-card:hover {
+      transform: translateY(-2px);
+      background:
+        linear-gradient(180deg, rgba(21, 28, 45, 0.9), rgba(12, 18, 32, 0.98));
+    }
+
+    .path-card p {
+      margin: 0;
+      color: rgba(226, 232, 255, 0.78);
+      line-height: 1.5;
+      font-size: 0.94rem;
+      padding-left: 0.35rem;
+    }
+
+    @keyframes pulse-orb {
+      0%, 100% {
+        transform: scale(1);
+        box-shadow:
+          0 0 0 2px rgba(255, 235, 192, 0.10),
+          0 0 40px rgba(94, 160, 255, 0.24),
+          inset 0 0 40px rgba(255, 255, 255, 0.08);
+      }
+      50% {
+        transform: scale(1.02);
+        box-shadow:
+          0 0 0 2px rgba(255, 235, 192, 0.16),
+          0 0 60px rgba(94, 160, 255, 0.34),
+          inset 0 0 46px rgba(255, 255, 255, 0.12);
+      }
+    }
+
+    @keyframes auraPulse {
+      0%, 100% {
+        transform: scale(1);
+        opacity: 0.2;
+      }
+      50% {
+        transform: scale(1.05);
+        opacity: 0.32;
+      }
+    }
+
+    @keyframes orbitSpin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+
+    @keyframes vesselFloat {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-4px); }
+    }
+
+    @keyframes waveShift {
+      0% { transform: translateX(0) rotate(0deg); }
+      50% { transform: translateX(8%) rotate(1.5deg); }
+      100% { transform: translateX(0) rotate(0deg); }
+    }
+
+    @keyframes coreBreath {
+      0%, 100% { opacity: 0.24; transform: scale(1); }
+      50% { opacity: 0.42; transform: scale(1.06); }
+    }
+
+    @keyframes currentDriftYin {
+      0%, 100% { transform: translate(0, 0) scale(1); }
+      50% { transform: translate(6%, -5%) scale(1.05); }
+    }
+
+    @keyframes currentDriftYang {
+      0%, 100% { transform: translate(0, 0) scale(1); }
+      50% { transform: translate(-5%, 6%) scale(1.04); }
+    }
+
+    @keyframes currentDriftTaiji {
+      0%, 100% { transform: translate(0, 0) scale(1); }
+      50% { transform: translate(2%, 4%) scale(1.07); }
+    }
+
+    @media (max-width: 1080px) {
+      .signal-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+
+      .band-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+
+      .path-links {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+    }
+
+    @media (max-width: 720px) {
+      .temple-page {
+        width: min(100% - 1rem, 1240px);
+        margin-top: 1rem;
+      }
+
+      .temple-header {
+        min-height: 220px;
+        padding: 1.2rem 1rem;
+        border-radius: 14px;
+      }
+
+      .orb-shrine {
+        padding: 1.15rem 1rem 1rem;
+      }
+
+      .record-band {
+        padding-top: 0.85rem;
+        padding-bottom: 0.85rem;
+      }
+
+      .current-triad,
+      .signal-grid,
+      .band-grid,
+      .path-links,
+      .shrine-line-group {
+        grid-template-columns: 1fr;
+      }
+
+      .alignment-orb-shell {
+        width: min(360px, 90vw);
+      }
+
+      .alignment-orbit-ring.outer {
+        width: 310px;
+        height: 310px;
+        margin-left: -155px;
+        margin-top: -155px;
+      }
+
+      .alignment-orbit-ring.inner {
+        width: 250px;
+        height: 250px;
+        margin-left: -125px;
+        margin-top: -125px;
+      }
+
+      .alignment-orb-ring {
+        width: min(288px, 72vw);
+      }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      .alignment-orb-shell::before,
+      .alignment-orbit-ring,
+      .alignment-center-glow,
+      .current-layer,
+      .alignment-orb-ring,
+      .mini-orb,
+      .mini-fill::before,
+      .mini-fill::after {
+        animation: none !important;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="cloud-layer"></div>
+  <div class="rune-layer"></div>
+  <div class="lightning-flash"></div>
+
+  <nav>
+    <a href="/index.html">Home</a>
+    <a href="/lore.html">Lore</a>
+    <a href="/dashboard.html">Dashboard</a>
+    <a href="/cultivation.html" class="active">Cultivation</a>
+    <a href="/.netlify/functions/logout" id="logout-button">Logout</a>
+  </nav>
+
+  <main class="temple-page">
+    <section class="temple-header">
+      <span class="temple-eyebrow">Meditation Chamber</span>
+      <h1 id="hero-character-name">Loading...</h1>
+      <p id="hero-summary-line">
+        A quiet chamber for stillness, timing, and breakthrough readiness.
+      </p>
+    </section>
+
+    <p id="page-message" class="summary is-hidden temple-message"></p>
+
+    <section class="orb-shrine">
+      <div class="alignment-orb-stage">
+        <div class="alignment-orb-shell leader-taiji" id="alignment-orb-shell">
+          <div class="alignment-orbit-ring outer"></div>
+          <div class="alignment-orbit-ring inner"></div>
+
+          <div class="alignment-orb-ring" id="alignment-orb-ring">
+            <div class="alignment-orb-core">
+              <div class="current-layer taiji" id="taiji-layer"></div>
+              <div class="current-layer yin" id="yin-layer"></div>
+              <div class="current-layer yang" id="yang-layer"></div>
+              <div class="alignment-center-glow" id="alignment-center-glow"></div>
+
+              <div class="orb-status">
+                <span>Current Session</span>
+                <h2 id="current-session-time">0s</h2>
+                <p id="orb-state-line">Stable</p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="current-triad">
+          <div class="current-mini-card yin">
+            <div class="mini-orb">
+              <div class="mini-core">
+                <div class="mini-fill yin" id="yin-mini-fill" style="height: 8%;"></div>
+                <div class="mini-glow yin"></div>
+              </div>
+            </div>
+            <div class="current-mini-label">Yin</div>
+            <div class="current-mini-value" id="yin-mini-total">0</div>
+            <div class="current-mini-share" id="yin-mini-share">0%</div>
+          </div>
+
+          <div class="current-mini-card taiji">
+            <div class="mini-orb">
+              <div class="mini-core">
+                <div class="mini-fill taiji" id="taiji-mini-fill" style="height: 8%;"></div>
+                <div class="mini-glow taiji"></div>
+              </div>
+            </div>
+            <div class="current-mini-label">Taiji</div>
+            <div class="current-mini-value" id="taiji-mini-total">0</div>
+            <div class="current-mini-share" id="taiji-mini-share">0%</div>
+          </div>
+
+          <div class="current-mini-card yang">
+            <div class="mini-orb">
+              <div class="mini-core">
+                <div class="mini-fill yang" id="yang-mini-fill" style="height: 8%;"></div>
+                <div class="mini-glow yang"></div>
+              </div>
+            </div>
+            <div class="current-mini-label">Yang</div>
+            <div class="current-mini-value" id="yang-mini-total">0</div>
+            <div class="current-mini-share" id="yang-mini-share">0%</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="shrine-meta">
+        <div class="signal-grid">
+          <div class="signal-card">
+            <span>Current Path</span>
+            <strong id="current-path-badge">Unaligned</strong>
+          </div>
+
+          <div class="signal-card">
+            <span>Reveal Status</span>
+            <strong id="reveal-status">Still Forming</strong>
+          </div>
+
+          <div class="signal-card">
+            <span>Leading Drift</span>
+            <strong id="leading-drift">Taiji</strong>
+          </div>
+
+          <div class="signal-card">
+            <span>Total Drift</span>
+            <strong id="drift-total">0</strong>
+          </div>
+        </div>
+
+        <div class="current-influence-panel">
+          <div class="current-influence-label">Current Influence</div>
+          <p class="current-influence-line" id="influence-line">
+            The inner current is still gathering form.
+          </p>
+
+          <div class="current-detail-row">
+            <span class="current-chip info" id="phase-chip">Phase Unknown</span>
+            <span class="current-chip info" id="hour-group-chip">Unknown Hours</span>
+            <span class="current-chip info" id="qi-multiplier-chip">Qi x1</span>
+            <span class="current-chip info" id="cp-multiplier-chip">CP x1</span>
+          </div>
+
+          <div class="current-detail-row">
+            <span class="current-chip warn" id="reveal-progress-chip">Reveal 0%</span>
+            <span class="current-chip info" id="session-state-chip">Stable</span>
+            <span class="current-chip info" id="conversion-chip">No Path Drift Warning</span>
+          </div>
+        </div>
+
+        <div class="shrine-line-group">
+          <div class="shrine-line">
+            <span>Meditation State</span>
+            <strong id="meditation-active">Inactive</strong>
+          </div>
+
+          <div class="shrine-line">
+            <span>Breakthrough Status</span>
+            <strong id="breakthrough-status">Stable</strong>
+          </div>
+        </div>
+
+        <div class="shrine-actions">
+          <a href="/cultivation-book.html?volume=1" class="temple-link" id="library-link">Open Book</a>
+        </div>
+
+        <p class="action-subnote">
+          Open your current scripture volume to continue section comprehension, advancement, and path formation.
+        </p>
+      </div>
+    </section>
+
+    <section class="record-band">
+      <div class="band-header">
+        <span>Path of Practice</span>
+        <h2>Practice Record</h2>
+      </div>
+
+      <div class="band-grid">
+        <div class="band-card">
+          <span>Current Realm</span>
+          <strong id="realm-name">Loading...</strong>
+        </div>
+
+        <div class="band-card">
+          <span>Sessions Today</span>
+          <strong id="sessions-today">Loading...</strong>
+        </div>
+
+        <div class="band-card">
+          <span>Total Meditation</span>
+          <strong id="meditation-time-total">Loading...</strong>
+        </div>
+
+        <div class="band-card">
+          <span>Current Candidate</span>
+          <strong id="current-candidate">Loading...</strong>
+        </div>
+      </div>
+    </section>
+
+    <section class="record-band">
+      <div class="band-header">
+        <span>Advancement Condition</span>
+        <h2>Breakthrough Record</h2>
+      </div>
+
+      <div class="band-grid">
+        <div class="band-card">
+          <span>Pending Advancement</span>
+          <strong id="pending-advancement">Loading...</strong>
+        </div>
+
+        <div class="band-card">
+          <span>Breakthrough Phase</span>
+          <strong id="breakthrough-phase">Loading...</strong>
+        </div>
+
+        <div class="band-card">
+          <span>Countdown Active</span>
+          <strong id="countdown-active">Loading...</strong>
+        </div>
+
+        <div class="band-card">
+          <span>Countdown Remaining</span>
+          <strong id="countdown-remaining">Loading...</strong>
+        </div>
+      </div>
+    </section>
+
+    <section class="path-links">
+      <a class="path-card" href="/dashboard.html">
+        <span>Overview</span>
+        <h3>Dashboard</h3>
+        <p>Return to the main overview of your cultivator record and broad state.</p>
+      </a>
+
+      <a class="path-card" href="/profile.html">
+        <span>Identity</span>
+        <h3>Profile</h3>
+        <p>Review character name, clan, linked account details, and personal alignment.</p>
+      </a>
+
+      <a class="path-card" href="/elements.html">
+        <span>Alignment</span>
+        <h3>Elements</h3>
+        <p>Inspect spiritual traits, affinities, and future elemental progression layers.</p>
+      </a>
+
+      <a class="path-card" href="/library.html">
+        <span>Scriptures</span>
+        <h3>Library</h3>
+        <p>Return to your owned volumes and browse the scriptures in your archive.</p>
+      </a>
+    </section>
+  </main>
+
+  <footer>
+    The Ascendant Path • Begin as Mortal, Ascend to Immortality
+  </footer>
+
+  <script>
+    const LOGIN_URL = "https://ascendantpath.org/login.html";
+    const VERIFY_SESSION_ENDPOINT = "/.netlify/functions/verify-session";
+    const LOGOUT_ENDPOINT = "/.netlify/functions/logout";
+    const DASHBOARD_ENDPOINT = "/.netlify/functions/load-dashboard-state";
+    const PATH_CURRENT_ENDPOINT = "/.netlify/functions/load-path-current";
+    const REFRESH_MS = 15000;
+
+    const state = {
+      member: null,
+      pathCurrent: null,
+      tickInterval: null,
+      refreshInterval: null,
+      refreshInFlight: false,
+      lastLoadedAtMs: 0,
+      countdownBaseSeconds: 0
+    };
+
+    function safeText(value, fallback = "Unknown") {
+      if (value === null || value === undefined) return fallback;
+      const text = String(value).trim();
+      return text ? text : fallback;
+    }
+
+    function safeLower(value, fallback = "") {
+      return safeText(value, fallback).toLowerCase();
+    }
+
+    function safeNumber(value, fallback = 0) {
+      const number = Number(value);
+      return Number.isFinite(number) ? number : fallback;
+    }
+
+    function clamp(value, min, max) {
+      return Math.min(max, Math.max(min, value));
+    }
+
+    function formatNumber(value) {
+      return new Intl.NumberFormat("en-GB").format(safeNumber(value, 0));
+    }
+
+    function formatPercent(value) {
+      return `${Math.round(safeNumber(value, 0))}%`;
+    }
+
+    function formatMultiplier(value) {
+      const n = safeNumber(value, 1);
+      return `x${Number(n.toFixed(2))}`;
+    }
+
+    function formatDuration(totalSeconds) {
+      const seconds = Math.max(0, Math.floor(safeNumber(totalSeconds, 0)));
+      const hours = Math.floor(seconds / 3600);
+      const minutes = Math.floor((seconds % 3600) / 60);
+      const secs = seconds % 60;
+
+      if (hours > 0) {
+        return `${hours}h ${minutes}m ${secs}s`;
+      }
+
+      if (minutes > 0) {
+        return `${minutes}m ${secs}s`;
+      }
+
+      return `${secs}s`;
+    }
+
+    function getCsrfToken() {
+      return sessionStorage.getItem("ap_csrf_token") || "";
+    }
+
+    function setCsrfToken(token) {
+      const value = safeText(token, "");
+      if (value) {
+        sessionStorage.setItem("ap_csrf_token", value);
+      }
+    }
+
+    function clearClientSessionArtifacts() {
+      sessionStorage.removeItem("ap_csrf_token");
+      localStorage.removeItem("session_token");
+    }
+
+    function redirectToLogin() {
+      const next = `${window.location.pathname}${window.location.search}${window.location.hash}`;
+      window.location.href = `${LOGIN_URL}?next=${encodeURIComponent(next)}`;
+    }
+
+    async function requireAuth() {
+      try {
+        const response = await fetch(VERIFY_SESSION_ENDPOINT, {
+          method: "GET",
+          credentials: "include",
+          headers: {
+            "Accept": "application/json"
+          }
+        });
+
+        if (response.status === 401) {
+          clearClientSessionArtifacts();
+          redirectToLogin();
+          return null;
+        }
+
+        if (!response.ok) {
+          throw new Error(`verify_session_failed_${response.status}`);
+        }
+
+        const data = await response.json();
+
+        if (!data || data.authenticated !== true) {
+          clearClientSessionArtifacts();
+          redirectToLogin();
+          return null;
+        }
+
+        const csrfToken =
+          data.csrf_token ||
+          data.csrfToken ||
+          data.csrf ||
+          "";
+
+        if (csrfToken) {
+          setCsrfToken(csrfToken);
+        }
+
+        return data;
+      } catch (error) {
+        console.error("Cultivation auth verification error:", error);
+        clearClientSessionArtifacts();
+        redirectToLogin();
+        return null;
+      }
+    }
+
+    async function logoutCurrentSession() {
+      const csrfToken = getCsrfToken();
+
+      try {
+        await fetch(LOGOUT_ENDPOINT, {
+          method: "POST",
+          credentials: "include",
+          headers: {
+            "Content-Type": "application/json",
+            "Accept": "application/json",
+            ...(csrfToken ? { "X-AP-CSRF-Token": csrfToken } : {})
+          },
+          body: JSON.stringify({})
+        });
+      } catch (error) {
+        console.error("Cultivation logout error:", error);
+      } finally {
+        clearClientSessionArtifacts();
+        window.location.href = LOGIN_URL;
+      }
+    }
+
+    function bindLogoutButton() {
+      const logoutButton = document.getElementById("logout-button");
+      if (!logoutButton) return;
+
+      logoutButton.addEventListener("click", async (event) => {
+        event.preventDefault();
+        await logoutCurrentSession();
+      });
+    }
+
+    function getEmptyPathCurrent() {
+      return {
+        current_path_key: "unaligned",
+        current_path_label: "Unaligned",
+        totals: {
+          yin: 0,
+          yang: 0,
+          taiji: 0,
+          total_drift: 0
+        },
+        orb: {
+          yin_percent: 0,
+          yang_percent: 0,
+          taiji_percent: 0,
+          leader_key: "taiji",
+          leader_label: "Taiji",
+          leader_total: 0,
+          lead_margin_over_second: 0
+        },
+        reveal: {
+          reveal_status: "forming",
+          reveal_label: "Still Forming",
+          ready_to_reveal: false,
+          summary_line: "Your path is still forming.",
+          first_reveal_progress_percent: 0,
+          current_candidate_label: "Taiji"
+        },
+        current: {
+          phase_name: "Unknown Phase",
+          hour_group_label: "Unknown Hours",
+          influence_line: "The inner current is still gathering form."
+        },
+        live_session: {
+          meditation_active: false,
+          aligned_bonus_window_active: false,
+          qi_multiplier: 1,
+          cp_multiplier: 1,
+          session_state_label: "forming",
+          summary_line: "Meditation is inactive."
+        },
+        conversion: {
+          warning_active: false,
+          summary_line: null
+        }
+      };
+    }
+
+    function buildBreakthroughStatus(member) {
+      if (member.v2_cultivation_status === 'in_breakthrough') {
+        return { label: 'Tribulation', phase: 'tribulation', active: true };
+      }
+      if (member.v2_breakthrough_gate_open || member.v2_cultivation_status === 'breakthrough_ready') {
+        return { label: 'Awaiting Breakthrough', phase: 'pending', active: false };
+      }
+      return null;
+    }
+
+    function getMeditationStartedAt(member) {
+      if (member.v2_cultivation_status === 'cultivating') {
+        return member.v2_cultivation_started_at || null;
+      }
+      return null;
+    }
+
+    function getDisplayedSessionSeconds(member) {
+      const m = member || state.member;
+      if (!m) return 0;
+      if (m.v2_cultivation_status === 'cultivating' && m.v2_cultivation_started_at) {
+        const elapsed = Math.floor((Date.now() - new Date(m.v2_cultivation_started_at).getTime()) / 1000);
+        return (m.v2_accumulated_seconds || 0) + elapsed;
+      }
+      return m.v2_accumulated_seconds || 0;
+    }
+
+    function getDisplayedCountdownSeconds(member, breakthroughState) {
+      const m = member || state.member;
+      if (!m) return 0;
+      if (m.v2_cultivation_status === 'in_breakthrough' && breakthroughState?.breakthrough_ends_at) {
+        return Math.max(0, Math.floor(
+          (new Date(breakthroughState.breakthrough_ends_at).getTime() - Date.now()) / 1000
+        ));
+      }
+      return 0;
+    }
+
+    function setMessage(text, tone = "info") {
+      const el = document.getElementById("page-message");
+
+      if (!text) {
+        el.textContent = "";
+        el.className = "summary is-hidden temple-message";
+        return;
+      }
+
+      el.textContent = text;
+      el.className = tone === "error" ? "login-error temple-message" : "summary temple-message";
+    }
+
+    function setLeaderClass(element, leaderKey) {
+      if (!element) return;
+      element.classList.remove("leader-yin", "leader-yang", "leader-taiji");
+
+      const normalized = safeLower(leaderKey, "taiji");
+      if (["yin", "yang", "taiji"].includes(normalized)) {
+        element.classList.add(`leader-${normalized}`);
+      } else {
+        element.classList.add("leader-taiji");
+      }
+    }
+
+    function applyCurrentLayerStyles(pathCurrent) {
+      const orb = pathCurrent?.orb || {};
+      const leaderKey = safeText(orb.leader_key, "taiji");
+
+      const shell = document.getElementById("alignment-orb-shell");
+      const ring = document.getElementById("alignment-orb-ring");
+
+      setLeaderClass(shell, leaderKey);
+
+      ring.classList.remove("aligned-window", "meditating");
+      if (state.member?.v2_cultivation_status === 'cultivating') {
+        ring.classList.add("meditating");
+      }
+      if (Boolean(pathCurrent?.live_session?.aligned_bonus_window_active)) {
+        ring.classList.add("aligned-window");
+      }
+
+      const yinPercent = safeNumber(orb.yin_percent, 0);
+      const yangPercent = safeNumber(orb.yang_percent, 0);
+      const taijiPercent = safeNumber(orb.taiji_percent, 0);
+
+      const yinLayer = document.getElementById("yin-layer");
+      const yangLayer = document.getElementById("yang-layer");
+      const taijiLayer = document.getElementById("taiji-layer");
+
+      const yinOpacity = (0.18 + (yinPercent / 100) * 0.64).toFixed(2);
+      const yangOpacity = (0.18 + (yangPercent / 100) * 0.64).toFixed(2);
+      const taijiOpacity = (0.18 + (taijiPercent / 100) * 0.64).toFixed(2);
+
+      yinLayer.style.opacity = yinOpacity;
+      yangLayer.style.opacity = yangOpacity;
+      taijiLayer.style.opacity = taijiOpacity;
+
+      yinLayer.style.transform = `translate(${(yinPercent * 0.04).toFixed(2)}%, ${(-yinPercent * 0.03).toFixed(2)}%) scale(${(0.84 + yinPercent / 260).toFixed(3)})`;
+      yangLayer.style.transform = `translate(${(-yangPercent * 0.04).toFixed(2)}%, ${(yangPercent * 0.03).toFixed(2)}%) scale(${(0.84 + yangPercent / 260).toFixed(3)})`;
+      taijiLayer.style.transform = `translate(${(taijiPercent * 0.01).toFixed(2)}%, ${(taijiPercent * 0.02).toFixed(2)}%) scale(${(0.88 + taijiPercent / 240).toFixed(3)})`;
+
+      document.getElementById("yin-mini-fill").style.height = `${Math.max(8, Math.round(yinPercent))}%`;
+      document.getElementById("yang-mini-fill").style.height = `${Math.max(8, Math.round(yangPercent))}%`;
+      document.getElementById("taiji-mini-fill").style.height = `${Math.max(8, Math.round(taijiPercent))}%`;
+    }
+
+    function updateOrbLiveState() {
+      if (!state.member) return;
+
+      const meditationActive = state.member.v2_cultivation_status === 'cultivating';
+      const sessionSeconds = getDisplayedSessionSeconds(state.member);
+      const countdownSeconds = getDisplayedCountdownSeconds(state.member, state.breakthroughState);
+      const pathCurrent = state.pathCurrent || getEmptyPathCurrent();
+
+      document.getElementById("current-session-time").textContent = formatDuration(sessionSeconds);
+      document.getElementById("countdown-remaining").textContent = formatDuration(countdownSeconds);
+
+      let orbLine = "Stable";
+      if (meditationActive && Boolean(pathCurrent.live_session?.aligned_bonus_window_active)) {
+        orbLine = "Aligned Window Active";
+      } else if (meditationActive) {
+        orbLine = "Meditating";
+      }
+
+      document.getElementById("orb-state-line").textContent = orbLine;
+
+      const sessionStateChip = document.getElementById("session-state-chip");
+      sessionStateChip.textContent = meditationActive ? orbLine : "Stable";
+      sessionStateChip.className = "current-chip " + (meditationActive ? "success" : "info");
+    }
+
+    function renderPathCurrent(pathCurrentInput) {
+      const pathCurrent = pathCurrentInput || getEmptyPathCurrent();
+      state.pathCurrent = pathCurrent;
+
+      const currentPathLabel = safeText(pathCurrent.current_path_label, "Unaligned");
+      const revealLabel = safeText(pathCurrent.reveal?.reveal_label, "Still Forming");
+      const revealPercent = safeNumber(pathCurrent.reveal?.first_reveal_progress_percent, 0);
+      const leaderLabel = safeText(pathCurrent.orb?.leader_label, "Taiji");
+      const leaderTotal = safeNumber(pathCurrent.orb?.leader_total, 0);
+      const totalDrift = safeNumber(pathCurrent.totals?.total_drift, 0);
+      const influenceLine = safeText(
+        pathCurrent.current?.influence_line,
+        "The inner current is still gathering form."
+      );
+
+      document.getElementById("current-path-badge").textContent = currentPathLabel;
+      document.getElementById("reveal-status").textContent = `${revealLabel} • ${Math.round(revealPercent)}%`;
+      document.getElementById("leading-drift").textContent = `${leaderLabel} • ${formatNumber(leaderTotal)}`;
+      document.getElementById("drift-total").textContent = formatNumber(totalDrift);
+
+      document.getElementById("yin-mini-total").textContent = formatNumber(pathCurrent.totals?.yin);
+      document.getElementById("yang-mini-total").textContent = formatNumber(pathCurrent.totals?.yang);
+      document.getElementById("taiji-mini-total").textContent = formatNumber(pathCurrent.totals?.taiji);
+
+      document.getElementById("yin-mini-share").textContent = formatPercent(pathCurrent.orb?.yin_percent);
+      document.getElementById("yang-mini-share").textContent = formatPercent(pathCurrent.orb?.yang_percent);
+      document.getElementById("taiji-mini-share").textContent = formatPercent(pathCurrent.orb?.taiji_percent);
+
+      document.getElementById("influence-line").textContent = influenceLine;
+
+      const phaseChip = document.getElementById("phase-chip");
+      phaseChip.textContent = safeText(pathCurrent.current?.phase_name, "Unknown Phase");
+
+      const hourGroupChip = document.getElementById("hour-group-chip");
+      hourGroupChip.textContent = safeText(pathCurrent.current?.hour_group_label, "Unknown Hours");
+
+      const qiChip = document.getElementById("qi-multiplier-chip");
+      qiChip.textContent = `Qi ${formatMultiplier(pathCurrent.live_session?.qi_multiplier)}`;
+
+      const cpChip = document.getElementById("cp-multiplier-chip");
+      cpChip.textContent = `CP ${formatMultiplier(pathCurrent.live_session?.cp_multiplier)}`;
+
+      const revealProgressChip = document.getElementById("reveal-progress-chip");
+      revealProgressChip.textContent = `Reveal ${Math.round(revealPercent)}%`;
+      revealProgressChip.className = "current-chip " + (Boolean(pathCurrent.reveal?.ready_to_reveal) ? "success" : "warn");
+
+      const conversionChip = document.getElementById("conversion-chip");
+      if (Boolean(pathCurrent.conversion?.warning_active)) {
+        conversionChip.textContent = safeText(pathCurrent.conversion?.summary_line, "Path drift warning active");
+        conversionChip.className = "current-chip warn";
+      } else {
+        conversionChip.textContent = "No Path Drift Warning";
+        conversionChip.className = "current-chip info";
+      }
+
+      document.getElementById("current-candidate").textContent = safeText(
+        pathCurrent.reveal?.current_candidate_label,
+        leaderLabel
+      );
+
+      applyCurrentLayerStyles(pathCurrent);
+      updateOrbLiveState();
+    }
+
+    function renderCultivation(member, pathCurrent, breakthroughState) {
+      state.member = member;
+      state.lastLoadedAtMs = Date.now();
+
+      const characterName = safeText(member.character_name, "Unnamed Cultivator");
+      const realmName = safeText(member.realm_name, "Mortal");
+      const meditationActive = member.v2_cultivation_status === 'cultivating';
+      const breakthroughStatus = buildBreakthroughStatus(member);
+
+      const sessionsToday = safeNumber(member.v2_sessions_today, 0);
+      const meditationTimeTotal = safeNumber(member.v2_accumulated_seconds, 0);
+      const pendingAdvancement = Boolean(member.v2_breakthrough_gate_open);
+      const breakthroughPhase = member.v2_cultivation_status === 'in_breakthrough' ? 'Tribulation' : 'Stable';
+      const countdownActive = member.v2_cultivation_status === 'in_breakthrough';
+
+      const pathCurrentSafe = pathCurrent || getEmptyPathCurrent();
+      const currentPathLabel = safeText(pathCurrentSafe.current_path_label, "Unaligned");
+      const revealLabel = safeText(pathCurrentSafe.reveal?.reveal_label, "Still Forming");
+      const leadingDrift = safeText(pathCurrentSafe.orb?.leader_label, "Taiji");
+      const phaseName = safeText(pathCurrentSafe.current?.phase_name, "the current heavens");
+
+      let heroSummary = "";
+      if (currentPathLabel !== "Unaligned") {
+        heroSummary = `${currentPathLabel} is your revealed path. ${phaseName} is now shaping the chamber around your present cultivation.`;
+      } else {
+        heroSummary = `${leadingDrift} is currently leading while your path remains ${revealLabel.toLowerCase()} beneath ${phaseName}.`;
+      }
+
+      document.getElementById("hero-character-name").textContent = characterName;
+      document.getElementById("hero-summary-line").textContent = heroSummary;
+
+      document.getElementById("realm-name").textContent = realmName;
+      document.getElementById("sessions-today").textContent = sessionsToday.toLocaleString();
+      document.getElementById("meditation-time-total").textContent = formatDuration(meditationTimeTotal);
+
+      document.getElementById("meditation-active").textContent = meditationActive ? "Active" : "Inactive";
+      document.getElementById("breakthrough-status").textContent = breakthroughStatus;
+      document.getElementById("pending-advancement").textContent = pendingAdvancement ? "Yes" : "No";
+      document.getElementById("breakthrough-phase").textContent = breakthroughPhase;
+      document.getElementById("countdown-active").textContent = countdownActive ? "Yes" : "No";
+
+      const currentRealmIndex = safeNumber(member.realm_index, 0) + 1;
+      document.getElementById("library-link").href = `/cultivation-book.html?volume=${Math.max(1, currentRealmIndex)}`;
+
+      renderPathCurrent(pathCurrentSafe);
+      updateOrbLiveState();
+    }
+
+    async function fetchJson(url) {
+      const response = await fetch(url, {
+        method: "GET",
+        credentials: "include",
+        headers: {
+          "Accept": "application/json"
+        }
+      });
+
+      const text = await response.text();
+      let payload = null;
+
+      try {
+        payload = text ? JSON.parse(text) : null;
+      } catch {
+        payload = null;
+      }
+
+      if (response.status === 401) {
+        clearClientSessionArtifacts();
+        redirectToLogin();
+        throw new Error("unauthorized");
+      }
+
+      if (!response.ok) {
+        throw new Error(payload?.error || payload?.message || `request_failed_${response.status}`);
+      }
+
+      return payload;
+    }
+
+    async function fetchCultivationBundle() {
+      const [dashboardData, pathCurrentData] = await Promise.all([
+        fetchJson(DASHBOARD_ENDPOINT),
+        fetchJson(PATH_CURRENT_ENDPOINT).catch((error) => {
+          if (String(error?.message || "") === "unauthorized") {
+            throw error;
+          }
+          return null;
+        })
+      ]);
+
+      if (!dashboardData?.success || !dashboardData?.member) {
+        throw new Error(dashboardData?.error || "Failed to load cultivation state.");
+      }
+
+      return {
+        member: dashboardData.member,
+        pathCurrent: pathCurrentData?.success
+          ? pathCurrentData.path_current
+          : getEmptyPathCurrent(),
+        pathCurrentLoaded: Boolean(pathCurrentData?.success)
+      };
+    }
+
+    async function loadCultivationState() {
+      try {
+        const bundle = await fetchCultivationBundle();
+        renderCultivation(bundle.member, bundle.pathCurrent);
+
+        if (!bundle.pathCurrentLoaded) {
+          setMessage("Path Current is resting for now. Base cultivation state is still active.", "info");
+        } else {
+          setMessage("");
+        }
+      } catch (error) {
+        if (String(error?.message || "") === "unauthorized") {
+          return;
+        }
+
+        console.error("Cultivation load error:", error);
+        clearClientSessionArtifacts();
+        redirectToLogin();
+      }
+    }
+
+    async function silentRefreshCultivation() {
+      if (state.refreshInFlight) return;
+
+      state.refreshInFlight = true;
+
+      try {
+        const bundle = await fetchCultivationBundle();
+        renderCultivation(bundle.member, bundle.pathCurrent);
+      } catch (error) {
+        if (String(error?.message || "") !== "unauthorized") {
+          console.error("Cultivation silent refresh error:", error);
+        }
+      } finally {
+        state.refreshInFlight = false;
+      }
+    }
+
+    function startTickLoop() {
+      if (state.tickInterval) {
+        clearInterval(state.tickInterval);
+      }
+
+      state.tickInterval = setInterval(function () {
+        if (!state.member) return;
+        updateOrbLiveState();
+      }, 1000);
+    }
+
+    function startRefreshLoop() {
+      if (state.refreshInterval) {
+        clearInterval(state.refreshInterval);
+      }
+
+      state.refreshInterval = setInterval(function () {
+        silentRefreshCultivation();
+      }, REFRESH_MS);
+    }
+
+    window.addEventListener("DOMContentLoaded", async function () {
+      bindLogoutButton();
+
+      const auth = await requireAuth();
+      if (!auth) return;
+
+      startTickLoop();
+      startRefreshLoop();
+      await loadCultivationState();
+    });
+
+    window.addEventListener("beforeunload", function () {
+      if (state.tickInterval) {
+        clearInterval(state.tickInterval);
+      }
+
+      if (state.refreshInterval) {
+        clearInterval(state.refreshInterval);
+      }
+    });
+  </script>
+</body>
+</html>

@@ -1,0 +1,1683 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Ascendant Oracle | The Ascendant Path</title>
+  <link rel="stylesheet" href="style.css" />
+  <style>
+    :root {
+      --bg-1: #060810;
+      --bg-2: #0b1020;
+      --panel-bg: rgba(8, 12, 22, 0.82);
+      --panel-border: rgba(255, 255, 255, 0.06);
+      --panel-shadow: 0 22px 56px rgba(0, 0, 0, 0.32);
+
+      --text-main: #f7f1df;
+      --text-soft: rgba(247, 241, 223, 0.76);
+      --text-dim: rgba(247, 241, 223, 0.5);
+
+      --success: #9fe1b2;
+      --warn: #f1cd7a;
+      --danger: #f3a5a5;
+      --info: #c7d7ff;
+
+      --gold-soft: #ead7aa;
+      --blue-soft: rgba(142, 168, 255, 0.12);
+      --blue-border: rgba(142, 168, 255, 0.22);
+      --oracle-glow: rgba(234, 215, 170, 0.12);
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    html,
+    body {
+      min-height: 100%;
+    }
+
+    body {
+      margin: 0;
+      color: var(--text-main);
+      background:
+        radial-gradient(circle at top, rgba(142, 168, 255, 0.08), transparent 28%),
+        radial-gradient(circle at bottom right, rgba(230, 220, 255, 0.06), transparent 22%),
+        linear-gradient(180deg, var(--bg-2), var(--bg-1));
+    }
+
+    a {
+      color: inherit;
+      text-decoration: none;
+    }
+
+    button,
+    input,
+    textarea,
+    select {
+      font: inherit;
+    }
+
+    .is-hidden {
+      display: none !important;
+    }
+
+    .site-shell {
+      width: min(1320px, calc(100% - 2rem));
+      margin: 0 auto;
+      position: relative;
+      z-index: 2;
+    }
+
+    .site-header {
+      padding-top: 1rem;
+      position: relative;
+      z-index: 10;
+    }
+
+    .dashboard-nav {
+      width: fit-content;
+      max-width: 100%;
+      margin: 0 auto;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.55rem;
+      flex-wrap: wrap;
+      padding: 0.75rem 0.9rem;
+      border-radius: 999px;
+      background:
+        linear-gradient(180deg, rgba(255,255,255,0.03), rgba(255,255,255,0.01)),
+        rgba(6, 10, 18, 0.74);
+      border: 1px solid rgba(255,255,255,0.06);
+      box-shadow: 0 14px 34px rgba(0, 0, 0, 0.22);
+      backdrop-filter: blur(10px);
+    }
+
+    .dashboard-nav a {
+      padding: 0.62rem 0.92rem;
+      border-radius: 999px;
+      border: 1px solid rgba(255,255,255,0.04);
+      background: rgba(255,255,255,0.02);
+      color: var(--text-soft);
+      font-size: 0.84rem;
+      transition: 0.18s ease;
+    }
+
+    .dashboard-nav a:hover {
+      transform: translateY(-1px);
+      color: var(--text-main);
+      border-color: rgba(142, 168, 255, 0.22);
+      background: rgba(255,255,255,0.04);
+    }
+
+    .dashboard-nav a.active {
+      color: #ffffff;
+      border-color: rgba(142, 168, 255, 0.28);
+      background: rgba(142, 168, 255, 0.10);
+      box-shadow: inset 0 0 0 1px rgba(142, 168, 255, 0.05);
+    }
+
+    .dashboard-nav a.admin-link {
+      border-color: rgba(234, 215, 170, 0.18);
+      background: rgba(234, 215, 170, 0.08);
+      color: var(--gold-soft);
+    }
+
+    .dashboard-nav a.admin-link:hover {
+      border-color: rgba(234, 215, 170, 0.26);
+      background: rgba(234, 215, 170, 0.12);
+      color: #fff5dc;
+    }
+
+    .oracle-page {
+      margin: 1.25rem auto 2rem;
+      display: grid;
+      gap: 1rem;
+    }
+
+    .dashboard-panel {
+      background:
+        radial-gradient(circle at top, rgba(142, 168, 255, 0.06), transparent 48%),
+        linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0)),
+        var(--panel-bg);
+      border: 1px solid var(--panel-border);
+      border-radius: 28px;
+      box-shadow: var(--panel-shadow);
+      backdrop-filter: blur(12px);
+      overflow: hidden;
+      position: relative;
+    }
+
+    .dashboard-panel::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(120deg, rgba(255,255,255,0.035), transparent 42%);
+      pointer-events: none;
+      opacity: 0.9;
+    }
+
+    .oracle-hero {
+      padding: 1.35rem 1.4rem;
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) auto;
+      gap: 1rem;
+      align-items: center;
+      position: relative;
+      z-index: 1;
+    }
+
+    .oracle-hero-copy {
+      display: grid;
+      gap: 0.48rem;
+      min-width: 0;
+    }
+
+    .oracle-kicker {
+      font-size: 0.72rem;
+      text-transform: uppercase;
+      letter-spacing: 0.16em;
+      color: var(--gold-soft);
+    }
+
+    .oracle-title {
+      margin: 0;
+      font-size: clamp(1.8rem, 3vw, 2.8rem);
+      line-height: 1.02;
+      color: #ffffff;
+    }
+
+    .oracle-subtitle {
+      margin: 0;
+      font-size: 0.96rem;
+      line-height: 1.6;
+      color: var(--text-soft);
+      max-width: 70ch;
+    }
+
+    .oracle-hero-side {
+      display: grid;
+      gap: 0.7rem;
+      justify-items: end;
+      align-items: center;
+    }
+
+    .oracle-hero-mark {
+      display: grid;
+      place-items: center;
+      width: 92px;
+      height: 92px;
+      border-radius: 999px;
+      overflow: hidden;
+      border: 1px solid rgba(255,255,255,0.08);
+      background:
+        radial-gradient(circle at top, rgba(255,255,255,0.12), transparent 48%),
+        linear-gradient(180deg, rgba(10, 18, 45, 1), rgba(4, 8, 18, 1));
+      box-shadow:
+        0 0 0 1px rgba(255,255,255,0.04) inset,
+        0 0 30px rgba(234, 215, 170, 0.08);
+    }
+
+    .oracle-hero-mark img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+    }
+
+    .oracle-hero-mark.no-image img {
+      display: none;
+    }
+
+    .oracle-fallback {
+      display: none;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.25rem;
+      font-weight: 800;
+      letter-spacing: 0.14em;
+      color: var(--gold-soft);
+    }
+
+    .oracle-hero-mark.no-image .oracle-fallback {
+      display: inline-flex;
+    }
+
+
+    .oracle-layout {
+      display: grid;
+      grid-template-columns: minmax(280px, 340px) minmax(0, 1fr);
+      gap: 1rem;
+      align-items: start;
+    }
+
+    .oracle-sidebar,
+    .oracle-main {
+      min-height: 620px;
+      position: relative;
+      z-index: 1;
+    }
+
+    .oracle-sidebar {
+      padding: 1.1rem;
+      display: grid;
+      gap: 1rem;
+      align-content: start;
+    }
+
+    .panel-title {
+      margin: 0;
+      font-size: 0.77rem;
+      text-transform: uppercase;
+      letter-spacing: 0.16em;
+      color: var(--text-dim);
+    }
+
+    .oracle-welcome-card {
+      padding: 1rem;
+      border-radius: 22px;
+      border: 1px solid rgba(255,255,255,0.06);
+      background:
+        radial-gradient(circle at top left, rgba(234, 215, 170, 0.08), transparent 38%),
+        linear-gradient(180deg, rgba(255,255,255,0.04), rgba(255,255,255,0.015)),
+        rgba(7, 12, 26, 0.86);
+      display: grid;
+      gap: 0.45rem;
+    }
+
+    .oracle-welcome-title {
+      font-size: 0.88rem;
+      text-transform: uppercase;
+      letter-spacing: 0.14em;
+      color: var(--gold-soft);
+    }
+
+    .oracle-welcome-text {
+      font-size: 0.93rem;
+      line-height: 1.6;
+      color: var(--text-soft);
+      margin: 0;
+    }
+
+    .oracle-category-grid {
+      display: grid;
+      gap: 0.72rem;
+    }
+
+    .oracle-category-card {
+      width: 100%;
+      text-align: left;
+      border: 1px solid rgba(255,255,255,0.06);
+      background:
+        linear-gradient(180deg, rgba(255,255,255,0.035), rgba(255,255,255,0.015)),
+        rgba(8, 13, 28, 0.82);
+      color: var(--text-main);
+      padding: 0.95rem 1rem;
+      border-radius: 20px;
+      cursor: pointer;
+      transition: 0.18s ease;
+      display: grid;
+      gap: 0.22rem;
+    }
+
+    .oracle-category-card:hover {
+      transform: translateY(-1px);
+      border-color: var(--blue-border);
+      background:
+        linear-gradient(180deg, rgba(255,255,255,0.045), rgba(255,255,255,0.02)),
+        rgba(9, 15, 32, 0.9);
+    }
+
+    .oracle-category-card.is-active {
+      border-color: rgba(234, 215, 170, 0.18);
+      background:
+        radial-gradient(circle at top right, rgba(234, 215, 170, 0.10), transparent 46%),
+        linear-gradient(180deg, rgba(255,255,255,0.05), rgba(255,255,255,0.02)),
+        rgba(10, 16, 34, 0.94);
+      box-shadow:
+        0 16px 34px rgba(0, 0, 0, 0.16),
+        0 0 0 1px rgba(234, 215, 170, 0.04) inset;
+    }
+
+    .oracle-category-title {
+      font-size: 0.95rem;
+      font-weight: 700;
+      color: #ffffff;
+    }
+
+    .oracle-category-copy {
+      font-size: 0.82rem;
+      line-height: 1.45;
+      color: var(--text-soft);
+    }
+
+    .oracle-selected-card {
+      padding: 0.95rem 1rem;
+      border-radius: 20px;
+      border: 1px solid rgba(255,255,255,0.06);
+      background: rgba(255,255,255,0.03);
+      display: grid;
+      gap: 0.28rem;
+    }
+
+    .oracle-selected-label {
+      font-size: 0.68rem;
+      text-transform: uppercase;
+      letter-spacing: 0.14em;
+      color: var(--text-dim);
+    }
+
+    .oracle-selected-value {
+      font-size: 1rem;
+      font-weight: 700;
+      color: #ffffff;
+    }
+
+    .oracle-selected-copy {
+      font-size: 0.83rem;
+      line-height: 1.5;
+      color: var(--text-soft);
+    }
+
+    .oracle-main {
+      padding: 1.1rem;
+      display: grid;
+      grid-template-rows: auto auto auto minmax(260px, 1fr) auto;
+      gap: 0.95rem;
+    }
+
+    .oracle-current-strip {
+      padding: 0.95rem 1rem;
+      border-radius: 22px;
+      border: 1px solid rgba(255,255,255,0.06);
+      background:
+        radial-gradient(circle at left, rgba(142, 168, 255, 0.09), transparent 32%),
+        linear-gradient(180deg, rgba(255,255,255,0.04), rgba(255,255,255,0.015)),
+        rgba(8, 13, 30, 0.88);
+      display: grid;
+      gap: 0.22rem;
+    }
+
+    .oracle-current-kicker {
+      font-size: 0.68rem;
+      text-transform: uppercase;
+      letter-spacing: 0.14em;
+      color: var(--gold-soft);
+    }
+
+    .oracle-current-title {
+      font-size: 1rem;
+      font-weight: 700;
+      color: #ffffff;
+    }
+
+    .oracle-current-copy {
+      font-size: 0.84rem;
+      line-height: 1.55;
+      color: var(--text-soft);
+    }
+
+    .oracle-suggestions-shell {
+      padding: 0.95rem 1rem;
+      border-radius: 22px;
+      border: 1px solid rgba(255,255,255,0.06);
+      background:
+        radial-gradient(circle at top right, rgba(234, 215, 170, 0.06), transparent 34%),
+        linear-gradient(180deg, rgba(255,255,255,0.04), rgba(255,255,255,0.015)),
+        rgba(8, 13, 30, 0.88);
+      display: grid;
+      gap: 0.78rem;
+    }
+
+    .oracle-suggestions-head {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 0.75rem;
+      flex-wrap: wrap;
+    }
+
+    .oracle-suggestions-title {
+      font-size: 0.76rem;
+      text-transform: uppercase;
+      letter-spacing: 0.14em;
+      color: var(--text-dim);
+    }
+
+    .oracle-suggestions-hint {
+      font-size: 0.78rem;
+      color: var(--text-soft);
+    }
+
+    .oracle-suggestion-list {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.65rem;
+    }
+
+    .oracle-suggestion-chip {
+      border: 1px solid rgba(255,255,255,0.08);
+      background:
+        linear-gradient(180deg, rgba(255,255,255,0.04), rgba(255,255,255,0.02)),
+        rgba(255,255,255,0.02);
+      color: var(--text-main);
+      padding: 0.78rem 0.88rem;
+      border-radius: 18px;
+      cursor: pointer;
+      transition: 0.18s ease;
+      display: grid;
+      gap: 0.24rem;
+      text-align: left;
+      min-width: 180px;
+      max-width: 100%;
+      flex: 1 1 220px;
+    }
+
+    .oracle-suggestion-chip:hover {
+      transform: translateY(-1px);
+      border-color: rgba(142, 168, 255, 0.24);
+      background:
+        linear-gradient(180deg, rgba(255,255,255,0.05), rgba(255,255,255,0.025)),
+        rgba(142, 168, 255, 0.06);
+    }
+
+    .oracle-suggestion-question {
+      font-size: 0.84rem;
+      line-height: 1.45;
+      color: #ffffff;
+    }
+
+    .oracle-suggestion-meta {
+      font-size: 0.67rem;
+      text-transform: uppercase;
+      letter-spacing: 0.12em;
+      color: var(--gold-soft);
+    }
+
+    .oracle-suggestion-empty {
+      width: 100%;
+      padding: 0.95rem 1rem;
+      border-radius: 18px;
+      border: 1px dashed rgba(255,255,255,0.08);
+      background: rgba(255,255,255,0.02);
+      color: var(--text-soft);
+      font-size: 0.84rem;
+      line-height: 1.5;
+    }
+
+    .oracle-status-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 0.8rem;
+      flex-wrap: wrap;
+    }
+
+    .oracle-status {
+      min-height: 1.2rem;
+      font-size: 0.78rem;
+      color: rgba(226, 232, 255, 0.70);
+      letter-spacing: 0.04em;
+    }
+
+    .oracle-clear {
+      border: 1px solid rgba(255,255,255,0.08);
+      background: rgba(255,255,255,0.04);
+      color: var(--text-soft);
+      transition: 0.18s ease;
+      min-height: 38px;
+      padding: 0.55rem 0.82rem;
+      border-radius: 999px;
+      cursor: pointer;
+    }
+
+    .oracle-clear:hover {
+      background: rgba(255,255,255,0.08);
+      color: #ffffff;
+    }
+
+    .oracle-message-list {
+      min-height: 320px;
+      max-height: 640px;
+      overflow-y: auto;
+      display: grid;
+      gap: 0.75rem;
+      padding-right: 0.2rem;
+      scrollbar-width: thin;
+      scrollbar-color: rgba(142, 168, 255, 0.24) transparent;
+    }
+
+    .oracle-message-list::-webkit-scrollbar {
+      width: 8px;
+    }
+
+    .oracle-message-list::-webkit-scrollbar-thumb {
+      background: rgba(142, 168, 255, 0.24);
+      border-radius: 999px;
+    }
+
+    .oracle-message {
+      display: flex;
+    }
+
+    .oracle-message.user {
+      justify-content: flex-end;
+    }
+
+    .oracle-message.oracle {
+      justify-content: flex-start;
+    }
+
+    .oracle-bubble {
+      width: min(100%, 840px);
+      padding: 0.95rem 1rem;
+      border-radius: 20px;
+      border: 1px solid rgba(255,255,255,0.06);
+      background: rgba(255,255,255,0.04);
+      color: var(--text-soft);
+      box-shadow: 0 10px 24px rgba(0,0,0,0.14);
+    }
+
+    .oracle-message.user .oracle-bubble {
+      background: rgba(142, 168, 255, 0.14);
+      border-color: rgba(142, 168, 255, 0.18);
+      color: #ffffff;
+    }
+
+    .oracle-answer-kicker {
+      font-size: 0.66rem;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: var(--gold-soft);
+      margin-bottom: 0.36rem;
+    }
+
+    .oracle-answer-title {
+      margin: 0 0 0.3rem;
+      font-size: 1rem;
+      line-height: 1.2;
+      color: #ffffff;
+    }
+
+    .oracle-answer-short {
+      margin: 0 0 0.42rem;
+      font-size: 0.92rem;
+      line-height: 1.55;
+      color: #ffffff;
+      font-weight: 600;
+    }
+
+    .oracle-answer-body {
+      margin: 0;
+      font-size: 0.86rem;
+      line-height: 1.62;
+      color: var(--text-soft);
+      white-space: pre-wrap;
+    }
+
+    .oracle-answer-note {
+      margin-top: 0.68rem;
+      padding: 0.78rem 0.82rem;
+      border-radius: 16px;
+      border: 1px solid rgba(255,255,255,0.06);
+      background: rgba(255,255,255,0.03);
+      font-size: 0.8rem;
+      line-height: 1.5;
+      color: rgba(226, 232, 255, 0.80);
+    }
+
+    .oracle-answer-tags {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.45rem;
+      margin-top: 0.72rem;
+    }
+
+    .oracle-tag {
+      padding: 0.42rem 0.65rem;
+      border-radius: 999px;
+      border: 1px solid rgba(255,255,255,0.08);
+      background: rgba(255,255,255,0.035);
+      color: var(--text-soft);
+      font-size: 0.73rem;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+    }
+
+    .oracle-form-shell {
+      padding: 1rem;
+      border-radius: 24px;
+      border: 1px solid rgba(255,255,255,0.06);
+      background:
+        radial-gradient(circle at top, rgba(234, 215, 170, 0.06), transparent 32%),
+        linear-gradient(180deg, rgba(255,255,255,0.04), rgba(255,255,255,0.015)),
+        rgba(7, 12, 26, 0.90);
+      display: grid;
+      gap: 0.8rem;
+    }
+
+    .oracle-form-title {
+      font-size: 0.76rem;
+      text-transform: uppercase;
+      letter-spacing: 0.14em;
+      color: var(--text-dim);
+    }
+
+    .oracle-form {
+      display: grid;
+      gap: 0.7rem;
+    }
+
+    .oracle-input-wrap {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) auto;
+      gap: 0.7rem;
+      align-items: stretch;
+    }
+
+    .oracle-input {
+      width: 100%;
+      min-height: 56px;
+      border-radius: 18px;
+      border: 1px solid rgba(255,255,255,0.08);
+      background: rgba(255,255,255,0.04);
+      color: #ffffff;
+      padding: 0.95rem 1rem;
+      outline: none;
+      transition: 0.18s ease;
+    }
+
+    .oracle-input::placeholder {
+      color: rgba(226, 232, 255, 0.46);
+    }
+
+    .oracle-input:focus {
+      border-color: rgba(142, 168, 255, 0.28);
+      box-shadow: 0 0 0 3px rgba(142, 168, 255, 0.08);
+      outline: none;
+    }
+
+    .oracle-submit {
+      min-width: 126px;
+      min-height: 56px;
+      border-radius: 18px;
+      border: 1px solid var(--blue-border);
+      background: rgba(142, 168, 255, 0.14);
+      color: #ffffff;
+      font-weight: 700;
+      cursor: pointer;
+      transition: 0.18s ease;
+    }
+
+    .oracle-submit:hover:not(:disabled) {
+      transform: translateY(-1px);
+      background: rgba(142, 168, 255, 0.20);
+    }
+
+    .oracle-input:disabled,
+    .oracle-submit:disabled {
+      opacity: 0.66;
+      cursor: wait;
+    }
+
+    .oracle-footnote {
+      font-size: 0.76rem;
+      line-height: 1.5;
+      color: rgba(226, 232, 255, 0.62);
+    }
+
+    .empty-state {
+      min-height: 180px;
+      display: grid;
+      place-items: center;
+      text-align: center;
+      padding: 1.4rem;
+      color: var(--text-soft);
+      border-radius: 22px;
+      border: 1px dashed rgba(255,255,255,0.08);
+      background: rgba(255,255,255,0.02);
+    }
+
+    @media (max-width: 980px) {
+      .oracle-layout {
+        grid-template-columns: 1fr;
+      }
+
+      .oracle-sidebar,
+      .oracle-main {
+        min-height: unset;
+      }
+    }
+
+    @media (max-width: 760px) {
+      .site-shell {
+        width: min(100% - 1rem, 1320px);
+      }
+
+      .dashboard-nav {
+        border-radius: 24px;
+        padding: 0.7rem 0.75rem;
+      }
+
+      .oracle-hero {
+        grid-template-columns: 1fr;
+      }
+
+      .oracle-hero-side {
+        justify-items: start;
+      }
+
+      .oracle-hero-mark {
+        width: 78px;
+        height: 78px;
+      }
+
+      .oracle-input-wrap {
+        grid-template-columns: 1fr;
+      }
+
+      .oracle-submit {
+        width: 100%;
+      }
+
+      .oracle-suggestion-chip {
+        flex-basis: 100%;
+      }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      * {
+        scroll-behavior: auto !important;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="cloud-layer"></div>
+  <div class="rune-layer"></div>
+  <div class="lightning-flash"></div>
+
+  <div class="site-shell">
+    <header class="site-header">
+      <nav class="dashboard-nav" aria-label="Global">
+        <a href="/index.html">Home</a>
+        <a href="/lore.html">Lore</a>
+        <a href="/dashboard.html">Dashboard</a>
+        <a href="/oracle.html" class="active">Ascendant Oracle</a>
+        <a href="/.netlify/functions/logout" id="logout-button">Logout</a>
+      </nav>
+    </header>
+
+    <main class="oracle-page">
+      <section class="dashboard-panel">
+        <div class="oracle-hero">
+          <div class="oracle-hero-copy">
+            <div class="oracle-kicker">Living Guidance</div>
+            <h1 class="oracle-title">Ascendant Oracle</h1>
+            <p class="oracle-subtitle">
+              Welcome, dear cultivator. Choose a path of guidance below, then ask what rests on your mind.
+            </p>
+          </div>
+
+          <div class="oracle-hero-side">
+
+            <div class="oracle-hero-mark" id="oracle-hero-mark">
+              <img id="oracle-hero-image" src="/images/ascendant-oracle.png" alt="Ascendant Oracle" />
+              <span class="oracle-fallback">AO</span>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="oracle-layout">
+        <aside class="dashboard-panel oracle-sidebar">
+          <p class="panel-title">Guidance Paths</p>
+
+          <div class="oracle-welcome-card">
+            <div class="oracle-welcome-title">Oracle Welcome</div>
+            <p class="oracle-welcome-text">
+              I can explain terms, guide your system choices, and read the moving currents around your path.
+            </p>
+          </div>
+
+          <div class="oracle-category-grid" id="oracle-category-grid"></div>
+
+          <div class="oracle-selected-card">
+            <div class="oracle-selected-label">Current Focus</div>
+            <div class="oracle-selected-value" id="oracle-selected-title">Glossary Guide</div>
+            <div class="oracle-selected-copy" id="oracle-selected-copy">
+              Ask what a system word or phrase means.
+            </div>
+          </div>
+        </aside>
+
+        <section class="dashboard-panel oracle-main">
+          <div class="oracle-current-strip">
+            <div class="oracle-current-kicker">Current Reading</div>
+            <div class="oracle-current-title" id="oracle-current-title">Glossary Guide</div>
+            <div class="oracle-current-copy" id="oracle-current-copy">
+              Ask what a system word or phrase means, and the Oracle will answer from your live system knowledge.
+            </div>
+          </div>
+
+          <div class="oracle-suggestions-shell">
+            <div class="oracle-suggestions-head">
+              <div class="oracle-suggestions-title" id="oracle-suggestions-title">Suggested Questions</div>
+              <div class="oracle-suggestions-hint" id="oracle-suggestions-hint">Tap a question to ask instantly.</div>
+            </div>
+            <div class="oracle-suggestion-list" id="oracle-suggestion-list">
+              <div class="oracle-suggestion-empty">Preparing Oracle suggestions...</div>
+            </div>
+          </div>
+
+          <div class="oracle-status-row">
+            <div class="oracle-status" id="oracle-status">Preparing the Oracle...</div>
+            <button type="button" class="oracle-clear" id="oracle-clear">Clear Reading</button>
+          </div>
+
+          <div class="oracle-message-list" id="oracle-messages" aria-live="polite">
+            <div class="empty-state" id="oracle-empty-state">
+              Choose a guidance path, then ask your question.
+            </div>
+          </div>
+
+          <div class="oracle-form-shell">
+            <div class="oracle-form-title">Ask the Oracle</div>
+
+            <form class="oracle-form" id="oracle-form">
+              <div class="oracle-input-wrap">
+                <input
+                  type="text"
+                  class="oracle-input"
+                  id="oracle-input"
+                  placeholder="Ask the Oracle..."
+                  autocomplete="off"
+                />
+                <button type="submit" class="oracle-submit" id="oracle-submit">Ask Oracle</button>
+              </div>
+            </form>
+
+            <div class="oracle-footnote" id="oracle-footnote">
+              The selected guidance path helps frame the reading, but you may ask any question you like.
+            </div>
+          </div>
+        </section>
+      </section>
+    </main>
+  </div>
+
+  <script>
+    const LOGIN_URL = "https://ascendantpath.org/login.html";
+    const VERIFY_SESSION_ENDPOINT = "/.netlify/functions/verify-session";
+    const LOGOUT_ENDPOINT = "/.netlify/functions/logout";
+
+    const ORACLE_ENDPOINT = "/.netlify/functions/resolve-ascendant-oracle";
+    const ORACLE_MEMBER_CONTEXT_ENDPOINT = "/.netlify/functions/load-oracle-member-context";
+    const ORACLE_LOGO = "/images/ascendant-oracle.png";
+    const ORACLE_FEATURED_PER_CATEGORY = 2;
+    const ORACLE_MATCH_LIMIT = 8;
+    const ORACLE_MATCH_DELAY = 220;
+    const ORACLE_ADMIN_USERNAME = "safareehills";
+
+    const ORACLE_CATEGORIES = [
+      {
+        key: "glossary_guide",
+        title: "Glossary Guide",
+        short: "Understand system words and official meanings.",
+        intro: "Ask what a system word or phrase means, and the Oracle will answer from your live system knowledge.",
+        placeholder: "What is Qi?",
+        footnote: "Best for meanings, definitions, and system terms."
+      },
+      {
+        key: "common_guidance",
+        title: "Common Guidance",
+        short: "Get practical help for everyday system use.",
+        intro: "Ask how something works, what to do next, or how to understand a normal system state.",
+        placeholder: "What should I focus on next?",
+        footnote: "Best for broad help, normal use, and gentle system direction."
+      },
+      {
+        key: "bond_resonance",
+        title: "Bond & Resonance",
+        short: "Ask about focused links, bonds, and resonance flow.",
+        intro: "Ask about bond states, focused links, resonance activity, and shared path conditions.",
+        placeholder: "Why is my resonance not active?",
+        footnote: "Best for partnerships, bonds, focused links, and shared path readings."
+      },
+      {
+        key: "progression_help",
+        title: "Progression Help",
+        short: "Understand growth, stages, limits, and advancement.",
+        intro: "Ask about cultivation progress, current stage limits, breakthroughs, and how your path is advancing.",
+        placeholder: "What does breakthrough ready mean?",
+        footnote: "Best for stage progress, advancement, and next-step growth."
+      },
+      {
+        key: "celestial_reading",
+        title: "Celestial Reading",
+        short: "Read the sky, phases, forces, and omen threads.",
+        intro: "Ask about celestial phases, nature forces, readings, forecasts, and how the world current may affect your path.",
+        placeholder: "What does the current celestial phase mean?",
+        footnote: "Best for weather, omens, world forces, and celestial interpretation."
+      }
+    ];
+
+    const oracleCategoryGrid = document.getElementById("oracle-category-grid");
+    const oracleSelectedTitle = document.getElementById("oracle-selected-title");
+    const oracleSelectedCopy = document.getElementById("oracle-selected-copy");
+    const oracleCurrentTitle = document.getElementById("oracle-current-title");
+    const oracleCurrentCopy = document.getElementById("oracle-current-copy");
+    const oracleStatus = document.getElementById("oracle-status");
+    const oracleMessages = document.getElementById("oracle-messages");
+    const oracleForm = document.getElementById("oracle-form");
+    const oracleInput = document.getElementById("oracle-input");
+    const oracleSubmit = document.getElementById("oracle-submit");
+    const oracleFootnote = document.getElementById("oracle-footnote");
+    const oracleClear = document.getElementById("oracle-clear");
+    const oracleHeroImage = document.getElementById("oracle-hero-image");
+    const oracleHeroMark = document.getElementById("oracle-hero-mark");
+    const oracleSuggestionsTitle = document.getElementById("oracle-suggestions-title");
+    const oracleSuggestionsHint = document.getElementById("oracle-suggestions-hint");
+    const oracleSuggestionList = document.getElementById("oracle-suggestion-list");
+
+    let selectedCategory = ORACLE_CATEGORIES[0];
+    let memberContext = {
+      avatarKey: "",
+      username: "",
+      characterName: ""
+    };
+
+    let featuredQuestions = [];
+    let matchTimer = null;
+    let latestSuggestionRequest = 0;
+    let isOracleAdmin = false;
+
+    function safeText(value, fallback = "") {
+      const text = String(value ?? "").trim();
+      return text || fallback;
+    }
+
+    function safeLower(value) {
+      return safeText(value).toLowerCase();
+    }
+
+    function escapeHtml(value) {
+      return safeText(value)
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;")
+        .replace(/'/g, "&#39;");
+    }
+
+    function normalizeKey(value) {
+      return String(value ?? "")
+        .trim()
+        .toLowerCase()
+        .replace(/[^a-z0-9]+/g, "_")
+        .replace(/^_+|_+$/g, "");
+    }
+
+    function humanizeKey(value) {
+      return safeText(value)
+        .replace(/_/g, " ")
+        .replace(/\s+/g, " ")
+        .trim();
+    }
+
+    function getCsrfToken() {
+      return sessionStorage.getItem("ap_csrf_token") || "";
+    }
+
+    function setCsrfToken(token) {
+      const value = safeText(token);
+      if (value) {
+        sessionStorage.setItem("ap_csrf_token", value);
+      }
+    }
+
+    function clearClientSessionArtifacts() {
+      sessionStorage.removeItem("ap_csrf_token");
+      localStorage.removeItem("session_token");
+    }
+
+    function redirectToLogin() {
+      const next = `${window.location.pathname}${window.location.search}${window.location.hash}`;
+      window.location.href = `${LOGIN_URL}?next=${encodeURIComponent(next)}`;
+    }
+
+    function setOracleBusy(isBusy, text = "") {
+      oracleInput.disabled = isBusy;
+      oracleSubmit.disabled = isBusy;
+      oracleSubmit.textContent = isBusy ? "Reading..." : "Ask Oracle";
+      oracleStatus.textContent = text || (isBusy ? "The Oracle is reading..." : "The Oracle is ready.");
+    }
+
+    async function requireAuth() {
+      try {
+        const response = await fetch(VERIFY_SESSION_ENDPOINT, {
+          method: "GET",
+          credentials: "include",
+          headers: {
+            "Accept": "application/json"
+          }
+        });
+
+        if (response.status === 401) {
+          clearClientSessionArtifacts();
+          redirectToLogin();
+          return null;
+        }
+
+        if (!response.ok) {
+          throw new Error(`verify_session_failed_${response.status}`);
+        }
+
+        const data = await response.json();
+
+        if (!data || data.authenticated !== true) {
+          clearClientSessionArtifacts();
+          redirectToLogin();
+          return null;
+        }
+
+        const csrfToken =
+          data.csrf_token ||
+          data.csrfToken ||
+          data.csrf ||
+          "";
+
+        if (csrfToken) {
+          setCsrfToken(csrfToken);
+        }
+
+        return data;
+      } catch (error) {
+        console.error("Oracle auth verification error:", error);
+        clearClientSessionArtifacts();
+        redirectToLogin();
+        return null;
+      }
+    }
+
+    async function logoutCurrentSession() {
+      const csrfToken = getCsrfToken();
+
+      try {
+        await fetch(LOGOUT_ENDPOINT, {
+          method: "POST",
+          credentials: "include",
+          headers: {
+            "Content-Type": "application/json",
+            "Accept": "application/json",
+            ...(csrfToken ? { "X-AP-CSRF-Token": csrfToken } : {})
+          },
+          body: JSON.stringify({})
+        });
+      } catch (error) {
+        console.error("Oracle logout error:", error);
+      } finally {
+        clearClientSessionArtifacts();
+        window.location.href = LOGIN_URL;
+      }
+    }
+
+    function bindLogoutButton() {
+      const logoutButton = document.getElementById("logout-button");
+      if (!logoutButton) return;
+
+      logoutButton.addEventListener("click", async (event) => {
+        event.preventDefault();
+        await logoutCurrentSession();
+      });
+    }
+
+    function renderCategories() {
+      oracleCategoryGrid.innerHTML = ORACLE_CATEGORIES.map((category) => `
+        <button
+          type="button"
+          class="oracle-category-card ${category.key === selectedCategory.key ? "is-active" : ""}"
+          data-category-key="${escapeHtml(category.key)}"
+        >
+          <span class="oracle-category-title">${escapeHtml(category.title)}</span>
+          <span class="oracle-category-copy">${escapeHtml(category.short)}</span>
+        </button>
+      `).join("");
+    }
+
+    function applyCategory(categoryKey) {
+      const found = ORACLE_CATEGORIES.find((item) => item.key === categoryKey) || ORACLE_CATEGORIES[0];
+      selectedCategory = found;
+
+      oracleSelectedTitle.textContent = found.title;
+      oracleSelectedCopy.textContent = found.short;
+      oracleCurrentTitle.textContent = found.title;
+      oracleCurrentCopy.textContent = found.intro;
+      oracleInput.placeholder = found.placeholder;
+      oracleFootnote.textContent = found.footnote;
+
+      renderCategories();
+    }
+
+    function getEmptyStateEl() {
+      return document.getElementById("oracle-empty-state");
+    }
+
+    function removeEmptyState() {
+      const emptyState = getEmptyStateEl();
+      if (emptyState) emptyState.remove();
+    }
+
+    function appendMessage(role, html) {
+      removeEmptyState();
+
+      const wrapper = document.createElement("div");
+      wrapper.className = `oracle-message ${role}`;
+
+      const bubble = document.createElement("div");
+      bubble.className = "oracle-bubble";
+      bubble.innerHTML = html;
+
+      wrapper.appendChild(bubble);
+      oracleMessages.appendChild(wrapper);
+      oracleMessages.scrollTop = oracleMessages.scrollHeight;
+    }
+
+    function buildUserMarkup(question) {
+      return `
+        <div class="oracle-answer-kicker">${escapeHtml(selectedCategory.title)}</div>
+        <div class="oracle-answer-body">${escapeHtml(question)}</div>
+      `;
+    }
+
+    function buildOracleWelcomeMarkup() {
+      return `
+        <div class="oracle-answer-kicker">Oracle Welcome</div>
+        <h3 class="oracle-answer-title">Ascendant Oracle</h3>
+        <p class="oracle-answer-body">Welcome, dear cultivator. I am ready to read your question.</p>
+      `;
+    }
+
+    function extractOracleResult(payload) {
+      return payload?.result || payload?.data || payload || {};
+    }
+
+    function collectTags(result) {
+      const tags = [];
+      const glossary = result?.glossary && typeof result.glossary === "object" ? result.glossary : null;
+
+      const mode = safeText(result.mode);
+      const intentKey = safeText(result.intent_key);
+      const glossaryCategory = safeText(glossary?.category);
+      const answerSource = safeText(result.source || result.answer_source);
+
+      if (mode) tags.push(mode);
+      if (intentKey) tags.push(humanizeKey(intentKey));
+      if (glossaryCategory) tags.push(glossaryCategory);
+      if (answerSource) tags.push(answerSource);
+
+      return tags.filter(Boolean).slice(0, 4);
+    }
+
+    function buildRelatedTermsMarkup(glossary) {
+      const related = Array.isArray(glossary?.related_terms)
+        ? glossary.related_terms
+            .map((item) => safeText(item?.term_name))
+            .filter(Boolean)
+            .slice(0, 6)
+        : [];
+
+      if (!related.length) return "";
+
+      return `
+        <div class="oracle-answer-tags">
+          ${related.map((term) => `<span class="oracle-tag">${escapeHtml(term)}</span>`).join("")}
+        </div>
+      `;
+    }
+
+    function buildOracleMarkup(result) {
+      const glossary = result?.glossary && typeof result.glossary === "object" ? result.glossary : null;
+      const capture = result?.capture && typeof result.capture === "object" ? result.capture : null;
+
+      const kicker =
+        safeText(result.title) ||
+        safeText(result.headline) ||
+        (glossary ? "Glossary Guide" : "Ascendant Oracle");
+
+      const title =
+        safeText(glossary?.term_name) ||
+        safeText(result.title) ||
+        safeText(result.heading) ||
+        "Oracle Reading";
+
+      const shortText =
+        safeText(glossary?.short_definition) ||
+        safeText(result.short_answer) ||
+        safeText(result.summary);
+
+      const body =
+        safeText(result.answer) ||
+        safeText(result.full_explanation) ||
+        safeText(result.message) ||
+        safeText(glossary?.full_explanation) ||
+        "The Oracle returned without a full reading.";
+
+      const note =
+        safeText(glossary?.mechanics_notes) ||
+        safeText(result.note) ||
+        safeText(result.guidance_note);
+
+      const tags = collectTags(result);
+
+      const intentKey = result?.intent_key || result?.capture?.intent_key || "";
+      const captureMarkup =
+        capture && !capture.was_answered && intentKey !== "not_system"
+          ? `<div class="oracle-answer-note">This question was not fully answered from the current Oracle library and has been captured for review.</div>`
+          : "";
+
+      return `
+        <div class="oracle-answer-kicker">${escapeHtml(kicker)}</div>
+        <h3 class="oracle-answer-title">${escapeHtml(title)}</h3>
+        ${shortText ? `<p class="oracle-answer-short">${escapeHtml(shortText)}</p>` : ""}
+        <p class="oracle-answer-body">${escapeHtml(body)}</p>
+        ${note ? `<div class="oracle-answer-note">${escapeHtml(note)}</div>` : ""}
+        ${captureMarkup}
+        ${buildRelatedTermsMarkup(glossary)}
+        ${tags.length ? `
+          <div class="oracle-answer-tags">
+            ${tags.map((tag) => `<span class="oracle-tag">${escapeHtml(tag)}</span>`).join("")}
+          </div>
+        ` : ""}
+      `;
+    }
+
+    function buildOracleErrorMarkup(message) {
+      return `
+        <div class="oracle-answer-kicker">Oracle Reading</div>
+        <h3 class="oracle-answer-title">The reading is veiled</h3>
+        <p class="oracle-answer-body">${escapeHtml(message || "The Oracle could not answer right now.")}</p>
+      `;
+    }
+
+    async function fetchJson(url, options = {}) {
+      const response = await fetch(url, {
+        credentials: "include",
+        headers: {
+          Accept: "application/json",
+          ...(options.headers || {})
+        },
+        ...options
+      });
+
+      const text = await response.text();
+      let payload = null;
+
+      try {
+        payload = text ? JSON.parse(text) : null;
+      } catch {
+        payload = null;
+      }
+
+      if (response.status === 401) {
+        clearClientSessionArtifacts();
+        redirectToLogin();
+        throw new Error("unauthorized");
+      }
+
+      if (!response.ok) {
+        throw new Error(payload?.error || payload?.message || `request_failed_${response.status}`);
+      }
+
+      return payload;
+    }
+
+    async function fetchOracleAction(action, params = {}) {
+      const url = new URL(ORACLE_ENDPOINT, window.location.origin);
+      url.searchParams.set("action", action);
+
+      Object.entries(params).forEach(([key, value]) => {
+        const text = safeText(value);
+        if (text) url.searchParams.set(key, text);
+      });
+
+      return fetchJson(url.toString());
+    }
+
+    function renderSuggestionList(items, title, hint, emptyText) {
+      oracleSuggestionsTitle.textContent = title;
+      oracleSuggestionsHint.textContent = hint;
+
+      if (!Array.isArray(items) || !items.length) {
+        oracleSuggestionList.innerHTML = `
+          <div class="oracle-suggestion-empty">${escapeHtml(emptyText || "No Oracle suggestions are available right now.")}</div>
+        `;
+        return;
+      }
+
+      oracleSuggestionList.innerHTML = items.map((item) => {
+        const question = safeText(item.question_text);
+        const category = humanizeKey(safeText(item.category, "suggestion"));
+
+        return `
+          <button
+            type="button"
+            class="oracle-suggestion-chip"
+            data-question="${escapeHtml(question)}"
+          >
+            <span class="oracle-suggestion-meta">${escapeHtml(category)}</span>
+            <span class="oracle-suggestion-question">${escapeHtml(question)}</span>
+          </button>
+        `;
+      }).join("");
+    }
+
+    async function loadFeaturedQuestions() {
+      const requestId = ++latestSuggestionRequest;
+
+      try {
+        const payload = await fetchOracleAction("featured", {
+          perCategory: ORACLE_FEATURED_PER_CATEGORY
+        });
+
+        if (requestId !== latestSuggestionRequest) return;
+
+        featuredQuestions = Array.isArray(payload?.result?.items) ? payload.result.items : [];
+
+        renderSuggestionList(
+          featuredQuestions,
+          "Suggested Questions",
+          "Tap a question to ask instantly.",
+          "The Oracle could not load featured questions right now."
+        );
+      } catch (error) {
+        console.error("Oracle featured FAQ error:", error);
+
+        if (requestId !== latestSuggestionRequest) return;
+
+        renderSuggestionList(
+          [],
+          "Suggested Questions",
+          "Tap a question to ask instantly.",
+          "The Oracle could not load suggestions right now."
+        );
+      }
+    }
+
+    async function loadMatchQuestions(rawInput) {
+      const query = safeText(rawInput);
+      const requestId = ++latestSuggestionRequest;
+
+      if (!query) {
+        if (featuredQuestions.length) {
+          renderSuggestionList(
+            featuredQuestions,
+            "Suggested Questions",
+            "Tap a question to ask instantly.",
+            "The Oracle could not load featured questions right now."
+          );
+        } else {
+          await loadFeaturedQuestions();
+        }
+        return;
+      }
+
+      try {
+        const payload = await fetchOracleAction("match", {
+          q: query,
+          limit: ORACLE_MATCH_LIMIT
+        });
+
+        if (requestId !== latestSuggestionRequest) return;
+
+        const items = Array.isArray(payload?.result?.items) ? payload.result.items : [];
+
+        renderSuggestionList(
+          items,
+          "Matching Questions",
+          "These are close Oracle questions from the database.",
+          "No close Oracle questions were found yet. You can still ask your own question."
+        );
+      } catch (error) {
+        console.error("Oracle match FAQ error:", error);
+
+        if (requestId !== latestSuggestionRequest) return;
+
+        renderSuggestionList(
+          [],
+          "Matching Questions",
+          "These are close Oracle questions from the database.",
+          "The Oracle could not search questions right now."
+        );
+      }
+    }
+
+    function scheduleQuestionMatch(rawInput) {
+      window.clearTimeout(matchTimer);
+      matchTimer = window.setTimeout(() => {
+        loadMatchQuestions(rawInput);
+      }, ORACLE_MATCH_DELAY);
+    }
+
+    async function loadMemberContext() {
+      const payload = await fetchJson(ORACLE_MEMBER_CONTEXT_ENDPOINT);
+
+      if (!payload?.success) {
+        throw new Error(payload?.error || "Could not load Oracle member context.");
+      }
+
+      const member = payload.member || {};
+      const avatarKey = safeText(member.sl_avatar_key || member.avatar_key);
+      const username = safeText(member.sl_username || member.username);
+      const characterName = safeText(member.character_name);
+
+      if (!avatarKey) {
+        throw new Error("Oracle member context loaded, but no avatar key was found.");
+      }
+
+      memberContext = {
+        avatarKey,
+        username,
+        characterName
+      };
+
+      isOracleAdmin = safeLower(username) === ORACLE_ADMIN_USERNAME;
+    }
+
+    function setAdminEntryVisibility() {
+      if (isOracleAdmin) {
+        oracleAdminNavLink.classList.remove("is-hidden");
+        oracleAdminShortcut.classList.remove("is-hidden");
+      } else {
+        oracleAdminNavLink.classList.add("is-hidden");
+        oracleAdminShortcut.classList.add("is-hidden");
+      }
+    }
+
+    async function postOracleQuestion(question) {
+      const csrfToken = getCsrfToken();
+
+      return fetchJson(ORACLE_ENDPOINT, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          ...(csrfToken ? { "X-AP-CSRF-Token": csrfToken } : {})
+        },
+        body: JSON.stringify({
+          action: "resolve",
+          input: question,
+          query: question,
+          question,
+          avatarKey: memberContext.avatarKey,
+          sl_avatar_key: memberContext.avatarKey,
+          username: memberContext.username,
+          sl_username: memberContext.username,
+          category: selectedCategory.key,
+          category_key: selectedCategory.key,
+          category_label: selectedCategory.title,
+          mode: selectedCategory.key,
+          runtimeState: {
+            selected_category: selectedCategory.key,
+            selected_category_title: selectedCategory.title,
+            page: "oracle"
+          }
+        })
+      });
+    }
+
+    async function submitQuestion(rawQuestion) {
+      const question = safeText(rawQuestion);
+      if (!question) return;
+
+      if (!memberContext.avatarKey) {
+        appendMessage(
+          "oracle",
+          buildOracleErrorMarkup("The Oracle could not identify your path record yet. Please refresh the page and try again.")
+        );
+        return;
+      }
+
+      appendMessage("user", buildUserMarkup(question));
+      oracleInput.value = "";
+      renderSuggestionList(
+        featuredQuestions,
+        "Suggested Questions",
+        "Tap a question to ask instantly.",
+        "The Oracle could not load featured questions right now."
+      );
+      setOracleBusy(true, "The Oracle is reading your path...");
+
+      try {
+        const payload = await postOracleQuestion(question);
+        const result = extractOracleResult(payload);
+
+        appendMessage("oracle", buildOracleMarkup(result));
+        setOracleBusy(false, `Reading complete under ${selectedCategory.title}.`);
+      } catch (error) {
+        if (String(error?.message || "") === "unauthorized") {
+          return;
+        }
+
+        console.error("Ascendant Oracle error:", error);
+        appendMessage(
+          "oracle",
+          buildOracleErrorMarkup(error.message || "The Oracle could not read clearly right now. Please try again.")
+        );
+        setOracleBusy(false, "The reading could not be completed.");
+      }
+
+      oracleInput.focus();
+    }
+
+    function clearReading() {
+      oracleMessages.innerHTML = `
+        <div class="empty-state" id="oracle-empty-state">
+          Choose a guidance path, then ask your question.
+        </div>
+      `;
+
+      oracleInput.value = "";
+      renderSuggestionList(
+        featuredQuestions,
+        "Suggested Questions",
+        "Tap a question to ask instantly.",
+        "The Oracle could not load featured questions right now."
+      );
+
+      oracleStatus.textContent = memberContext.avatarKey
+        ? "The Oracle is ready."
+        : "The Oracle is waiting for your path record.";
+    }
+
+    function setOracleLogo() {
+      const handleMissingImage = () => {
+        oracleHeroMark.classList.add("no-image");
+      };
+
+      oracleHeroImage.src = ORACLE_LOGO;
+      oracleHeroImage.addEventListener("error", handleMissingImage, { once: true });
+    }
+
+    async function initializeOracle() {
+      setOracleLogo();
+      applyCategory(selectedCategory.key);
+      appendMessage("oracle", buildOracleWelcomeMarkup());
+      setOracleBusy(true, "Preparing the Oracle...");
+      renderSuggestionList([], "Suggested Questions", "Tap a question to ask instantly.", "Preparing Oracle suggestions...");
+
+      const memberContextPromise = loadMemberContext();
+      const featuredPromise = loadFeaturedQuestions();
+
+      try {
+        await memberContextPromise;
+        setAdminEntryVisibility();
+        setOracleBusy(false, "The Oracle is ready.");
+      } catch (error) {
+        if (String(error?.message || "") === "unauthorized") {
+          return;
+        }
+
+        console.error("Oracle member context error:", error);
+        appendMessage(
+          "oracle",
+          buildOracleErrorMarkup("The Oracle could not prepare your path record. Please refresh and try again.")
+        );
+        setAdminEntryVisibility();
+        setOracleBusy(false, "The Oracle could not prepare your path record.");
+      }
+
+      try {
+        await featuredPromise;
+      } catch (error) {
+        console.error("Oracle featured init error:", error);
+      }
+    }
+
+    function wireOraclePage() {
+      oracleCategoryGrid.addEventListener("click", (event) => {
+        const card = event.target.closest("[data-category-key]");
+        if (!card) return;
+
+        const categoryKey = safeText(card.getAttribute("data-category-key"));
+        applyCategory(normalizeKey(categoryKey));
+        oracleInput.focus();
+      });
+
+      oracleSuggestionList.addEventListener("click", async (event) => {
+        const button = event.target.closest("[data-question]");
+        if (!button) return;
+
+        const question = safeText(button.getAttribute("data-question"));
+        if (!question) return;
+
+        oracleInput.value = question;
+        await submitQuestion(question);
+      });
+
+      oracleInput.addEventListener("input", () => {
+        scheduleQuestionMatch(oracleInput.value);
+      });
+
+      oracleForm.addEventListener("submit", async (event) => {
+        event.preventDefault();
+        await submitQuestion(oracleInput.value);
+      });
+
+      oracleClear.addEventListener("click", () => {
+        clearReading();
+      });
+    }
+
+    document.addEventListener("DOMContentLoaded", async () => {
+      bindLogoutButton();
+
+      const auth = await requireAuth();
+      if (!auth) return;
+
+      wireOraclePage();
+      await initializeOracle();
+    });
+  </script>
+</body>
+</html>
