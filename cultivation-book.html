@@ -1985,9 +1985,17 @@
         } else {
           els.fig.style.display = 'none';
           _portalState = 'damaged';
-          if (_portalCracks.length < 6) {
-            for (var i = 0; i < 8; i++) {
-              _portalCracks.push({ angle: Math.random()*Math.PI*2, len: 0.2+Math.random()*0.6, w: 0.5+Math.random() });
+          if (_portalCracks.length < 6 || !_portalCracks[0].sg) {
+            _portalCracks = [];
+            for (var i = 0; i < 10; i++) {
+              var ca = -2.5+Math.random()*5, cl = 20+Math.random()*45, sg = [];
+              var cpx = 0, cpy = 0;
+              for (var k = 0; k < 5; k++) {
+                cpx += Math.cos(ca+Math.random()*0.5-0.25)*(cl/5);
+                cpy += Math.sin(ca+Math.random()*0.5-0.25)*(cl/5);
+                sg.push({ x: cpx, y: cpy });
+              }
+              _portalCracks.push({ sg: sg, al: 0.2+Math.random()*0.5 });
             }
           }
           if (t >= 1) {
