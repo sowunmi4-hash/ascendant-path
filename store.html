@@ -1334,7 +1334,7 @@
         throw new Error(data?.message || "Unable to verify session.");
       }
 
-      const member = data.member || data.session?.member || data.user || {};
+      const member = data.member || data.viewer || data.session?.member || data.session || data.user || {};
       state.session = {
         ...(state.session || {}),
         sl_avatar_key: safeText(member.sl_avatar_key || member.avatar_key),
