@@ -816,6 +816,7 @@
     const DASHBOARD_ENDPOINT = "/.netlify/functions/load-dashboard-state";
     const MEMBER_STATE_ENDPOINT = "/.netlify/functions/load-member-state";
     const BOOK_STATE_ENDPOINT = "/.netlify/functions/load-cultivation-book-state";
+    const REPAIR_ENDPOINT = "/.netlify/functions/repair-cultivation-book";
 
     const state = {
       member: null,
@@ -2418,7 +2419,11 @@
         } else if (gateState === 'active') {
           if (actionBtn) { actionBtn.style.display = 'block'; actionBtn.style.background = '#e8a840'; actionBtn.style.color = '#1a0f00'; actionBtn.textContent = 'Return to Breakthrough Chamber'; actionBtn.onclick = function() { window.location.href = getBreakthroughRoute(); }; }
         } else if (gateState === 'damaged') {
-          if (actionBtn) { actionBtn.style.display = 'block'; actionBtn.style.background = '#7a2020'; actionBtn.style.color = '#ffe0e0'; actionBtn.textContent = 'Repair the Record'; actionBtn.onclick = null; }
+          if (actionBtn) {
+            actionBtn.style.display = 'block'; actionBtn.style.background = '#7a2020'; actionBtn.style.color = '#ffe0e0'; actionBtn.textContent = 'Repair the Record'; actionBtn.disabled = false;
+            actionBtn.onclick = function() { handleRepairRecord(actionBtn, subNote); };
+          }
+          if (subNote) { subNote.textContent = 'Your scripture is damaged. Pay the repair cost to restore your progress.'; subNote.style.color = '#cc444488'; }
         }
       } catch(e) {
         console.error('renderBreakthroughFooter error:', e);
@@ -2471,6 +2476,30 @@
         }, 3200);
       } catch(e) {
         window.location.href = getBreakthroughRoute();
+      }
+    }
+
+    async function handleRepairRecord(btn, noteEl) {
+      try {
+        if (btn) { btn.disabled = true; btn.textContent = 'Repairing...'; }
+        if (noteEl) noteEl.textContent = 'Channeling repair energy into the damaged record...';
+        var avatarKey = (state && state.member && state.member.sl_avatar_key) || (state && state.user && state.user.sl_avatar_key) || '';
+        if (!avatarKey) { if (btn) { btn.disabled = false; btn.textContent = 'Repair the Record'; } if (noteEl) noteEl.textContent = 'Could not resolve your identity.'; return; }
+        var resp = await fetch(REPAIR_ENDPOINT, { method: 'POST', headers: { 'Content-Type': 'application/json' }, credentials: 'include', body: JSON.stringify({ sl_avatar_key: avatarKey }) });
+        var data = await resp.json();
+        if (data && data.success) {
+          if (btn) { btn.style.background = '#2a6a2a'; btn.style.color = '#d0ffd0'; btn.textContent = 'Record Restored'; }
+          if (noteEl) { noteEl.textContent = 'The damage has been mended. Resuming from retained progress.'; noteEl.style.color = '#44bb8888'; }
+          setTimeout(function() { window.location.reload(); }, 1500);
+        } else {
+          var msg = (data && data.message) || 'Repair failed.';
+          if (btn) { btn.disabled = false; btn.textContent = 'Repair the Record'; }
+          if (noteEl) { noteEl.textContent = msg; noteEl.style.color = '#cc444488'; }
+        }
+      } catch(e) {
+        console.error('handleRepairRecord error:', e);
+        if (btn) { btn.disabled = false; btn.textContent = 'Repair the Record'; }
+        if (noteEl) { noteEl.textContent = 'An unexpected error occurred during repair.'; noteEl.style.color = '#cc444488'; }
       }
     }
 
