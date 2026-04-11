@@ -2,6 +2,10 @@
 // Thin action helper for parcel Weather Crystal repair.
 // Database is the single source of truth.
 // This file only triggers repair — no duration calc, no Qi calc, no status logic.
+//
+// Auth: Two paths —
+//   1. Cookie session (browser)  → avatar key resolved from session
+//   2. sl_avatar_key in body (LSL in-world) → verified against members table
 
 const { createClient } = require("@supabase/supabase-js");
 
@@ -55,47 +59,7 @@ exports.handler = async function(event) {
     return json(405, { success: false, message: "Method not allowed. Use POST." });
   }
 
-  // Session auth — supports cookie, query param, or Authorization header
-  //   1. Cookie (browser)
-  //   2. ?session_token= query param (LSL / in-world objects)
-  //   3. Authorization: Bearer header (API callers)
-  var cookieHeader = (event.headers && event.headers.cookie) || (event.headers && event.headers.Cookie) || "";
-  var sessionToken = parseCookies(cookieHeader)[COOKIE_NAME] || "";
-
-  if (!sessionToken) {
-    var query0 = event.queryStringParameters || {};
-    sessionToken = safeText(query0.session_token);
-  }
-  if (!sessionToken) {
-    var authHeader = (event.headers && (event.headers.authorization || event.headers.Authorization)) || "";
-    if (authHeader.toLowerCase().indexOf("bearer ") === 0) {
-      sessionToken = authHeader.slice(7).trim();
-    }
-  }
-  if (!sessionToken) {
-    // Also check POST body for session_token
-    var authBody = {};
-    try { if (event.body) authBody = JSON.parse(event.body); } catch(e) {}
-    sessionToken = safeText(authBody.session_token);
-  }
-
-  if (!sessionToken) {
-    return json(401, { success: false, message: "No active session. Pass cookie, ?session_token=, or Authorization header." });
-  }
-
-  var sessionCheck = await supabase
-    .from("website_sessions")
-    .select("sl_avatar_key, sl_username")
-    .eq("session_token", sessionToken)
-    .eq("is_active", true)
-    .limit(1)
-    .maybeSingle();
-
-  if (sessionCheck.error || !sessionCheck.data) {
-    return json(401, { success: false, message: "Session expired or invalid." });
-  }
-
-  // Parse request body
+  // Parse request body first (needed for both auth paths)
   var body = {};
   try {
     if (event.body) body = JSON.parse(event.body);
@@ -103,19 +67,62 @@ exports.handler = async function(event) {
     return json(400, { success: false, message: "Invalid JSON body." });
   }
 
-  // Read inputs — avatar_key from session or body
   var parcelKey = safeText(body.parcel_key);
-  var avatarKey = safeText(body.sl_avatar_key || sessionCheck.data.sl_avatar_key);
-
   if (!parcelKey) {
     return json(400, { success: false, message: "parcel_key is required." });
   }
 
-  if (!avatarKey) {
-    return json(400, { success: false, message: "sl_avatar_key could not be resolved." });
+  // ── Auth: try cookie session first, fall back to sl_avatar_key ──
+  var avatarKey = "";
+
+  // Path 1: Cookie session (browser callers)
+  var cookieHeader = (event.headers && event.headers.cookie) || (event.headers && event.headers.Cookie) || "";
+  var sessionToken = parseCookies(cookieHeader)[COOKIE_NAME] || "";
+
+  if (sessionToken) {
+    var sessionCheck = await supabase
+      .from("website_sessions")
+      .select("sl_avatar_key, sl_username")
+      .eq("session_token", sessionToken)
+      .eq("is_active", true)
+      .limit(1)
+      .maybeSingle();
+
+    if (sessionCheck.data && sessionCheck.data.sl_avatar_key) {
+      avatarKey = safeText(sessionCheck.data.sl_avatar_key);
+    }
   }
 
-  // Call database function — single source of truth
+  // Path 2: sl_avatar_key in body (LSL in-world callers)
+  if (!avatarKey) {
+    var bodyAvatarKey = safeText(body.sl_avatar_key);
+
+    if (!bodyAvatarKey) {
+      return json(401, {
+        success: false,
+        message: "No valid session cookie or sl_avatar_key provided."
+      });
+    }
+
+    // Verify the avatar key exists in the members table
+    var memberCheck = await supabase
+      .from("members")
+      .select("sl_avatar_key")
+      .eq("sl_avatar_key", bodyAvatarKey)
+      .limit(1)
+      .maybeSingle();
+
+    if (memberCheck.error || !memberCheck.data) {
+      return json(403, {
+        success: false,
+        message: "Avatar key not recognised as a registered member."
+      });
+    }
+
+    avatarKey = bodyAvatarKey;
+  }
+
+  // ── Call database function ─────────────────────────────────
   try {
     var result = await supabase.rpc("start_parcel_crystal_repair", {
       p_parcel_key: parcelKey,
@@ -131,4 +138,6 @@ exports.handler = async function(event) {
       });
     }
 
-    var data = resul
+    var data = result.data;
+
+    //
