@@ -2603,15 +2603,17 @@
       var record = getRecord ? getRecord() : null;
       var sections = record && record.sections ? record.sections : {};
       // Realm from store or member
-      if (realmEl) realmEl.textContent = (store && store.realm_name) || mem.current_realm_name || '--';
+      if (realmEl) realmEl.textContent = toTitle((store && store.realm_name) || mem.current_realm_name, '--');
       // Stage: find the focus section's stage or current stage
       if (stageEl) {
         var focusSection = getFocusRecord ? getFocusRecord() : null;
         var stageName = '';
         if (focusSection && focusSection.stage_name) { stageName = focusSection.stage_name; }
+        else if (focusSection && focusSection.section_key) { stageName = toTitle(focusSection.section_key, ''); }
         else if (focusSection && focusSection.current_stage) { stageName = 'Stage ' + focusSection.current_stage; }
         else if (mem.current_stage_name) { stageName = mem.current_stage_name; }
         else if (mem.current_stage) { stageName = 'Stage ' + mem.current_stage; }
+        else if (state.user && state.user.realm_stage_key) { stageName = toTitle(state.user.realm_stage_key.split(':').pop(), ''); }
         stageEl.textContent = stageName || '--';
       }
       // Status from book UI state
