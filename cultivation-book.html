@@ -1668,6 +1668,23 @@
                 figX = cx - figW * 0.5 - 10;
                 figY = cy - figH * 0.45 + 10;
               }
+
+              // Portal-entry shrink + glide animation toward the portal
+              var portalAlphaOverride = -1;
+              if (_vesselEnteringPortal) {
+                _vesselPortalProgress = Math.min(1, _vesselPortalProgress + 0.012);
+                var ep = _vesselPortalProgress;
+                var ease = ep < 0.5 ? 2 * ep * ep : 1 - Math.pow(-2 * ep + 2, 2) / 2;
+                var shrink = 1 - ease * 0.85;
+                figW *= shrink;
+                figH *= shrink;
+                figX = cx - figW * 0.5 + ease * (W * 0.55);
+                figY = cy - figH * 0.5 + ease * (-H * 0.05);
+                floatOffset = floatOffset * (1 - ease);
+                figY += floatOffset;
+                portalAlphaOverride = Math.max(0, 1 - ease * 1.3);
+              }
+
               var rawC1 = figureAscended ? 'rgba(255,230,120,0.9)' : figureDamaged ? 'rgba(200,80,80,0.9)' : c1;
               var tr = parseInt(rawC1.replace('rgba(','').split(',')[0],10)||200;
               var tg = parseInt(rawC1.replace('rgba(','').split(',')[1],10)||169;
@@ -1683,13 +1700,13 @@
               }
               ctx2.putImageData(id2, 0, 0);
               ctx.save();
-              if (figureDamaged) {
+              if (figureDamaged && !_vesselEnteringPortal) {
                 ctx.translate(figX + figW * 0.5, figY + figH * 0.9);
                 ctx.rotate(-0.25);
                 ctx.globalAlpha = 0.7;
                 ctx.drawImage(off2, -figW * 0.5, -figH * 0.9, figW, figH);
               } else {
-                ctx.globalAlpha = figureAscended ? 1 : 0.92;
+                ctx.globalAlpha = portalAlphaOverride >= 0 ? portalAlphaOverride : (figureAscended ? 1 : 0.92);
                 ctx.drawImage(off2, figX, figY, figW, figH);
               }
               ctx.restore();
@@ -1724,6 +1741,10 @@
       }
       draw();
     }
+
+    // Portal-entry animation state
+    var _vesselEnteringPortal = false;
+    var _vesselPortalProgress = 0;
 
     function stopGateVessel() {
       if (_vesselRafId) { cancelAnimationFrame(_vesselRafId); _vesselRafId = null; }
@@ -2415,7 +2436,9 @@
         _portalEntering = true;
         _portalEnterStartTime = _portalTime;
 
-        if (vessel) vessel.style.opacity = '0.3';
+        // Start figure shrink + glide animation toward the portal
+        _vesselEnteringPortal = true;
+        _vesselPortalProgress = 0;
 
         setTimeout(function() {
           if (note) note.textContent = 'Entering the threshold...';
@@ -2424,7 +2447,9 @@
         setTimeout(function() {
           if (note) note.textContent = 'Passing through...';
           if (flash) flash.style.opacity = '0.65';
+          // Stop the vessel draw loop after figure has glided away
           stopGateVessel();
+          if (vessel) vessel.style.opacity = '0';
           var avatarKey = (state && state.member && state.member.sl_avatar_key) || (state && state.user && state.user.sl_avatar_key) || '';
           if (avatarKey) {
             fetch('/.netlify/functions/enter-breakthrough', {
@@ -2434,16 +2459,16 @@
               body: JSON.stringify({ sl_avatar_key: avatarKey })
             }).catch(function() {});
           }
-        }, 1800);
+        }, 2200);
 
         setTimeout(function() {
           if (flash) flash.style.opacity = '0';
-        }, 2200);
+        }, 2800);
 
         setTimeout(function() {
           if (note) note.textContent = 'Entering the Breakthrough Chamber...';
           window.location.href = getBreakthroughRoute();
-        }, 2800);
+        }, 3200);
       } catch(e) {
         window.location.href = getBreakthroughRoute();
       }
