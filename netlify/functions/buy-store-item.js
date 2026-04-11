@@ -8,6 +8,39 @@ const supabase = createClient(
 const PARTNERSHIP_TABLE = "cultivation_partnerships";
 const MEMBER_SELECTED_PARTNERSHIPS_TABLE = "member_selected_partnerships";
 
+const COOKIE_NAME = (process.env.SESSION_COOKIE_NAME || "ap_session").trim();
+
+function parseCookies(header) {
+  const cookies = {};
+  if (!header) return cookies;
+  header.split(";").forEach(function(part) {
+    const trimmed = part.trim();
+    const eq = trimmed.indexOf("=");
+    if (eq === -1) return;
+    const key = trimmed.slice(0, eq).trim();
+    const val = trimmed.slice(eq + 1).trim();
+    try { cookies[key] = decodeURIComponent(val); } catch(e) { cookies[key] = val; }
+  });
+  return cookies;
+}
+
+async function resolveSession(event) {
+  const cookieHeader = event.headers?.cookie || event.headers?.Cookie || "";
+  const token = parseCookies(cookieHeader)[COOKIE_NAME] || "";
+  if (!token) return null;
+
+  const { data, error } = await supabase
+    .from("website_sessions")
+    .select("sl_avatar_key, sl_username")
+    .eq("session_token", token)
+    .eq("is_active", true)
+    .limit(1)
+    .maybeSingle();
+
+  if (error || !data) return null;
+  return data;
+}
+
 function buildResponse(statusCode, body) {
   return {
     statusCode,
@@ -1326,8 +1359,16 @@ exports.handler = async (event) => {
     const body = parseBody(event);
     const query = event.queryStringParameters || {};
 
-    const sl_avatar_key = safeText(query.sl_avatar_key || body.sl_avatar_key);
-    const inputUsername = safeLower(query.sl_username || body.sl_username);
+    let sl_avatar_key = safeText(query.sl_avatar_key || body.sl_avatar_key);
+    let inputUsername = safeLower(query.sl_username || body.sl_username);
+
+    if (!sl_avatar_key && !inputUsername) {
+      const session = await resolveSession(event);
+      if (session) {
+        sl_avatar_key = safeText(session.sl_avatar_key);
+        inputUsername = safeLower(session.sl_username);
+      }
+    }
     const item_key = safeText(query.item_key || body.item_key);
     const store_item_id = body.store_item_id || query.store_item_id || null;
 
