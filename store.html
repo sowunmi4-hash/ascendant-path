@@ -1,2529 +1,830 @@
 <!DOCTYPE html>
-<html lang="en" style="--token-crest-url: url('/images/ascension-token-crest.png');">
+<html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Store | The Ascendant Path</title>
-  <link rel="stylesheet" href="/css/style.css" />
-  <style>
-    .store-page {
-      width: min(1240px, calc(100% - 2rem));
-      margin: 1.5rem auto 4rem;
-      display: grid;
-      gap: 1.1rem;
-      position: relative;
-      z-index: 3;
-    }
-
-    .store-header {
-      position: relative;
-      overflow: hidden;
-      min-height: 300px;
-      display: grid;
-      align-content: end;
-      gap: 0.85rem;
-      padding: 1.75rem;
-      border: 1px solid var(--border-soft);
-      box-shadow: var(--shadow-lg);
-      border-radius: 18px;
-      background:
-        linear-gradient(180deg, rgba(7, 10, 18, 0.22), rgba(7, 10, 18, 0.82)),
-        radial-gradient(circle at 18% 20%, rgba(234, 215, 170, 0.08), transparent 24%),
-        radial-gradient(circle at 82% 18%, rgba(111, 151, 255, 0.14), transparent 24%),
-        url("https://images.unsplash.com/photo-1516979187457-637abb4f9353?auto=format&fit=crop&w=1800&q=80")
-          center 46% / cover no-repeat;
-    }
-
-    .store-header::before {
-      content: "";
-      position: absolute;
-      inset: 0;
-      background:
-        linear-gradient(
-          90deg,
-          rgba(6, 9, 16, 0.82) 0%,
-          rgba(6, 9, 16, 0.46) 48%,
-          rgba(6, 9, 16, 0.78) 100%
-        );
-      pointer-events: none;
-    }
-
-    .store-header::after {
-      content: "";
-      position: absolute;
-      right: -20px;
-      top: -25px;
-      width: 340px;
-      height: 340px;
-      background-image: var(--token-crest-url);
-      background-repeat: no-repeat;
-      background-position: center;
-      background-size: contain;
-      opacity: 0.08;
-      pointer-events: none;
-      filter: saturate(1.15);
-    }
-
-    .store-header-main {
-      position: relative;
-      z-index: 1;
-      display: grid;
-      gap: 0.55rem;
-      max-width: 880px;
-    }
-
-    .store-eyebrow {
-      display: inline-block;
-      font-size: 0.78rem;
-      letter-spacing: 0.16em;
-      text-transform: uppercase;
-      color: var(--blue-soft);
-    }
-
-    .store-header h1 {
-      margin: 0;
-      font-size: clamp(2.15rem, 4vw, 3.15rem);
-      line-height: 1.02;
-      color: #ffffff;
-      text-shadow: 0 6px 18px rgba(0, 0, 0, 0.28);
-    }
-
-    .store-session-line,
-    .store-copy {
-      margin: 0;
-      color: rgba(231, 237, 255, 0.84);
-      line-height: 1.6;
-      max-width: 840px;
-    }
-
-    .store-layout {
-      display: grid;
-      grid-template-columns: 330px minmax(0, 1fr);
-      gap: 1rem;
-      align-items: start;
-    }
-
-    .token-shrine,
-    .shrine-selector-shell,
-    .store-controls,
-    .altar-shell,
-    .codex-shell,
-    .store-admin-shell,
-    .management-shell {
-      position: relative;
-      overflow: hidden;
-      padding: 1rem;
-      display: grid;
-      gap: 0.95rem;
-      border: 1px solid rgba(142, 168, 255, 0.14);
-      background:
-        linear-gradient(180deg, rgba(18, 24, 40, 0.94), rgba(10, 15, 28, 0.98)),
-        radial-gradient(circle at center, rgba(47, 85, 188, 0.14), transparent 58%);
-      box-shadow: var(--shadow-lg);
-      clip-path: polygon(
-        18px 0,
-        calc(100% - 18px) 0,
-        100% 18px,
-        100% calc(100% - 18px),
-        calc(100% - 18px) 100%,
-        18px 100%,
-        0 calc(100% - 18px),
-        0 18px
-      );
-    }
-
-    .token-shrine::before,
-    .token-shrine::after,
-    .shrine-selector-shell::before,
-    .store-controls::before,
-    .altar-shell::before,
-    .codex-shell::before,
-    .store-admin-shell::before,
-    .management-shell::before {
-      content: "";
-      position: absolute;
-      width: 170px;
-      height: 170px;
-      border-radius: 50%;
-      pointer-events: none;
-      right: -64px;
-      top: -64px;
-      background: radial-gradient(circle, rgba(142, 168, 255, 0.08), transparent 70%);
-    }
-
-    .token-shrine::after {
-      right: auto;
-      top: auto;
-      left: -64px;
-      bottom: -64px;
-      background: radial-gradient(circle, rgba(234, 215, 170, 0.08), transparent 70%);
-    }
-
-    .panel-header {
-      display: grid;
-      gap: 0.25rem;
-      padding: 0 0.15rem;
-      position: relative;
-      z-index: 1;
-    }
-
-    .panel-header span {
-      font-size: 0.74rem;
-      letter-spacing: 0.14em;
-      text-transform: uppercase;
-      color: var(--blue-soft);
-    }
-
-    .panel-header h2 {
-      margin: 0;
-      font-size: 1.25rem;
-      color: #ffffff;
-    }
-
-    .panel-header p {
-      margin: 0;
-      color: rgba(228, 234, 255, 0.78);
-      line-height: 1.55;
-    }
-
-    .token-crest-wrap {
-      position: relative;
-      z-index: 1;
-      display: grid;
-      justify-items: center;
-      gap: 0.75rem;
-      text-align: center;
-    }
-
-    .token-crest-frame {
-      width: 140px;
-      height: 140px;
-      border-radius: 50%;
-      padding: 10px;
-      display: grid;
-      place-items: center;
-      background:
-        radial-gradient(circle at center, rgba(223, 189, 104, 0.16), rgba(255, 255, 255, 0.02) 65%),
-        linear-gradient(180deg, rgba(24, 20, 10, 0.95), rgba(10, 11, 18, 0.98));
-      border: 1px solid rgba(223, 189, 104, 0.22);
-      box-shadow:
-        0 0 0 1px rgba(223, 189, 104, 0.08),
-        0 0 28px rgba(223, 189, 104, 0.12);
-    }
-
-    .token-crest-frame img {
-      width: 100%;
-      height: 100%;
-      object-fit: contain;
-      display: block;
-      border-radius: 50%;
-    }
-
-    .token-balance-block {
-      display: grid;
-      gap: 0.2rem;
-    }
-
-    .token-balance-block span {
-      font-size: 0.74rem;
-      letter-spacing: 0.12em;
-      text-transform: uppercase;
-      color: rgba(196, 208, 255, 0.72);
-    }
-
-    .token-balance-block strong {
-      font-size: clamp(1.5rem, 3vw, 2rem);
-      color: #ffffff;
-      line-height: 1;
-    }
-
-    .token-summary-grid {
-      position: relative;
-      z-index: 1;
-      display: grid;
-      grid-template-columns: 1fr;
-      gap: 0.75rem;
-    }
-
-    .token-summary-card,
-    .altar-info-card,
-    .altar-side-card,
-    .management-card {
-      position: relative;
-      display: grid;
-      gap: 0.28rem;
-      padding: 0.9rem 0.95rem 0.9rem 1rem;
-      background:
-        linear-gradient(180deg, rgba(18, 24, 40, 0.82), rgba(11, 16, 28, 0.96));
-      border-top: 1px solid rgba(255, 255, 255, 0.07);
-      border-bottom: 1px solid rgba(255, 255, 255, 0.07);
-      box-shadow: 0 16px 42px rgba(0, 0, 0, 0.18);
-    }
-
-    .token-summary-card::before,
-    .altar-info-card::before,
-    .altar-side-card::before,
-    .management-card::before,
-    .altar-price-row::before,
-    .form-group::before {
-      content: "";
-      position: absolute;
-      left: 0;
-      top: 18px;
-      bottom: 18px;
-      width: 2px;
-      background: linear-gradient(180deg, rgba(142, 168, 255, 0.28), rgba(234, 215, 170, 0.16));
-    }
-
-    .token-summary-card span,
-    .altar-info-card span,
-    .altar-side-card span,
-    .management-card span {
-      font-size: 0.7rem;
-      letter-spacing: 0.1em;
-      text-transform: uppercase;
-      color: rgba(196, 208, 255, 0.72);
-      padding-left: 0.3rem;
-    }
-
-    .token-summary-card strong,
-    .altar-info-card strong,
-    .altar-side-card strong,
-    .management-card strong {
-      font-size: 1rem;
-      color: #ffffff;
-      line-height: 1.3;
-      word-break: break-word;
-      padding-left: 0.3rem;
-    }
-
-    .token-actions {
-      position: relative;
-      z-index: 1;
-      display: flex;
-      flex-direction: column;
-      gap: 0.75rem;
-    }
-
-    .token-actions .primary,
-    .token-actions .secondary {
-      justify-content: center;
-      text-align: center;
-    }
-
-    .main-shell {
-      display: grid;
-      gap: 1rem;
-      align-content: start;
-    }
-
-    .shrine-selector-grid {
-      display: grid;
-      grid-template-columns: repeat(2, minmax(0, 1fr));
-      gap: 1rem;
-      position: relative;
-      z-index: 1;
-    }
-
-    .shrine-card {
-      position: relative;
-      overflow: hidden;
-      border: 1px solid rgba(255, 255, 255, 0.08);
-      background:
-        linear-gradient(180deg, rgba(18, 24, 40, 0.82), rgba(11, 16, 28, 0.96));
-      padding: 1rem;
-      display: grid;
-      gap: 0.55rem;
-      text-align: left;
-      cursor: pointer;
-      transition: transform 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease;
-      clip-path: polygon(
-        16px 0,
-        calc(100% - 16px) 0,
-        100% 16px,
-        100% calc(100% - 16px),
-        calc(100% - 16px) 100%,
-        16px 100%,
-        0 calc(100% - 16px),
-        0 16px
-      );
-    }
-
-    .shrine-card:hover {
-      transform: translateY(-2px);
-    }
-
-    .shrine-card.active {
-      border-color: rgba(223, 189, 104, 0.38);
-      box-shadow: 0 0 0 1px rgba(223, 189, 104, 0.08), 0 18px 44px rgba(0, 0, 0, 0.24);
-    }
-
-    .shrine-card h3 {
-      margin: 0;
-      font-size: 1.08rem;
-      color: #ffffff;
-    }
-
-    .shrine-card p {
-      margin: 0;
-      color: rgba(229, 235, 255, 0.8);
-      line-height: 1.5;
-      font-size: 0.95rem;
-    }
-
-    .shrine-meta {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 0.5rem;
-      margin-top: 0.2rem;
-    }
-
-    .shrine-meta span {
-      display: inline-flex;
-      align-items: center;
-      border-radius: 999px;
-      padding: 0.42rem 0.7rem;
-      background: rgba(255, 255, 255, 0.05);
-      border: 1px solid rgba(255, 255, 255, 0.08);
-      color: rgba(241, 245, 255, 0.84);
-      font-size: 0.74rem;
-      letter-spacing: 0.08em;
-      text-transform: uppercase;
-    }
-
-    .store-controls-grid {
-      display: grid;
-      grid-template-columns: repeat(3, minmax(0, 1fr));
-      gap: 1rem;
-      position: relative;
-      z-index: 1;
-    }
-
-    .form-group {
-      position: relative;
-      margin: 0;
-      padding: 0.9rem 0.95rem 0.9rem 1rem;
-      background:
-        linear-gradient(180deg, rgba(18, 24, 40, 0.82), rgba(11, 16, 28, 0.96));
-      border-top: 1px solid rgba(255, 255, 255, 0.07);
-      border-bottom: 1px solid rgba(255, 255, 255, 0.07);
-      box-shadow: 0 16px 42px rgba(0, 0, 0, 0.18);
-    }
-
-    .form-group label {
-      display: block;
-      margin-bottom: 0.45rem;
-    }
-
-    .altar-layout,
-    .management-layout {
-      display: grid;
-      grid-template-columns: minmax(0, 1.2fr) 320px;
-      gap: 1rem;
-      align-items: start;
-    }
-
-    .altar-main,
-    .management-main {
-      display: grid;
-      gap: 1rem;
-      align-content: start;
-    }
-
-    .altar-main h3,
-    .management-main h3 {
-      margin: 0;
-      font-size: clamp(1.3rem, 2vw, 1.75rem);
-      line-height: 1.2;
-      color: #ffffff;
-    }
-
-    .altar-badge,
-    .management-badge {
-      display: inline-flex;
-      align-items: center;
-      width: fit-content;
-      border-radius: 999px;
-      padding: 0.55rem 0.8rem;
-      background: rgba(255, 255, 255, 0.06);
-      border: 1px solid rgba(255, 255, 255, 0.08);
-      color: #f2f5ff;
-      font-size: 0.8rem;
-      letter-spacing: 0.08em;
-      text-transform: uppercase;
-    }
-
-    .altar-copy,
-    .management-copy {
-      margin: 0;
-      color: rgba(229, 235, 255, 0.84);
-      line-height: 1.6;
-    }
-
-    .altar-price-row {
-      position: relative;
-      display: flex;
-      align-items: center;
-      gap: 0.9rem;
-      padding: 0.95rem 1rem 0.95rem 1.1rem;
-      background:
-        linear-gradient(180deg, rgba(18, 24, 40, 0.82), rgba(11, 16, 28, 0.96));
-      border-top: 1px solid rgba(255, 255, 255, 0.07);
-      border-bottom: 1px solid rgba(255, 255, 255, 0.07);
-      box-shadow: 0 16px 42px rgba(0, 0, 0, 0.18);
-    }
-
-    .price-crest {
-      width: 54px;
-      height: 54px;
-      border-radius: 50%;
-      padding: 6px;
-      flex: 0 0 auto;
-      display: grid;
-      place-items: center;
-      background:
-        radial-gradient(circle at center, rgba(223, 189, 104, 0.16), rgba(255, 255, 255, 0.02) 65%),
-        linear-gradient(180deg, rgba(24, 20, 10, 0.95), rgba(10, 11, 18, 0.98));
-      border: 1px solid rgba(223, 189, 104, 0.22);
-    }
-
-    .price-crest img {
-      width: 100%;
-      height: 100%;
-      object-fit: contain;
-      display: block;
-      border-radius: 50%;
-    }
-
-    .altar-price-copy {
-      display: grid;
-      gap: 0.18rem;
-    }
-
-    .altar-price-copy span {
-      font-size: 0.72rem;
-      letter-spacing: 0.1em;
-      text-transform: uppercase;
-      color: rgba(196, 208, 255, 0.72);
-      padding-left: 0.2rem;
-    }
-
-    .altar-price-copy strong {
-      font-size: 1.2rem;
-      color: #ffffff;
-      line-height: 1.15;
-      padding-left: 0.2rem;
-    }
-
-    .altar-info-grid {
-      display: grid;
-      grid-template-columns: repeat(2, minmax(0, 1fr));
-      gap: 0.75rem;
-    }
-
-    .altar-note,
-    .management-note {
-      margin: 0;
-      padding: 0.95rem 1rem;
-      line-height: 1.55;
-      font-size: 0.94rem;
-      border-top: 1px solid rgba(255, 255, 255, 0.06);
-      border-bottom: 1px solid rgba(255, 255, 255, 0.06);
-    }
-
-    .altar-note.ready,
-    .management-note.ready {
-      background: rgba(104, 201, 126, 0.08);
-      border-color: rgba(104, 201, 126, 0.18);
-    }
-
-    .altar-note.shortfall {
-      background: rgba(137, 92, 255, 0.08);
-      border-color: rgba(137, 92, 255, 0.18);
-    }
-
-    .altar-note.owned {
-      background: rgba(110, 190, 255, 0.08);
-      border-color: rgba(110, 190, 255, 0.18);
-    }
-
-    .altar-note.waiting {
-      background: rgba(255, 196, 87, 0.08);
-      border-color: rgba(255, 196, 87, 0.22);
-    }
-
-    .altar-note.locked,
-    .altar-note.empty,
-    .management-note.empty {
-      background: rgba(255, 255, 255, 0.04);
-      border-color: rgba(255, 255, 255, 0.08);
-    }
-
-    .altar-side,
-    .management-side {
-      display: grid;
-      gap: 0.75rem;
-      align-content: start;
-    }
-
-    .altar-actions {
-      display: flex;
-      gap: 0.75rem;
-      flex-wrap: wrap;
-    }
-
-    .altar-actions .primary,
-    .altar-actions .secondary,
-    .altar-actions .login-submit {
-      flex: 1 1 180px;
-      justify-content: center;
-      text-align: center;
-    }
-
-    .codex-shelf-wrap {
-      position: relative;
-      z-index: 1;
-      display: grid;
-      gap: 0.9rem;
-    }
-
-    .codex-shelf {
-      display: flex;
-      align-items: end;
-      gap: 0.8rem;
-      overflow-x: auto;
-      padding: 0.4rem 0.1rem 0.8rem;
-      min-height: 330px;
-    }
-
-    .codex-shelf::after {
-      content: "";
-      min-width: 0.1rem;
-    }
-
-    .codex-shelf-base {
-      height: 10px;
-      border-radius: 999px;
-      background: linear-gradient(
-        90deg,
-        rgba(223, 189, 104, 0.12),
-        rgba(223, 189, 104, 0.35),
-        rgba(223, 189, 104, 0.12)
-      );
-      box-shadow: 0 6px 18px rgba(0, 0, 0, 0.22);
-    }
-
-    .codex-spine {
-      position: relative;
-      width: 92px;
-      min-width: 92px;
-      height: 280px;
-      border: 0;
-      padding: 0;
-      background: transparent;
-      cursor: pointer;
-      display: flex;
-      align-items: stretch;
-      justify-content: center;
-      transition: transform 0.2s ease, opacity 0.2s ease;
-    }
-
-    .codex-spine:hover {
-      transform: translateY(-4px);
-    }
-
-    .codex-spine[disabled] {
-      cursor: default;
-    }
-
-    .codex-spine.filtered-out {
-      opacity: 0.3;
-    }
-
-    .codex-spine-inner {
-      position: relative;
-      width: 100%;
-      height: 100%;
-      border: 1px solid rgba(255, 255, 255, 0.08);
-      background:
-        linear-gradient(180deg, rgba(18, 24, 40, 0.98), rgba(11, 16, 28, 0.98));
-      box-shadow:
-        inset 0 0 0 1px rgba(255, 255, 255, 0.02),
-        0 18px 36px rgba(0, 0, 0, 0.24);
-      clip-path: polygon(
-        12px 0,
-        calc(100% - 12px) 0,
-        100% 12px,
-        100% calc(100% - 12px),
-        calc(100% - 12px) 100%,
-        12px 100%,
-        0 calc(100% - 12px),
-        0 12px
-      );
-      overflow: hidden;
-      display: grid;
-      grid-template-rows: auto 1fr auto;
-      padding: 0.55rem 0.45rem;
-    }
-
-    .codex-spine.selected .codex-spine-inner {
-      border-color: rgba(223, 189, 104, 0.42);
-      box-shadow:
-        inset 0 0 0 1px rgba(223, 189, 104, 0.08),
-        0 20px 40px rgba(0, 0, 0, 0.26),
-        0 0 18px rgba(223, 189, 104, 0.12);
-    }
-
-    .codex-spine.owned .codex-spine-inner,
-    .codex-spine.unlocked .codex-spine-inner {
-      border-color: rgba(110, 190, 255, 0.26);
-    }
-
-    .codex-spine.available .codex-spine-inner,
-    .codex-spine.affordable .codex-spine-inner {
-      border-color: rgba(104, 201, 126, 0.24);
-    }
-
-    .codex-spine.waiting .codex-spine-inner {
-      border-color: rgba(255, 196, 87, 0.28);
-    }
-
-    .codex-spine.out_of_stock .codex-spine-inner,
-    .codex-spine.locked .codex-spine-inner {
-      opacity: 0.9;
-    }
-
-    .codex-spine-seal {
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      height: 34px;
-    }
-
-    .codex-spine-seal span {
-      width: 18px;
-      height: 18px;
-      border-radius: 50%;
-      display: inline-block;
-      border: 2px solid rgba(170, 188, 255, 0.42);
-      background: rgba(14, 18, 32, 0.96);
-      box-shadow: 0 0 0 6px rgba(255, 255, 255, 0.02);
-    }
-
-    .codex-spine.selected .codex-spine-seal span {
-      border-color: rgba(223, 189, 104, 0.96);
-      box-shadow: 0 0 0 6px rgba(223, 189, 104, 0.08), 0 0 18px rgba(223, 189, 104, 0.24);
-    }
-
-    .codex-spine.owned .codex-spine-seal span,
-    .codex-spine.unlocked .codex-spine-seal span {
-      border-color: rgba(110, 190, 255, 0.92);
-      box-shadow: 0 0 0 6px rgba(110, 190, 255, 0.08), 0 0 14px rgba(110, 190, 255, 0.18);
-    }
-
-    .codex-spine.available .codex-spine-seal span,
-    .codex-spine.affordable .codex-spine-seal span {
-      border-color: rgba(120, 211, 141, 0.82);
-      box-shadow: 0 0 0 6px rgba(120, 211, 141, 0.08), 0 0 14px rgba(120, 211, 141, 0.18);
-    }
-
-    .codex-spine.waiting .codex-spine-seal span {
-      border-color: rgba(255, 196, 87, 0.92);
-      box-shadow: 0 0 0 6px rgba(255, 196, 87, 0.08), 0 0 14px rgba(255, 196, 87, 0.18);
-    }
-
-    .codex-spine-label {
-      display: grid;
-      justify-items: center;
-      align-content: center;
-      gap: 0.45rem;
-      min-height: 0;
-    }
-
-    .codex-spine-volume {
-      font-size: 0.78rem;
-      letter-spacing: 0.12em;
-      text-transform: uppercase;
-      color: rgba(198, 209, 255, 0.72);
-    }
-
-    .codex-spine-title {
-      writing-mode: vertical-rl;
-      transform: rotate(180deg);
-      text-align: center;
-      font-size: 0.9rem;
-      line-height: 1.15;
-      color: #ffffff;
-      letter-spacing: 0.06em;
-      max-height: 150px;
-      overflow: hidden;
-    }
-
-    .codex-spine-meta {
-      display: grid;
-      gap: 0.35rem;
-      justify-items: center;
-    }
-
-    .codex-chip {
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      padding: 0.3rem 0.42rem;
-      border-radius: 999px;
-      background: rgba(255, 255, 255, 0.05);
-      border: 1px solid rgba(255, 255, 255, 0.08);
-      color: rgba(241, 245, 255, 0.84);
-      font-size: 0.62rem;
-      letter-spacing: 0.08em;
-      text-transform: uppercase;
-      max-width: 78px;
-      text-align: center;
-      line-height: 1.15;
-    }
-
-    .codex-spine.owned .codex-chip.state,
-    .codex-spine.unlocked .codex-chip.state {
-      border-color: rgba(110, 190, 255, 0.24);
-      background: rgba(110, 190, 255, 0.08);
-    }
-
-    .codex-spine.available .codex-chip.state,
-    .codex-spine.affordable .codex-chip.state {
-      border-color: rgba(104, 201, 126, 0.22);
-      background: rgba(104, 201, 126, 0.08);
-    }
-
-    .codex-spine.waiting .codex-chip.state {
-      border-color: rgba(255, 196, 87, 0.24);
-      background: rgba(255, 196, 87, 0.08);
-    }
-
-    .store-admin-header {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 1rem;
-      flex-wrap: wrap;
-      padding: 0 0.15rem;
-      position: relative;
-      z-index: 1;
-    }
-
-    .store-admin-toggle {
-      min-width: 180px;
-    }
-
-    .management-form {
-      display: grid;
-      gap: 1rem;
-    }
-
-    .management-form .login-submit {
-      justify-content: center;
-    }
-
-    .login-error {
-      margin: 0;
-      padding: 0.85rem 1rem;
-      border-top: 1px solid rgba(218, 114, 114, 0.38);
-      border-bottom: 1px solid rgba(218, 114, 114, 0.22);
-      background: linear-gradient(180deg, rgba(90, 22, 22, 0.26), rgba(52, 14, 14, 0.18));
-      color: rgba(255, 222, 222, 0.92);
-      line-height: 1.55;
-    }
-
-    @media (max-width: 980px) {
-      .store-layout,
-      .altar-layout,
-      .management-layout,
-      .store-controls-grid {
-        grid-template-columns: 1fr;
-      }
-
-      .altar-info-grid {
-        grid-template-columns: 1fr 1fr;
-      }
-
-      .token-actions {
-        flex-direction: row;
-        flex-wrap: wrap;
-      }
-
-      .token-actions .primary,
-      .token-actions .secondary {
-        flex: 1 1 180px;
-      }
-    }
-
-    @media (max-width: 720px) {
-      .store-page {
-        width: min(100% - 1rem, 1240px);
-        margin-top: 1rem;
-      }
-
-      .store-header {
-        min-height: 250px;
-        padding: 1.2rem 1rem;
-        border-radius: 14px;
-      }
-
-      .token-shrine,
-      .shrine-selector-shell,
-      .store-controls,
-      .altar-shell,
-      .codex-shell,
-      .store-admin-shell,
-      .management-shell {
-        padding: 1rem;
-      }
-
-      .shrine-selector-grid,
-      .store-controls-grid,
-      .altar-info-grid {
-        grid-template-columns: 1fr;
-      }
-
-      .altar-actions,
-      .token-actions {
-        flex-direction: column;
-      }
-
-      .codex-spine {
-        width: 84px;
-        min-width: 84px;
-        height: 250px;
-      }
-
-      .codex-spine-title {
-        max-height: 130px;
-      }
-    }
-  </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Sacred Treasury | The Ascendant Path</title>
+<link rel="stylesheet" href="/css/style.css" />
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@400;500;600&family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400&display=swap');
+:root {
+  --bg-void: #060608;
+  --bg-deep: #0a0a10;
+  --bg-surface: #0e0e16;
+  --bg-card: #111119;
+  --bg-card-hover: #15151f;
+  --bg-elevated: #1a1a24;
+  --gold: #c8a96a;
+  --gold-dim: #a08548;
+  --gold-bright: #e8cc8a;
+  --gold-bg: #c8a96a0a;
+  --gold-border: #c8a96a1a;
+  --gold-glow: #c8a96a22;
+  --text-primary: #d4cebf;
+  --text-secondary: #8a8478;
+  --text-dim: #555044;
+  --text-faint: #333028;
+  --border: #1a1a22;
+  --border-hover: #2a2a33;
+  --cat-cultivation: #5a9acc;
+  --cat-bond: #cc6699;
+  --cat-seeds: #55bb66;
+  --cat-spells: #aa77dd;
+  --cat-alchemy: #dd9944;
+  --cat-materials: #88aacc;
+  --cat-weapons: #cc5555;
+  --cat-other: #999977;
+  --font-display: 'Cinzel', serif;
+  --font-body: 'Cormorant Garamond', serif;
+  --font-ui: system-ui, -apple-system, sans-serif;
+  --radius-sm: 6px;
+  --radius-md: 10px;
+  --radius-lg: 14px;
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body {
+  background: var(--bg-void);
+  color: var(--text-primary);
+  font-family: var(--font-body);
+  font-size: 16px;
+  line-height: 1.6;
+  min-height: 100vh;
+}
+/* HEADER */
+.store-header {
+  position: sticky;
+  top: 0;
+  z-index: 50;
+  background: var(--bg-void);
+  border-bottom: 0.5px solid var(--gold-border);
+}
+.store-header-inner {
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 16px 24px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.store-brand {
+  display: flex;
+  align-items: baseline;
+  gap: 10px;
+}
+.store-brand-title {
+  font-family: var(--font-display);
+  font-size: 18px;
+  font-weight: 500;
+  color: var(--gold);
+  letter-spacing: 2px;
+}
+.store-brand-sub {
+  font-family: var(--font-body);
+  font-size: 13px;
+  color: var(--text-dim);
+  font-style: italic;
+}
+.token-display {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.token-badge {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: var(--gold-bg);
+  border: 0.5px solid var(--gold-border);
+  border-radius: 24px;
+  padding: 6px 16px 6px 8px;
+}
+.token-icon {
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  background: var(--gold-border);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.token-icon svg {
+  width: 14px;
+  height: 14px;
+}
+.token-amount {
+  font-family: var(--font-display);
+  font-size: 15px;
+  font-weight: 500;
+  color: var(--gold);
+}
+.token-label {
+  font-size: 11px;
+  color: var(--text-dim);
+  font-family: var(--font-ui);
+}
+/* TABS */
+.store-tabs-wrap {
+  background: var(--bg-deep);
+  border-bottom: 0.5px solid var(--border);
+  position: sticky;
+  top: 56px;
+  z-index: 40;
+}
+.store-tabs {
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 0 24px;
+  display: flex;
+  gap: 0;
+  overflow-x: auto;
+  scrollbar-width: none;
+}
+.store-tabs::-webkit-scrollbar { display: none; }
+.store-tab {
+  padding: 14px 20px;
+  font-family: var(--font-display);
+  font-size: 12px;
+  font-weight: 400;
+  letter-spacing: 1.5px;
+  color: var(--text-dim);
+  cursor: pointer;
+  border-bottom: 2px solid transparent;
+  white-space: nowrap;
+  transition: color 0.25s, border-color 0.25s;
+  user-select: none;
+}
+.store-tab:hover {
+  color: var(--text-secondary);
+}
+.store-tab.active {
+  color: var(--gold);
+  border-bottom-color: var(--gold);
+}
+.store-tab .tab-count {
+  font-family: var(--font-ui);
+  font-size: 10px;
+  color: var(--text-faint);
+  margin-left: 5px;
+}
+.store-tab.active .tab-count {
+  color: var(--gold-dim);
+}
+/* SEARCH + FILTER BAR */
+.store-toolbar {
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 20px 24px 8px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+.search-wrap {
+  flex: 1;
+  position: relative;
+}
+.search-wrap input {
+  width: 100%;
+  background: var(--bg-surface);
+  border: 0.5px solid var(--border);
+  border-radius: var(--radius-md);
+  padding: 10px 14px 10px 38px;
+  color: var(--text-primary);
+  font-family: var(--font-body);
+  font-size: 14px;
+  outline: none;
+  transition: border-color 0.2s;
+}
+.search-wrap input::placeholder {
+  color: var(--text-dim);
+  font-style: italic;
+}
+.search-wrap input:focus {
+  border-color: var(--gold-border);
+}
+.search-icon {
+  position: absolute;
+  left: 13px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: var(--text-dim);
+  font-size: 14px;
+  pointer-events: none;
+}
+.sort-select {
+  background: var(--bg-surface);
+  border: 0.5px solid var(--border);
+  border-radius: var(--radius-md);
+  padding: 10px 14px;
+  color: var(--text-secondary);
+  font-family: var(--font-body);
+  font-size: 13px;
+  outline: none;
+  cursor: pointer;
+}
+/* ITEM GRID */
+.store-body {
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 16px 24px 60px;
+}
+.item-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+  gap: 14px;
+}
+.item-card {
+  background: var(--bg-card);
+  border: 0.5px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: 18px;
+  cursor: pointer;
+  transition: border-color 0.25s, transform 0.2s, background 0.25s;
+  display: flex;
+  flex-direction: column;
+}
+.item-card:hover {
+  border-color: var(--border-hover);
+  background: var(--bg-card-hover);
+  transform: translateY(-2px);
+}
+.card-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 10px;
+}
+.cat-tag {
+  font-family: var(--font-ui);
+  font-size: 10px;
+  font-weight: 500;
+  letter-spacing: 0.8px;
+  text-transform: uppercase;
+  padding: 3px 10px;
+  border-radius: 12px;
+}
+.cat-tag[data-cat="cultivation"] { color: var(--cat-cultivation); background: #5a9acc12; border: 0.5px solid #5a9acc22; }
+.cat-tag[data-cat="bond"]       { color: var(--cat-bond); background: #cc669912; border: 0.5px solid #cc669922; }
+.cat-tag[data-cat="seeds"]      { color: var(--cat-seeds); background: #55bb6612; border: 0.5px solid #55bb6622; }
+.cat-tag[data-cat="spells"]     { color: var(--cat-spells); background: #aa77dd12; border: 0.5px solid #aa77dd22; }
+.cat-tag[data-cat="alchemy"]    { color: var(--cat-alchemy); background: #dd994412; border: 0.5px solid #dd994422; }
+.cat-tag[data-cat="materials"]  { color: var(--cat-materials); background: #88aacc12; border: 0.5px solid #88aacc22; }
+.cat-tag[data-cat="weapons"]    { color: var(--cat-weapons); background: #cc555512; border: 0.5px solid #cc555522; }
+.card-badge {
+  font-family: var(--font-ui);
+  font-size: 10px;
+  font-weight: 500;
+  padding: 3px 10px;
+  border-radius: 12px;
+}
+.badge-owned { color: #55bb66; background: #55bb6612; border: 0.5px solid #55bb6622; }
+.badge-sold  { color: #cc4444; background: #cc444412; border: 0.5px solid #cc444422; }
+.badge-new   { color: var(--gold); background: var(--gold-bg); border: 0.5px solid var(--gold-border); }
+.card-name {
+  font-family: var(--font-display);
+  font-size: 14px;
+  font-weight: 400;
+  color: #ddd5c8;
+  letter-spacing: 0.5px;
+  margin-bottom: 6px;
+}
+.card-desc {
+  font-family: var(--font-body);
+  font-size: 13px;
+  color: var(--text-secondary);
+  line-height: 1.45;
+  margin-bottom: 14px;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  flex: 1;
+}
+.card-bottom {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding-top: 12px;
+  border-top: 0.5px solid var(--border);
+}
+.card-price {
+  font-family: var(--font-display);
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--gold);
+  letter-spacing: 0.5px;
+}
+.card-stock {
+  font-family: var(--font-ui);
+  font-size: 11px;
+  color: var(--text-dim);
+}
+/* EMPTY STATE */
+.empty-state {
+  grid-column: 1 / -1;
+  text-align: center;
+  padding: 60px 20px;
+}
+.empty-state-icon {
+  font-size: 32px;
+  color: var(--text-faint);
+  margin-bottom: 12px;
+}
+.empty-state-text {
+  font-family: var(--font-body);
+  font-size: 16px;
+  color: var(--text-dim);
+  font-style: italic;
+}
+.empty-state-sub {
+  font-family: var(--font-ui);
+  font-size: 12px;
+  color: var(--text-faint);
+  margin-top: 6px;
+}
+/* DETAIL PANEL (OVERLAY) */
+.detail-overlay {
+  display: none;
+  position: fixed;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background: rgba(4,4,8,0.88);
+  z-index: 100;
+  overflow-y: auto;
+  padding: 40px 20px;
+}
+.detail-overlay.open { display: block; }
+.detail-panel {
+  max-width: 480px;
+  margin: 0 auto;
+  background: var(--bg-surface);
+  border: 0.5px solid var(--gold-border);
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+}
+.detail-panel-header {
+  padding: 24px 24px 16px;
+  border-bottom: 0.5px solid var(--border);
+}
+.detail-close {
+  float: right;
+  cursor: pointer;
+  color: var(--text-dim);
+  font-size: 22px;
+  line-height: 1;
+  padding: 2px 6px;
+  border-radius: 4px;
+  transition: color 0.2s;
+}
+.detail-close:hover { color: var(--gold); }
+.detail-cat {
+  margin-bottom: 10px;
+}
+.detail-name {
+  font-family: var(--font-display);
+  font-size: 20px;
+  font-weight: 500;
+  color: #ddd5c8;
+  letter-spacing: 0.5px;
+  margin-bottom: 8px;
+}
+.detail-desc {
+  font-family: var(--font-body);
+  font-size: 15px;
+  color: var(--text-secondary);
+  line-height: 1.55;
+}
+.detail-panel-body {
+  padding: 20px 24px 24px;
+}
+.detail-stats {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+  margin-bottom: 20px;
+}
+.detail-stat {
+  background: var(--bg-card);
+  border-radius: var(--radius-md);
+  padding: 12px 14px;
+}
+.detail-stat-label {
+  font-family: var(--font-ui);
+  font-size: 11px;
+  color: var(--text-dim);
+  margin-bottom: 3px;
+}
+.detail-stat-value {
+  font-family: var(--font-display);
+  font-size: 16px;
+  font-weight: 500;
+  color: var(--gold);
+}
+.detail-stat-value.negative { color: #cc4444; }
+.detail-stat-value.positive { color: #55bb66; }
+.detail-note {
+  font-family: var(--font-body);
+  font-size: 13px;
+  color: var(--text-dim);
+  font-style: italic;
+  margin-bottom: 16px;
+  padding: 10px 14px;
+  background: var(--bg-card);
+  border-radius: var(--radius-sm);
+  border-left: 2px solid var(--gold-border);
+}
+.detail-buy-btn {
+  width: 100%;
+  padding: 14px;
+  background: var(--gold);
+  color: var(--bg-void);
+  border: none;
+  border-radius: var(--radius-md);
+  font-family: var(--font-display);
+  font-size: 14px;
+  font-weight: 500;
+  letter-spacing: 1px;
+  cursor: pointer;
+  transition: opacity 0.2s, transform 0.1s;
+}
+.detail-buy-btn:hover { opacity: 0.92; }
+.detail-buy-btn:active { transform: scale(0.98); }
+.detail-buy-btn:disabled {
+  background: var(--bg-elevated);
+  color: var(--text-dim);
+  cursor: not-allowed;
+}
+/* RESPONSIVE */
+@media (max-width: 768px) {
+  .store-header-inner { padding: 12px 16px; }
+  .store-brand-sub { display: none; }
+  .store-tabs { padding: 0 16px; }
+  .store-tab { padding: 12px 14px; font-size: 11px; }
+  .store-toolbar { padding: 16px 16px 6px; flex-direction: column; }
+  .search-wrap { width: 100%; }
+  .sort-select { width: 100%; }
+  .store-body { padding: 12px 16px 60px; }
+  .item-grid { grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); gap: 10px; }
+  .item-card { padding: 14px; }
+  .card-name { font-size: 13px; }
+  .detail-overlay { padding: 20px 12px; }
+}
+@media (max-width: 420px) {
+  .item-grid { grid-template-columns: 1fr; }
+}
+</style>
 </head>
 <body>
-  <div class="cloud-layer"></div>
-  <div class="rune-layer"></div>
-  <div class="lightning-flash"></div>
-
-  <nav>
-    <a href="/index.html">Home</a>
-    <a href="/lore.html">Lore</a>
-    <a href="/dashboard.html">Dashboard</a>
-    <a href="/store.html" class="active">Store</a>
-    <a href="/library.html">Library</a>
-    <a href="/index.html" id="logout-button">Logout</a>
-  </nav>
-
-  <main class="store-page">
-    <section class="store-header">
-      <div class="store-header-main">
-        <span class="store-eyebrow">Sacred Exchange</span>
-        <h1>The Altar of Exchange</h1>
-        <p class="store-session-line" id="session-line">Loading archive access...</p>
-        <p class="store-copy" id="store-copy">
-          Choose between the Cultivation Shrine and the Bond Shrine. Personal scripture and shared sacred volumes now pass through one consecrated exchange.
-        </p>
+<!-- HEADER -->
+<header class="store-header">
+  <div class="store-header-inner">
+    <div class="store-brand">
+      <span class="store-brand-title">SACRED TREASURY</span>
+      <span class="store-brand-sub">The Ascendant Path</span>
+    </div>
+    <div class="token-display">
+      <div class="token-badge">
+        <div class="token-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <circle cx="12" cy="12" r="9" stroke="#c8a96a"/>
+            <path d="M12 7v10M9 12h6" stroke="#c8a96a" stroke-width="1.5"/>
+          </svg>
+        </div>
+        <span class="token-amount" id="token-balance">0</span>
       </div>
-    </section>
-
-    <p id="page-message" class="summary is-hidden"></p>
-
-    <section class="store-layout">
-      <aside class="token-shrine">
-        <div class="panel-header">
-          <span>Token Shrine</span>
-          <h2>Ascension Treasury</h2>
-          <p>The seal and balance that govern every scripture offering.</p>
-        </div>
-
-        <div class="token-crest-wrap">
-          <div class="token-crest-frame">
-            <img src="/images/ascension-token-crest.png" alt="Ascension Tokens crest" />
-          </div>
-
-          <div class="token-balance-block">
-            <span>Ascension Tokens</span>
-            <strong id="token-balance">0</strong>
-          </div>
-        </div>
-
-        <div class="token-summary-grid">
-          <div class="token-summary-card">
-            <span>Active Shrine</span>
-            <strong id="active-shrine-label">Cultivation</strong>
-          </div>
-
-          <div class="token-summary-card">
-            <span>Visible Volumes</span>
-            <strong id="visible-volumes">0</strong>
-          </div>
-
-          <div class="token-summary-card">
-            <span>Owned / Unlocked</span>
-            <strong id="owned-volumes">0</strong>
-          </div>
-
-          <div class="token-summary-card">
-            <span>Store View</span>
-            <strong id="viewer-mode">Loading...</strong>
-          </div>
-        </div>
-
-        <div class="token-actions">
-          <a href="/library.html" class="primary">Open My Library</a>
-          <a href="/dashboard.html" class="secondary">Return to Dashboard</a>
-        </div>
-      </aside>
-
-      <section class="main-shell">
-        <section class="shrine-selector-shell">
-          <div class="panel-header">
-            <span>Shrine Gateways</span>
-            <h2>Choose Your Path</h2>
-            <p>Select the shrine that will open on the altar below.</p>
-          </div>
-
-          <div class="shrine-selector-grid">
-            <button type="button" class="shrine-card active" id="cultivation-shrine-card" data-category="cultivation">
-              <h3>Cultivation Shrine</h3>
-              <p>Personal scripture for canon realm progression, volume ownership, and private comprehension.</p>
-              <div class="shrine-meta">
-                <span id="cultivation-count">0 Volumes</span>
-                <span>Solo Path</span>
-              </div>
-            </button>
-
-            <button type="button" class="shrine-card" id="bond-shrine-card" data-category="bond">
-              <h3>Bond Shrine</h3>
-              <p>Shared sacred volumes for partnered offering, dual payment, and intimate bond progression.</p>
-              <div class="shrine-meta">
-                <span id="bond-count">0 Volumes</span>
-                <span>Shared Path</span>
-              </div>
-            </button>
-          </div>
-        </section>
-
-        <section class="store-controls">
-          <div class="panel-header">
-            <span>Altar Controls</span>
-            <h2>Refine the Shrine View</h2>
-            <p>Search, filter, and sort the volumes currently passing through the chosen shrine.</p>
-          </div>
-
-          <div class="store-controls-grid">
-            <div class="form-group">
-              <label for="store-search">Search Volumes</label>
-              <input
-                id="store-search"
-                type="text"
-                placeholder="Search by name, realm, or bond volume"
-                autocomplete="off"
-              />
-            </div>
-
-            <div class="form-group">
-              <label for="store-filter">Filter Status</label>
-              <select id="store-filter" class="store-select">
-                <option value="all">All Volumes</option>
-                <option value="available">Available to Purchase</option>
-                <option value="affordable">Affordable Now</option>
-                <option value="owned">Owned / Unlocked</option>
-                <option value="waiting">Waiting State</option>
-                <option value="out_of_stock">Out of Stock</option>
-              </select>
-            </div>
-
-            <div class="form-group">
-              <label for="store-sort">Sort By</label>
-              <select id="store-sort" class="store-select">
-                <option value="volume_asc">Volume Number (Ascending)</option>
-                <option value="volume_desc">Volume Number (Descending)</option>
-                <option value="price_asc">Price (Low to High)</option>
-                <option value="price_desc">Price (High to Low)</option>
-                <option value="name_asc">Name (A–Z)</option>
-              </select>
-            </div>
-          </div>
-        </section>
-
-        <section class="altar-shell">
-          <div class="panel-header">
-            <span>Active Altar</span>
-            <h2 id="altar-title-label">Selected Volume</h2>
-            <p id="altar-subcopy">The chosen shrine volume appears here in full.</p>
-          </div>
-
-          <div id="active-altar" class="altar-layout"></div>
-        </section>
-
-        <section class="codex-shell">
-          <div class="panel-header">
-            <span>Codex Shelf</span>
-            <h2 id="codex-title-label">Current Shrine Shelf</h2>
-            <p id="codex-subcopy">Choose a sacred spine below to raise that volume onto the altar.</p>
-          </div>
-
-          <div class="codex-shelf-wrap">
-            <div id="codex-shelf" class="codex-shelf"></div>
-            <div class="codex-shelf-base"></div>
-          </div>
-        </section>
-      </section>
-    </section>
-
-    <section class="store-admin-shell is-hidden" id="admin-panel">
-      <div class="store-admin-header">
-        <div class="panel-header">
-          <span>Store Management</span>
-          <h2>Archive Supply Control</h2>
-          <p>Restock the volume currently resting on the altar. Works for both Cultivation and Bond.</p>
-        </div>
-
-        <button
-          id="admin-toggle-button"
-          type="button"
-          class="secondary store-admin-toggle"
-        >
-          Hide Admin Panel
-        </button>
-      </div>
-
-      <div id="admin-panel-body" style="display: block;">
-        <section class="management-shell">
-          <div class="panel-header">
-            <span>Management Chamber</span>
-            <h2>Restock Selected Volume</h2>
-            <p>The current altar selection becomes the active management target.</p>
-          </div>
-
-          <div id="management-chamber-content" class="management-layout"></div>
-        </section>
-      </div>
-    </section>
-  </main>
-
-  <footer>
-    The Ascendant Path • Sacred Exchange • Cultivation and Bond under one altar
-  </footer>
-
-  <script>
-    const LOGIN_PAGE_URL = "/login.html";
-    const VERIFY_SESSION_URL = "/.netlify/functions/verify-session";
-    const LOGOUT_URL = "/.netlify/functions/logout";
-    const CURRENCY_NAME = "Ascension Tokens";
-
-    const REALM_SEQUENCE = [
-      "Mortal Realm",
-      "Qi Gathering Realm",
-      "Foundation Realm",
-      "Core Formation Realm",
-      "Nascent Soul Realm",
-      "Soul Transformation Realm",
-      "Void Refinement Realm",
-      "Body Integration Realm",
-      "Mahayana Realm",
-      "Tribulation Realm"
-    ];
-
-    const REALM_DISPLAY_MAP = {
-      mortal: "Mortal Realm",
-      "mortal realm": "Mortal Realm",
-      "qi gathering": "Qi Gathering Realm",
-      "qi gathering realm": "Qi Gathering Realm",
-      foundation: "Foundation Realm",
-      "foundation realm": "Foundation Realm",
-      "core formation": "Core Formation Realm",
-      "core formation realm": "Core Formation Realm",
-      "nascent soul": "Nascent Soul Realm",
-      "nascent soul realm": "Nascent Soul Realm",
-      "soul transformation": "Soul Transformation Realm",
-      "soul transformation realm": "Soul Transformation Realm",
-      "void refinement": "Void Refinement Realm",
-      "void refinement realm": "Void Refinement Realm",
-      "body integration": "Body Integration Realm",
-      "body integration realm": "Body Integration Realm",
-      mahayana: "Mahayana Realm",
-      "mahayana realm": "Mahayana Realm",
-      tribulation: "Tribulation Realm",
-      "tribulation realm": "Tribulation Realm"
-    };
-
-    const state = {
-      session: null,
-      activeCategory: "cultivation",
-      items: [],
-      cultivationItems: [],
-      bondItems: [],
-      filteredItems: [],
-      isAdmin: false,
-      adminOpen: true,
-      selectedByCategory: {
-        cultivation: "",
-        bond: ""
-      },
-      wallet: {
-        currency_name: CURRENCY_NAME,
-        ascension_tokens_balance: 0,
-        wallet_found: false
-      },
-      userContext: {
-        has_active_partnership: false,
-        partnership_uuid: null,
-        legacy_partnership_id: null,
-        buyer_role: null,
-        partnership_source: null
-      }
-    };
-
-    function safeText(value, fallback = "") {
-      const text = String(value ?? "").trim();
-      return text || fallback;
-    }
-
-    function safeLower(value) {
-      return safeText(value).toLowerCase();
-    }
-
-    function safeNumber(value, fallback = 0) {
-      const num = Number(value);
-      return Number.isFinite(num) ? num : fallback;
-    }
-
-    function formatNumber(value) {
-      return safeNumber(value, 0).toLocaleString();
-    }
-
-    function escapeHtml(value) {
-      return safeText(value)
-        .replace(/&/g, "&amp;")
-        .replace(/</g, "&lt;")
-        .replace(/>/g, "&gt;")
-        .replace(/"/g, "&quot;")
-        .replace(/'/g, "&#39;");
-    }
-
-    function looksLikeUuid(value) {
-      return /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i.test(
-        safeText(value)
-      );
-    }
-
-    function formatRealmLabel(value, fallback = "Unknown Realm") {
-      const lowered = safeLower(value);
-      return REALM_DISPLAY_MAP[lowered] || safeText(value, fallback);
-    }
-
-    function getRealmLabelFromVolume(volumeNumber, fallback = "Unknown Realm") {
-      const safeVolume = safeNumber(volumeNumber, 0);
-      if (safeVolume >= 1 && safeVolume <= REALM_SEQUENCE.length) {
-        return REALM_SEQUENCE[safeVolume - 1];
-      }
-      return fallback;
-    }
-
-    function getCultivationRealmLabel(item) {
-      if (!item) return "Unknown Realm";
-
-      const fromVolume = getRealmLabelFromVolume(safeNumber(item.volume_number, 0), "");
-      if (fromVolume) return fromVolume;
-
-      return formatRealmLabel(
-        item.realm_display_name || item.realm_name,
-        "Unknown Realm"
-      );
-    }
-
-    function setMessage(text, tone = "info") {
-      const el = document.getElementById("page-message");
-
-      if (!text) {
-        el.textContent = "";
-        el.className = "summary is-hidden";
-        return;
-      }
-
-      el.textContent = text;
-      el.className = tone === "error" ? "login-error" : "summary";
-    }
-
-    function clearClientSessionArtifacts() {
-      const keysToRemove = [
-        "session",
-        "sessionToken",
-        "session_token",
-        "websiteSession",
-        "website_session",
-        "member",
-        "memberState",
-        "member_state",
-        "user",
-        "user_state",
-        "sl_username",
-        "slUsername",
-        "avatar_key",
-        "avatarKey",
-        "selected_partnership_uuid",
-        "selectedPartnershipUuid"
-      ];
-
-      for (const key of keysToRemove) {
-        try { localStorage.removeItem(key); } catch (_) {}
-        try { sessionStorage.removeItem(key); } catch (_) {}
-      }
-    }
-
-    function redirectToLogin() {
-      clearClientSessionArtifacts();
+      <span class="token-label">Ascension Tokens</span>
+    </div>
+  </div>
+</header>
+<!-- TABS -->
+<nav class="store-tabs-wrap">
+  <div class="store-tabs" id="store-tabs"></div>
+</nav>
+<!-- TOOLBAR -->
+<div class="store-toolbar">
+  <div class="search-wrap">
+    <span class="search-icon">&#9906;</span>
+    <input type="text" id="store-search" placeholder="Search the treasury..." />
+  </div>
+  <select class="sort-select" id="store-sort">
+    <option value="default">Sort: Default</option>
+    <option value="price-asc">Price: Low to High</option>
+    <option value="price-desc">Price: High to Low</option>
+    <option value="name">Name: A-Z</option>
+    <option value="stock">Stock: Low First</option>
+  </select>
+</div>
+<!-- GRID -->
+<main class="store-body">
+  <div class="item-grid" id="item-grid"></div>
+</main>
+<!-- DETAIL OVERLAY -->
+<div class="detail-overlay" id="detail-overlay">
+  <div class="detail-panel" id="detail-panel"></div>
+</div>
+<script>
+/* STATE */
+var state = {
+  activeTab: 'all',
+  searchQuery: '',
+  sortBy: 'default',
+  wallet: { ascension_tokens_balance: 0, wallet_found: false },
+  items: [],
+  session: null
+};
+var CATEGORIES = [
+  { key: 'all',         label: 'All' },
+  { key: 'cultivation', label: 'Cultivation' },
+  { key: 'bond',        label: 'Bond' },
+  { key: 'seeds',       label: 'Seeds' },
+  { key: 'spells',      label: 'Spell Books' },
+  { key: 'alchemy',     label: 'Alchemy' },
+  { key: 'materials',   label: 'Materials' },
+  { key: 'weapons',     label: 'Weapons' }
+];
+var CURRENCY_NAME = 'Ascension Tokens';
+var LOGIN_PAGE_URL = '/login.html';
+var VERIFY_SESSION_URL = '/.netlify/functions/verify-session';
+var LIST_STORE_URL = '/.netlify/functions/list-store-items';
+var BUY_STORE_URL = '/.netlify/functions/buy-store-item';
+var COOKIE_NAME = 'ap_session';
+/* HELPERS */
+function safeText(v, fb) { var t = String(v || '').trim(); return t || (fb || ''); }
+function safeNumber(v, fb) { var n = Number(v); return Number.isFinite(n) ? n : (fb || 0); }
+function formatNumber(n) { return Number(n).toLocaleString(); }
+function escapeHtml(s) {
+  var d = document.createElement('div');
+  d.appendChild(document.createTextNode(s));
+  return d.innerHTML;
+}
+/* AUTH */
+async function authFetch(url, options) {
+  options = options || {};
+  var response = await fetch(url, Object.assign({}, options, {
+    credentials: 'include',
+    cache: 'no-store',
+    headers: Object.assign({ Accept: 'application/json' }, options.headers || {})
+  }));
+  if (response.status === 401 || response.status === 403) {
+    window.location.href = LOGIN_PAGE_URL;
+    throw new Error('Session expired.');
+  }
+  return response;
+}
+async function verifySession() {
+  try {
+    var response = await authFetch(VERIFY_SESSION_URL, { method: 'GET' });
+    var data = await response.json();
+    if (!response.ok || !data.success) {
       window.location.href = LOGIN_PAGE_URL;
+      return;
     }
-
-    async function authFetch(url, options = {}) {
-      const response = await fetch(url, {
-        ...options,
-        credentials: "include",
-        cache: "no-store",
-        headers: {
-          Accept: "application/json",
-          ...(options.headers || {})
-        }
-      });
-
-      if (response.status === 401 || response.status === 403) {
-        redirectToLogin();
-        throw new Error("Your session has expired. Please sign in again.");
-      }
-
-      return response;
+    var member = data.member || data.viewer || data.session || data.user || {};
+    state.session = {
+      sl_avatar_key: safeText(member.sl_avatar_key || member.avatar_key),
+      sl_username: safeText(member.sl_username || member.username),
+      display_name: safeText(member.display_name)
+    };
+  } catch (e) {
+    console.error('verifySession error:', e);
+    window.location.href = LOGIN_PAGE_URL;
+  }
+}
+/* DATA LOADING */
+async function loadStoreData() {
+  try {
+    var response = await authFetch(LIST_STORE_URL, { method: 'GET' });
+    var data = await response.json();
+    if (!data.success) {
+      console.error('Store load failed:', data.message);
+      return;
     }
-
-    async function parseJsonResponse(response, fallbackMessage) {
-      const rawText = await response.text();
-      let data = null;
-
-      try {
-        data = rawText ? JSON.parse(rawText) : null;
-      } catch {
-        data = null;
-      }
-
-      if (!response.ok || !data?.success) {
-        throw new Error(data?.message || fallbackMessage);
-      }
-
-      return data;
-    }
-
-    async function verifySession() {
-      const response = await authFetch(VERIFY_SESSION_URL, {
-        method: "GET"
-      });
-
-      const rawText = await response.text();
-      let data = null;
-
-      try {
-        data = rawText ? JSON.parse(rawText) : null;
-      } catch {
-        data = null;
-      }
-
-      if (!response.ok || !data?.success) {
-        redirectToLogin();
-        throw new Error(data?.message || "Unable to verify session.");
-      }
-
-      const member = data.member || data.viewer || data.session?.member || data.session || data.user || {};
-      state.session = {
-        ...(state.session || {}),
-        sl_avatar_key: safeText(member.sl_avatar_key || member.avatar_key),
-        sl_username: safeText(member.sl_username || member.username),
-        display_name: safeText(member.display_name),
-        character_name: safeText(member.character_name)
-      };
-
-      return data;
-    }
-
-    async function logoutUser() {
-      try {
-        await fetch(LOGOUT_URL, {
-          method: "POST",
-          credentials: "include"
-        });
-      } catch (error) {
-        console.error("Logout request error:", error);
-      } finally {
-        clearClientSessionArtifacts();
-        window.location.href = LOGIN_PAGE_URL;
-      }
-    }
-
-    function getActiveItems() {
-      return state.activeCategory === "bond" ? state.bondItems : state.cultivationItems;
-    }
-
-    function getSelectedItemKey() {
-      return safeText(state.selectedByCategory[state.activeCategory]);
-    }
-
-    function setSelectedItemKey(itemKey) {
-      state.selectedByCategory[state.activeCategory] = safeText(itemKey);
-    }
-
-    function getSelectedItem() {
-      const selectedKey = getSelectedItemKey();
-      return getActiveItems().find(item => safeText(item.item_key) === selectedKey) || null;
-    }
-
-    function getBondPairState(item) {
-      return safeLower(item?.bond_volume_state?.pair_progress_state);
-    }
-
-    function isBondOwnedOrUnlocked(item) {
-      const pairState = getBondPairState(item);
-      return (
-        pairState === "completed" ||
-        pairState === "unlocked" ||
-        pairState === "fully_paid"
-      );
-    }
-
-    function isOwnedOrUnlocked(item) {
-      if (state.activeCategory === "bond") {
-        return isBondOwnedOrUnlocked(item);
-      }
-      return !!item.owned;
-    }
-
-    function resolvePartnershipContext(userContext = {}) {
-      const uuidCandidates = [
-        userContext.partnership_uuid,
-        userContext.selected_partnership_uuid,
-        userContext.selected_partnership_id,
-        userContext.active_partnership_uuid,
-        userContext.partnership_id
-      ];
-
-      const legacyCandidates = [
-        userContext.legacy_partnership_id,
-        userContext.partnership_legacy_id,
-        userContext.active_legacy_partnership_id
-      ];
-
-      let partnershipUuid = null;
-      for (const candidate of uuidCandidates) {
-        const clean = safeText(candidate);
-        if (clean && looksLikeUuid(clean)) {
-          partnershipUuid = clean;
-          break;
-        }
-      }
-
-      let legacyPartnershipId = null;
-      for (const candidate of legacyCandidates) {
-        const clean = safeText(candidate);
-        if (clean) {
-          legacyPartnershipId = clean;
-          break;
-        }
-      }
-
+    state.wallet = {
+      ascension_tokens_balance: safeNumber(data.wallet && data.wallet.ascension_tokens_balance, 0),
+      wallet_found: !!(data.wallet && data.wallet.wallet_found)
+    };
+    state.items = (data.items || []).map(function(item) {
       return {
-        has_active_partnership: !!userContext.has_active_partnership,
-        partnership_uuid: partnershipUuid,
-        legacy_partnership_id: legacyPartnershipId,
-        buyer_role: safeText(userContext.buyer_role || "unbound"),
-        partnership_source: safeText(
-          userContext.partnership_source ||
-          userContext.selected_partnership_source ||
-          ""
-        )
+        id: item.id,
+        item_key: item.item_key,
+        category: safeText(item.category, 'cultivation').toLowerCase(),
+        item_type: safeText(item.item_type, 'cultivation_volume'),
+        name: safeText(item.item_name),
+        description: safeText(item.description),
+        price: safeNumber(item.price_amount, 0),
+        stock: safeNumber(item.stock, 0),
+        in_stock: item.stock > 0,
+        owned: Boolean(item.owned),
+        can_afford: Boolean(item.can_afford),
+        can_purchase: Boolean(item.can_purchase),
+        tokens_needed: safeNumber(item.tokens_needed, 0),
+        purchase_block_reason: item.purchase_block_reason || null,
+        volume_number: safeNumber(item.volume_number, 0),
+        is_shared_purchase: Boolean(item.is_shared_purchase),
+        bond_volume_state: item.bond_volume_state || null,
+        section_statuses: item.section_statuses || null,
+        owned_volume_status: item.owned_volume_status || null
       };
+    });
+    renderAll();
+  } catch (e) {
+    console.error('loadStoreData error:', e);
+  }
+}
+/* RENDERING */
+function renderAll() {
+  renderTokenBalance();
+  renderTabs();
+  renderGrid();
+}
+function renderTokenBalance() {
+  var el = document.getElementById('token-balance');
+  if (el) el.textContent = formatNumber(state.wallet.ascension_tokens_balance);
+}
+function renderTabs() {
+  var tabsEl = document.getElementById('store-tabs');
+  if (!tabsEl) return;
+  var counts = {};
+  state.items.forEach(function(it) {
+    counts[it.category] = (counts[it.category] || 0) + 1;
+  });
+  tabsEl.innerHTML = CATEGORIES.map(function(cat) {
+    var count = cat.key === 'all' ? state.items.length : (counts[cat.key] || 0);
+    var active = state.activeTab === cat.key ? ' active' : '';
+    var countStr = count > 0 ? '<span class="tab-count">(' + count + ')</span>' : '<span class="tab-count">(0)</span>';
+    return '<div class="store-tab' + active + '" data-tab="' + cat.key + '">'
+      + escapeHtml(cat.label) + countStr + '</div>';
+  }).join('');
+  tabsEl.querySelectorAll('.store-tab').forEach(function(tab) {
+    tab.addEventListener('click', function() {
+      state.activeTab = tab.getAttribute('data-tab');
+      renderTabs();
+      renderGrid();
+    });
+  });
+}
+function getFilteredItems() {
+  var items = state.items.filter(function(it) {
+    if (state.activeTab !== 'all' && it.category !== state.activeTab) return false;
+    if (state.searchQuery) {
+      var q = state.searchQuery.toLowerCase();
+      if (it.name.toLowerCase().indexOf(q) === -1 && it.description.toLowerCase().indexOf(q) === -1) return false;
     }
-
-    function updateHeader() {
-      const sessionLine = document.getElementById("session-line");
-      const viewerMode = document.getElementById("viewer-mode");
-      const storeCopy = document.getElementById("store-copy");
-      const shrineLabel = document.getElementById("active-shrine-label");
-
-      if (!state.session) {
-        sessionLine.textContent = "Loading archive access...";
-        viewerMode.textContent = "Loading...";
-        shrineLabel.textContent = "Loading...";
-        return;
-      }
-
-      const displayName =
-        safeText(state.session.character_name) ||
-        safeText(state.session.display_name) ||
-        safeText(state.session.sl_username) ||
-        "Cultivator";
-
-      const username = safeText(state.session.sl_username);
-
-      sessionLine.textContent = username
-        ? `Signed in as ${displayName} • @${username}`
-        : `Signed in as ${displayName}`;
-
-      viewerMode.textContent = state.isAdmin ? "Management View" : "Cultivator View";
-      shrineLabel.textContent = state.activeCategory === "bond" ? "Bond Shrine" : "Cultivation Shrine";
-
-      if (state.activeCategory === "bond") {
-        storeCopy.textContent =
-          "The Bond Shrine governs shared sacred volumes. Each partner must offer their own tokens before a volume opens for the pair.";
-      } else {
-        storeCopy.textContent =
-          "The Cultivation Shrine governs personal scripture volumes across the canon realm path. Claimed scripture enters your private library for later comprehension.";
-      }
-    }
-
-    function updateSummary() {
-      const activeItems = getActiveItems();
-      const visibleCount = state.filteredItems.length;
-      const ownedCount = activeItems.filter(item => {
-        if (state.activeCategory === "bond") {
-          return isBondOwnedOrUnlocked(item);
-        }
-        return !!item.owned;
-      }).length;
-
-      document.getElementById("token-balance").textContent = formatNumber(state.wallet.ascension_tokens_balance);
-      document.getElementById("visible-volumes").textContent = String(visibleCount);
-      document.getElementById("owned-volumes").textContent = String(ownedCount);
-      document.getElementById("cultivation-count").textContent = `${state.cultivationItems.length} Volumes`;
-      document.getElementById("bond-count").textContent = `${state.bondItems.length} Volumes`;
-      updateHeader();
-    }
-
-    function updateAdminPanel() {
-      const panel = document.getElementById("admin-panel");
-      const body = document.getElementById("admin-panel-body");
-      const button = document.getElementById("admin-toggle-button");
-
-      if (!state.isAdmin) {
-        panel.classList.add("is-hidden");
-        return;
-      }
-
-      panel.classList.remove("is-hidden");
-      body.style.display = state.adminOpen ? "block" : "none";
-      button.textContent = state.adminOpen ? "Hide Admin Panel" : "Show Admin Panel";
-    }
-
-    function getFilterValues() {
-      return {
-        search: safeLower(document.getElementById("store-search").value),
-        filter: safeText(document.getElementById("store-filter").value, "all"),
-        sort: safeText(document.getElementById("store-sort").value, "volume_asc")
-      };
-    }
-
-    function getCultivationNodeState(item) {
-      if (item.owned) return "owned";
-      if (!item.in_stock) return "out_of_stock";
-      if (item.can_afford) return "affordable";
-      return "locked";
-    }
-
-    function getBondNodeState(item) {
-      const pairState = getBondPairState(item);
-
-      if (pairState === "completed") return "owned";
-      if (pairState === "unlocked" || pairState === "fully_paid") return "unlocked";
-      if (pairState === "waiting_for_partner" || pairState === "waiting_for_you") return "waiting";
-      if (!item.in_stock) return "out_of_stock";
-      if ((pairState === "available" || pairState === "waiting_for_you") && item.can_afford) return "available";
-      if (item.can_afford) return "affordable";
-      return "locked";
-    }
-
-    function getNodeState(item) {
-      return state.activeCategory === "bond" ? getBondNodeState(item) : getCultivationNodeState(item);
-    }
-
-    function getCultivationButtonConfig(item) {
-      if (item.owned) {
-        return {
-          label: "Open in Library",
-          className: "secondary",
-          disabled: false,
-          href: "/library.html",
-          kind: "link"
-        };
-      }
-
-      if (!item.in_stock) {
-        return {
-          label: "Out of Stock",
-          className: "login-submit",
-          disabled: true,
-          kind: "button"
-        };
-      }
-
-      if (!item.can_afford) {
-        return {
-          label: `Need ${formatNumber(item.tokens_needed)} More`,
-          className: "login-submit",
-          disabled: true,
-          kind: "button"
-        };
-      }
-
-      return {
-        label: "Buy Volume",
-        className: "login-submit",
-        disabled: false,
-        kind: "button"
-      };
-    }
-
-    function getBondButtonConfig(item) {
-      const pairState = getBondPairState(item);
-      const block = safeLower(item?.purchase_block_reason);
-
-      if (pairState === "completed") {
-        return {
-          label: "Volume Completed",
-          className: "secondary",
-          disabled: true,
-          kind: "button"
-        };
-      }
-
-      if (pairState === "unlocked" || pairState === "fully_paid") {
-        return {
-          label: "Volume Unlocked",
-          className: "secondary",
-          disabled: true,
-          kind: "button"
-        };
-      }
-
-      if (pairState === "waiting_for_partner") {
-        return {
-          label: "Your Offering Given",
-          className: "secondary",
-          disabled: true,
-          kind: "button"
-        };
-      }
-
-      if (pairState === "waiting_for_you" && item.can_purchase) {
-        return {
-          label: "Give Your Offering",
-          className: "login-submit",
-          disabled: false,
-          kind: "button"
-        };
-      }
-
-      if (block === "active_partnership_required") {
-        return {
-          label: "Need Active Partnership",
-          className: "login-submit",
-          disabled: true,
-          kind: "button"
-        };
-      }
-
-      if (block === "previous_volume_incomplete") {
-        return {
-          label: "Complete Previous Volume",
-          className: "login-submit",
-          disabled: true,
-          kind: "button"
-        };
-      }
-
-      if (!item.in_stock) {
-        return {
-          label: "Out of Stock",
-          className: "login-submit",
-          disabled: true,
-          kind: "button"
-        };
-      }
-
-      if (!item.can_afford) {
-        return {
-          label: `Need ${formatNumber(item.tokens_needed)} More`,
-          className: "login-submit",
-          disabled: true,
-          kind: "button"
-        };
-      }
-
-      if (item.can_purchase) {
-        return {
-          label: "Offer Tokens",
-          className: "login-submit",
-          disabled: false,
-          kind: "button"
-        };
-      }
-
-      return {
-        label: "Unavailable",
-        className: "login-submit",
-        disabled: true,
-        kind: "button"
-      };
-    }
-
-    function ensureCategorySelection() {
-      const activeItems = getActiveItems();
-      const currentKey = getSelectedItemKey();
-      const stillExists = activeItems.some(item => safeText(item.item_key) === currentKey);
-
-      if (stillExists) return;
-
-      setSelectedItemKey(activeItems.length ? safeText(activeItems[0].item_key) : "");
-    }
-
-    function matchesFilter(item, filter) {
-      const category = state.activeCategory;
-
-      if (filter === "all") return true;
-      if (filter === "out_of_stock") return !item.in_stock;
-      if (filter === "owned") return category === "bond" ? isBondOwnedOrUnlocked(item) : !!item.owned;
-      if (filter === "affordable") {
-        if (category === "bond") {
-          return !!item.can_afford && !isBondOwnedOrUnlocked(item);
-        }
-        return !!item.can_afford && !item.owned;
-      }
-
-      if (category === "bond") {
-        const pairState = getBondPairState(item);
-
-        if (filter === "waiting") {
-          return pairState === "waiting_for_partner" || pairState === "waiting_for_you";
-        }
-
-        if (filter === "available") {
-          return pairState === "available" || pairState === "waiting_for_you";
-        }
-      } else {
-        if (filter === "waiting") return false;
-        if (filter === "available") return !item.owned && !!item.in_stock;
-      }
-
-      return true;
-    }
-
-    function sortItems(items, sort) {
-      items.sort((a, b) => {
-        if (sort === "volume_desc") {
-          return safeNumber(b.volume_number, 0) - safeNumber(a.volume_number, 0);
-        }
-
-        if (sort === "price_asc") {
-          return safeNumber(a.price_amount, 0) - safeNumber(b.price_amount, 0);
-        }
-
-        if (sort === "price_desc") {
-          return safeNumber(b.price_amount, 0) - safeNumber(a.price_amount, 0);
-        }
-
-        if (sort === "name_asc") {
-          return safeText(a.item_name).localeCompare(safeText(b.item_name));
-        }
-
-        return safeNumber(a.volume_number, 0) - safeNumber(b.volume_number, 0);
-      });
-
-      return items;
-    }
-
-    function renderShrineSelector() {
-      document.querySelectorAll(".shrine-card[data-category]").forEach(card => {
-        const cardCategory = safeText(card.getAttribute("data-category"));
-        card.classList.toggle("active", cardCategory === state.activeCategory);
-      });
-    }
-
-    function getCodexStateLabel(item) {
-      if (state.activeCategory === "bond") {
-        return safeText(item?.bond_volume_state?.pair_progress_state, "locked").replaceAll("_", " ");
-      }
-
-      return item.owned ? safeText(item.owned_volume_status, "Owned") : "Unclaimed";
-    }
-
-    function renderCodexShelf() {
-      const shell = document.getElementById("codex-shelf");
-      const activeItems = getActiveItems();
-      const visibleMap = new Map(state.filteredItems.map(item => [safeText(item.item_key), item]));
-      const selectedKey = getSelectedItemKey();
-
-      document.getElementById("codex-title-label").textContent =
-        state.activeCategory === "bond" ? "Bond Codex Shelf" : "Cultivation Codex Shelf";
-
-      document.getElementById("codex-subcopy").textContent =
-        state.activeCategory === "bond"
-          ? "Each sacred spine below represents one Bond Volume. Choose a spine to raise that volume onto the altar."
-          : "Each sacred spine below represents one Cultivation Volume. Choose a spine to raise that volume onto the altar.";
-
-      if (!activeItems.length) {
-        shell.innerHTML = `
-          <div class="codex-spine locked" disabled>
-            <div class="codex-spine-inner">
-              <div class="codex-spine-seal"><span></span></div>
-              <div class="codex-spine-label">
-                <div class="codex-spine-volume">Empty</div>
-                <div class="codex-spine-title">No Volumes</div>
-              </div>
-              <div class="codex-spine-meta">
-                <span class="codex-chip state">None</span>
-              </div>
-            </div>
-          </div>
-        `;
-        return;
-      }
-
-      shell.innerHTML = activeItems.map(item => {
-        const itemKey = safeText(item.item_key);
-        const isVisible = visibleMap.has(itemKey);
-        const isSelected = itemKey === selectedKey;
-        const nodeState = getNodeState(item);
-        const stateLabel = getCodexStateLabel(item);
-
-        return `
-          <button
-            type="button"
-            class="codex-spine ${escapeHtml(nodeState)} ${isSelected ? "selected" : ""} ${isVisible ? "" : "filtered-out"}"
-            data-item-key="${escapeHtml(itemKey)}"
-            ${isVisible ? "" : "disabled"}
-            title="${escapeHtml(item.item_name)}"
-          >
-            <div class="codex-spine-inner">
-              <div class="codex-spine-seal">
-                <span></span>
-              </div>
-
-              <div class="codex-spine-label">
-                <div class="codex-spine-volume">V${formatNumber(item.volume_number)}</div>
-                <div class="codex-spine-title">${escapeHtml(item.item_name)}</div>
-              </div>
-
-              <div class="codex-spine-meta">
-                <span class="codex-chip state">${escapeHtml(stateLabel)}</span>
-                <span class="codex-chip">${formatNumber(item.price_amount)}</span>
-              </div>
-            </div>
-          </button>
-        `;
-      }).join("");
-
-      shell.querySelectorAll("[data-item-key]").forEach(button => {
-        button.addEventListener("click", () => {
-          const itemKey = safeText(button.getAttribute("data-item-key"));
-          const item = state.filteredItems.find(entry => safeText(entry.item_key) === itemKey);
-          if (!item) return;
-
-          setSelectedItemKey(itemKey);
-          renderCodexShelf();
-          renderActiveAltar();
-          renderManagementChamber();
-        });
-      });
-    }
-
-    function buildCultivationAltar(item) {
-      const buttonConfig = getCultivationButtonConfig(item);
-      const displayStatus = item.owned ? safeText(item.owned_volume_status, "Owned") : "Unclaimed";
-      const insightCurrent = safeNumber(item.insight_current, 0);
-      const insightRequired = safeNumber(item.insight_required, 100);
-      const currentSection = safeText(item.current_section || "None");
-      const realmLabel = getCultivationRealmLabel(item);
-
-      let noteText = "";
-      let noteClass = "";
-
-      if (item.owned) {
-        noteText = `You already own this volume. Insight: ${formatNumber(insightCurrent)} / ${formatNumber(insightRequired)} • Current Section: ${currentSection}.`;
-        noteClass = "owned";
-      } else if (item.can_afford) {
-        noteText = "You can afford this volume now. Once purchased, it enters your personal library for later comprehension.";
-        noteClass = "ready";
-      } else if (!item.in_stock) {
-        noteText = "This volume is currently out of stock and cannot be claimed right now.";
-        noteClass = "locked";
-      } else {
-        noteText = `You need ${formatNumber(item.tokens_needed)} more Ascension Tokens to claim this volume.`;
-        noteClass = "shortfall";
-      }
-
-      return {
-        noteText,
-        noteClass,
-        infoGrid: `
-          <div class="altar-info-card">
-            <span>Realm</span>
-            <strong>${escapeHtml(realmLabel)}</strong>
-          </div>
-
-          <div class="altar-info-card">
-            <span>Status</span>
-            <strong>${escapeHtml(displayStatus)}</strong>
-          </div>
-
-          <div class="altar-info-card">
-            <span>Stock</span>
-            <strong>${formatNumber(item.stock)}</strong>
-          </div>
-
-          <div class="altar-info-card">
-            <span>Affordability</span>
-            <strong>${item.can_afford ? "Affordable Now" : "Insufficient Tokens"}</strong>
-          </div>
-        `,
-        sideCards: `
-          <div class="altar-side-card">
-            <span>Token Balance</span>
-            <strong>${formatNumber(state.wallet.ascension_tokens_balance)} ${escapeHtml(CURRENCY_NAME)}</strong>
-          </div>
-
-          <div class="altar-side-card">
-            <span>Owned State</span>
-            <strong>${item.owned ? "Already Claimed" : "Not Yet Claimed"}</strong>
-          </div>
-
-          ${
-            item.owned
-              ? `
-                <div class="altar-side-card">
-                  <span>Current Section</span>
-                  <strong>${escapeHtml(currentSection)}</strong>
-                </div>
-                <div class="altar-side-card">
-                  <span>Insight</span>
-                  <strong>${formatNumber(insightCurrent)} / ${formatNumber(insightRequired)}</strong>
-                </div>
-              `
-              : `
-                <div class="altar-side-card">
-                  <span>Needed to Claim</span>
-                  <strong>${item.can_afford ? "Ready Now" : `${formatNumber(item.tokens_needed)} More`}</strong>
-                </div>
-              `
-          }
-        `,
-        actionHtml:
-          buttonConfig.kind === "link"
-            ? `<a href="${buttonConfig.href}" class="${buttonConfig.className}">${buttonConfig.label}</a>`
-            : `<button type="button" class="${buttonConfig.className}" ${buttonConfig.disabled ? "disabled" : ""} data-buy-item-key="${escapeHtml(item.item_key)}">${buttonConfig.label}</button>`
-      };
-    }
-
-    function buildBondAltar(item) {
-      const buttonConfig = getBondButtonConfig(item);
-      const bondState = item.bond_volume_state || {};
-      const yourPaid = Boolean(
-        bondState.your_share_paid ??
-        bondState.buyer_share_paid ??
-        bondState.member_share_paid
-      );
-      const partnerPaid = Boolean(
-        bondState.partner_share_paid ??
-        bondState.other_share_paid
-      );
-      const unlocked = Boolean(bondState.is_unlocked);
-      const completed = Boolean(bondState.is_completed);
-      const previousCompleted = bondState.previous_volume_completed !== false;
-
-      let noteText = "";
-      let noteClass = "";
-
-      if (!state.userContext.has_active_partnership) {
-        noteText = "Bond Volumes require an active partnership before any offering can be made.";
-        noteClass = "locked";
-      } else if (!state.userContext.partnership_uuid && !state.userContext.legacy_partnership_id) {
-        noteText = "A partnership must be selected before bond purchases can be processed.";
-        noteClass = "locked";
-      } else if (!previousCompleted) {
-        noteText = "The previous Bond Volume must be completed before this one can be offered to the pair.";
-        noteClass = "locked";
-      } else if (completed) {
-        noteText = "This Bond Volume has already been completed by your partnership.";
-        noteClass = "owned";
-      } else if (unlocked) {
-        noteText = "This Bond Volume is fully unlocked for your partnership. The inner scriptures are now open to your shared path.";
-        noteClass = "owned";
-      } else if (yourPaid && !partnerPaid) {
-        noteText = "Your offering has already been given. This volume is now waiting for your partner’s matching offering.";
-        noteClass = "waiting";
-      } else if (!yourPaid && partnerPaid) {
-        noteText = "Your partner has already offered their share. This volume is waiting for your matching offering.";
-        noteClass = "waiting";
-      } else if (item.can_afford) {
-        noteText = "You can afford your offering now. Both partners must contribute before this Bond Volume opens.";
-        noteClass = "ready";
-      } else if (!item.in_stock) {
-        noteText = "This Bond Volume is currently out of stock and cannot receive offerings right now.";
-        noteClass = "locked";
-      } else {
-        noteText = `You need ${formatNumber(item.tokens_needed)} more Ascension Tokens to make your offering.`;
-        noteClass = "shortfall";
-      }
-
-      return {
-        noteText,
-        noteClass,
-        infoGrid: `
-          <div class="altar-info-card">
-            <span>Your Offering</span>
-            <strong>${yourPaid ? "Given" : "Not Yet Given"}</strong>
-          </div>
-
-          <div class="altar-info-card">
-            <span>Partner Offering</span>
-            <strong>${partnerPaid ? "Given" : "Not Yet Given"}</strong>
-          </div>
-
-          <div class="altar-info-card">
-            <span>Shared State</span>
-            <strong>${escapeHtml(safeText(bondState.pair_progress_state, "locked").replaceAll("_", " "))}</strong>
-          </div>
-
-          <div class="altar-info-card">
-            <span>Stock</span>
-            <strong>${formatNumber(item.stock)}</strong>
-          </div>
-        `,
-        sideCards: `
-          <div class="altar-side-card">
-            <span>Token Balance</span>
-            <strong>${formatNumber(state.wallet.ascension_tokens_balance)} ${escapeHtml(CURRENCY_NAME)}</strong>
-          </div>
-
-          <div class="altar-side-card">
-            <span>Buyer Role</span>
-            <strong>${escapeHtml(safeText(state.userContext.buyer_role || "unbound").replaceAll("_", " "))}</strong>
-          </div>
-
-          <div class="altar-side-card">
-            <span>Partnership Focus</span>
-            <strong>${
-              state.userContext.partnership_uuid
-                ? escapeHtml(state.userContext.partnership_uuid)
-                : state.userContext.legacy_partnership_id
-                  ? escapeHtml(state.userContext.legacy_partnership_id)
-                  : "No active focus"
-            }</strong>
-          </div>
-
-          <div class="altar-side-card">
-            <span>Volume State</span>
-            <strong>${completed ? "Completed" : unlocked ? "Unlocked" : "Awaiting Offerings"}</strong>
-          </div>
-
-          <div class="altar-side-card">
-            <span>Previous Volume</span>
-            <strong>${previousCompleted ? "Fulfilled" : "Not Yet Fulfilled"}</strong>
-          </div>
-        `,
-        actionHtml: `<button type="button" class="${buttonConfig.className}" ${buttonConfig.disabled ? "disabled" : ""} data-buy-item-key="${escapeHtml(item.item_key)}">${buttonConfig.label}</button>`
-      };
-    }
-
-    function renderActiveAltar() {
-      const shell = document.getElementById("active-altar");
-      const item = getSelectedItem();
-
-      document.getElementById("altar-title-label").textContent =
-        state.activeCategory === "bond" ? "Bond Shrine Altar" : "Cultivation Shrine Altar";
-
-      document.getElementById("altar-subcopy").textContent =
-        state.activeCategory === "bond"
-          ? "A shared Bond Volume is now resting on the altar. View your offering state before you contribute."
-          : "A personal Cultivation Volume is now resting on the altar. Claim it here to place it in your archive.";
-
-      if (!item) {
-        shell.innerHTML = `
-          <div class="altar-main">
-            <h3>No volume selected</h3>
-            <p class="altar-copy">
-              Change the search, filter, or sort settings, then choose a visible codex spine from the active shelf.
-            </p>
-            <p class="altar-note empty">
-              No matching volumes are visible in the current shrine view.
-            </p>
-          </div>
-
-          <aside class="altar-side">
-            <div class="altar-side-card">
-              <span>Store State</span>
-              <strong>No active selection</strong>
-            </div>
-          </aside>
-        `;
-        return;
-      }
-
-      const priceAmount = safeNumber(item.price_amount, 0);
-      const realmLabel =
-        state.activeCategory === "bond"
-          ? `Bond Volume ${formatNumber(item.volume_number)}`
-          : `Volume ${formatNumber(item.volume_number)} • ${getCultivationRealmLabel(item)}`;
-
-      const altarData =
-        state.activeCategory === "bond"
-          ? buildBondAltar(item)
-          : buildCultivationAltar(item);
-
-      shell.innerHTML = `
-        <div class="altar-main">
-          <div>
-            <span class="altar-badge">${escapeHtml(realmLabel)}</span>
-          </div>
-
-          <h3>${escapeHtml(item.item_name)}</h3>
-          <p class="altar-copy">${escapeHtml(safeText(item.description, "No description available for this volume yet."))}</p>
-
-          <div class="altar-price-row">
-            <div class="price-crest">
-              <img src="/images/ascension-token-crest.png" alt="Ascension Tokens crest" />
-            </div>
-
-            <div class="altar-price-copy">
-              <span>Offering Price</span>
-              <strong>${formatNumber(priceAmount)} ${escapeHtml(item.price_currency || CURRENCY_NAME)}</strong>
-            </div>
-          </div>
-
-          <div class="altar-info-grid">
-            ${altarData.infoGrid}
-          </div>
-
-          <p class="altar-note ${altarData.noteClass}">
-            ${escapeHtml(altarData.noteText)}
-          </p>
-
-          <div class="altar-actions">
-            ${altarData.actionHtml}
-          </div>
-        </div>
-
-        <aside class="altar-side">
-          ${altarData.sideCards}
-        </aside>
-      `;
-
-      shell.querySelectorAll("[data-buy-item-key]").forEach(button => {
-        button.addEventListener("click", () => {
-          const itemKey = safeText(button.getAttribute("data-buy-item-key"));
-          if (!itemKey) return;
-          buyVolume(itemKey);
-        });
-      });
-    }
-
-    function renderManagementChamber() {
-      const shell = document.getElementById("management-chamber-content");
-      const item = getSelectedItem();
-
-      if (!item) {
-        shell.innerHTML = `
-          <div class="management-main">
-            <h3>No management target selected</h3>
-            <p class="management-copy">
-              Select a visible altar volume first. The current altar target becomes the restock target.
-            </p>
-            <p class="management-note empty">
-              No active volume has been chosen for management.
-            </p>
-          </div>
-
-          <aside class="management-side">
-            <div class="management-card">
-              <span>Selection</span>
-              <strong>No active seal</strong>
-            </div>
-          </aside>
-        `;
-        return;
-      }
-
-      shell.innerHTML = `
-        <div class="management-main">
-          <div>
-            <span class="management-badge">${escapeHtml(state.activeCategory === "bond" ? "Bond Shrine" : "Cultivation Shrine")}</span>
-          </div>
-
-          <h3>${escapeHtml(item.item_name)}</h3>
-          <p class="management-copy">
-            Restock the selected altar volume by adding a quantity and an optional management note.
-          </p>
-
-          <div class="altar-info-grid">
-            <div class="management-card">
-              <span>Current Stock</span>
-              <strong>${formatNumber(item.stock)}</strong>
-            </div>
-
-            <div class="management-card">
-              <span>Category</span>
-              <strong>${escapeHtml(safeText(item.category, state.activeCategory))}</strong>
-            </div>
-
-            <div class="management-card">
-              <span>Volume Number</span>
-              <strong>${formatNumber(item.volume_number)}</strong>
-            </div>
-
-            <div class="management-card">
-              <span>Price</span>
-              <strong>${formatNumber(item.price_amount)} ${escapeHtml(item.price_currency || CURRENCY_NAME)}</strong>
-            </div>
-          </div>
-
-          <p class="management-note ready">
-            This chamber updates supply for the currently selected altar volume only.
-          </p>
-
-          <div class="management-form">
-            <div class="form-group">
-              <label for="restock-quantity">Quantity to Add</label>
-              <input id="restock-quantity" type="number" min="1" step="1" value="5" />
-            </div>
-
-            <div class="form-group">
-              <label for="restock-notes">Notes</label>
-              <input
-                id="restock-notes"
-                type="text"
-                placeholder="Optional restock note"
-                autocomplete="off"
-              />
-            </div>
-
-            <button id="restock-button" class="login-submit" type="button">
-              Restock Selected Volume
-            </button>
-          </div>
-        </div>
-
-        <aside class="management-side">
-          <div class="management-card">
-            <span>Selected Seal</span>
-            <strong>${escapeHtml(item.item_name)}</strong>
-          </div>
-
-          <div class="management-card">
-            <span>Target Shrine</span>
-            <strong>${escapeHtml(state.activeCategory === "bond" ? "Bond" : "Cultivation")}</strong>
-          </div>
-        </aside>
-      `;
-
-      const restockButton = document.getElementById("restock-button");
-      if (restockButton) {
-        restockButton.addEventListener("click", restockSelectedItem);
-      }
-    }
-
-    function applyFiltersAndRender() {
-      const { search, filter, sort } = getFilterValues();
-      let items = [...getActiveItems()];
-
-      if (search) {
-        items = items.filter(item => {
-          const haystack = [
-            safeText(item.item_name),
-            safeText(item.realm_name),
-            safeText(item.realm_display_name),
-            safeText(getCultivationRealmLabel(item)),
-            safeText(item.description),
-            safeText(item?.bond_volume_state?.pair_progress_state),
-            `volume ${safeNumber(item.volume_number, 0)}`
-          ].join(" ").toLowerCase();
-
-          return haystack.includes(search);
-        });
-      }
-
-      items = items.filter(item => matchesFilter(item, filter));
-      state.filteredItems = sortItems(items, sort);
-
-      ensureCategorySelection();
-      updateSummary();
-      renderShrineSelector();
-      renderCodexShelf();
-      renderActiveAltar();
-      renderManagementChamber();
-      updateAdminPanel();
-    }
-
-    async function loadStore() {
-      setMessage("");
-
-      try {
-        let url = "/.netlify/functions/list-store-items";
-        const params = new URLSearchParams();
-
-        if (state.session?.sl_avatar_key) {
-          params.set("sl_avatar_key", state.session.sl_avatar_key);
-        }
-
-        if (state.session?.sl_username) {
-          params.set("sl_username", state.session.sl_username);
-        }
-
-        if (params.toString()) {
-          url += `?${params.toString()}`;
-        }
-
-        const response = await authFetch(url, {
-          method: "GET"
-        });
-
-        const data = await parseJsonResponse(response, "Failed to load store items.");
-
-        state.items = Array.isArray(data.items) ? data.items : [];
-        state.cultivationItems = Array.isArray(data.cultivation_items) ? data.cultivation_items : [];
-        state.bondItems = Array.isArray(data.bond_items) ? data.bond_items : [];
-        state.isAdmin = !!data.user_context?.is_store_admin;
-        state.wallet = {
-          currency_name: CURRENCY_NAME,
-          ascension_tokens_balance: safeNumber(data.wallet?.ascension_tokens_balance, 0),
-          wallet_found: !!data.wallet?.wallet_found
-        };
-        state.userContext = resolvePartnershipContext(data.user_context || {});
-
-        if (!state.selectedByCategory.cultivation && state.cultivationItems.length) {
-          state.selectedByCategory.cultivation = safeText(state.cultivationItems[0].item_key);
-        }
-
-        if (!state.selectedByCategory.bond && state.bondItems.length) {
-          state.selectedByCategory.bond = safeText(state.bondItems[0].item_key);
-        }
-
-        ensureCategorySelection();
-        applyFiltersAndRender();
-      } catch (error) {
-        console.error("Store load error:", error);
-        if (/session has expired/i.test(safeText(error.message))) {
-          return;
-        }
-
-        state.items = [];
-        state.cultivationItems = [];
-        state.bondItems = [];
-        state.filteredItems = [];
-        state.wallet = {
-          currency_name: CURRENCY_NAME,
-          ascension_tokens_balance: 0,
-          wallet_found: false
-        };
-        state.userContext = {
-          has_active_partnership: false,
-          partnership_uuid: null,
-          legacy_partnership_id: null,
-          buyer_role: null,
-          partnership_source: null
-        };
-        updateSummary();
-        renderCodexShelf();
-        renderActiveAltar();
-        renderManagementChamber();
-        updateAdminPanel();
-        setMessage(error.message || "Failed to load store items.", "error");
-      }
-    }
-
-    async function buyVolume(itemKey) {
-      if (!state.session?.sl_avatar_key) {
-        redirectToLogin();
-        return;
-      }
-
-      const selectedItem =
-        getActiveItems().find(item => safeText(item.item_key) === safeText(itemKey)) || null;
-
-      if (!selectedItem) {
-        setMessage("The selected volume could not be found.", "error");
-        return;
-      }
-
-      const payload = {
+    return true;
+  });
+  if (state.sortBy === 'price-asc') items.sort(function(a,b) { return a.price - b.price; });
+  else if (state.sortBy === 'price-desc') items.sort(function(a,b) { return b.price - a.price; });
+  else if (state.sortBy === 'name') items.sort(function(a,b) { return a.name.localeCompare(b.name); });
+  else if (state.sortBy === 'stock') items.sort(function(a,b) { return a.stock - b.stock; });
+  return items;
+}
+function renderGrid() {
+  var gridEl = document.getElementById('item-grid');
+  if (!gridEl) return;
+  var items = getFilteredItems();
+  if (items.length === 0) {
+    var emptyMsg = state.searchQuery
+      ? 'No items match your search.'
+      : 'No items available in this category yet.';
+    gridEl.innerHTML = '<div class="empty-state">'
+      + '<div class="empty-state-icon">&#9670;</div>'
+      + '<div class="empty-state-text">' + escapeHtml(emptyMsg) + '</div>'
+      + '<div class="empty-state-sub">New wares arrive with each celestial cycle.</div>'
+      + '</div>';
+    return;
+  }
+  gridEl.innerHTML = items.map(function(it) {
+    var badge = '';
+    if (it.owned) badge = '<span class="card-badge badge-owned">Owned</span>';
+    else if (!it.in_stock) badge = '<span class="card-badge badge-sold">Sold out</span>';
+    var catLabel = it.category.charAt(0).toUpperCase() + it.category.slice(1);
+    return '<div class="item-card" data-item-id="' + it.id + '">'
+      + '<div class="card-top">'
+      + '<span class="cat-tag" data-cat="' + escapeHtml(it.category) + '">' + escapeHtml(catLabel) + '</span>'
+      + badge
+      + '</div>'
+      + '<div class="card-name">' + escapeHtml(it.name) + '</div>'
+      + '<div class="card-desc">' + escapeHtml(it.description) + '</div>'
+      + '<div class="card-bottom">'
+      + '<span class="card-price">' + formatNumber(it.price) + ' AT</span>'
+      + '<span class="card-stock">' + it.stock + ' in stock</span>'
+      + '</div>'
+      + '</div>';
+  }).join('');
+  gridEl.querySelectorAll('.item-card').forEach(function(card) {
+    card.addEventListener('click', function() {
+      var id = parseInt(card.getAttribute('data-item-id'), 10);
+      showDetail(id);
+    });
+  });
+}
+/* DETAIL PANEL */
+function showDetail(id) {
+  var item = null;
+  for (var i = 0; i < state.items.length; i++) {
+    if (state.items[i].id === id) { item = state.items[i]; break; }
+  }
+  if (!item) return;
+  var overlay = document.getElementById('detail-overlay');
+  var panel = document.getElementById('detail-panel');
+  if (!overlay || !panel) return;
+  var balance = state.wallet.ascension_tokens_balance;
+  var canAfford = balance >= item.price;
+  var afterBalance = canAfford ? balance - item.price : balance;
+  var btnText, btnDisabled;
+  if (item.owned) { btnText = 'Already Owned'; btnDisabled = true; }
+  else if (!item.in_stock) { btnText = 'Sold Out'; btnDisabled = true; }
+  else if (item.purchase_block_reason === 'active_partnership_required') { btnText = 'Partnership Required'; btnDisabled = true; }
+  else if (!canAfford) { btnText = 'Need ' + formatNumber(item.tokens_needed) + ' More Tokens'; btnDisabled = true; }
+  else { btnText = 'Offer ' + formatNumber(item.price) + ' Tokens'; btnDisabled = false; }
+  var catLabel = item.category.charAt(0).toUpperCase() + item.category.slice(1);
+  var noteHtml = '';
+  if (item.purchase_block_reason === 'active_partnership_required') {
+    noteHtml = '<div class="detail-note">This is a bond volume. You need an active partnership to purchase.</div>';
+  } else if (!canAfford && !item.owned) {
+    noteHtml = '<div class="detail-note">You need ' + formatNumber(item.tokens_needed) + ' more ' + CURRENCY_NAME + ' to claim this.</div>';
+  } else if (item.is_shared_purchase) {
+    noteHtml = '<div class="detail-note">This is a shared purchase. Both partners must offer their share.</div>';
+  }
+  panel.innerHTML = '<div class="detail-panel-header">'
+    + '<span class="detail-close" id="detail-close-btn">&times;</span>'
+    + '<div class="detail-cat"><span class="cat-tag" data-cat="' + escapeHtml(item.category) + '">' + escapeHtml(catLabel) + '</span></div>'
+    + '<div class="detail-name">' + escapeHtml(item.name) + '</div>'
+    + '<div class="detail-desc">' + escapeHtml(item.description) + '</div>'
+    + '</div>'
+    + '<div class="detail-panel-body">'
+    + '<div class="detail-stats">'
+    + '<div class="detail-stat"><div class="detail-stat-label">Price</div><div class="detail-stat-value">' + formatNumber(item.price) + ' AT</div></div>'
+    + '<div class="detail-stat"><div class="detail-stat-label">In stock</div><div class="detail-stat-value">' + item.stock + '</div></div>'
+    + '<div class="detail-stat"><div class="detail-stat-label">Your balance</div><div class="detail-stat-value">' + formatNumber(balance) + ' AT</div></div>'
+    + '<div class="detail-stat"><div class="detail-stat-label">After purchase</div><div class="detail-stat-value ' + (canAfford ? 'positive' : 'negative') + '">' + (canAfford ? formatNumber(afterBalance) + ' AT' : '---') + '</div></div>'
+    + '</div>'
+    + noteHtml
+    + '<button class="detail-buy-btn" id="detail-buy-btn" ' + (btnDisabled ? 'disabled' : '') + '>' + escapeHtml(btnText) + '</button>'
+    + '</div>';
+  overlay.classList.add('open');
+  document.getElementById('detail-close-btn').addEventListener('click', closeDetail);
+  overlay.addEventListener('click', function(e) {
+    if (e.target === overlay) closeDetail();
+  });
+  if (!btnDisabled) {
+    document.getElementById('detail-buy-btn').addEventListener('click', function() {
+      buyItem(item);
+    });
+  }
+}
+function closeDetail() {
+  var overlay = document.getElementById('detail-overlay');
+  if (overlay) overlay.classList.remove('open');
+}
+/* PURCHASE */
+async function buyItem(item) {
+  if (!state.session || !state.session.sl_avatar_key) {
+    window.location.href = LOGIN_PAGE_URL;
+    return;
+  }
+  var btn = document.getElementById('detail-buy-btn');
+  if (btn) { btn.disabled = true; btn.textContent = 'Processing...'; }
+  try {
+    var response = await authFetch(BUY_STORE_URL, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
         sl_avatar_key: state.session.sl_avatar_key,
         sl_username: state.session.sl_username,
-        item_key: itemKey
-      };
-
-      if (state.activeCategory === "bond") {
-        if (state.userContext.partnership_uuid) {
-          payload.partnership_uuid = state.userContext.partnership_uuid;
-        } else if (state.userContext.legacy_partnership_id) {
-          payload.legacy_partnership_id = state.userContext.legacy_partnership_id;
-        }
+        item_key: item.item_key
+      })
+    });
+    var data = await response.json();
+    if (data.success) {
+      if (data.wallet) {
+        state.wallet.ascension_tokens_balance = safeNumber(data.wallet.balance_after, state.wallet.ascension_tokens_balance);
       }
-
-      setMessage(
-        state.activeCategory === "bond"
-          ? "Offering tokens to the Bond Shrine..."
-          : "Purchasing cultivation volume..."
-      );
-
-      try {
-        const response = await authFetch("/.netlify/functions/buy-store-item", {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json"
-          },
-          body: JSON.stringify(payload)
-        });
-
-        const rawText = await response.text();
-        let data = null;
-
-        try {
-          data = rawText ? JSON.parse(rawText) : null;
-        } catch {
-          data = null;
-        }
-
-        if (!response.ok || !data?.success) {
-          if (data?.currency_shortfall) {
-            throw new Error(
-              `${data.message} You need ${formatNumber(data.currency_shortfall)} more ${CURRENCY_NAME}.`
-            );
-          }
-
-          throw new Error(data?.message || "Purchase failed.");
-        }
-
-        const spent = safeNumber(data.wallet?.spent, 0);
-        const balanceAfter = safeNumber(data.wallet?.balance_after, 0);
-
-        if (state.activeCategory === "bond" && data.partnership) {
-          const returnedUuid = safeText(data.partnership.id);
-          const returnedLegacyId = safeText(data.partnership.legacy_partnership_id);
-
-          if (looksLikeUuid(returnedUuid)) {
-            state.userContext.partnership_uuid = returnedUuid;
-          }
-
-          if (returnedLegacyId) {
-            state.userContext.legacy_partnership_id = returnedLegacyId;
-          }
-
-          state.userContext.buyer_role = safeText(
-            data.partnership.buyer_role || state.userContext.buyer_role
-          );
-          state.userContext.partnership_source = safeText(
-            data.partnership.source || state.userContext.partnership_source
-          );
-        }
-
-        setMessage(
-          `${data.message || "Purchase completed."} Spent ${formatNumber(spent)} ${CURRENCY_NAME}. Remaining balance: ${formatNumber(balanceAfter)}.`
-        );
-
-        await loadStore();
-      } catch (error) {
-        console.error("Buy volume error:", error);
-        if (!/session has expired/i.test(safeText(error.message))) {
-          setMessage(error.message || "Purchase failed.", "error");
-        }
-      }
+      await loadStoreData();
+      closeDetail();
+    } else {
+      if (btn) { btn.disabled = false; btn.textContent = data.message || 'Purchase failed. Try again.'; }
     }
-
-    async function restockSelectedItem() {
-      if (!state.session?.sl_username) {
-        setMessage("You must be logged in as management to restock.", "error");
-        return;
-      }
-
-      const selectedItem = getSelectedItem();
-      const quantity = safeText(document.getElementById("restock-quantity")?.value);
-      const notes = safeText(document.getElementById("restock-notes")?.value);
-
-      if (!selectedItem) {
-        setMessage("Please select a volume to restock.", "error");
-        return;
-      }
-
-      if (!quantity || Number(quantity) <= 0) {
-        setMessage("Please enter a valid restock quantity.", "error");
-        return;
-      }
-
-      setMessage("Restocking selected volume...");
-
-      try {
-        const response = await authFetch("/.netlify/functions/admin-restock-item", {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json"
-          },
-          body: JSON.stringify({
-            admin_username: state.session.sl_username,
-            item_key: selectedItem.item_key,
-            quantity_added: Number(quantity),
-            notes
-          })
-        });
-
-        const data = await parseJsonResponse(response, "Restock failed.");
-        setMessage(data.message || "Volume restocked successfully.");
-        await loadStore();
-      } catch (error) {
-        console.error("Restock error:", error);
-        if (!/session has expired/i.test(safeText(error.message))) {
-          setMessage(error.message || "Restock failed.", "error");
-        }
-      }
-    }
-
-    function wireEvents() {
-      document.getElementById("store-search").addEventListener("input", applyFiltersAndRender);
-      document.getElementById("store-filter").addEventListener("change", applyFiltersAndRender);
-      document.getElementById("store-sort").addEventListener("change", applyFiltersAndRender);
-
-      document.querySelectorAll(".shrine-card[data-category]").forEach(card => {
-        card.addEventListener("click", () => {
-          const category = safeText(card.getAttribute("data-category"), "cultivation");
-          if (category !== "cultivation" && category !== "bond") return;
-          state.activeCategory = category;
-          ensureCategorySelection();
-          applyFiltersAndRender();
-        });
-      });
-
-      document.getElementById("admin-toggle-button").addEventListener("click", () => {
-        state.adminOpen = !state.adminOpen;
-        updateAdminPanel();
-      });
-
-      document.getElementById("logout-button").addEventListener("click", async (event) => {
-        event.preventDefault();
-        await logoutUser();
-      });
-    }
-
-    async function init() {
-      updateHeader();
-      wireEvents();
-
-      try {
-        await verifySession();
-      } catch (error) {
-        console.error("Store auth error:", error);
-        return;
-      }
-
-      updateHeader();
-      await loadStore();
-    }
-
-    window.addEventListener("DOMContentLoaded", init);
-  </script>
+  } catch (e) {
+    console.error('buyItem error:', e);
+    if (btn) { btn.disabled = false; btn.textContent = 'Error. Try again.'; }
+  }
+}
+/* EVENT LISTENERS */
+document.getElementById('store-search').addEventListener('input', function(e) {
+  state.searchQuery = e.target.value;
+  renderGrid();
+});
+document.getElementById('store-sort').addEventListener('change', function(e) {
+  state.sortBy = e.target.value;
+  renderGrid();
+});
+document.addEventListener('keydown', function(e) {
+  if (e.key === 'Escape') closeDetail();
+});
+/* INIT */
+(async function init() {
+  await verifySession();
+  await loadStoreData();
+})();
+</script>
 </body>
 </html>
