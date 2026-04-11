@@ -1758,34 +1758,54 @@
 
 
     var _portalState = 'sealed';
-    var _portalRealmColors = { pri:'#5a9acc', sec:'#3a6a99', dim:'#1a3a55', glow:'#88ccff', particle:'#aaddff', rune:'#6ab4ee' };
+    var _portalRealmColors = { pri:'#4488cc', sec:'#2a5a99', dim:'#0e1e33', glow:'#66bbff', pt:'#88ddff', iris:'#2266aa', deep:'#061122', vein:'#335588', sclera:'#121828', rune:'#5599dd' };
     var _portalRaf = null;
     var _portalTime = 0;
     var _portalEntering = false;
     var _portalEnterStartTime = 0;
     var _portalMotes = [];
     var _portalCracks = [];
+    var _portalVeins = [];
+    var _portalOuterPts = [];
+    var _portalDustPts = [];
     var _portalInited = false;
 
     function initPortalParticles() {
       if (_portalInited) return;
       _portalInited = true;
       _portalMotes = [];
-      for (var i = 0; i < 60; i++) {
-        _portalMotes.push({ a: Math.random()*Math.PI*2, r: 30+Math.random()*60, speed: 0.2+Math.random()*0.4, sz: 0.8+Math.random()*1.8, phase: Math.random()*Math.PI*2 });
+      for (var i = 0; i < 90; i++) {
+        _portalMotes.push({ a: Math.random()*6.28, r: 5+Math.random()*40, sp: 0.1+Math.random()*0.35, sz: 0.4+Math.random()*1.5, ph: Math.random()*6.28 });
+      }
+      _portalOuterPts = [];
+      for (var i = 0; i < 50; i++) {
+        _portalOuterPts.push({ x: Math.random()*400, y: Math.random()*400, sp: 0.08+Math.random()*0.25, sz: 0.2+Math.random()*0.8, ph: Math.random()*6.28, dx: Math.random()*0.4-0.2 });
+      }
+      _portalDustPts = [];
+      for (var i = 0; i < 20; i++) {
+        _portalDustPts.push({ x: Math.random()*400, y: Math.random()*50, sz: 0.3+Math.random()*0.6, sp: 0.15+Math.random()*0.3, ph: Math.random()*6.28 });
+      }
+      _portalVeins = [];
+      for (var i = 0; i < 18; i++) {
+        var va = Math.random()*6.28, vsegs = [], vpx = 0, vpy = 0;
+        for (var j = 0; j < 6; j++) {
+          var vl = 12+Math.random()*25;
+          vpx += Math.cos(va+Math.random()*0.8-0.4)*vl;
+          vpy += Math.sin(va+Math.random()*0.8-0.4)*vl;
+          vsegs.push({ x: vpx, y: vpy });
+        }
+        _portalVeins.push({ segs: vsegs, startR: 35+Math.random()*50, startA: Math.random()*6.28, w: 0.3+Math.random()*0.8, al: 0.08+Math.random()*0.12 });
       }
       _portalCracks = [];
-      for (var j = 0; j < 7; j++) {
-        var ca = -Math.PI*0.7 + Math.random()*Math.PI*1.4;
-        var clen = 20+Math.random()*35;
-        var segs = [];
+      for (var j = 0; j < 10; j++) {
+        var ca = -2.5+Math.random()*5, cl = 20+Math.random()*45, sg = [];
         var cpx = 0, cpy = 0;
-        for (var k = 0; k < 4; k++) {
-          cpx += Math.cos(ca+Math.random()*0.5-0.25)*(clen/4);
-          cpy += Math.sin(ca+Math.random()*0.5-0.25)*(clen/4);
-          segs.push({ x: cpx, y: cpy });
+        for (var k = 0; k < 5; k++) {
+          cpx += Math.cos(ca+Math.random()*0.5-0.25)*(cl/5);
+          cpy += Math.sin(ca+Math.random()*0.5-0.25)*(cl/5);
+          sg.push({ x: cpx, y: cpy });
         }
-        _portalCracks.push({ segs: segs, alpha: 0.3+Math.random()*0.4 });
+        _portalCracks.push({ sg: sg, al: 0.2+Math.random()*0.5 });
       }
     }
 
@@ -1814,200 +1834,343 @@
         var st = _portalState;
         var rect = canvas.parentElement.getBoundingClientRect();
         var W = rect.width, H = rect.height;
-        var pcx = W / 2, pcy = H * 0.45;
-        var portalR = st === 'active' ? 55 : 50;
-        var sealed = st === 'sealed' || st === 'cultivating' || st === 'complete';
+        var cx = W / 2, cy = H * 0.42, gY = H - 50;
+        var entering = _portalEntering;
+        var enterE = entering ? t - _portalEnterStartTime : 0;
+        var closed = st === 'sealed' || st === 'cultivating' || st === 'complete';
         var damaged = st === 'damaged';
-        var intensity = sealed ? 0.15 : damaged ? 0.25 : _portalEntering ? Math.min(1.5, 0.6 + (_portalTime - _portalEnterStartTime) * 0.5) : 0.5;
+        var inten = closed ? 0.08 : damaged ? 0.15 : entering ? Math.min(1.3, 0.5+enterE*0.4) : 0.45;
+
+        var eyeOpen = 1;
+        if (closed || damaged) eyeOpen = 0;
+        if (entering && enterE > 2) eyeOpen = Math.max(0, 1 - (enterE - 2) * 2);
+
+        var eyeW = Math.min(W * 0.18, 120);
+        var eyeH = 55 * eyeOpen;
+        var irisR = 22 * eyeOpen;
+        var pupilR = 8 * eyeOpen;
 
         ctx.clearRect(0, 0, W, H);
 
-        var skyGrd = ctx.createLinearGradient(0, 0, 0, H);
-        skyGrd.addColorStop(0, '#0a0a14'); skyGrd.addColorStop(1, '#0e0e18');
-        ctx.fillStyle = skyGrd; ctx.fillRect(0, 0, W, H);
+        var sk = ctx.createLinearGradient(0, 0, 0, H);
+        sk.addColorStop(0, '#050508'); sk.addColorStop(0.4, '#080810'); sk.addColorStop(1, '#0a0a12');
+        ctx.fillStyle = sk; ctx.fillRect(0, 0, W, H);
 
-        var groundY = H * 0.82;
-        ctx.fillStyle = '#131320'; ctx.fillRect(0, groundY, W, H - groundY);
-        ctx.strokeStyle = '#222233'; ctx.lineWidth = 1;
-        ctx.beginPath(); ctx.moveTo(0, groundY); ctx.lineTo(W, groundY); ctx.stroke();
+        ctx.fillStyle = '#0c0c18'; ctx.fillRect(0, gY, W, H - gY);
+        for (var g = 0; g < 3; g++) { ctx.strokeStyle = '#161622'; ctx.lineWidth = 0.5; ctx.globalAlpha = 0.25; ctx.beginPath(); ctx.moveTo(0, gY+g*14); ctx.lineTo(W, gY+g*14); ctx.stroke(); }
+        ctx.globalAlpha = 1;
 
-        var ambGrd = ctx.createRadialGradient(pcx, pcy, 5, pcx, pcy, portalR * 3);
-        ambGrd.addColorStop(0, rc.pri + '25'); ambGrd.addColorStop(1, 'transparent');
-        ctx.fillStyle = ambGrd; ctx.globalAlpha = sealed ? 0.3 : 1; ctx.fillRect(0, 0, W, H); ctx.globalAlpha = 1;
+        for (var i = 0; i < _portalOuterPts.length; i++) {
+          var op = _portalOuterPts[i]; op.y -= op.sp*0.4; op.x += op.dx*0.2;
+          if (op.y < -5) { op.y = H+5; op.x = Math.random()*W; }
+          ctx.beginPath(); ctx.fillStyle = rc.pt; ctx.globalAlpha = (0.04+0.04*Math.sin(t*1.2+op.ph))*inten;
+          ctx.arc(op.x, op.y, op.sz, 0, 6.28); ctx.fill();
+        }
+        ctx.globalAlpha = 1;
 
-        drawPortalArch(ctx, pcx, pcy, portalR, rc, st, t, intensity);
-        drawPortalVoid(ctx, pcx, pcy, portalR, rc, st, t, intensity, sealed);
+        var amb = ctx.createRadialGradient(cx, cy, 5, cx, cy, 180);
+        amb.addColorStop(0, rc.pri+(closed?'08':'15')); amb.addColorStop(0.4, rc.dim+'0a'); amb.addColorStop(1, 'transparent');
+        ctx.fillStyle = amb; ctx.fillRect(0, 0, W, H);
 
-        if (!sealed) {
-          drawPortalSwirls(ctx, pcx, pcy, portalR, rc, t, intensity);
-          drawPortalMotes(ctx, pcx, pcy, portalR, rc, t, intensity);
+        if (eyeOpen > 0.01) {
+          drawEyeOpen(ctx, cx, cy, eyeW, eyeH, irisR, pupilR, eyeOpen, rc, t, inten, entering, enterE, gY);
+        }
+
+        if (closed) {
+          drawEyeClosed(ctx, cx, cy, eyeW, rc, t, st);
         }
 
         if (damaged) {
-          drawPortalCracks(ctx, pcx, pcy, portalR, t);
+          drawEyeDamaged(ctx, cx, cy, eyeW, rc, t);
         }
 
-        if (sealed) {
-          ctx.font = '500 10px sans-serif'; ctx.textAlign = 'center';
-          ctx.fillStyle = '#444455'; ctx.globalAlpha = 0.4 + 0.2 * Math.sin(t * 1.5);
-          ctx.fillText('SEALED', pcx, pcy + 3); ctx.globalAlpha = 1;
-        }
+        var eGlow = ctx.createRadialGradient(cx, gY-10, 0, cx, gY-10, 70);
+        eGlow.addColorStop(0, rc.pri+(closed?'06':'10')); eGlow.addColorStop(1, 'transparent');
+        ctx.fillStyle = eGlow; ctx.fillRect(cx-70, gY-30, 140, 60);
 
-        if (_portalEntering) {
-          drawPortalEnterAnim(ctx, pcx, pcy, portalR, rc, t, groundY);
+        for (var i = 0; i < _portalDustPts.length; i++) {
+          var dp = _portalDustPts[i]; dp.y -= dp.sp*0.15;
+          if (dp.y < gY-5) { dp.y = gY+Math.random()*40; dp.x = cx-80+Math.random()*160; }
+          ctx.beginPath(); ctx.fillStyle = rc.pt; ctx.globalAlpha = 0.06+0.03*Math.sin(t*1.5+dp.ph);
+          ctx.arc(dp.x, dp.y, dp.sz, 0, 6.28); ctx.fill();
+        }
+        ctx.globalAlpha = 1;
+
+        if (entering) {
+          drawEyeEnterAnim(ctx, cx, cy, irisR, pupilR, rc, t, enterE, gY);
         }
       }
       _portalRaf = requestAnimationFrame(frame);
     }
 
-    function drawPortalArch(ctx, cx, cy, r, rc, st, t, intensity) {
-      var archW = r * 2, archH = r * 2.4;
-      var baseX = cx - archW / 2, baseY = cy + r * 1;
-
-      ctx.strokeStyle = rc.sec; ctx.lineWidth = 5; ctx.globalAlpha = 0.6;
+    function drawEyeOpen(ctx, cx, cy, eyeW, eyeH, irisR, pupilR, eyeOpen, rc, t, inten, entering, enterE, gY) {
+      ctx.save();
       ctx.beginPath();
-      ctx.moveTo(baseX, baseY);
-      ctx.lineTo(baseX, cy - archH / 2 + 20);
-      ctx.quadraticCurveTo(baseX, cy - archH / 2, cx, cy - archH / 2 - 15);
-      ctx.quadraticCurveTo(baseX + archW, cy - archH / 2, baseX + archW, cy - archH / 2 + 20);
-      ctx.lineTo(baseX + archW, baseY);
-      ctx.stroke();
+      ctx.moveTo(cx-eyeW, cy);
+      ctx.quadraticCurveTo(cx-eyeW*0.5, cy-eyeH*1.6, cx, cy-eyeH);
+      ctx.quadraticCurveTo(cx+eyeW*0.5, cy-eyeH*1.6, cx+eyeW, cy);
+      ctx.quadraticCurveTo(cx+eyeW*0.5, cy+eyeH*1.6, cx, cy+eyeH);
+      ctx.quadraticCurveTo(cx-eyeW*0.5, cy+eyeH*1.6, cx-eyeW, cy);
+      ctx.closePath(); ctx.clip();
 
-      ctx.strokeStyle = rc.dim; ctx.lineWidth = 8; ctx.globalAlpha = 0.3;
-      ctx.beginPath();
-      ctx.moveTo(baseX - 2, baseY);
-      ctx.lineTo(baseX - 2, cy - archH / 2 + 22);
-      ctx.quadraticCurveTo(baseX - 2, cy - archH / 2 + 2, cx, cy - archH / 2 - 13);
-      ctx.quadraticCurveTo(baseX + archW + 2, cy - archH / 2 + 2, baseX + archW + 2, cy - archH / 2 + 22);
-      ctx.lineTo(baseX + archW + 2, baseY);
-      ctx.stroke();
-      ctx.globalAlpha = 1;
+      var scGrd = ctx.createRadialGradient(cx, cy, irisR*1.5, cx, cy, eyeW);
+      scGrd.addColorStop(0, rc.sclera); scGrd.addColorStop(0.5, '#0a0a12'); scGrd.addColorStop(1, '#060608');
+      ctx.fillStyle = scGrd; ctx.fillRect(cx-eyeW-5, cy-eyeH*2, eyeW*2+10, eyeH*4+10);
 
-      var runePos = [
-        { x: baseX - 3, y: cy - 25 }, { x: baseX - 3, y: cy + 10 },
-        { x: baseX + archW + 3, y: cy - 25 }, { x: baseX + archW + 3, y: cy + 10 },
-        { x: cx, y: cy - archH / 2 - 18 }
-      ];
-      var runeChars = ['\u2630', '\u2631', '\u2632', '\u2633', '\u2B21'];
-      ctx.font = '500 11px serif'; ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
-      for (var i = 0; i < runePos.length; i++) {
-        ctx.fillStyle = rc.rune;
-        ctx.globalAlpha = st === 'sealed' ? 0.15 : st === 'damaged' ? 0.1 : 0.3 + 0.3 * Math.sin(t * 1.3 + i * 0.8);
-        ctx.fillText(runeChars[i], runePos[i].x, runePos[i].y);
+      for (var v = 0; v < _portalVeins.length; v++) {
+        var vn = _portalVeins[v];
+        var vsx = cx+Math.cos(vn.startA)*vn.startR;
+        var vsy = cy+Math.sin(vn.startA)*vn.startR*0.6;
+        ctx.beginPath(); ctx.moveTo(vsx, vsy);
+        for (var j = 0; j < vn.segs.length; j++) { ctx.lineTo(vsx+vn.segs[j].x, vsy+vn.segs[j].y); }
+        ctx.strokeStyle = rc.vein; ctx.lineWidth = vn.w;
+        ctx.globalAlpha = vn.al*(0.5+0.3*Math.sin(t*0.8+v*0.5))*eyeOpen; ctx.stroke();
       }
       ctx.globalAlpha = 1;
 
-      ctx.fillStyle = rc.glow;
-      ctx.globalAlpha = 0.5 + 0.3 * Math.sin(t * 2);
-      ctx.beginPath(); ctx.arc(cx, cy - archH / 2 - 16, 3.5 + Math.sin(t * 2.5) * 1.5, 0, Math.PI * 2); ctx.fill();
-      ctx.globalAlpha = 1;
-    }
-
-    function drawPortalVoid(ctx, cx, cy, r, rc, st, t, intensity, sealed) {
-      var voidGrd = ctx.createRadialGradient(cx, cy, 0, cx, cy, r);
-      if (sealed) {
-        voidGrd.addColorStop(0, '#12121a'); voidGrd.addColorStop(1, '#08080e');
-      } else if (st === 'damaged') {
-        voidGrd.addColorStop(0, '#220808'); voidGrd.addColorStop(1, '#0e0303');
-      } else {
-        voidGrd.addColorStop(0, rc.dim + 'cc'); voidGrd.addColorStop(0.7, rc.dim + '66'); voidGrd.addColorStop(1, '#08080e');
-      }
-      ctx.beginPath(); ctx.ellipse(cx, cy, r, r * 1.25, 0, 0, Math.PI * 2);
-      ctx.fillStyle = voidGrd; ctx.fill();
-    }
-
-    function drawPortalSwirls(ctx, cx, cy, r, rc, t, intensity) {
-      for (var s = 0; s < 3; s++) {
-        ctx.beginPath(); ctx.strokeStyle = rc.pri; ctx.lineWidth = 0.8;
-        ctx.globalAlpha = (0.1 + s * 0.06) * intensity;
-        var sr = r * 0.25 + s * r * 0.22;
-        for (var i = 0; i <= 40; i++) {
-          var a = (i / 40) * Math.PI * 2;
-          var wobble = Math.sin(a * 3 + t * (1.2 + s * 0.3)) * 4 * intensity;
-          var px = cx + Math.cos(a) * (sr + wobble);
-          var py = cy + Math.sin(a) * (sr + wobble) * 1.25;
-          i === 0 ? ctx.moveTo(px, py) : ctx.lineTo(px, py);
-        }
-        ctx.stroke();
-      }
-      for (var arm = 0; arm < 2; arm++) {
-        ctx.beginPath(); ctx.strokeStyle = rc.glow; ctx.lineWidth = 0.8;
-        ctx.globalAlpha = 0.15 * intensity;
-        var baseA = arm * Math.PI + t * 0.4;
-        for (var j = 0; j < 50; j++) {
-          var frac = j / 50;
-          var sa = baseA + frac * Math.PI * 2.2;
-          var rr = 4 + frac * r * 0.85;
-          var spx = cx + Math.cos(sa) * rr;
-          var spy = cy + Math.sin(sa) * rr * 1.25;
-          j === 0 ? ctx.moveTo(spx, spy) : ctx.lineTo(spx, spy);
-        }
-        ctx.stroke();
+      for (var ring = 0; ring < 5; ring++) {
+        var rr = irisR - ring*3; if (rr < 2) continue;
+        ctx.beginPath(); ctx.arc(cx, cy, rr, 0, 6.28);
+        var iGrd = ctx.createRadialGradient(cx, cy, rr*0.3, cx, cy, rr);
+        var baseHue = ring%2===0 ? rc.iris : rc.sec;
+        iGrd.addColorStop(0, baseHue+'aa'); iGrd.addColorStop(0.5, baseHue+'66'); iGrd.addColorStop(1, rc.dim+'44');
+        ctx.fillStyle = iGrd; ctx.globalAlpha = (0.3+ring*0.1)*eyeOpen; ctx.fill();
       }
       ctx.globalAlpha = 1;
-    }
 
-    function drawPortalMotes(ctx, cx, cy, r, rc, t, intensity) {
+      for (var f = 0; f < 24; f++) {
+        var fa = f*(6.28/24)+t*0.15;
+        var fInner = pupilR+2, fOuter = irisR-1;
+        ctx.beginPath();
+        ctx.moveTo(cx+Math.cos(fa)*fInner, cy+Math.sin(fa)*fInner);
+        ctx.lineTo(cx+Math.cos(fa+0.04)*fOuter, cy+Math.sin(fa+0.04)*fOuter);
+        ctx.strokeStyle = rc.glow; ctx.lineWidth = 0.5;
+        ctx.globalAlpha = (0.1+0.1*Math.sin(t*1.5+f*0.5))*eyeOpen; ctx.stroke();
+      }
+      ctx.globalAlpha = 1;
+
+      for (var cr = 0; cr < 3; cr++) {
+        ctx.beginPath(); ctx.arc(cx, cy, irisR-cr*2, 0, 6.28);
+        ctx.strokeStyle = cr===0 ? rc.glow : rc.pri;
+        ctx.lineWidth = cr===0 ? 1.2 : 0.6;
+        ctx.globalAlpha = (cr===0?0.4:0.2)*(0.7+0.3*Math.sin(t*1.2+cr))*eyeOpen; ctx.stroke();
+      }
+      ctx.globalAlpha = 1;
+
+      var pGrd = ctx.createRadialGradient(cx, cy, 0, cx, cy, pupilR);
+      pGrd.addColorStop(0, '#000000'); pGrd.addColorStop(0.6, '#020204');
+      pGrd.addColorStop(0.85, rc.deep); pGrd.addColorStop(1, rc.dim+'88');
+      ctx.beginPath(); ctx.arc(cx, cy, pupilR, 0, 6.28);
+      ctx.fillStyle = pGrd; ctx.globalAlpha = eyeOpen; ctx.fill(); ctx.globalAlpha = 1;
+
       for (var i = 0; i < _portalMotes.length; i++) {
-        var m = _portalMotes[i];
-        m.a += m.speed * 0.007 * intensity;
-        var mr = m.r + Math.sin(t + m.phase) * 6;
-        var mx = cx + Math.cos(m.a) * mr;
-        var my = cy + Math.sin(m.a) * mr * 1.25;
-        var dx = (mx - cx) / r, dy = (my - cy) / (r * 1.25);
-        if (dx * dx + dy * dy > 1) continue;
-        ctx.beginPath(); ctx.fillStyle = rc.particle;
-        ctx.globalAlpha = (0.15 + 0.3 * Math.sin(t * 2 + m.phase)) * intensity;
-        ctx.arc(mx, my, m.sz, 0, Math.PI * 2); ctx.fill();
+        var m = _portalMotes[i]; m.a += m.sp*0.005*inten;
+        var mr = m.r*eyeOpen;
+        var mx = cx+Math.cos(m.a)*mr, my = cy+Math.sin(m.a)*mr*0.5;
+        var d2 = ((mx-cx)*(mx-cx))/(pupilR*pupilR)+((my-cy)*(my-cy))/(pupilR*pupilR*0.25);
+        if (d2 > 1) continue;
+        ctx.beginPath(); ctx.fillStyle = rc.pt;
+        ctx.globalAlpha = (0.08+0.18*Math.sin(t*1.5+m.ph))*inten*eyeOpen;
+        ctx.arc(mx, my, m.sz*0.8, 0, 6.28); ctx.fill();
+      }
+      ctx.globalAlpha = 1;
+
+      var coreGrd = ctx.createRadialGradient(cx, cy, 0, cx, cy, pupilR*0.5);
+      coreGrd.addColorStop(0, rc.glow+'33'); coreGrd.addColorStop(1, 'transparent');
+      ctx.fillStyle = coreGrd; ctx.globalAlpha = 0.5*inten*eyeOpen;
+      ctx.fillRect(cx-pupilR, cy-pupilR, pupilR*2, pupilR*2); ctx.globalAlpha = 1;
+
+      var hlx = cx-irisR*0.35, hly = cy-irisR*0.3;
+      ctx.beginPath(); ctx.arc(hlx, hly, 2.5, 0, 6.28);
+      ctx.fillStyle = '#ffffff'; ctx.globalAlpha = 0.15*eyeOpen; ctx.fill();
+      ctx.beginPath(); ctx.arc(hlx+3, hly+2, 1.2, 0, 6.28);
+      ctx.globalAlpha = 0.08*eyeOpen; ctx.fill(); ctx.globalAlpha = 1;
+
+      ctx.restore();
+
+      ctx.beginPath();
+      ctx.moveTo(cx-eyeW, cy);
+      ctx.quadraticCurveTo(cx-eyeW*0.5, cy-eyeH*1.6, cx, cy-eyeH);
+      ctx.quadraticCurveTo(cx+eyeW*0.5, cy-eyeH*1.6, cx+eyeW, cy);
+      ctx.quadraticCurveTo(cx+eyeW*0.5, cy+eyeH*1.6, cx, cy+eyeH);
+      ctx.quadraticCurveTo(cx-eyeW*0.5, cy+eyeH*1.6, cx-eyeW, cy);
+      ctx.closePath();
+      ctx.strokeStyle = rc.sec; ctx.lineWidth = 2.5; ctx.globalAlpha = 0.6; ctx.stroke(); ctx.globalAlpha = 1;
+
+      ctx.beginPath();
+      ctx.moveTo(cx-eyeW-4, cy);
+      ctx.quadraticCurveTo(cx-eyeW*0.5, cy-eyeH*1.7-3, cx, cy-eyeH-3);
+      ctx.quadraticCurveTo(cx+eyeW*0.5, cy-eyeH*1.7-3, cx+eyeW+4, cy);
+      ctx.strokeStyle = rc.dim; ctx.lineWidth = 5; ctx.globalAlpha = 0.3; ctx.stroke(); ctx.globalAlpha = 1;
+
+      ctx.beginPath();
+      ctx.moveTo(cx-eyeW-4, cy);
+      ctx.quadraticCurveTo(cx-eyeW*0.5, cy+eyeH*1.7+3, cx, cy+eyeH+3);
+      ctx.quadraticCurveTo(cx+eyeW*0.5, cy+eyeH*1.7+3, cx+eyeW+4, cy);
+      ctx.strokeStyle = rc.dim; ctx.lineWidth = 5; ctx.globalAlpha = 0.3; ctx.stroke(); ctx.globalAlpha = 1;
+
+      for (var side = 0; side < 2; side++) {
+        var dir = side===0 ? -1 : 1;
+        var lx = cx+dir*(eyeW+8);
+        ctx.beginPath(); ctx.moveTo(lx, cy);
+        ctx.quadraticCurveTo(lx+dir*15, cy-8, lx+dir*25, cy-3);
+        ctx.strokeStyle = rc.vein; ctx.lineWidth = 1; ctx.globalAlpha = 0.2; ctx.stroke();
+        ctx.beginPath(); ctx.moveTo(lx, cy);
+        ctx.quadraticCurveTo(lx+dir*12, cy+6, lx+dir*22, cy+2); ctx.stroke();
+        ctx.beginPath(); ctx.moveTo(lx, cy);
+        ctx.quadraticCurveTo(lx+dir*18, cy+2, lx+dir*28, cy+8);
+        ctx.globalAlpha = 0.12; ctx.stroke(); ctx.globalAlpha = 1;
+      }
+
+      var rPos = [
+        {x:cx-eyeW-18,y:cy-18},{x:cx-eyeW-18,y:cy+18},
+        {x:cx+eyeW+18,y:cy-18},{x:cx+eyeW+18,y:cy+18},
+        {x:cx-30,y:cy-eyeH-18},{x:cx,y:cy-eyeH-25},{x:cx+30,y:cy-eyeH-18},
+        {x:cx-25,y:cy+eyeH+18},{x:cx+25,y:cy+eyeH+18}
+      ];
+      var rCh = ['\u2630','\u2631','\u2632','\u2633','\u2634','\u2726','\u2635','\u2636','\u2637'];
+      ctx.font = '500 10px serif'; ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+      for (var i = 0; i < rPos.length; i++) {
+        ctx.fillStyle = rc.glow;
+        ctx.globalAlpha = 0.12+0.15*Math.sin(t*1+i*0.6);
+        ctx.fillText(rCh[i], rPos[i].x, rPos[i].y);
       }
       ctx.globalAlpha = 1;
     }
 
-    function drawPortalCracks(ctx, cx, cy, r, t) {
+    function drawEyeClosed(ctx, cx, cy, eyeW, rc, t, st) {
+      ctx.beginPath();
+      ctx.moveTo(cx-eyeW+5, cy);
+      ctx.quadraticCurveTo(cx, cy-3, cx+eyeW-5, cy);
+      ctx.strokeStyle = rc.sec; ctx.lineWidth = 2; ctx.globalAlpha = 0.4; ctx.stroke(); ctx.globalAlpha = 1;
+
+      ctx.beginPath();
+      ctx.moveTo(cx-eyeW-4, cy);
+      ctx.quadraticCurveTo(cx-eyeW*0.5, cy-6, cx, cy-4);
+      ctx.quadraticCurveTo(cx+eyeW*0.5, cy-6, cx+eyeW+4, cy);
+      ctx.strokeStyle = rc.dim; ctx.lineWidth = 5; ctx.globalAlpha = 0.3; ctx.stroke();
+      ctx.beginPath();
+      ctx.moveTo(cx-eyeW-4, cy);
+      ctx.quadraticCurveTo(cx-eyeW*0.5, cy+6, cx, cy+4);
+      ctx.quadraticCurveTo(cx+eyeW*0.5, cy+6, cx+eyeW+4, cy);
+      ctx.stroke(); ctx.globalAlpha = 1;
+
+      ctx.beginPath();
+      ctx.moveTo(cx-eyeW+5, cy);
+      ctx.quadraticCurveTo(cx, cy+2, cx+eyeW-5, cy);
+      ctx.strokeStyle = rc.sec; ctx.lineWidth = 1.5; ctx.globalAlpha = 0.3; ctx.stroke(); ctx.globalAlpha = 1;
+
+      for (var side = 0; side < 2; side++) {
+        var dir = side===0 ? -1 : 1;
+        var lx = cx+dir*(eyeW+3);
+        ctx.beginPath(); ctx.moveTo(lx, cy);
+        ctx.quadraticCurveTo(lx+dir*12, cy-5, lx+dir*20, cy-2);
+        ctx.strokeStyle = rc.vein; ctx.lineWidth = 0.8; ctx.globalAlpha = 0.12; ctx.stroke();
+        ctx.beginPath(); ctx.moveTo(lx, cy);
+        ctx.quadraticCurveTo(lx+dir*10, cy+4, lx+dir*18, cy+2);
+        ctx.stroke(); ctx.globalAlpha = 1;
+      }
+
+      var slitGlow = ctx.createRadialGradient(cx, cy, 0, cx, cy, 30);
+      slitGlow.addColorStop(0, rc.pri+'12'); slitGlow.addColorStop(1, 'transparent');
+      ctx.fillStyle = slitGlow; ctx.fillRect(cx-30, cy-30, 60, 60);
+
+      ctx.font = '500 8px sans-serif'; ctx.textAlign = 'center';
+      ctx.fillStyle = rc.dim; ctx.globalAlpha = 0.3+0.15*Math.sin(t*1.2);
+      ctx.fillText('SEALED', cx, cy+25); ctx.globalAlpha = 1;
+
+      var rPos = [{x:cx-eyeW-15,y:cy-12},{x:cx-eyeW-15,y:cy+12},{x:cx+eyeW+15,y:cy-12},{x:cx+eyeW+15,y:cy+12},{x:cx,y:cy-22}];
+      var rCh = ['\u2630','\u2631','\u2632','\u2633','\u2726'];
+      ctx.font = '500 10px serif'; ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+      for (var i = 0; i < rPos.length; i++) {
+        ctx.fillStyle = rc.glow; ctx.globalAlpha = 0.04+0.05*Math.sin(t*0.8+i*0.9);
+        ctx.fillText(rCh[i], rPos[i].x, rPos[i].y);
+      }
+      ctx.globalAlpha = 1;
+    }
+
+    function drawEyeDamaged(ctx, cx, cy, eyeW, rc, t) {
+      ctx.beginPath();
+      ctx.moveTo(cx-eyeW+5, cy);
+      ctx.quadraticCurveTo(cx, cy-2, cx+eyeW-5, cy);
+      ctx.strokeStyle = '#882211'; ctx.lineWidth = 2;
+      ctx.globalAlpha = 0.5+0.2*Math.sin(t*2); ctx.stroke(); ctx.globalAlpha = 1;
+
+      ctx.beginPath();
+      ctx.moveTo(cx-eyeW-4, cy);
+      ctx.quadraticCurveTo(cx-eyeW*0.5, cy-5, cx, cy-3);
+      ctx.quadraticCurveTo(cx+eyeW*0.5, cy-5, cx+eyeW+4, cy);
+      ctx.strokeStyle = '#331108'; ctx.lineWidth = 5; ctx.globalAlpha = 0.3; ctx.stroke();
+      ctx.beginPath();
+      ctx.moveTo(cx-eyeW-4, cy);
+      ctx.quadraticCurveTo(cx-eyeW*0.5, cy+5, cx, cy+3);
+      ctx.quadraticCurveTo(cx+eyeW*0.5, cy+5, cx+eyeW+4, cy);
+      ctx.stroke(); ctx.globalAlpha = 1;
+
       for (var i = 0; i < _portalCracks.length; i++) {
         var c = _portalCracks[i];
-        ctx.beginPath(); ctx.strokeStyle = '#ff3322';
-        ctx.lineWidth = 1.2 + Math.sin(t * 3) * 0.4;
-        ctx.globalAlpha = c.alpha * (0.4 + 0.3 * Math.sin(t * 2.5));
+        ctx.beginPath(); ctx.strokeStyle = '#ee2211';
+        ctx.lineWidth = 0.8+Math.sin(t*3)*0.3;
+        ctx.globalAlpha = c.al*(0.3+0.2*Math.sin(t*2+i));
         ctx.moveTo(cx, cy);
-        for (var j = 0; j < c.segs.length; j++) { ctx.lineTo(cx + c.segs[j].x, cy + c.segs[j].y); }
+        for (var j = 0; j < c.sg.length; j++) { ctx.lineTo(cx+c.sg[j].x*0.7, cy+c.sg[j].y*0.35); }
         ctx.stroke();
       }
       ctx.globalAlpha = 1;
-      var damGrd = ctx.createRadialGradient(cx, cy, r * 0.4, cx, cy, r);
-      damGrd.addColorStop(0, '#ff220012'); damGrd.addColorStop(1, '#ff220004');
-      ctx.fillStyle = damGrd; ctx.globalAlpha = 0.5 + 0.2 * Math.sin(t * 2);
-      ctx.beginPath(); ctx.ellipse(cx, cy, r, r * 1.25, 0, 0, Math.PI * 2); ctx.fill();
-      ctx.globalAlpha = 1;
+
+      var dg = ctx.createRadialGradient(cx, cy, 5, cx, cy, 80);
+      dg.addColorStop(0, '#ff110012'); dg.addColorStop(1, 'transparent');
+      ctx.fillStyle = dg; ctx.globalAlpha = 0.3+0.15*Math.sin(t*1.8);
+      ctx.fillRect(cx-80, cy-50, 160, 100); ctx.globalAlpha = 1;
+
+      for (var side = 0; side < 2; side++) {
+        var dir = side===0 ? -1 : 1;
+        var lx = cx+dir*(eyeW+3);
+        ctx.beginPath(); ctx.moveTo(lx, cy);
+        ctx.quadraticCurveTo(lx+dir*12, cy-4, lx+dir*20, cy-1);
+        ctx.strokeStyle = '#442211'; ctx.lineWidth = 0.8; ctx.globalAlpha = 0.15; ctx.stroke();
+        ctx.beginPath(); ctx.moveTo(lx, cy);
+        ctx.quadraticCurveTo(lx+dir*10, cy+3, lx+dir*18, cy+1);
+        ctx.stroke(); ctx.globalAlpha = 1;
+      }
     }
 
-    function drawPortalEnterAnim(ctx, cx, cy, r, rc, t, groundY) {
-      var elapsed = t - _portalEnterStartTime;
-      if (elapsed < 1.8) {
-        var walkProgress = Math.min(1, elapsed / 1.2);
-        var figStartX = cx - 70;
-        var fx = figStartX + (cx - figStartX) * walkProgress;
-        var fy = groundY;
-        var alpha = elapsed > 1 ? Math.max(0, 1 - (elapsed - 1) / 0.8) : 1;
-        var scale = elapsed > 0.8 ? Math.max(0.2, 1 - (elapsed - 0.8) * 1) : 1;
+    function drawEyeEnterAnim(ctx, cx, cy, irisR, pupilR, rc, t, enterE, gY) {
+      if (enterE < 1.8) {
+        var wp = Math.min(1, enterE/1.4);
+        var figStartX = cx - 100;
+        var fx = figStartX+(cx-figStartX)*wp;
+        var fy = gY;
+        var alpha = enterE > 1.2 ? Math.max(0, 1-(enterE-1.2)/0.6) : 0.85;
+        var scale = enterE > 1 ? Math.max(0.1, 1-(enterE-1)*1.2) : 1;
         ctx.save(); ctx.translate(fx, fy); ctx.scale(scale, scale); ctx.translate(-fx, -fy);
-        ctx.globalAlpha = alpha * 0.85; ctx.fillStyle = '#e8d5b0'; ctx.strokeStyle = '#e8d5b0'; ctx.lineWidth = 2;
-        ctx.beginPath(); ctx.arc(fx, fy - 38, 5.5, 0, Math.PI * 2); ctx.fill();
-        ctx.beginPath(); ctx.moveTo(fx, fy - 32); ctx.lineTo(fx, fy - 14); ctx.stroke();
-        ctx.beginPath(); ctx.moveTo(fx, fy - 28); ctx.lineTo(fx - 9, fy - 20); ctx.stroke();
-        ctx.beginPath(); ctx.moveTo(fx, fy - 28); ctx.lineTo(fx + 9, fy - 20); ctx.stroke();
-        ctx.beginPath(); ctx.moveTo(fx, fy - 14); ctx.lineTo(fx - 5, fy); ctx.stroke();
-        ctx.beginPath(); ctx.moveTo(fx, fy - 14); ctx.lineTo(fx + 5, fy); ctx.stroke();
+        ctx.globalAlpha = alpha; ctx.fillStyle = '#ddd0a0'; ctx.strokeStyle = '#ddd0a0'; ctx.lineWidth = 2;
+        ctx.beginPath(); ctx.arc(fx, fy-38, 5, 0, 6.28); ctx.fill();
+        ctx.beginPath(); ctx.moveTo(fx, fy-33); ctx.lineTo(fx, fy-14); ctx.stroke();
+        ctx.beginPath(); ctx.moveTo(fx, fy-28); ctx.lineTo(fx-8, fy-21); ctx.stroke();
+        ctx.beginPath(); ctx.moveTo(fx, fy-28); ctx.lineTo(fx+8, fy-21); ctx.stroke();
+        ctx.beginPath(); ctx.moveTo(fx, fy-14); ctx.lineTo(fx-5, fy); ctx.stroke();
+        ctx.beginPath(); ctx.moveTo(fx, fy-14); ctx.lineTo(fx+5, fy); ctx.stroke();
         ctx.restore();
 
-        if (elapsed > 0.6) {
-          var pullAlpha = Math.min(1, (elapsed - 0.6) * 2.5);
-          var pullGrd = ctx.createRadialGradient(cx, cy, 0, cx, cy, r * 1.4);
-          pullGrd.addColorStop(0, rc.glow + '55'); pullGrd.addColorStop(1, 'transparent');
-          ctx.fillStyle = pullGrd; ctx.globalAlpha = pullAlpha * 0.5;
-          ctx.beginPath(); ctx.ellipse(cx, cy, r * 1.4, r * 1.7, 0, 0, Math.PI * 2); ctx.fill();
-          ctx.globalAlpha = 1;
+        if (enterE > 0.7) {
+          var pA = Math.min(1, (enterE-0.7)*2);
+          var pGrd = ctx.createRadialGradient(cx, cy, 0, cx, cy, irisR*2.5);
+          pGrd.addColorStop(0, rc.glow+'44'); pGrd.addColorStop(1, 'transparent');
+          ctx.fillStyle = pGrd; ctx.globalAlpha = pA*0.4;
+          ctx.beginPath(); ctx.arc(cx, cy, irisR*2.5, 0, 6.28); ctx.fill(); ctx.globalAlpha = 1;
         }
+      }
+      if (enterE > 1.8 && enterE < 3) {
+        var fA = Math.max(0, 1-(enterE-1.8)/0.6);
+        ctx.fillStyle = rc.glow; ctx.globalAlpha = fA*0.18;
+        ctx.fillRect(0, 0, ctx.canvas.width, ctx.canvas.height); ctx.globalAlpha = 1;
+      }
+
+      if (enterE < 2) {
+        var figAlpha2 = 0.85;
+        if (enterE > 1.2) figAlpha2 = 0;
+        if (figAlpha2 <= 0) return;
       }
     }
 
@@ -2145,24 +2308,24 @@
         if (panel) panel.className = 'vessel-gate-panel state-' + gateState;
 
         var realmColors = {
-          mortal:              { pri:'#5a9acc', sec:'#3a6a99', dim:'#1a3a55', glow:'#88ccff', particle:'#aaddff', rune:'#6ab4ee' },
-          'qi gathering':      { pri:'#44bb88', sec:'#2a8866', dim:'#1a5544', glow:'#66eebb', particle:'#99ffdd', rune:'#55ddaa' },
-          foundation:          { pri:'#8866cc', sec:'#6644aa', dim:'#3a2266', glow:'#aa88ee', particle:'#ccbbff', rune:'#9977dd' },
-          'core formation':    { pri:'#cc7733', sec:'#aa5522', dim:'#663311', glow:'#eebb55', particle:'#ffcc88', rune:'#ddaa44' },
-          'nascent soul':      { pri:'#cc8833', sec:'#aa6622', dim:'#664411', glow:'#eebb55', particle:'#ffdd88', rune:'#ddaa44' },
-          'soul transformation':{ pri:'#aa44cc', sec:'#8822aa', dim:'#551166', glow:'#cc66ee', particle:'#dd99ff', rune:'#bb55dd' },
-          'void refinement':   { pri:'#7744cc', sec:'#5522aa', dim:'#331166', glow:'#9966ee', particle:'#bb99ff', rune:'#8855dd' },
-          'body integration':  { pri:'#cc4444', sec:'#aa2222', dim:'#661111', glow:'#ee6655', particle:'#ff9988', rune:'#dd5544' },
-          mahayana:            { pri:'#ccaa33', sec:'#aa8822', dim:'#665511', glow:'#eedd55', particle:'#ffee88', rune:'#ddcc44' },
-          tribulation:         { pri:'#eebb33', sec:'#ccaa22', dim:'#886611', glow:'#ffdd55', particle:'#ffee88', rune:'#eedd44' }
+          mortal:              { pri:'#4488cc', sec:'#2a5a99', dim:'#0e1e33', glow:'#66bbff', pt:'#88ddff', iris:'#2266aa', deep:'#061122', vein:'#335588', sclera:'#121828', rune:'#5599dd', particle:'#88ddff' },
+          'qi gathering':      { pri:'#33bb88', sec:'#228866', dim:'#0a2218', glow:'#55eeaa', pt:'#88ffcc', iris:'#1a8855', deep:'#061a0e', vein:'#226644', sclera:'#0e1e16', rune:'#44bb88', particle:'#88ffcc' },
+          foundation:          { pri:'#7755cc', sec:'#5533aa', dim:'#180e33', glow:'#9977ee', pt:'#bbaaff', iris:'#5533aa', deep:'#0e0622', vein:'#443388', sclera:'#161028', rune:'#8866cc', particle:'#bbaaff' },
+          'core formation':    { pri:'#cc7733', sec:'#aa5522', dim:'#2a1508', glow:'#eebb55', pt:'#ffcc88', iris:'#aa5511', deep:'#1a0e04', vein:'#885522', sclera:'#1e1610', rune:'#ddaa44', particle:'#ffcc88' },
+          'nascent soul':      { pri:'#cc9933', sec:'#aa7722', dim:'#2a1a08', glow:'#eebb44', pt:'#ffdd88', iris:'#aa7711', deep:'#1a1008', vein:'#886622', sclera:'#1e1810', rune:'#ccaa33', particle:'#ffdd88' },
+          'soul transformation':{ pri:'#aa44cc', sec:'#8822aa', dim:'#220e33', glow:'#cc66ee', pt:'#dd99ff', iris:'#8822bb', deep:'#140822', vein:'#663399', sclera:'#1a1028', rune:'#bb55dd', particle:'#dd99ff' },
+          'void refinement':   { pri:'#7744cc', sec:'#5522aa', dim:'#180e33', glow:'#9966ee', pt:'#bb99ff', iris:'#5522aa', deep:'#0e0622', vein:'#443388', sclera:'#161028', rune:'#8855dd', particle:'#bb99ff' },
+          'body integration':  { pri:'#cc4444', sec:'#aa2222', dim:'#330e0e', glow:'#ee6655', pt:'#ff9988', iris:'#aa2222', deep:'#1a0606', vein:'#883333', sclera:'#1e1212', rune:'#dd5544', particle:'#ff9988' },
+          mahayana:            { pri:'#ccaa33', sec:'#aa8822', dim:'#2a2208', glow:'#eedd55', pt:'#ffee88', iris:'#aa8811', deep:'#1a1604', vein:'#887722', sclera:'#1e1c10', rune:'#ddcc44', particle:'#ffee88' },
+          tribulation:         { pri:'#ddbb22', sec:'#bb9911', dim:'#2a2206', glow:'#ffdd44', pt:'#ffee88', iris:'#aa8811', deep:'#1a1604', vein:'#887722', sclera:'#1e1c10', rune:'#eedd44', particle:'#ffee88' }
         };
         var realmKey = safeLower(state.member && state.member.realm_key || 'mortal');
         var rc = realmColors[realmKey] || realmColors.mortal;
 
         if (kicker) kicker.textContent = 'Ascension Threshold';
         if (kicker) kicker.style.color = rc.pri;
-        var titles = { sealed:'Portal Sealed', cultivating:'Portal Dormant', complete:"Awaiting Heaven's Judgment", open:'Portal Awakened', active:'In Tribulation', damaged:'Portal Fractured' };
-        var descs = { sealed:'Continue cultivating to awaken the portal.', cultivating:'Qi flows through you. The portal stirs.', complete:'Comprehension is complete. The heavens judge your readiness.', open:'The portal calls. Step through to face tribulation.', active:'You are within the tribulation chamber.', damaged:'The portal is fractured. Repair required.' };
+        var titles = { sealed:'The Eye is Closed', cultivating:'The Eye Stirs', complete:"Awaiting Heaven's Judgment", open:'The Eye Opens', active:'In Tribulation', damaged:'The Eye is Fractured' };
+        var descs = { sealed:'Continue cultivating to open the cosmic eye.', cultivating:'Qi flows through you. The eye stirs beneath its lids.', complete:'Comprehension is complete. The heavens judge your readiness.', open:'The cosmic eye gazes upon you. Step into its pupil to face tribulation.', active:'You are within the tribulation chamber.', damaged:'The eye is fractured. Repair required.' };
         if (titleEl) { titleEl.textContent = titles[gateState] || 'Portal'; titleEl.style.color = ''; }
         if (descEl) descEl.textContent = descs[gateState] || '';
 
