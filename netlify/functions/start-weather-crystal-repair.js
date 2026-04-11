@@ -93,9 +93,9 @@ exports.handler = async function(event) {
     }
   }
 
-  // Path 2: sl_avatar_key in body (LSL in-world callers)
+  // Path 2: sl_avatar_key or avatar_key in body (LSL in-world callers)
   if (!avatarKey) {
-    var bodyAvatarKey = safeText(body.sl_avatar_key);
+    var bodyAvatarKey = safeText(body.sl_avatar_key || body.avatar_key);
 
     if (!bodyAvatarKey) {
       return json(401, {
