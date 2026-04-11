@@ -4,8 +4,8 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Dashboard | The Ascendant Path</title>
-  <link rel="stylesheet" href="style.css" />
-  <link rel="stylesheet" href="/dashboard.css">
+  <link rel="stylesheet" href="/css/style.css" />
+  <link rel="stylesheet" href="/css/dashboard.css">
   <style>
     :root {
       --bg-1: #060810;
@@ -4257,8 +4257,8 @@
             return (r<50&&g<50&&b<50)?m:'';
           }).replace(/<rect[^>]*\/>/gi,'');
           if (figureFile === 'DUAL_TWO_FIGURE') {
-            const myFigFile      = vm.gender === 'female' ? 'female-figure.svg' : 'figure.svg';
-            const partnerFigFile = partnerGender === 'female' ? 'female-figure.svg' : 'figure.svg';
+            const myFigFile      = vm.gender === 'female' ? '/images/female-figure.svg' : '/images/figure.svg';
+            const partnerFigFile = partnerGender === 'female' ? '/images/female-figure.svg' : '/images/figure.svg';
             Promise.all([fetch(myFigFile), fetch(partnerFigFile)])
               .then(([rM, rF]) => Promise.all([rM.text(), rF.text()]))
               .then(([tM, tF]) => {
@@ -4322,7 +4322,7 @@
 <script>
 function getFigureFile(gender, vesselMode) {
   if (vesselMode === 'dual' || vesselMode === 'hybrid') return 'DUAL_TWO_FIGURE';
-  return gender === 'female' ? '/female-figure.svg' : '/figure.svg';
+  return gender === 'female' ? '/images/female-figure.svg' : '/images/figure.svg';
 }
 
 function getColors(gender, vesselMode) {
@@ -4412,8 +4412,8 @@ function initVessel() {
     return (r<50&&g<50&&b<50)?m:'';
   }).replace(/<rect[^>]*\/>/gi,'');
   if (figureFile === 'DUAL_TWO_FIGURE') {
-    const myFigFile      = member.gender === 'female' ? 'female-figure.svg' : 'figure.svg';
-    const partnerFigFile = partnerGender === 'female' ? 'female-figure.svg' : 'figure.svg';
+    const myFigFile      = member.gender === 'female' ? '/images/female-figure.svg' : '/images/figure.svg';
+    const partnerFigFile = partnerGender === 'female' ? '/images/female-figure.svg' : '/images/figure.svg';
     Promise.all([fetch(myFigFile), fetch(partnerFigFile)])
       .then(([rM, rF]) => Promise.all([rM.text(), rF.text()]))
       .then(([tM, tF]) => {

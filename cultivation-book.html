@@ -4,8 +4,8 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Opened Record | The Ascendant Path</title>
-  <link rel="stylesheet" href="style.css" />
-  <link rel="stylesheet" href="/cultivation-book.css" />
+  <link rel="stylesheet" href="/css/style.css" />
+  <link rel="stylesheet" href="/css/cultivation-book.css" />
   <style>
     :root {
       --panel-bg: linear-gradient(180deg, rgba(16, 22, 38, 0.88), rgba(8, 12, 22, 0.96));
@@ -1502,7 +1502,7 @@
       _vesselFigCallbacks.push(callback);
       if (_vesselFigLoading) return;
       _vesselFigLoading = true;
-      var url = (gender === 'female') ? '/female-figure.svg' : '/figure.svg';
+      var url = (gender === 'female') ? '/images/female-figure.svg' : '/images/figure.svg';
       var img = new Image();
       img.crossOrigin = 'anonymous';
       img.onload = function() {
@@ -2183,7 +2183,7 @@
       _gateFigureCallbacks.push(callback);
       if (_gateFigureLoading) return;
       _gateFigureLoading = true;
-      var url = (gender === 'female') ? '/female-figure.svg' : '/figure.svg';
+      var url = (gender === 'female') ? '/images/female-figure.svg' : '/images/figure.svg';
       var img = new Image();
       img.onload = function() {
         try {

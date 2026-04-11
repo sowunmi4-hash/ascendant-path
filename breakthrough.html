@@ -4,7 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Tribulation Chamber | The Ascendant Path</title>
-  <link rel="stylesheet" href="style.css" />
+  <link rel="stylesheet" href="/css/style.css" />
   <style>
     :root {
       --bg-1: #050810;
@@ -1746,7 +1746,7 @@
 
   function loadFigure(gender, cb) {
     if (_figCache[gender]) { cb(_figCache[gender]); return; }
-    var src = gender === 'female' ? '/female-figure.svg' : '/figure.svg';
+    var src = gender === 'female' ? '/images/female-figure.svg' : '/images/figure.svg';
     var img = new window.Image();
     img.onload = function() {
       var oc = document.createElement('canvas');

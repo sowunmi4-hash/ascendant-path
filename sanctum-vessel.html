@@ -14,7 +14,7 @@ canvas { width:min(1024px,98vw); height:min(1024px,98vw); }
 <script>
 function getFigureFile(gender, vesselMode) {
   if (vesselMode === 'dual' || vesselMode === 'hybrid') return 'DUAL_TWO_FIGURE';
-  return gender === 'female' ? 'female-figure.svg' : 'figure.svg';
+  return gender === 'female' ? '/images/female-figure.svg' : '/images/figure.svg';
 }
 
 function getColors(gender, vesselMode) {
@@ -97,8 +97,8 @@ const stripSvg = txt => txt.replace(/<path[^>]*\/>/gi, m => {
 if (figureFile === 'DUAL_TWO_FIGURE') {
   const dc = getDualColors();
   Promise.all([
-    fetch('figure.svg').then(r => r.text()),
-    fetch('female-figure.svg').then(r => r.text())
+    fetch('/images/figure.svg').then(r => r.text()),
+    fetch('/images/female-figure.svg').then(r => r.text())
   ]).then(([mtxt, ftxt]) => {
     const mStr = stripSvg(mtxt);
     const fStr = stripSvg(ftxt);
