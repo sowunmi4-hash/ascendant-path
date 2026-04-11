@@ -1347,13 +1347,14 @@
       let bannerIcon = "✕";
       let bannerTitle = "Heaven Has Withheld the Crossing";
       let bannerCopy = safeText(bt.verdict_text, "The attempt did not succeed. The cultivator endured the storm but Heaven did not grant the ascent.");
+      let rewardTokensBanner = 0;
 
       if (outcome === "success") {
         bannerClass = "success";
         bannerIcon = "✦";
         bannerTitle = "Heaven Accepts the Ascent";
         bannerCopy = safeText(bt.verdict_text, "The tribulation was endured in full. Heaven has acknowledged the breakthrough and the next threshold is now open.");
-        const rewardTokensBanner = safeNumber(bt.reward_tokens, 0);
+        rewardTokensBanner = safeNumber(bt.reward_tokens, 0);
         // Task 2 — auto-redirect to cultivation book with cinematic param
         if (!window._successRedirectScheduled) {
           window._successRedirectScheduled = true;
