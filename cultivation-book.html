@@ -2598,17 +2598,36 @@
       var statusEl = document.getElementById('stat-status');
       var qiEl    = document.getElementById('stat-qi');
       if (!state) return;
-      var stg = state.stage || {};
-      var mem = state.member || {};
-      if (realmEl) realmEl.textContent = stg.realm_name || mem.current_realm_name || '--';
-      if (stageEl) stageEl.textContent = stg.stage_name || (stg.current_stage ? 'Stage ' + stg.current_stage : '--');
-      if (statusEl) {
-        var st = stg.stage_status || mem.cultivation_status || '--';
-        statusEl.textContent = st.charAt(0).toUpperCase() + st.slice(1).replace(/_/g, ' ');
+      var store = getStore ? getStore() : null;
+      var mem = state.member || state.user || {};
+      var record = getRecord ? getRecord() : null;
+      var sections = record && record.sections ? record.sections : {};
+      // Realm from store or member
+      if (realmEl) realmEl.textContent = (store && store.realm_name) || mem.current_realm_name || '--';
+      // Stage: find the focus section's stage or current stage
+      if (stageEl) {
+        var focusSection = getFocusRecord ? getFocusRecord() : null;
+        var stageName = '';
+        if (focusSection && focusSection.stage_name) { stageName = focusSection.stage_name; }
+        else if (focusSection && focusSection.current_stage) { stageName = 'Stage ' + focusSection.current_stage; }
+        else if (mem.current_stage_name) { stageName = mem.current_stage_name; }
+        else if (mem.current_stage) { stageName = 'Stage ' + mem.current_stage; }
+        stageEl.textContent = stageName || '--';
       }
+      // Status from book UI state
+      if (statusEl) {
+        var bookState = getBookUiState ? getBookUiState() : null;
+        if (bookState) {
+          statusEl.textContent = toTitle(bookState, '--');
+        } else {
+          var st = mem.v2_cultivation_status || mem.cultivation_status || '--';
+          statusEl.textContent = toTitle(st, '--');
+        }
+      }
+      // Qi from member/user
       if (qiEl) {
-        var qi = stg.qi_current != null ? stg.qi_current : (mem.qi_current != null ? mem.qi_current : null);
-        var qiMax = stg.qi_maximum != null ? stg.qi_maximum : (mem.qi_maximum != null ? mem.qi_maximum : null);
+        var qi = safeNumber(mem.qi_current, null);
+        var qiMax = safeNumber(mem.qi_maximum, null);
         if (qi != null && qiMax != null) {
           qiEl.textContent = qi.toLocaleString() + ' / ' + qiMax.toLocaleString();
         } else if (qi != null) {
