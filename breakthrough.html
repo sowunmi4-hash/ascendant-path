@@ -1533,7 +1533,7 @@
     function renderAftermath() {
       const model = buildAftermathModel();
       const panel = $("after-panel");
-      if (!model) { panel.classList.remove("active"); $("elements-link").style.display = "none"; return; }
+      if (!model) { panel.classList.remove("active"); var _el1 = $("elements-link"); if (_el1) _el1.style.display = "none"; return; }
       $("after-title").textContent = safeText(model.title, "The Chamber Has Settled");
       $("after-copy").textContent = safeText(model.copy, "The verdict has resolved.");
       $("after-grid").innerHTML = (model.cards || []).map(card => `
@@ -1543,7 +1543,7 @@
           <p>${safeText(card.text)}</p>
         </article>
       `).join("");
-      $("elements-link").style.display = safeBoolean(model.show_elements_link) ? "" : "none";
+      var _el2 = $("elements-link"); if (_el2) _el2.style.display = safeBoolean(model.show_elements_link) ? "" : "none";
       panel.classList.add("active");
     }
 
