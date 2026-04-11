@@ -1354,13 +1354,6 @@
         bannerTitle = "Heaven Accepts the Ascent";
         bannerCopy = safeText(bt.verdict_text, "The tribulation was endured in full. Heaven has acknowledged the breakthrough and the next threshold is now open.");
         const rewardTokensBanner = safeNumber(bt.reward_tokens, 0);
-        // Task 2 — auto-redirect to cultivation book with cinematic param
-        if (!window._successRedirectScheduled) {
-          window._successRedirectScheduled = true;
-          setTimeout(function() {
-            window.location.href = '/cultivation-book.html?breakthrough=success';
-          }, 4000);
-        }
       } else if (outcome === "failed_damaged") {
         bannerClass = "damaged";
         bannerIcon = "⚡";

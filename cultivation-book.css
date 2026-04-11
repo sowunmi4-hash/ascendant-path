@@ -2,8 +2,11 @@
 
 html { background: #070910; }
 
+/* GATE SIDE (Task 8 — flex fill) */
+.gate-side { display: flex; flex-direction: column; flex: 1; height: 100%; }
+
 /* GATE WRAP */
-.gate-wrap { border-radius: 12px; overflow: hidden; border: 1px solid #c8a96a22; transition: border-color 0.5s ease; }
+.gate-wrap { border-radius: 12px; overflow: hidden; border: 1px solid #c8a96a22; transition: border-color 0.5s ease; flex: 1; display: flex; flex-direction: column; height: 100%; }
 .gate-wrap.state-sealed      { border-color: #222; }
 .gate-wrap.state-cultivating { border-color: #3a608055; }
 .gate-wrap.state-complete    { border-color: #c8a96a33; }
@@ -17,29 +20,200 @@ html { background: #070910; }
 .gate-title  { font-size: 19px; font-weight: 500; color: #fff; margin: 0 0 4px; }
 .gate-desc   { font-size: 13px; color: rgba(255,255,255,0.55); margin: 0; line-height: 1.55; }
 
-/* GATE SCENE */
-.gate-scene { position: relative; height: 280px; overflow: hidden; cursor: default; }
+/* GATE SCENE (Task 1A + Task 8) */
+.gate-scene {
+  position: relative;
+  flex: 1;
+  height: auto;
+  min-height: 340px;
+  overflow: hidden;
+  cursor: default;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
 .gate-scene.is-clickable { cursor: pointer; }
 
-/* GATE FLOOR */
-.gate-floor { position: absolute; bottom: 0; left: 0; right: 0; height: 24px; z-index: 5; }
+/* GATE FLOOR (Task 1A — stepped base) */
+.gate-floor {
+  position: absolute;
+  bottom: 0; left: 50%;
+  transform: translateX(-50%);
+  width: 220px; height: 24px;
+  background: var(--gate-frame, #181828);
+  border-top: 0.5px solid var(--gate-rim, #222235);
+  z-index: 3;
+}
+.gate-floor::before {
+  content: '';
+  position: absolute;
+  top: -6px; left: -10px; right: -10px;
+  height: 6px;
+  background: var(--gate-frame, #181828);
+  border-top: 0.5px solid var(--gate-rim, #222235);
+}
+.gate-floor::after {
+  content: '';
+  position: absolute;
+  top: -12px; left: -20px; right: -20px;
+  height: 6px;
+  background: var(--gate-frame, #181828);
+  border-top: 0.5px solid var(--gate-rim, #222235);
+}
 
-/* ARCHWAY */
-.gate-archway { position: absolute; top: 0; left: 50%; transform: translateX(-50%); width: 220px; height: 270px; z-index: 3; }
-.gate-arch-pillar-l { position: absolute; left: 0; top: 0; width: 28px; height: 100%; z-index: 4; }
-.gate-arch-pillar-r { position: absolute; right: 0; top: 0; width: 28px; height: 100%; z-index: 4; }
-.gate-arch-top { position: absolute; top: 0; left: 0; right: 0; height: 36px; border-radius: 80px 80px 0 0; display: flex; align-items: center; justify-content: center; gap: 18px; z-index: 4; }
-.gate-rune { font-size: 10px; font-weight: 500; }
+/* ARCHWAY (Task 1A) */
+.gate-archway {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
 
-/* DOORS */
-.gate-door-l { position: absolute; left: 28px; top: 36px; width: 82px; bottom: 24px; transform-origin: left center; z-index: 2; transition: transform 0.6s ease; }
-.gate-door-r { position: absolute; right: 28px; top: 36px; width: 82px; bottom: 24px; transform-origin: right center; z-index: 2; transition: transform 0.6s ease; }
-.gate-door-panel { position: absolute; inset: 7px; border-radius: 2px; }
-.gate-door-inner  { position: absolute; inset: 6px; border-radius: 1px; }
+/* Outer frame / arch top (Task 1A) */
+.gate-arch-top {
+  position: absolute;
+  top: 0; left: 50%;
+  transform: translateX(-50%);
+  width: 200px;
+  height: 48px;
+  background: var(--gate-frame, #181828);
+  border: 0.5px solid var(--gate-rim, #222235);
+  display: flex;
+  align-items: center;
+  justify-content: space-around;
+  padding: 0 12px;
+  z-index: 3;
+}
+.gate-arch-top::before {
+  content: '';
+  position: absolute;
+  bottom: -8px; left: 50%;
+  transform: translateX(-50%);
+  width: 24px; height: 24px;
+  background: var(--gate-frame, #181828);
+  border: 0.5px solid var(--gate-rim, #222235);
+  z-index: 4;
+}
 
-/* BEAM + SEAM */
-.gate-beam { position: absolute; left: 50%; top: 36px; bottom: 24px; width: 164px; transform: translateX(-50%); z-index: 1; }
-.gate-seam { position: absolute; top: 36px; left: 50%; width: 2px; bottom: 24px; transform: translateX(-50%); z-index: 3; }
+/* Rune dots (Task 1A) */
+.gate-rune {
+  width: 8px; height: 8px;
+  border-radius: 50%;
+  background: var(--gate-glow-color, #222235);
+  opacity: 0.5;
+  transition: opacity 0.5s, background 0.5s;
+  font-size: 0;
+}
+
+/* Pillars (Task 1A — using existing HTML class names gate-arch-pillar-l/r) */
+.gate-arch-pillar-l,
+.gate-arch-pillar-r {
+  position: absolute;
+  top: 48px;
+  width: 22px;
+  bottom: 24px;
+  background: var(--gate-frame, #181828);
+  border: 0.5px solid var(--gate-rim, #222235);
+  z-index: 3;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+.gate-arch-pillar-l { left: 20px; }
+.gate-arch-pillar-r { right: 20px; }
+.gate-arch-pillar-l::before,
+.gate-arch-pillar-r::before,
+.gate-arch-pillar-l::after,
+.gate-arch-pillar-r::after {
+  content: '';
+  position: absolute;
+  left: 3px; right: 3px;
+  height: 4px;
+  background: var(--gate-glow-color, #222235);
+  opacity: 0.3;
+  border-radius: 0;
+}
+.gate-arch-pillar-l::before,
+.gate-arch-pillar-r::before { top: 25%; }
+.gate-arch-pillar-l::after,
+.gate-arch-pillar-r::after  { top: 60%; }
+/* Capital tops (Task 1C span elements) */
+.gate-arch-pillar-l > span,
+.gate-arch-pillar-r > span {
+  display: block;
+  height: 10px;
+  background: var(--gate-frame, #1e1e30);
+  border-bottom: 0.5px solid var(--gate-rim, #222235);
+  flex-shrink: 0;
+}
+
+/* DOORS (Task 1A) */
+.gate-door-l,
+.gate-door-r {
+  position: absolute;
+  top: 48px;
+  width: 88px;
+  bottom: 24px;
+  background: var(--gate-door, #131322);
+  border: 0.5px solid var(--gate-rim, #222235);
+  transition: transform 1.4s cubic-bezier(0.4, 0, 0.2, 1),
+              background 0.8s, border-color 0.8s;
+  z-index: 2;
+  overflow: hidden;
+}
+.gate-door-l { left: 42px; transform-origin: left center; }
+.gate-door-r { right: 42px; transform-origin: right center; }
+
+/* Door panel insets (Task 1A) */
+.gate-door-panel {
+  position: absolute;
+  left: 6px; right: 6px;
+  border: 0.5px solid rgba(255,255,255,0.06);
+  background: rgba(0,0,0,0.3);
+}
+.gate-door-panel.top    { top: 8px;  height: 38%; }
+.gate-door-panel.bottom { bottom: 8px; height: 38%; }
+/* Fallback for existing non-top/bottom panels */
+.gate-door-panel:not(.top):not(.bottom) { inset: 7px; border-radius: 2px; }
+
+/* Door inner ornament lines (Task 1A) */
+.gate-door-inner {
+  position: absolute;
+  left: 10px; right: 10px;
+  border: 0.5px solid rgba(255,255,255,0.04);
+}
+.gate-door-inner.top    { top: 12px;  height: calc(38% - 8px); }
+.gate-door-inner.bottom { bottom: 12px; height: calc(38% - 8px); }
+.gate-door-inner:not(.top):not(.bottom) { inset: 6px; border-radius: 1px; }
+
+/* CENTER SEAM (Task 1A) */
+.gate-seam {
+  position: absolute;
+  top: 48px; bottom: 24px;
+  left: 50%; width: 2px;
+  transform: translateX(-50%);
+  background: var(--gate-rim, #222235);
+  z-index: 4;
+  transition: background 0.8s, box-shadow 0.8s;
+}
+
+/* BEAM (Task 1A) */
+.gate-beam {
+  position: absolute;
+  top: 48px; bottom: 24px;
+  left: 50%;
+  width: 0;
+  transform: translateX(-50%);
+  background: linear-gradient(to bottom,
+    var(--gate-beam-color, transparent),
+    transparent);
+  opacity: 0;
+  z-index: 1;
+  transition: width 0.8s, opacity 0.8s;
+  pointer-events: none;
+}
 
 /* PARTICLES */
 .gate-star  { position: absolute; width: 1px; height: 1px; border-radius: 50%; animation: gateTwinkle var(--td) ease-in-out infinite var(--ts); }
@@ -47,12 +221,34 @@ html { background: #070910; }
 .gate-qi    { position: absolute; width: 3px; height: 3px; border-radius: 50%; animation: gateQiRise var(--qd) ease-in infinite var(--qs); opacity: 0; }
 
 /* FIGURE + FLASH */
-.gate-figure { position: absolute; bottom: 24px; z-index: 6; pointer-events: none; transition: left 0.4s ease, opacity 0.4s ease; }
+.gate-figure {
+  position: absolute;
+  bottom: 24px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 5;
+  pointer-events: none;
+}
 .gate-flash  { position: absolute; inset: 0; background: #c8a96a; opacity: 0; z-index: 20; pointer-events: none; transition: opacity 0.35s ease; }
 
-/* PROGRESS BAR */
-.gate-progress-bar-wrap { position: absolute; bottom: 28px; left: 50%; transform: translateX(-50%); width: 120px; height: 4px; background: rgba(255,255,255,0.08); border-radius: 2px; overflow: hidden; z-index: 4; }
-.gate-progress-bar-fill { height: 100%; border-radius: 2px; transition: width 1s ease; }
+/* PROGRESS BAR (Task 1A) */
+.gate-progress-bar-wrap {
+  position: absolute;
+  bottom: 28px; left: 50%;
+  transform: translateX(-50%);
+  width: 140px; height: 3px;
+  background: rgba(255,255,255,0.06);
+  border-radius: 2px;
+  overflow: hidden;
+  z-index: 6;
+}
+.gate-progress-bar-fill,
+.gate-progress-bar {
+  height: 100%;
+  background: var(--gate-glow-color, #3a6080);
+  border-radius: 2px;
+  transition: width 0.5s;
+}
 
 /* FOOTER */
 .gate-footer { padding: 0.85rem 1.4rem 1rem; }
@@ -77,58 +273,24 @@ html { background: #070910; }
 @keyframes gateKnockback { 0%,100%{transform:rotate(30deg) translateY(6px)} 50%{transform:rotate(36deg) translateY(11px)} }
 @keyframes gateRuneGlow  { 0%,100%{opacity:0.25} 50%{opacity:1} }
 
-/* ── GATE VISUALIZATION (appended) ─────────────────────────────────────────── */
-.gate-wrap { border-radius: 12px; overflow: hidden; border: 1px solid #c8a96a22; transition: border-color 0.5s ease; }
-.gate-wrap.state-sealed      { border-color: #222; }
-.gate-wrap.state-cultivating { border-color: #3a608055; }
-.gate-wrap.state-complete    { border-color: #c8a96a33; }
-.gate-wrap.state-open        { border-color: #c8a96a88; }
-.gate-wrap.state-active      { border-color: #e8a84055; }
-.gate-wrap.state-damaged     { border-color: #7a202055; }
-.gate-header { padding: 1.1rem 1.4rem 0.85rem; }
-.gate-kicker { font-size: 11px; font-weight: 500; text-transform: uppercase; letter-spacing: 0.1em; margin: 0 0 3px; transition: color 0.5s ease; }
-.gate-title  { font-size: 19px; font-weight: 500; color: #fff; margin: 0 0 4px; }
-.gate-desc   { font-size: 13px; color: rgba(255,255,255,0.55); margin: 0; line-height: 1.55; }
-.gate-scene  { position: relative; height: 280px; overflow: hidden; cursor: default; }
-.gate-scene.is-clickable { cursor: pointer; }
-.gate-floor  { position: absolute; bottom: 0; left: 0; right: 0; height: 24px; z-index: 5; }
-.gate-archway { position: absolute; top: 0; left: 50%; transform: translateX(-50%); width: 220px; height: 270px; z-index: 3; }
-.gate-arch-pillar-l { position: absolute; left: 0; top: 0; width: 28px; height: 100%; z-index: 4; }
-.gate-arch-pillar-r { position: absolute; right: 0; top: 0; width: 28px; height: 100%; z-index: 4; }
-.gate-arch-top { position: absolute; top: 0; left: 0; right: 0; height: 36px; border-radius: 80px 80px 0 0; display: flex; align-items: center; justify-content: center; gap: 18px; z-index: 4; }
-.gate-rune   { font-size: 10px; font-weight: 500; }
-.gate-door-l { position: absolute; left: 28px; top: 36px; width: 82px; bottom: 24px; transform-origin: left center; z-index: 2; transition: transform 0.6s ease; }
-.gate-door-r { position: absolute; right: 28px; top: 36px; width: 82px; bottom: 24px; transform-origin: right center; z-index: 2; transition: transform 0.6s ease; }
-.gate-door-panel { position: absolute; inset: 7px; border-radius: 2px; }
-.gate-door-inner  { position: absolute; inset: 6px; border-radius: 1px; }
-.gate-beam   { position: absolute; left: 50%; top: 36px; bottom: 24px; width: 164px; transform: translateX(-50%); z-index: 1; }
-.gate-seam   { position: absolute; top: 36px; left: 50%; width: 2px; bottom: 24px; transform: translateX(-50%); z-index: 3; }
-.gate-star   { position: absolute; width: 1px; height: 1px; border-radius: 50%; animation: gateTwinkle var(--td) ease-in-out infinite var(--ts); }
-.gate-spark  { position: absolute; width: 2px; height: 2px; border-radius: 50%; animation: gateSparkFly var(--sd) ease-out infinite var(--ss); opacity: 0; }
-.gate-qi     { position: absolute; width: 3px; height: 3px; border-radius: 50%; animation: gateQiRise var(--qd) ease-in infinite var(--qs); opacity: 0; }
-.gate-figure { position: absolute; bottom: 24px; z-index: 6; pointer-events: none; transition: left 0.4s ease, opacity 0.4s ease; }
-.gate-flash  { position: absolute; inset: 0; background: #c8a96a; opacity: 0; z-index: 20; pointer-events: none; transition: opacity 0.35s ease; }
-.gate-progress-bar-wrap { position: absolute; bottom: 28px; left: 50%; transform: translateX(-50%); width: 120px; height: 4px; background: rgba(255,255,255,0.08); border-radius: 2px; overflow: hidden; z-index: 4; }
-.gate-progress-bar-fill { height: 100%; border-radius: 2px; transition: width 1s ease; }
-.gate-footer { padding: 0.85rem 1.4rem 1rem; }
-.gate-chips  { display: flex; gap: 7px; flex-wrap: wrap; margin-bottom: 0.85rem; }
-.gate-chip   { border-radius: 8px; padding: 6px 11px; font-size: 12px; }
-.gate-chip span   { display: block; margin-bottom: 1px; }
-.gate-chip strong { font-weight: 500; }
-.gate-action-btn  { display: block; width: 100%; padding: 12px; border-radius: 9px; font-size: 14px; font-weight: 500; text-align: center; border: none; cursor: pointer; position: relative; overflow: hidden; text-decoration: none; }
-.gate-action-btn::after { content: ''; position: absolute; inset: 0; background: linear-gradient(90deg, transparent, rgba(255,255,255,0.22), transparent); transform: translateX(-100%); animation: gateShimmer 3s ease-in-out infinite; }
-.gate-action-btn-off { display: block; width: 100%; padding: 12px; border-radius: 9px; font-size: 14px; font-weight: 500; text-align: center; cursor: not-allowed; border: none; }
-.gate-sub-note { font-size: 12px; text-align: center; margin: 6px 0 0; }
-.record-footer-band { padding: 0; background: none; border: none; overflow: hidden; }
-@keyframes gateTwinkle   { 0%,100%{opacity:0.15} 50%{opacity:0.7} }
-@keyframes gateSparkFly  { 0%{opacity:0;transform:translate(0,0)} 20%{opacity:0.9} 100%{opacity:0;transform:translate(var(--sx),var(--sy))} }
-@keyframes gateQiRise    { 0%{opacity:0;transform:translateY(0)} 30%{opacity:0.7} 100%{opacity:0;transform:translateY(-65px)} }
-@keyframes gateShimmer   { 0%{transform:translateX(-100%)} 60%,100%{transform:translateX(200%)} }
-@keyframes gateBeamPulse { 0%,100%{opacity:0.5} 50%{opacity:1} }
-@keyframes gateCrack     { 0%,100%{opacity:0.4} 50%{opacity:1} }
-@keyframes gateMeditate  { 0%,100%{transform:translateY(0px)} 50%{transform:translateY(-4px)} }
-@keyframes gateKnockback { 0%,100%{transform:rotate(30deg) translateY(6px)} 50%{transform:rotate(36deg) translateY(11px)} }
-@keyframes gateRuneGlow  { 0%,100%{opacity:0.25} 50%{opacity:1} }
+/* TASK 4 — Damaged state animations */
+.vessel-gate-panel.state-damaged .gate-seam {
+  background: #7a2020;
+  box-shadow: 0 0 8px rgba(200,40,40,0.4);
+  animation: seamCrack 2s ease-in-out infinite;
+}
+.vessel-gate-panel.state-damaged .gate-rune {
+  background: #cc4444;
+  animation: runeFlicker 1.5s ease-in-out infinite;
+}
+@keyframes seamCrack {
+  0%, 100% { opacity: 1; box-shadow: 0 0 8px rgba(200,40,40,0.4); }
+  50% { opacity: 0.5; box-shadow: 0 0 16px rgba(200,40,40,0.7); }
+}
+@keyframes runeFlicker {
+  0%, 100% { opacity: 0.8; }
+  50% { opacity: 0.2; }
+}
 
 /* GATE STATS BAR */
 .gate-stats-bar { padding: 1rem 1.5rem; border-top: 0.5px solid #c8a96a22; background: #0d0a00; }
@@ -137,3 +299,4 @@ html { background: #070910; }
 .gate-stat-box span { display: block; font-size: 10px; font-weight: 500; color: #c8a96a88; text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 4px; }
 .gate-stat-box strong { display: block; font-size: 18px; font-weight: 500; color: #c8a96a; }
 .vessel-gate-panel, .record-stats-bar, .record-lower-grid { position: relative; z-index: 4; isolation: isolate; }
+.record-footer-band { padding: 0; background: none; border: none; overflow: hidden; }

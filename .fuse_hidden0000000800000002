@@ -2032,10 +2032,6 @@
         <aside class="dashboard-panel side-panel" id="clock-panel"></aside>
       </section>
 
-      <section class="dashboard-panel celestial-strip-panel" id="celestial-strip-panel">
-        <div class="loading-state">Calling the celestial report…</div>
-      </section>
-
       <section class="dashboard-panel" id="resources-panel" hidden></section>
       <section class="dashboard-panel" id="notices-panel" hidden></section>
     </main>
@@ -2135,7 +2131,6 @@
     const sanctumPanel = document.getElementById("sanctum-panel");
     const clockPanel = document.getElementById("clock-panel");
     const resourcesPanel = document.getElementById("resources-panel");
-    const celestialStripPanel = document.getElementById("celestial-strip-panel");
     const noticesPanel = document.getElementById("notices-panel");
 
     let refreshTimer = null;
@@ -3626,7 +3621,7 @@
 
         function initHexClock(world) {
           var canvas = document.getElementById('hex-clock-canvas');
-          if (\!canvas || \!world) return;
+          if (!canvas || !world) return;
           var ctx = canvas.getContext('2d');
           var W = 480, H = 480, cx = W/2, cy = H/2;
           var orbitR = 158, outerHexR = 50, centerHexR = 72;
@@ -3960,9 +3955,6 @@
 
       dashboardMiddle.hidden = true;
 
-      celestialStripPanel.innerHTML = `
-        <div class="error-state" style="min-height: 90px;">The celestial strip could not be opened.</div>
-      `;
       noticesPanel.hidden = true;
       resourcesPanel.hidden = true;
     }
@@ -4248,6 +4240,11 @@
           const pathCurrent = vm.path_current || '';
           const figureFile = getFigureFile(gender, vesselMode);
           const colors = getColors(gender, vesselMode);
+          window._vesselGlowColor     = colors.glow;
+          window._vesselBrightColor   = colors.bright;
+          window._vesselScanColor     = colors.glow;
+          window._vesselParticleColor = colors.glow;
+          window._vesselGroundColor   = colors.solid;
           const toImg = svg => new Promise(res => {
             const img = new Image();
             img.onload = () => res(img);
@@ -4268,12 +4265,15 @@
                 const strippedM = stripSvg(tM);
                 const strippedF = stripSvg(tF);
                 const dc = getDualColors();
-                const mSolid  = strippedM.replace(/fill="#[0-9A-Fa-f]{6}"/gi, `fill="${dc.male.solid}"`);
-                const mGlow   = strippedM.replace(/fill="#[0-9A-Fa-f]{6}"/gi, `fill="${dc.male.glow}"`);
-                const mBright = strippedM.replace(/fill="#[0-9A-Fa-f]{6}"/gi, `fill="${dc.male.bright}"`);
-                const fSolid  = strippedF.replace(/fill="#[0-9A-Fa-f]{6}"/gi, `fill="${dc.female.solid}"`);
-                const fGlow   = strippedF.replace(/fill="#[0-9A-Fa-f]{6}"/gi, `fill="${dc.female.glow}"`);
-                const fBright = strippedF.replace(/fill="#[0-9A-Fa-f]{6}"/gi, `fill="${dc.female.bright}"`);
+                // Task 7 fix: colour each figure by its actual gender
+                const myDc      = (vm.gender === 'female') ? dc.female : dc.male;
+                const partnerDc = (partnerGender === 'female') ? dc.female : dc.male;
+                const mSolid  = strippedM.replace(/fill="#[0-9A-Fa-f]{6}"/gi, `fill="${myDc.solid}"`);
+                const mGlow   = strippedM.replace(/fill="#[0-9A-Fa-f]{6}"/gi, `fill="${myDc.glow}"`);
+                const mBright = strippedM.replace(/fill="#[0-9A-Fa-f]{6}"/gi, `fill="${myDc.bright}"`);
+                const fSolid  = strippedF.replace(/fill="#[0-9A-Fa-f]{6}"/gi, `fill="${partnerDc.solid}"`);
+                const fGlow   = strippedF.replace(/fill="#[0-9A-Fa-f]{6}"/gi, `fill="${partnerDc.glow}"`);
+                const fBright = strippedF.replace(/fill="#[0-9A-Fa-f]{6}"/gi, `fill="${partnerDc.bright}"`);
                 Promise.all([toImg(mSolid),toImg(mGlow),toImg(mBright),toImg(fSolid),toImg(fGlow),toImg(fBright)])
                   .then(([ms,mg,mb,fs,fg,fb]) => runVessel(ms,mg,mb,Math.min(1,qiCurrent/qiMax),realmIndex,fs,fg,fb,vesselMode,pathCurrent));
               });
@@ -4326,9 +4326,9 @@ function getFigureFile(gender, vesselMode) {
 }
 
 function getColors(gender, vesselMode) {
+  if (gender === 'female') return { solid: '#6b2a40', glow: '#c86890', bright: '#f0a0b8' };
   if (vesselMode === 'hybrid') return { solid: '#7a5a28', glow: '#c8a060', bright: '#f0c87a' };
   if (vesselMode === 'dual')   return { solid: '#6b3a2a', glow: '#c87941', bright: '#f0b06a' };
-  if (gender === 'female')     return { solid: '#6b2a40', glow: '#c86890', bright: '#f0a0b8' };
   return { solid: '#8a6a20', glow: '#c8a96a', bright: '#ffe090' };
 }
 
@@ -4395,6 +4395,11 @@ function initVessel() {
   const partnerGender = (window.dashboardData && window.dashboardData.partner && window.dashboardData.partner.gender) || 'male';
   const figureFile = getFigureFile(gender, vesselMode);
   const colors = getColors(gender, vesselMode);
+  window._vesselGlowColor     = colors.glow;
+  window._vesselBrightColor   = colors.bright;
+  window._vesselScanColor     = colors.glow;
+  window._vesselParticleColor = colors.glow;
+  window._vesselGroundColor   = colors.solid;
   const toImg = svg => new Promise(res => {
     const img = new Image();
     img.onload = () => res(img);
@@ -4415,12 +4420,15 @@ function initVessel() {
         const strippedM = stripSvg(tM);
         const strippedF = stripSvg(tF);
         const dc = getDualColors();
-        const mSolid  = strippedM.replace(/fill="#[0-9A-Fa-f]{6}"/gi, `fill="${dc.male.solid}"`);
-        const mGlow   = strippedM.replace(/fill="#[0-9A-Fa-f]{6}"/gi, `fill="${dc.male.glow}"`);
-        const mBright = strippedM.replace(/fill="#[0-9A-Fa-f]{6}"/gi, `fill="${dc.male.bright}"`);
-        const fSolid  = strippedF.replace(/fill="#[0-9A-Fa-f]{6}"/gi, `fill="${dc.female.solid}"`);
-        const fGlow   = strippedF.replace(/fill="#[0-9A-Fa-f]{6}"/gi, `fill="${dc.female.glow}"`);
-        const fBright = strippedF.replace(/fill="#[0-9A-Fa-f]{6}"/gi, `fill="${dc.female.bright}"`);
+        // Task 7 fix: colour each figure by its actual gender
+        const myDc2      = (member.gender === 'female') ? dc.female : dc.male;
+        const partnerDc2 = (partnerGender === 'female') ? dc.female : dc.male;
+        const mSolid  = strippedM.replace(/fill="#[0-9A-Fa-f]{6}"/gi, `fill="${myDc2.solid}"`);
+        const mGlow   = strippedM.replace(/fill="#[0-9A-Fa-f]{6}"/gi, `fill="${myDc2.glow}"`);
+        const mBright = strippedM.replace(/fill="#[0-9A-Fa-f]{6}"/gi, `fill="${myDc2.bright}"`);
+        const fSolid  = strippedF.replace(/fill="#[0-9A-Fa-f]{6}"/gi, `fill="${partnerDc2.solid}"`);
+        const fGlow   = strippedF.replace(/fill="#[0-9A-Fa-f]{6}"/gi, `fill="${partnerDc2.glow}"`);
+        const fBright = strippedF.replace(/fill="#[0-9A-Fa-f]{6}"/gi, `fill="${partnerDc2.bright}"`);
         Promise.all([toImg(mSolid),toImg(mGlow),toImg(mBright),toImg(fSolid),toImg(fGlow),toImg(fBright)])
           .then(([ms,mg,mb,fs,fg,fb]) => runVessel(ms,mg,mb,pct,realmIndex,fs,fg,fb,vesselMode,pathCurrent));
       });
@@ -4734,7 +4742,7 @@ function runVessel(solidImg, glowImg, brightImg, pct, realmIndex, fSolidImg, fGl
       } else if (ac.type === 'yang') {
         drawQiAura(cxS, cyS, arcR, dp, '#e8a840', '#ff6820', pulse);
       } else {
-        drawQiAura(cxS, cyS, arcR, dp, '#c8a96a', '#ffe090', pulse);
+        drawQiAura(cxS, cyS, arcR, dp, _vesselGlowColor, _vesselBrightColor, pulse);
       }
     }
 
@@ -4743,7 +4751,7 @@ function runVessel(solidImg, glowImg, brightImg, pct, realmIndex, fSolidImg, fGl
     octx.globalCompositeOperation='source-in';
     for(let y=figTop;y<figBottom;y+=8){
       octx.globalAlpha=0.04*(0.3+0.7*Math.sin(y*0.15+t*7));
-      octx.strokeStyle='rgba(240,200,100,1)'; octx.lineWidth=1;
+      octx.strokeStyle=_vesselScanColor; octx.lineWidth=1;
       octx.beginPath(); octx.moveTo(0,y); octx.lineTo(W,y); octx.stroke();
     }
     octx.globalCompositeOperation='source-over';
@@ -4757,14 +4765,14 @@ function runVessel(solidImg, glowImg, brightImg, pct, realmIndex, fSolidImg, fGl
         const pa=(ph<0.12?ph/0.12:ph>0.72?1-(ph-0.72)/0.16:0.9)*pct*flicker;
         ctx.save(); ctx.globalAlpha=pa*0.75;
         ctx.beginPath(); ctx.arc(px,py,3*(1-ph*0.5),0,Math.PI*2);
-        ctx.fillStyle='rgba(240,200,100,0.9)'; ctx.fill(); ctx.restore();
+        ctx.fillStyle=_vesselParticleColor; ctx.fill(); ctx.restore();
       }
     }
 
     ctx.save(); ctx.translate(W/2,figBottom+24); ctx.scale(1,0.22);
     ctx.globalAlpha=(0.16+0.08*b)*flicker;
     ctx.beginPath(); ctx.arc(0,0,200,0,Math.PI*2);
-    ctx.strokeStyle='rgba(200,169,106,1)'; ctx.lineWidth=2; ctx.stroke();
+    ctx.strokeStyle=_vesselGroundColor; ctx.lineWidth=2; ctx.stroke();
     ctx.restore();
 
     yyTargetOpacity = vesselMode === 'hybrid' ? 1 : 0;
@@ -4781,10 +4789,4 @@ function runVessel(solidImg, glowImg, brightImg, pct, realmIndex, fSolidImg, fGl
 
 </script>
 <div id="news-ticker-bar" style="width:100%;background:#0a0d1a;border-top:1px solid rgba(200,169,106,0.25);height:38px;display:flex;align-items:center;overflow:hidden;position:fixed;bottom:0;left:0;z-index:999;">
-  <div id="ticker-label" style="flex-shrink:0;padding:0 14px;font-size:10px;letter-spacing:0.12em;text-transform:uppercase;color:#c8a96a;font-weight:600;border-right:1px solid rgba(200,169,106,0.3);height:100%;display:flex;align-items:center;background:#0a0d1a;white-space:nowrap;">⬡ Celestial Feed</div>
-  <div style="overflow:hidden;flex:1;position:relative;height:100%;">
-    <div id="ticker-track" style="display:flex;align-items:center;height:100%;position:absolute;white-space:nowrap;"></div>
-  </div>
-</div>
-</body>
-</html>
+  <div

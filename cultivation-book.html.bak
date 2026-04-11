@@ -765,8 +765,8 @@
                   <span class="gate-rune" id="gate-rune-m">&#x2630;</span>
                   <span class="gate-rune" id="gate-rune-r">&#x2B21;</span>
                 </div>
-                <div class="gate-arch-pillar-l" id="gate-pillar-l"><span></span></div>
-                <div class="gate-arch-pillar-r" id="gate-pillar-r"><span></span></div>
+                <div class="gate-arch-pillar-l" id="gate-pillar-l"></div>
+                <div class="gate-arch-pillar-r" id="gate-pillar-r"></div>
                 <div class="gate-beam" id="gate-beam"></div>
                 <div class="gate-door-l" id="gate-door-l">
                   <div class="gate-door-panel" id="gate-door-panel-l">
@@ -1642,9 +1642,6 @@
       if (_vesselRafId) { cancelAnimationFrame(_vesselRafId); _vesselRafId = null; }
 
       var gender = safeLower(state.member && (state.member.gender || state.member.sl_gender)) || 'male';
-      // Task 6 — gender-aware vessel colours
-      var vesselColor = (gender === 'female') ? '#c86890' : '#c8a96a';
-      var vesselRGB   = (gender === 'female') ? '200,104,144' : '200,169,106';
       var pathCurrent = safeLower(state.member && state.member.path_current) || '';
       var colors = getAlignmentColors(pathCurrent);
       var c1 = colors.fillA; var c2 = colors.fillB;
@@ -1670,7 +1667,7 @@
 
           ctx.save();
           ctx.beginPath(); ctx.arc(cx, cy, baseR + 40, 0, Math.PI * 2);
-          ctx.fillStyle = 'rgba(' + vesselRGB + ',0.03)'; ctx.fill();
+          ctx.fillStyle = 'rgba(200,169,106,0.03)'; ctx.fill();
           ctx.restore();
 
           var v2StatusNow = safeLower(getV2CultivationStatus());
@@ -1754,34 +1751,6 @@
     function stopGateVessel() {
       if (_vesselRafId) { cancelAnimationFrame(_vesselRafId); _vesselRafId = null; }
     }
-    function runFigureDropCinematic() {
-      var canvas = document.getElementById('vessel-canvas');
-      if (!canvas) return;
-      var urlParams = new URLSearchParams(window.location.search);
-      if (urlParams.get('breakthrough') !== 'success') return;
-      // Figure starts above canvas and drops into position
-      var dropProgress = 0;
-      var dropRAF;
-      function dropFrame() {
-        dropProgress = Math.min(1, dropProgress + 0.012);
-        var ease = 1 - Math.pow(1 - dropProgress, 3);
-        canvas.style.transform = 'translateY(' + ((1 - ease) * -120) + 'px)';
-        canvas.style.opacity = String(ease);
-        if (dropProgress < 1) {
-          dropRAF = requestAnimationFrame(dropFrame);
-        } else {
-          canvas.style.transform = '';
-          canvas.style.opacity = '';
-          var url = new URL(window.location.href);
-          url.searchParams.delete('breakthrough');
-          window.history.replaceState({}, '', url);
-        }
-      }
-      canvas.style.opacity = '0';
-      canvas.style.transform = 'translateY(-120px)';
-      setTimeout(function() { dropRAF = requestAnimationFrame(dropFrame); }, 600);
-    }
-
 
     var _gateFigureCache = null;
     var _gateFigureLoading = false;
@@ -1950,25 +1919,6 @@
         scene.style.background = c.bg;
         scene.className = 'gate-scene' + (gateState === 'open' ? ' is-clickable' : '');
 
-        // Task 1B — CSS variables per gate state
-        var gateVars = {
-          sealed:      { frame:'#181828', rim:'#222235', door:'#131322', glowColor:'#222235', beamColor:'transparent' },
-          cultivating: { frame:'#0d1e30', rim:'#1a3555', door:'#0a1824', glowColor:'#3a6080', beamColor:'transparent' },
-          complete:    { frame:'#1e1800', rim:'#3a2a00', door:'#181200', glowColor:'#c8a96a', beamColor:'transparent' },
-          open:        { frame:'#201a00', rim:'#c8a96a', door:'#181200', glowColor:'#c8a96a', beamColor:'rgba(200,169,106,0.4)' },
-          active:      { frame:'#281400', rim:'#e09040', door:'#1a0e00', glowColor:'#e09040', beamColor:'rgba(220,130,40,0.35)' },
-          damaged:     { frame:'#200808', rim:'#7a1515', door:'#160505', glowColor:'#c03030', beamColor:'transparent' },
-        };
-        var gv = gateVars[gateState] || gateVars.sealed;
-        var gateEl = document.getElementById('gate-scene') || document.querySelector('.gate-scene');
-        if (gateEl) {
-          gateEl.style.setProperty('--gate-frame', gv.frame);
-          gateEl.style.setProperty('--gate-rim', gv.rim);
-          gateEl.style.setProperty('--gate-door', gv.door);
-          gateEl.style.setProperty('--gate-glow-color', gv.glowColor);
-          gateEl.style.setProperty('--gate-beam-color', gv.beamColor);
-        }
-
         if (archTop)  { archTop.style.background = c.aBg;  archTop.style.border  = '1px solid ' + c.aBorder; }
         if (pillarL)  { pillarL.style.background = c.pBg;  pillarL.style.border  = '1px solid ' + c.pBorder; }
         if (pillarR)  { pillarR.style.background = c.pBg;  pillarR.style.border  = '1px solid ' + c.pBorder; }
@@ -1994,15 +1944,9 @@
         if (beam) {
           if (c.beam) {
             beam.style.display = 'block';
-            beam.style.width = '80px';
-            beam.style.opacity = '1';
             beam.style.background = 'radial-gradient(ellipse at 50% 30%,' + c.beamCol + ' 0%,transparent 70%)';
             beam.style.animation = 'gateBeamPulse ' + c.beamSpd + ' ease-in-out infinite';
-          } else {
-            beam.style.display = 'none';
-            beam.style.width = '0';
-            beam.style.opacity = '0';
-          }
+          } else { beam.style.display = 'none'; }
         }
 
         var runeCol = c.runes ? (c.runeCol || '#c8a96a') : 'transparent';
@@ -2412,7 +2356,6 @@
       renderHero();
       renderPath();
       renderAltar();
-      runFigureDropCinematic();
       renderContext();
       renderBreakthroughFooter();
       renderPrimaryAction();

@@ -4265,15 +4265,12 @@
                 const strippedM = stripSvg(tM);
                 const strippedF = stripSvg(tF);
                 const dc = getDualColors();
-                // Task 7 fix: colour each figure by its actual gender
-                const myDc      = (vm.gender === 'female') ? dc.female : dc.male;
-                const partnerDc = (partnerGender === 'female') ? dc.female : dc.male;
-                const mSolid  = strippedM.replace(/fill="#[0-9A-Fa-f]{6}"/gi, `fill="${myDc.solid}"`);
-                const mGlow   = strippedM.replace(/fill="#[0-9A-Fa-f]{6}"/gi, `fill="${myDc.glow}"`);
-                const mBright = strippedM.replace(/fill="#[0-9A-Fa-f]{6}"/gi, `fill="${myDc.bright}"`);
-                const fSolid  = strippedF.replace(/fill="#[0-9A-Fa-f]{6}"/gi, `fill="${partnerDc.solid}"`);
-                const fGlow   = strippedF.replace(/fill="#[0-9A-Fa-f]{6}"/gi, `fill="${partnerDc.glow}"`);
-                const fBright = strippedF.replace(/fill="#[0-9A-Fa-f]{6}"/gi, `fill="${partnerDc.bright}"`);
+                const mSolid  = strippedM.replace(/fill="#[0-9A-Fa-f]{6}"/gi, `fill="${dc.male.solid}"`);
+                const mGlow   = strippedM.replace(/fill="#[0-9A-Fa-f]{6}"/gi, `fill="${dc.male.glow}"`);
+                const mBright = strippedM.replace(/fill="#[0-9A-Fa-f]{6}"/gi, `fill="${dc.male.bright}"`);
+                const fSolid  = strippedF.replace(/fill="#[0-9A-Fa-f]{6}"/gi, `fill="${dc.female.solid}"`);
+                const fGlow   = strippedF.replace(/fill="#[0-9A-Fa-f]{6}"/gi, `fill="${dc.female.glow}"`);
+                const fBright = strippedF.replace(/fill="#[0-9A-Fa-f]{6}"/gi, `fill="${dc.female.bright}"`);
                 Promise.all([toImg(mSolid),toImg(mGlow),toImg(mBright),toImg(fSolid),toImg(fGlow),toImg(fBright)])
                   .then(([ms,mg,mb,fs,fg,fb]) => runVessel(ms,mg,mb,Math.min(1,qiCurrent/qiMax),realmIndex,fs,fg,fb,vesselMode,pathCurrent));
               });
@@ -4420,15 +4417,12 @@ function initVessel() {
         const strippedM = stripSvg(tM);
         const strippedF = stripSvg(tF);
         const dc = getDualColors();
-        // Task 7 fix: colour each figure by its actual gender
-        const myDc2      = (member.gender === 'female') ? dc.female : dc.male;
-        const partnerDc2 = (partnerGender === 'female') ? dc.female : dc.male;
-        const mSolid  = strippedM.replace(/fill="#[0-9A-Fa-f]{6}"/gi, `fill="${myDc2.solid}"`);
-        const mGlow   = strippedM.replace(/fill="#[0-9A-Fa-f]{6}"/gi, `fill="${myDc2.glow}"`);
-        const mBright = strippedM.replace(/fill="#[0-9A-Fa-f]{6}"/gi, `fill="${myDc2.bright}"`);
-        const fSolid  = strippedF.replace(/fill="#[0-9A-Fa-f]{6}"/gi, `fill="${partnerDc2.solid}"`);
-        const fGlow   = strippedF.replace(/fill="#[0-9A-Fa-f]{6}"/gi, `fill="${partnerDc2.glow}"`);
-        const fBright = strippedF.replace(/fill="#[0-9A-Fa-f]{6}"/gi, `fill="${partnerDc2.bright}"`);
+        const mSolid  = strippedM.replace(/fill="#[0-9A-Fa-f]{6}"/gi, `fill="${dc.male.solid}"`);
+        const mGlow   = strippedM.replace(/fill="#[0-9A-Fa-f]{6}"/gi, `fill="${dc.male.glow}"`);
+        const mBright = strippedM.replace(/fill="#[0-9A-Fa-f]{6}"/gi, `fill="${dc.male.bright}"`);
+        const fSolid  = strippedF.replace(/fill="#[0-9A-Fa-f]{6}"/gi, `fill="${dc.female.solid}"`);
+        const fGlow   = strippedF.replace(/fill="#[0-9A-Fa-f]{6}"/gi, `fill="${dc.female.glow}"`);
+        const fBright = strippedF.replace(/fill="#[0-9A-Fa-f]{6}"/gi, `fill="${dc.female.bright}"`);
         Promise.all([toImg(mSolid),toImg(mGlow),toImg(mBright),toImg(fSolid),toImg(fGlow),toImg(fBright)])
           .then(([ms,mg,mb,fs,fg,fb]) => runVessel(ms,mg,mb,pct,realmIndex,fs,fg,fb,vesselMode,pathCurrent));
       });
@@ -4601,4 +4595,198 @@ function runVessel(solidImg, glowImg, brightImg, pct, realmIndex, fSolidImg, fGl
       // Glow layer
       ctx.save();
       ctx.beginPath(); ctx.rect(W/2, 0, W/2, H); ctx.clip();
-      ctx.globalAlpha = (0.18 + 0.10 * b) * flic
+      ctx.globalAlpha = (0.18 + 0.10 * b) * flicker;
+      ctx.drawImage(fGlowImg, TX_f - 8, TY2 + floatY_f - 8, FW2 + 16, FH2 + 16);
+      ctx.restore();
+    } else {
+      // Single figure — floating
+      ctx.save();
+      ctx.globalAlpha = (0.9 + 0.08 * b) * flicker;
+      ctx.drawImage(solidImg, TX, TY + floatY, FW, FH);
+      ctx.restore();
+      // Glow layer
+      ctx.save();
+      ctx.globalAlpha = (0.18 + 0.10 * b) * flicker;
+      ctx.drawImage(glowImg, TX - 8, TY + floatY - 8, FW + 16, FH + 16);
+      ctx.restore();
+    }
+
+    // Qi aura rings — layered living aura
+    const ac = getAlignmentColors(pathCurrent);
+    if (typeof draw._displayPct === 'undefined') draw._displayPct = pct;
+    draw._displayPct += (pct - draw._displayPct) * 0.012;
+    const dp = draw._displayPct;
+    const start = -Math.PI / 2;
+
+    function drawQiAura(cx, cy, baseR, pct, c1, c2, pulse) {
+      if (pct <= 0) return;
+      const end = start + Math.PI * 2 * pct;
+
+      // Layer 1 — soft breathing halo
+      const haloR = baseR + 28 + Math.sin(t * 0.8) * 8;
+      const halo = ctx.createRadialGradient(cx, cy, baseR * 0.3, cx, cy, haloR);
+      halo.addColorStop(0, 'rgba(0,0,0,0)');
+      halo.addColorStop(0.5, c1 + '33');
+      halo.addColorStop(1, 'rgba(0,0,0,0)');
+      ctx.save();
+      ctx.beginPath(); ctx.arc(cx, cy, haloR, 0, Math.PI * 2);
+      ctx.fillStyle = halo; ctx.globalAlpha = 1; ctx.fill();
+      ctx.restore();
+
+      // Layer 2 — background track
+      ctx.save();
+      ctx.beginPath(); ctx.arc(cx, cy, baseR, 0, Math.PI * 2);
+      ctx.strokeStyle = 'rgba(255,255,255,0.06)'; ctx.lineWidth = 14; ctx.stroke();
+      ctx.restore();
+
+      // Layer 3 — thick soft outer glow arc
+      ctx.save();
+      ctx.beginPath(); ctx.arc(cx, cy, baseR, start, end);
+      ctx.strokeStyle = c1; ctx.lineWidth = 22;
+      ctx.globalAlpha = 0.18 + Math.sin(t * 1.2) * 0.06;
+      ctx.lineCap = 'round'; ctx.stroke();
+      ctx.restore();
+
+      // Layer 4 — mid colour arc
+      ctx.save();
+      ctx.beginPath(); ctx.arc(cx, cy, baseR, start, end);
+      ctx.strokeStyle = c2; ctx.lineWidth = 12;
+      ctx.globalAlpha = 0.35 + Math.sin(t * 1.5) * 0.1;
+      ctx.lineCap = 'round'; ctx.stroke();
+      ctx.restore();
+
+      // Layer 5 — sharp bright core arc
+      ctx.save();
+      ctx.beginPath(); ctx.arc(cx, cy, baseR, start, end);
+      ctx.strokeStyle = c1; ctx.lineWidth = 4;
+      ctx.globalAlpha = 0.92; ctx.lineCap = 'round'; ctx.stroke();
+      ctx.restore();
+
+      // Layer 6 — inner secondary ring, slightly offset
+      const innerR = baseR - 18;
+      const innerEnd = start + Math.PI * 2 * pct * 0.95 + Math.sin(t * 0.4) * 0.08;
+      ctx.save();
+      ctx.beginPath(); ctx.arc(cx, cy, innerR, start, innerEnd);
+      ctx.strokeStyle = c2; ctx.lineWidth = 2.5;
+      ctx.globalAlpha = 0.5 + Math.sin(t * 2) * 0.2;
+      ctx.lineCap = 'round'; ctx.stroke();
+      ctx.restore();
+
+      // Layer 7 — energy particles orbiting along arc
+      const particleCount = Math.floor(pct * 14) + 3;
+      for (let i = 0; i < particleCount; i++) {
+        const phase = (i / particleCount) * pct * Math.PI * 2 + t * (0.4 + i * 0.02);
+        const drift = Math.sin(t * 2 + i * 1.3) * 7;
+        const px = cx + Math.cos(start + phase) * (baseR + drift);
+        const py = cy + Math.sin(start + phase) * (baseR + drift);
+        const pSize = 1.5 + Math.sin(t * 3 + i) * 1;
+        const pAlpha = 0.4 + Math.sin(t * 2.5 + i * 0.7) * 0.4;
+        ctx.save();
+        ctx.beginPath(); ctx.arc(px, py, pSize, 0, Math.PI * 2);
+        ctx.fillStyle = i % 2 === 0 ? c1 : c2;
+        ctx.globalAlpha = pAlpha; ctx.fill();
+        ctx.restore();
+      }
+
+      // Layer 8 — bright rippling tip dot
+      const tipX = cx + Math.cos(end) * baseR;
+      const tipY = cy + Math.sin(end) * baseR;
+      const ripple = Math.sin(t * 4) * 0.5 + 0.5;
+      ctx.save();
+      ctx.beginPath(); ctx.arc(tipX, tipY, 10 + ripple * 5, 0, Math.PI * 2);
+      ctx.fillStyle = c1; ctx.globalAlpha = 0.12 * ripple; ctx.fill();
+      ctx.restore();
+      ctx.save();
+      ctx.beginPath(); ctx.arc(tipX, tipY, 5, 0, Math.PI * 2);
+      ctx.fillStyle = '#ffffff'; ctx.globalAlpha = 0.9; ctx.fill();
+      ctx.restore();
+      ctx.save();
+      ctx.beginPath(); ctx.arc(tipX, tipY, 3, 0, Math.PI * 2);
+      ctx.fillStyle = c1; ctx.globalAlpha = 1; ctx.fill();
+      ctx.restore();
+    }
+
+    const pulse = Math.sin(t * 2) * 0.5 + 0.5;
+
+    if (dual) {
+      const cxM = TX_m + FW2 / 2;
+      const cyM = TY2 + FH2 / 2 + floatY_m;
+      const cxF = TX_f + FW2 / 2;
+      const cyF = TY2 + FH2 / 2 + floatY_f;
+      const arcR = FW2 * 0.52;
+      if (ac.type === 'taiji') {
+        drawQiAura(cxM, cyM, arcR, dp, '#c8a96a', '#ffe090', pulse);
+        drawQiAura(cxF, cyF, arcR, dp, '#c86890', '#f0a0b8', pulse);
+      } else if (ac.type === 'yin') {
+        drawQiAura(cxM, cyM, arcR, dp, '#a0c8f0', '#6090e0', pulse);
+        drawQiAura(cxF, cyF, arcR, dp, '#a0c8f0', '#6090e0', pulse);
+      } else if (ac.type === 'yang') {
+        drawQiAura(cxM, cyM, arcR, dp, '#e8a840', '#ff6820', pulse);
+        drawQiAura(cxF, cyF, arcR, dp, '#e8a840', '#ff6820', pulse);
+      } else {
+        drawQiAura(cxM, cyM, arcR, dp, '#c8a96a', '#ffe090', pulse);
+        drawQiAura(cxF, cyF, arcR, dp, '#c86890', '#f0a0b8', pulse);
+      }
+    } else {
+      const cxS = TX + FW / 2;
+      const cyS = TY + FH / 2 + floatY;
+      const arcR = FW * 0.52;
+      if (ac.type === 'yin') {
+        drawQiAura(cxS, cyS, arcR, dp, '#a0c8f0', '#6090e0', pulse);
+      } else if (ac.type === 'yang') {
+        drawQiAura(cxS, cyS, arcR, dp, '#e8a840', '#ff6820', pulse);
+      } else {
+        drawQiAura(cxS, cyS, arcR, dp, _vesselGlowColor, _vesselBrightColor, pulse);
+      }
+    }
+
+    octx.clearRect(0,0,W,H);
+    octx.drawImage(solidImg,dual?TX_m:TX,dual?TY2:TY,dual?FW2:FW,dual?FH2:FH);
+    octx.globalCompositeOperation='source-in';
+    for(let y=figTop;y<figBottom;y+=8){
+      octx.globalAlpha=0.04*(0.3+0.7*Math.sin(y*0.15+t*7));
+      octx.strokeStyle=_vesselScanColor; octx.lineWidth=1;
+      octx.beginPath(); octx.moveTo(0,y); octx.lineTo(W,y); octx.stroke();
+    }
+    octx.globalCompositeOperation='source-over';
+    ctx.save(); ctx.globalAlpha=flicker; ctx.drawImage(off,0,0); ctx.restore();
+
+    for(let p=0;p<particleCount;p++){
+      const ph=(t*0.3+p*0.6)%1;
+      if(ph<0.88){
+        const px=W/2+(p*58-420)+Math.sin(t*1.1+p)*26;
+        const py=figBottom-20-ph*(figBottom-figTop-40);
+        const pa=(ph<0.12?ph/0.12:ph>0.72?1-(ph-0.72)/0.16:0.9)*pct*flicker;
+        ctx.save(); ctx.globalAlpha=pa*0.75;
+        ctx.beginPath(); ctx.arc(px,py,3*(1-ph*0.5),0,Math.PI*2);
+        ctx.fillStyle=_vesselParticleColor; ctx.fill(); ctx.restore();
+      }
+    }
+
+    ctx.save(); ctx.translate(W/2,figBottom+24); ctx.scale(1,0.22);
+    ctx.globalAlpha=(0.16+0.08*b)*flicker;
+    ctx.beginPath(); ctx.arc(0,0,200,0,Math.PI*2);
+    ctx.strokeStyle=_vesselGroundColor; ctx.lineWidth=2; ctx.stroke();
+    ctx.restore();
+
+    yyTargetOpacity = vesselMode === 'hybrid' ? 1 : 0;
+    yyOpacity += (yyTargetOpacity - yyOpacity) * 0.03;
+    yyRotation += 0.002;
+    yyPulse += 0.025;
+    drawYinYang(ctx, W, H, yyOpacity, yyRotation, yyPulse);
+
+    requestAnimationFrame(draw);
+  }
+  draw();
+}
+
+
+</script>
+<div id="news-ticker-bar" style="width:100%;background:#0a0d1a;border-top:1px solid rgba(200,169,106,0.25);height:38px;display:flex;align-items:center;overflow:hidden;position:fixed;bottom:0;left:0;z-index:999;">
+  <div id="ticker-label" style="flex-shrink:0;padding:0 14px;font-size:10px;letter-spacing:0.12em;text-transform:uppercase;color:#c8a96a;font-weight:600;border-right:1px solid rgba(200,169,106,0.3);height:100%;display:flex;align-items:center;background:#0a0d1a;white-space:nowrap;">⬡ Celestial Feed</div>
+  <div style="overflow:hidden;flex:1;position:relative;height:100%;">
+    <div id="ticker-track" style="display:flex;align-items:center;height:100%;position:absolute;white-space:nowrap;"></div>
+  </div>
+</div>
+</body>
+</html>

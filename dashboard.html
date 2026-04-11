@@ -4265,12 +4265,15 @@
                 const strippedM = stripSvg(tM);
                 const strippedF = stripSvg(tF);
                 const dc = getDualColors();
-                const mSolid  = strippedM.replace(/fill="#[0-9A-Fa-f]{6}"/gi, `fill="${dc.male.solid}"`);
-                const mGlow   = strippedM.replace(/fill="#[0-9A-Fa-f]{6}"/gi, `fill="${dc.male.glow}"`);
-                const mBright = strippedM.replace(/fill="#[0-9A-Fa-f]{6}"/gi, `fill="${dc.male.bright}"`);
-                const fSolid  = strippedF.replace(/fill="#[0-9A-Fa-f]{6}"/gi, `fill="${dc.female.solid}"`);
-                const fGlow   = strippedF.replace(/fill="#[0-9A-Fa-f]{6}"/gi, `fill="${dc.female.glow}"`);
-                const fBright = strippedF.replace(/fill="#[0-9A-Fa-f]{6}"/gi, `fill="${dc.female.bright}"`);
+                // Task 7 fix: colour each figure by its actual gender
+                const myDc      = (vm.gender === 'female') ? dc.female : dc.male;
+                const partnerDc = (partnerGender === 'female') ? dc.female : dc.male;
+                const mSolid  = strippedM.replace(/fill="#[0-9A-Fa-f]{6}"/gi, `fill="${myDc.solid}"`);
+                const mGlow   = strippedM.replace(/fill="#[0-9A-Fa-f]{6}"/gi, `fill="${myDc.glow}"`);
+                const mBright = strippedM.replace(/fill="#[0-9A-Fa-f]{6}"/gi, `fill="${myDc.bright}"`);
+                const fSolid  = strippedF.replace(/fill="#[0-9A-Fa-f]{6}"/gi, `fill="${partnerDc.solid}"`);
+                const fGlow   = strippedF.replace(/fill="#[0-9A-Fa-f]{6}"/gi, `fill="${partnerDc.glow}"`);
+                const fBright = strippedF.replace(/fill="#[0-9A-Fa-f]{6}"/gi, `fill="${partnerDc.bright}"`);
                 Promise.all([toImg(mSolid),toImg(mGlow),toImg(mBright),toImg(fSolid),toImg(fGlow),toImg(fBright)])
                   .then(([ms,mg,mb,fs,fg,fb]) => runVessel(ms,mg,mb,Math.min(1,qiCurrent/qiMax),realmIndex,fs,fg,fb,vesselMode,pathCurrent));
               });
@@ -4417,12 +4420,15 @@ function initVessel() {
         const strippedM = stripSvg(tM);
         const strippedF = stripSvg(tF);
         const dc = getDualColors();
-        const mSolid  = strippedM.replace(/fill="#[0-9A-Fa-f]{6}"/gi, `fill="${dc.male.solid}"`);
-        const mGlow   = strippedM.replace(/fill="#[0-9A-Fa-f]{6}"/gi, `fill="${dc.male.glow}"`);
-        const mBright = strippedM.replace(/fill="#[0-9A-Fa-f]{6}"/gi, `fill="${dc.male.bright}"`);
-        const fSolid  = strippedF.replace(/fill="#[0-9A-Fa-f]{6}"/gi, `fill="${dc.female.solid}"`);
-        const fGlow   = strippedF.replace(/fill="#[0-9A-Fa-f]{6}"/gi, `fill="${dc.female.glow}"`);
-        const fBright = strippedF.replace(/fill="#[0-9A-Fa-f]{6}"/gi, `fill="${dc.female.bright}"`);
+        // Task 7 fix: colour each figure by its actual gender
+        const myDc2      = (member.gender === 'female') ? dc.female : dc.male;
+        const partnerDc2 = (partnerGender === 'female') ? dc.female : dc.male;
+        const mSolid  = strippedM.replace(/fill="#[0-9A-Fa-f]{6}"/gi, `fill="${myDc2.solid}"`);
+        const mGlow   = strippedM.replace(/fill="#[0-9A-Fa-f]{6}"/gi, `fill="${myDc2.glow}"`);
+        const mBright = strippedM.replace(/fill="#[0-9A-Fa-f]{6}"/gi, `fill="${myDc2.bright}"`);
+        const fSolid  = strippedF.replace(/fill="#[0-9A-Fa-f]{6}"/gi, `fill="${partnerDc2.solid}"`);
+        const fGlow   = strippedF.replace(/fill="#[0-9A-Fa-f]{6}"/gi, `fill="${partnerDc2.glow}"`);
+        const fBright = strippedF.replace(/fill="#[0-9A-Fa-f]{6}"/gi, `fill="${partnerDc2.bright}"`);
         Promise.all([toImg(mSolid),toImg(mGlow),toImg(mBright),toImg(fSolid),toImg(fGlow),toImg(fBright)])
           .then(([ms,mg,mb,fs,fg,fb]) => runVessel(ms,mg,mb,pct,realmIndex,fs,fg,fb,vesselMode,pathCurrent));
       });
