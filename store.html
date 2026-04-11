@@ -470,9 +470,71 @@ body {
 @media (max-width: 420px) {
   .item-grid { grid-template-columns: 1fr; }
 }
+/* SITE NAV */
+.site-nav {
+  width: fit-content;
+  max-width: 100%;
+  margin: 0 auto;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.55rem;
+  flex-wrap: wrap;
+  padding: 0.75rem 0.9rem;
+  border-radius: 999px;
+  background:
+    linear-gradient(180deg, rgba(255,255,255,0.03), rgba(255,255,255,0.01)),
+    rgba(6, 10, 18, 0.74);
+  border: 1px solid rgba(255,255,255,0.06);
+  box-shadow: 0 14px 34px rgba(0, 0, 0, 0.22);
+  backdrop-filter: blur(10px);
+}
+.site-nav a {
+  padding: 0.62rem 0.92rem;
+  border-radius: 999px;
+  border: 1px solid rgba(255,255,255,0.04);
+  background: rgba(255,255,255,0.02);
+  color: var(--text-secondary);
+  font-family: var(--font-ui);
+  font-size: 0.84rem;
+  text-decoration: none;
+  transition: 0.18s ease;
+}
+.site-nav a:hover {
+  transform: translateY(-1px);
+  color: var(--text-primary);
+  border-color: rgba(200, 169, 106, 0.22);
+  background: rgba(255,255,255,0.04);
+}
+.site-nav a.active {
+  color: var(--gold);
+  border-color: rgba(200, 169, 106, 0.28);
+  background: rgba(200, 169, 106, 0.10);
+  box-shadow: inset 0 0 0 1px rgba(200, 169, 106, 0.05);
+}
+.site-nav-wrap {
+  padding: 1rem 0 0;
+  position: relative;
+  z-index: 60;
+}
+@media (max-width: 768px) {
+  .site-nav { gap: 0.35rem; padding: 0.55rem 0.65rem; }
+  .site-nav a { padding: 0.5rem 0.7rem; font-size: 0.78rem; }
+}
 </style>
 </head>
 <body>
+<!-- SITE NAV -->
+<div class="site-nav-wrap">
+  <nav class="site-nav" aria-label="Global">
+    <a href="/index.html">Home</a>
+    <a href="/lore.html">Lore</a>
+    <a href="/dashboard.html">Dashboard</a>
+    <a href="/store.html" class="active">Store</a>
+    <a href="/library.html">Library</a>
+    <a href="/.netlify/functions/logout" id="logout-button">Logout</a>
+  </nav>
+</div>
 <!-- HEADER -->
 <header class="store-header">
   <div class="store-header-inner">
