@@ -55,13 +55,27 @@ exports.handler = async function(event) {
     return json(405, { success: false, message: "Method not allowed." });
   }
 
-  // Session check (optional — crystal state is parcel-level,
-  // but we verify session to ensure the caller is authenticated)
-  var cookieHeader = event.headers.cookie || event.headers.Cookie || "";
+  // Session check — supports three auth paths:
+  //   1. Cookie (browser)
+  //   2. ?session_token= query param (LSL / in-world objects)
+  //   3. Authorization: Bearer header (API callers)
+  var cookieHeader = (event.headers && event.headers.cookie) || (event.headers && event.headers.Cookie) || "";
   var sessionToken = parseCookies(cookieHeader)[COOKIE_NAME] || "";
 
+  // Fallback: query param or Authorization header (for LSL in-world objects)
   if (!sessionToken) {
-    return json(401, { success: false, message: "No active session." });
+    var query0 = event.queryStringParameters || {};
+    sessionToken = safeText(query0.session_token);
+  }
+  if (!sessionToken) {
+    var authHeader = (event.headers && (event.headers.authorization || event.headers.Authorization)) || "";
+    if (authHeader.toLowerCase().indexOf("bearer ") === 0) {
+      sessionToken = authHeader.slice(7).trim();
+    }
+  }
+
+  if (!sessionToken) {
+    return json(401, { success: false, message: "No active session. Pass cookie, ?session_token=, or Authorization header." });
   }
 
   var sessionCheck = await supabase
@@ -108,26 +122,3 @@ exports.handler = async function(event) {
         error: result.error.message
       });
     }
-
-    var data = result.data;
-
-    // DB function returns jsonb — Supabase parses it automatically
-    if (!data || data.success === false) {
-      return json(404, {
-        success: false,
-        message: data && data.error ? data.error : "Parcel crystal not found.",
-        parcel_key: parcelKey
-      });
-    }
-
-    // Return the DB result as-is — no mutations, no extra math
-    return json(200, data);
-
-  } catch(err) {
-    console.error("weather-loader unexpected error:", err);
-    return json(500, {
-      success: false,
-      message: "Unexpected error loading weather crystal state."
-    });
-  }
-};

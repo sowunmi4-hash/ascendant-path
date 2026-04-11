@@ -55,12 +55,32 @@ exports.handler = async function(event) {
     return json(405, { success: false, message: "Method not allowed. Use POST." });
   }
 
-  // Session auth
-  var cookieHeader = event.headers.cookie || event.headers.Cookie || "";
+  // Session auth — supports cookie, query param, or Authorization header
+  //   1. Cookie (browser)
+  //   2. ?session_token= query param (LSL / in-world objects)
+  //   3. Authorization: Bearer header (API callers)
+  var cookieHeader = (event.headers && event.headers.cookie) || (event.headers && event.headers.Cookie) || "";
   var sessionToken = parseCookies(cookieHeader)[COOKIE_NAME] || "";
 
   if (!sessionToken) {
-    return json(401, { success: false, message: "No active session." });
+    var query0 = event.queryStringParameters || {};
+    sessionToken = safeText(query0.session_token);
+  }
+  if (!sessionToken) {
+    var authHeader = (event.headers && (event.headers.authorization || event.headers.Authorization)) || "";
+    if (authHeader.toLowerCase().indexOf("bearer ") === 0) {
+      sessionToken = authHeader.slice(7).trim();
+    }
+  }
+  if (!sessionToken) {
+    // Also check POST body for session_token
+    var authBody = {};
+    try { if (event.body) authBody = JSON.parse(event.body); } catch(e) {}
+    sessionToken = safeText(authBody.session_token);
+  }
+
+  if (!sessionToken) {
+    return json(401, { success: false, message: "No active session. Pass cookie, ?session_token=, or Authorization header." });
   }
 
   var sessionCheck = await supabase
@@ -111,31 +131,4 @@ exports.handler = async function(event) {
       });
     }
 
-    var data = result.data;
-
-    // DB function returns jsonb with success field
-    if (!data || data.success === false) {
-      // Map known error codes to appropriate HTTP status
-      var errorCode = data && data.error ? data.error : "unknown_error";
-      var httpStatus = 400;
-
-      if (errorCode === "parcel_crystal_not_found") httpStatus = 404;
-      if (errorCode === "member_not_found") httpStatus = 404;
-      if (errorCode === "insufficient_qi") httpStatus = 422;
-      if (errorCode === "already_repairing") httpStatus = 409;
-      if (errorCode === "no_repair_needed") httpStatus = 409;
-
-      return json(httpStatus, data);
-    }
-
-    // Return the DB result as-is
-    return json(200, data);
-
-  } catch(err) {
-    console.error("start-weather-crystal-repair unexpected error:", err);
-    return json(500, {
-      success: false,
-      message: "Unexpected error starting crystal repair."
-    });
-  }
-};
+    var data = resul
