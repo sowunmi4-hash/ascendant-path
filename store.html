@@ -43,7 +43,6 @@
 }
 * { box-sizing: border-box; margin: 0; padding: 0; }
 body {
-  background: var(--bg-void);
   color: var(--text-primary);
   font-family: var(--font-body);
   font-size: 16px;
@@ -55,7 +54,8 @@ body {
   position: sticky;
   top: 0;
   z-index: 50;
-  background: var(--bg-void);
+  background: rgba(6,8,16,0.92);
+  backdrop-filter: blur(10px);
   border-bottom: 0.5px solid var(--gold-border);
 }
 .store-header-inner {
@@ -222,7 +222,7 @@ body {
   cursor: pointer;
 }
 /* ITEM GRID */
-.store-body {
+.store-body { position: relative; z-index: 3;
   max-width: 1100px;
   margin: 0 auto;
   padding: 16px 24px 60px;
@@ -524,6 +524,9 @@ body {
 </style>
 </head>
 <body>
+<div class="cloud-layer"></div>
+<div class="rune-layer"></div>
+<div class="lightning-flash"></div>
 <!-- SITE NAV -->
 <div class="site-nav-wrap">
   <nav class="site-nav" aria-label="Global">

@@ -124,7 +124,7 @@ exports.handler = async function(event) {
 
   // ── Call database function ─────────────────────────────────
   try {
-    var result = await supabase.rpc("start_parcel_crystal_repair", {
+    var result = await supabase.schema("weather").rpc("start_parcel_crystal_repair", {
       p_parcel_key: parcelKey,
       p_sl_avatar_key: avatarKey
     });
