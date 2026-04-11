@@ -1,708 +1,166 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>My Library | The Ascendant Path</title>
-  <link rel="stylesheet" href="/css/style.css" />
-  <style>
-    .library-page {
-      width: min(1240px, calc(100% - 2rem));
-      margin: 1.5rem auto 4rem;
-      display: grid;
-      gap: 1.1rem;
-      position: relative;
-      z-index: 3;
-    }
-
-    .library-frame {
-      display: grid;
-      gap: 1.1rem;
-    }
-
-    .record-header {
-      position: relative;
-      overflow: hidden;
-      min-height: 320px;
-      display: grid;
-      align-content: end;
-      gap: 1rem;
-      padding: 1.75rem;
-      border: 1px solid var(--border-soft);
-      box-shadow: var(--shadow-lg);
-      border-radius: 18px;
-      background:
-        linear-gradient(180deg, rgba(7, 10, 18, 0.24), rgba(7, 10, 18, 0.84)),
-        radial-gradient(circle at 18% 20%, rgba(234, 215, 170, 0.08), transparent 24%),
-        radial-gradient(circle at 82% 18%, rgba(111, 151, 255, 0.14), transparent 24%),
-        url("https://images.unsplash.com/photo-1516979187457-637abb4f9353?auto=format&fit=crop&w=1800&q=80")
-          center 45% / cover no-repeat;
-    }
-
-    .record-header::before {
-      content: "";
-      position: absolute;
-      inset: 0;
-      background:
-        linear-gradient(
-          90deg,
-          rgba(6, 9, 16, 0.84) 0%,
-          rgba(6, 9, 16, 0.48) 48%,
-          rgba(6, 9, 16, 0.82) 100%
-        );
-      pointer-events: none;
-    }
-
-    .record-header::after {
-      content: "";
-      position: absolute;
-      inset: auto 0 0;
-      height: 120px;
-      background: linear-gradient(180deg, transparent, rgba(6, 9, 16, 0.7));
-      pointer-events: none;
-    }
-
-    .record-header-main,
-    .record-header-actions,
-    .record-status-strip {
-      position: relative;
-      z-index: 1;
-    }
-
-    .record-header-main {
-      display: grid;
-      gap: 0.6rem;
-      max-width: 880px;
-    }
-
-    .record-eyebrow {
-      display: inline-block;
-      font-size: 0.78rem;
-      letter-spacing: 0.16em;
-      text-transform: uppercase;
-      color: var(--blue-soft);
-    }
-
-    .record-header h1 {
-      margin: 0;
-      font-size: clamp(2.2rem, 4vw, 3.35rem);
-      line-height: 1.02;
-      color: #ffffff;
-      text-shadow: 0 6px 18px rgba(0, 0, 0, 0.28);
-    }
-
-    .record-session-line,
-    .record-header-copy {
-      margin: 0;
-      color: rgba(231, 237, 255, 0.84);
-      line-height: 1.6;
-      max-width: 860px;
-    }
-
-    .record-header-actions {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 0.8rem;
-    }
-
-    .record-status-strip {
-      display: grid;
-      grid-template-columns: repeat(4, minmax(0, 1fr));
-      gap: 0.9rem;
-    }
-
-    .record-status-card,
-    .record-section,
-    .altar-main,
-    .altar-side,
-    .shrine-card,
-    .shelf-shell,
-    .archive-panel,
-    .scroll-card,
-    .empty-card {
-      position: relative;
-      overflow: hidden;
-      background:
-        linear-gradient(180deg, rgba(18, 24, 40, 0.82), rgba(11, 16, 28, 0.96));
-      border-top: 1px solid rgba(255, 255, 255, 0.07);
-      border-bottom: 1px solid rgba(255, 255, 255, 0.07);
-      box-shadow: 0 16px 42px rgba(0, 0, 0, 0.18);
-    }
-
-    .record-status-card::before,
-    .record-section::before,
-    .altar-main::before,
-    .altar-side::before,
-    .shrine-card::before,
-    .shelf-shell::before,
-    .archive-panel::before,
-    .scroll-card::before,
-    .empty-card::before,
-    .meta-block::before,
-    .summary-chip::before,
-    .shelf-spine::before,
-    .focus-chip::before {
-      content: "";
-      position: absolute;
-      left: 0;
-      top: 18px;
-      bottom: 18px;
-      width: 2px;
-      background: linear-gradient(180deg, rgba(142, 168, 255, 0.28), rgba(234, 215, 170, 0.16));
-    }
-
-    .record-status-card {
-      min-height: 108px;
-      display: grid;
-      gap: 0.35rem;
-      padding: 0.95rem 1rem 0.95rem 1.1rem;
-      border-radius: 14px;
-    }
-
-    .record-status-card span {
-      font-size: 0.72rem;
-      letter-spacing: 0.1em;
-      text-transform: uppercase;
-      color: rgba(196, 208, 255, 0.74);
-      padding-left: 0.35rem;
-    }
-
-    .record-status-card strong {
-      font-size: 1.1rem;
-      color: #ffffff;
-      line-height: 1.25;
-      padding-left: 0.35rem;
-    }
-
-    .record-section {
-      display: grid;
-      gap: 1rem;
-      padding: 1rem 1rem 1.05rem 1.05rem;
-      border-radius: 18px;
-    }
-
-    .section-header {
-      display: flex;
-      justify-content: space-between;
-      align-items: end;
-      gap: 1rem;
-      flex-wrap: wrap;
-      padding-left: 0.2rem;
-    }
-
-    .section-header span {
-      font-size: 0.74rem;
-      letter-spacing: 0.14em;
-      text-transform: uppercase;
-      color: var(--blue-soft);
-    }
-
-    .section-header h2 {
-      margin: 0.2rem 0 0;
-      font-size: 1.34rem;
-      color: #ffffff;
-    }
-
-    .section-header p {
-      margin: 0.3rem 0 0;
-      color: rgba(228, 234, 255, 0.78);
-      line-height: 1.55;
-      max-width: 760px;
-    }
-
-    .view-toggle {
-      display: inline-flex;
-      gap: 0.25rem;
-      padding: 0.25rem;
-      border-radius: 999px;
-      border: 1px solid rgba(255, 255, 255, 0.08);
-      background: rgba(255, 255, 255, 0.04);
-    }
-
-    .view-toggle button {
-      border: 0;
-      background: transparent;
-      color: rgba(226, 232, 255, 0.72);
-      font: inherit;
-      font-weight: 700;
-      padding: 0.72rem 1rem;
-      border-radius: 999px;
-      cursor: pointer;
-    }
-
-    .view-toggle button.active {
-      background: linear-gradient(180deg, rgba(120, 144, 230, 0.24), rgba(62, 78, 145, 0.36));
-      color: #ffffff;
-      box-shadow: inset 0 0 0 1px rgba(160, 182, 255, 0.18);
-    }
-
-    .altar-grid {
-      display: grid;
-      grid-template-columns: minmax(0, 1.35fr) minmax(280px, 0.65fr);
-      gap: 1rem;
-    }
-
-    .altar-main,
-    .altar-side,
-    .shrine-card,
-    .archive-panel {
-      border-radius: 16px;
-      padding: 1rem 1rem 1.05rem 1.05rem;
-    }
-
-    .altar-top,
-    .archive-top {
-      display: flex;
-      justify-content: space-between;
-      gap: 1rem;
-      align-items: start;
-      flex-wrap: wrap;
-      padding-bottom: 0.95rem;
-      border-bottom: 1px solid rgba(255, 255, 255, 0.06);
-    }
-
-    .altar-type,
-    .archive-type {
-      font-size: 0.72rem;
-      letter-spacing: 0.12em;
-      text-transform: uppercase;
-      color: var(--blue-soft);
-    }
-
-    .altar-main h3,
-    .archive-panel h3,
-    .shrine-card h3 {
-      margin: 0.25rem 0 0;
-      font-size: 1.3rem;
-      color: #ffffff;
-      line-height: 1.2;
-    }
-
-    .altar-copy,
-    .archive-copy {
-      margin: 0.45rem 0 0;
-      color: rgba(226, 232, 255, 0.78);
-      line-height: 1.55;
-    }
-
-    .state-badge,
-    .focus-chip {
-      position: relative;
-      min-width: 150px;
-      border-radius: 14px;
-      padding: 0.8rem 0.9rem 0.8rem 1rem;
-      background: rgba(255, 255, 255, 0.04);
-      border-top: 1px solid rgba(255, 255, 255, 0.06);
-      border-bottom: 1px solid rgba(255, 255, 255, 0.06);
-    }
-
-    .state-badge span,
-    .focus-chip span {
-      display: block;
-      font-size: 0.7rem;
-      letter-spacing: 0.1em;
-      text-transform: uppercase;
-      color: rgba(196, 208, 255, 0.72);
-      padding-left: 0.3rem;
-    }
-
-    .state-badge strong,
-    .focus-chip strong {
-      display: block;
-      margin-top: 0.32rem;
-      font-size: 0.96rem;
-      color: #ffffff;
-      line-height: 1.35;
-      padding-left: 0.3rem;
-    }
-
-    .altar-meta-grid {
-      display: grid;
-      grid-template-columns: repeat(2, minmax(0, 1fr));
-      gap: 0.75rem;
-      margin-top: 1rem;
-    }
-
-    .meta-block,
-    .summary-chip {
-      position: relative;
-      display: grid;
-      gap: 0.28rem;
-      padding: 0.85rem 0.95rem 0.85rem 1rem;
-      background: rgba(255, 255, 255, 0.045);
-      border-top: 1px solid rgba(255, 255, 255, 0.06);
-      border-bottom: 1px solid rgba(255, 255, 255, 0.06);
-      border-radius: 14px;
-    }
-
-    .meta-block span,
-    .summary-chip span {
-      font-size: 0.7rem;
-      letter-spacing: 0.1em;
-      text-transform: uppercase;
-      color: rgba(196, 208, 255, 0.72);
-      padding-left: 0.3rem;
-    }
-
-    .meta-block strong,
-    .summary-chip strong {
-      font-size: 0.98rem;
-      color: #ffffff;
-      line-height: 1.35;
-      padding-left: 0.3rem;
-    }
-
-    .altar-actions {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 0.75rem;
-      margin-top: 1rem;
-    }
-
-    .action-button {
-      border: 0;
-      cursor: pointer;
-      text-decoration: none;
-      display: inline-flex;
-      justify-content: center;
-      align-items: center;
-      gap: 0.45rem;
-      padding: 0.78rem 1rem;
-      min-width: 170px;
-      border-radius: 999px;
-      font: inherit;
-      font-weight: 700;
-      transition: transform 0.2s ease, box-shadow 0.2s ease, opacity 0.2s ease;
-    }
-
-    .action-button:hover {
-      transform: translateY(-1px);
-      box-shadow: 0 12px 26px rgba(0, 0, 0, 0.16);
-    }
-
-    .action-button.primary {
-      background: linear-gradient(180deg, rgba(120, 144, 230, 0.24), rgba(62, 78, 145, 0.36));
-      color: #ffffff;
-      box-shadow: inset 0 0 0 1px rgba(160, 182, 255, 0.2);
-    }
-
-    .action-button.secondary {
-      background: rgba(255, 255, 255, 0.05);
-      color: #ffffff;
-      box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.08);
-    }
-
-    .action-button.muted {
-      background: rgba(255, 255, 255, 0.03);
-      color: rgba(220, 228, 255, 0.76);
-      box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.06);
-    }
-
-    .action-button.disabled {
-      opacity: 0.6;
-      pointer-events: none;
-      cursor: default;
-    }
-
-    .summary-stack {
-      display: grid;
-      gap: 0.75rem;
-      margin-top: 0.8rem;
-    }
-
-    .shrine-grid {
-      display: grid;
-      grid-template-columns: repeat(2, minmax(0, 1fr));
-      gap: 1rem;
-    }
-
-    .shrine-head {
-      display: flex;
-      justify-content: space-between;
-      align-items: start;
-      gap: 1rem;
-      flex-wrap: wrap;
-      margin-bottom: 1rem;
-    }
-
-    .shrine-head p {
-      margin: 0.35rem 0 0;
-      color: rgba(228, 234, 255, 0.78);
-      line-height: 1.55;
-    }
-
-    .shrine-toggle {
-      border: 0;
-      border-radius: 999px;
-      padding: 0.72rem 1rem;
-      font: inherit;
-      font-weight: 700;
-      cursor: pointer;
-    }
-
-    .shrine-toggle.active {
-      background: linear-gradient(180deg, rgba(120, 144, 230, 0.24), rgba(62, 78, 145, 0.36));
-      color: #ffffff;
-      box-shadow: inset 0 0 0 1px rgba(160, 182, 255, 0.2);
-    }
-
-    .shrine-toggle.inactive {
-      background: rgba(255, 255, 255, 0.05);
-      color: rgba(220, 228, 255, 0.76);
-      box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.08);
-    }
-
-    .shelf-shell {
-      display: grid;
-      gap: 0.9rem;
-    }
-
-    .shelf-title {
-      font-size: 0.72rem;
-      letter-spacing: 0.12em;
-      text-transform: uppercase;
-      color: var(--blue-soft);
-      padding-left: 0.2rem;
-    }
-
-    .shelf-grid {
-      display: grid;
-      gap: 0.75rem;
-    }
-
-    .shelf-grid.cultivation-grid {
-      grid-template-columns: repeat(5, minmax(0, 1fr));
-    }
-
-    .shelf-grid.bond-grid {
-      grid-template-columns: repeat(5, minmax(0, 1fr));
-    }
-
-    .shelf-spine {
-      position: relative;
-      border: 0;
-      cursor: pointer;
-      display: grid;
-      gap: 0.55rem;
-      align-content: start;
-      text-align: center;
-      min-height: 142px;
-      padding: 0.85rem 0.45rem 0.85rem 0.65rem;
-      border-radius: 16px;
-      color: inherit;
-      background:
-        linear-gradient(180deg, rgba(18, 24, 40, 0.82), rgba(11, 16, 28, 0.96));
-      border-top: 1px solid rgba(255, 255, 255, 0.07);
-      border-bottom: 1px solid rgba(255, 255, 255, 0.07);
-      box-shadow: 0 16px 42px rgba(0, 0, 0, 0.18);
-      transition: transform 0.2s ease, background 0.2s ease;
-    }
-
-    .shelf-spine:hover {
-      transform: translateY(-2px);
-    }
-
-    .shelf-spine.active {
-      background:
-        linear-gradient(180deg, rgba(33, 44, 72, 0.96), rgba(14, 18, 32, 0.98));
-      box-shadow:
-        0 16px 42px rgba(0, 0, 0, 0.18),
-        0 0 0 1px rgba(223, 189, 104, 0.18);
-    }
-
-    .shelf-spine.unavailable {
-      opacity: 0.7;
-    }
-
-    .spine-subtle {
-      font-size: 0.68rem;
-      letter-spacing: 0.08em;
-      text-transform: uppercase;
-      color: rgba(196, 208, 255, 0.72);
-      padding-left: 0.15rem;
-    }
-
-    .spine-code {
-      font-size: 1.45rem;
-      font-weight: 800;
-      color: #ffffff;
-      line-height: 1;
-    }
-
-    .spine-marker {
-      border-radius: 12px;
-      padding: 0.5rem 0.35rem;
-      background: rgba(255, 255, 255, 0.05);
-      border-top: 1px solid rgba(255, 255, 255, 0.06);
-      border-bottom: 1px solid rgba(255, 255, 255, 0.06);
-      color: #ffffff;
-      font-weight: 800;
-      font-size: 0.8rem;
-    }
-
-    .spine-state {
-      font-size: 0.76rem;
-      color: rgba(226, 232, 255, 0.78);
-      line-height: 1.35;
-      font-weight: 700;
-    }
-
-    .shelf-note {
-      margin: 0;
-      color: rgba(228, 234, 255, 0.76);
-      line-height: 1.55;
-      font-size: 0.93rem;
-    }
-
-    .archive-panel {
-      display: grid;
-      gap: 1rem;
-    }
-
-    .scroll-grid {
-      display: grid;
-      grid-template-columns: repeat(4, minmax(0, 1fr));
-      gap: 0.85rem;
-    }
-
-    .scroll-card {
-      display: grid;
-      gap: 0.45rem;
-      border-radius: 14px;
-      padding: 0.9rem 0.9rem 0.95rem 1rem;
-    }
-
-    .scroll-label {
-      font-size: 0.68rem;
-      letter-spacing: 0.08em;
-      text-transform: uppercase;
-      color: rgba(196, 208, 255, 0.72);
-      padding-left: 0.25rem;
-    }
-
-    .scroll-title {
-      font-size: 0.98rem;
-      font-weight: 700;
-      color: #ffffff;
-      line-height: 1.35;
-      padding-left: 0.25rem;
-      min-height: 2.6em;
-    }
-
-    .scroll-meta {
-      font-size: 0.88rem;
-      color: rgba(226, 232, 255, 0.78);
-      line-height: 1.45;
-      padding-left: 0.25rem;
-    }
-
-    .progress-track {
-      width: 100%;
-      height: 12px;
-      border-radius: 999px;
-      overflow: hidden;
-      background: rgba(255, 255, 255, 0.08);
-      border-top: 1px solid rgba(255, 255, 255, 0.06);
-      border-bottom: 1px solid rgba(255, 255, 255, 0.06);
-      margin-top: 0.35rem;
-    }
-
-    .progress-bar {
-      height: 100%;
-      background: linear-gradient(90deg, rgba(120, 144, 230, 0.82), rgba(223, 189, 104, 0.88));
-      width: 0%;
-    }
-
-    .empty-card {
-      border-radius: 14px;
-      padding: 1rem 1rem 1rem 1.05rem;
-      color: rgba(228, 234, 255, 0.78);
-      line-height: 1.55;
-      grid-column: 1 / -1;
-    }
-
-    .library-banner {
-      margin: 0;
-      padding: 0.9rem 1rem;
-      border-radius: 14px;
-      color: rgba(228, 234, 255, 0.9);
-      background:
-        linear-gradient(180deg, rgba(18, 24, 40, 0.82), rgba(11, 16, 28, 0.96));
-      border-top: 1px solid rgba(255, 255, 255, 0.07);
-      border-bottom: 1px solid rgba(255, 255, 255, 0.07);
-      box-shadow: 0 16px 42px rgba(0, 0, 0, 0.18);
-      line-height: 1.55;
-    }
-
-    .library-banner.error {
-      border-top-color: rgba(218, 114, 114, 0.38);
-      border-bottom-color: rgba(218, 114, 114, 0.22);
-      background: linear-gradient(180deg, rgba(90, 22, 22, 0.28), rgba(52, 14, 14, 0.18));
-      color: rgba(255, 222, 222, 0.92);
-    }
-
-    .is-hidden {
-      display: none !important;
-    }
-
-    @media (max-width: 1080px) {
-      .record-status-strip,
-      .altar-grid,
-      .shrine-grid,
-      .scroll-grid,
-      .altar-meta-grid {
-        grid-template-columns: 1fr 1fr;
-      }
-
-      .shelf-grid.cultivation-grid,
-      .shelf-grid.bond-grid {
-        grid-template-columns: repeat(3, minmax(0, 1fr));
-      }
-    }
-
-    @media (max-width: 900px) {
-      .record-status-strip,
-      .altar-grid,
-      .shrine-grid,
-      .scroll-grid,
-      .altar-meta-grid {
-        grid-template-columns: 1fr;
-      }
-    }
-
-    @media (max-width: 720px) {
-      .library-page {
-        width: min(100% - 1rem, 1240px);
-        margin-top: 1rem;
-      }
-
-      .record-header {
-        min-height: 260px;
-        padding: 1.2rem 1rem;
-      }
-
-      .shelf-grid.cultivation-grid,
-      .shelf-grid.bond-grid {
-        grid-template-columns: repeat(2, minmax(0, 1fr));
-      }
-
-      .record-header-actions,
-      .altar-actions {
-        flex-direction: column;
-      }
-
-      .action-button {
-        width: 100%;
-      }
-    }
-  </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>My Library | The Ascendant Path</title>
+<link rel="stylesheet" href="/css/style.css" />
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@400;500&family=Cormorant+Garamond:ital,wght@0,400;0,500;1,400&display=swap');
+:root {
+  --bg-void: #060608;
+  --bg-card: #0a0a12;
+  --bg-surface: #0e0e16;
+  --bg-elevated: #131320;
+  --gold: #c8a96a;
+  --gold-dim: #a08548;
+  --gold-bg: #c8a96a0a;
+  --gold-border: #c8a96a1a;
+  --text-primary: #ddd5c8;
+  --text-secondary: #8a8478;
+  --text-dim: #555044;
+  --text-faint: #333028;
+  --border: #1a1a22;
+  --border-hover: #2a2a33;
+  --green: #55bb66;
+  --pink: #cc6699;
+  --purple: #aa77dd;
+  --font-display: 'Cinzel', serif;
+  --font-body: 'Cormorant Garamond', serif;
+  --font-ui: system-ui, -apple-system, sans-serif;
+  --radius-sm: 6px;
+  --radius-md: 10px;
+  --radius-lg: 14px;
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { background: var(--bg-void); color: var(--text-primary); font-family: var(--font-body); font-size: 16px; line-height: 1.6; min-height: 100vh; }
+/* SITE NAV */
+.site-nav-wrap { padding: 1rem 0 0; position: relative; z-index: 60; }
+.site-nav { width: fit-content; max-width: 100%; margin: 0 auto; display: flex; align-items: center; justify-content: center; gap: 0.55rem; flex-wrap: wrap; padding: 0.75rem 0.9rem; border-radius: 999px; background: linear-gradient(180deg, rgba(255,255,255,0.03), rgba(255,255,255,0.01)), rgba(6, 10, 18, 0.74); border: 1px solid rgba(255,255,255,0.06); box-shadow: 0 14px 34px rgba(0, 0, 0, 0.22); backdrop-filter: blur(10px); }
+.site-nav a { padding: 0.62rem 0.92rem; border-radius: 999px; border: 1px solid rgba(255,255,255,0.04); background: rgba(255,255,255,0.02); color: var(--text-secondary); font-family: var(--font-ui); font-size: 0.84rem; text-decoration: none; transition: 0.18s ease; }
+.site-nav a:hover { transform: translateY(-1px); color: var(--text-primary); border-color: rgba(200,169,106,0.22); background: rgba(255,255,255,0.04); }
+.site-nav a.active { color: var(--gold); border-color: rgba(200,169,106,0.28); background: rgba(200,169,106,0.10); box-shadow: inset 0 0 0 1px rgba(200,169,106,0.05); }
+.site-nav button { padding: 0.62rem 0.92rem; border-radius: 999px; border: 1px solid rgba(255,255,255,0.04); background: rgba(255,255,255,0.02); color: var(--text-secondary); font-family: var(--font-ui); font-size: 0.84rem; cursor: pointer; transition: 0.18s ease; }
+.site-nav button:hover { transform: translateY(-1px); color: var(--text-primary); border-color: rgba(200,169,106,0.22); background: rgba(255,255,255,0.04); }
+/* PAGE CONTAINER */
+.lib-page { max-width: 860px; margin: 0 auto; padding: 20px 24px 60px; }
+/* HERO */
+.lib-hero { background: var(--bg-card); border: 0.5px solid var(--border); border-radius: var(--radius-lg); padding: 28px 28px 22px; margin-bottom: 0; }
+.lib-hero-eyebrow { font-family: var(--font-ui); font-size: 10px; font-weight: 500; letter-spacing: 2px; text-transform: uppercase; color: #665e4e; margin-bottom: 8px; }
+.lib-hero-name { font-family: var(--font-display); font-size: 22px; font-weight: 500; color: var(--text-primary); letter-spacing: 0.5px; margin-bottom: 2px; }
+.lib-hero-realm { font-family: var(--font-body); font-size: 15px; color: var(--text-secondary); font-style: italic; margin-bottom: 18px; }
+.lib-hero-stats { display: flex; gap: 24px; flex-wrap: wrap; }
+.lib-hero-stat { display: flex; flex-direction: column; }
+.lib-hero-stat-value { font-family: var(--font-display); font-size: 18px; font-weight: 500; color: var(--gold); }
+.lib-hero-stat-label { font-family: var(--font-ui); font-size: 11px; color: var(--text-dim); }
+/* TABS */
+.lib-tabs { display: flex; gap: 0; border-bottom: 0.5px solid var(--border); background: var(--bg-card); border-left: 0.5px solid var(--border); border-right: 0.5px solid var(--border); border-radius: 0; }
+.lib-tab { padding: 14px 24px; font-family: var(--font-display); font-size: 11px; font-weight: 400; letter-spacing: 1.5px; color: var(--text-dim); cursor: pointer; border-bottom: 2px solid transparent; white-space: nowrap; transition: color 0.25s, border-color 0.25s; user-select: none; }
+.lib-tab:hover { color: var(--text-secondary); }
+.lib-tab.active { color: var(--gold); border-bottom-color: var(--gold); }
+.lib-tab .tab-count { font-family: var(--font-ui); font-size: 10px; color: var(--text-faint); margin-left: 5px; }
+.lib-tab.active .tab-count { color: var(--gold-dim); }
+/* SECTION */
+.lib-section { display: none; }
+.lib-section.active { display: block; }
+.lib-section-header { padding: 24px 0 16px; }
+.lib-section-title { font-family: var(--font-display); font-size: 16px; font-weight: 400; color: var(--text-primary); letter-spacing: 0.5px; margin-bottom: 4px; }
+.lib-section-desc { font-family: var(--font-body); font-size: 14px; color: var(--text-dim); font-style: italic; }
+/* JOURNEY BAR */
+.journey-bar { background: var(--bg-card); border: 0.5px solid var(--border); border-radius: var(--radius-md); padding: 16px 20px; margin-bottom: 16px; }
+.journey-label { font-family: var(--font-ui); font-size: 10px; color: var(--text-dim); letter-spacing: 1px; text-transform: uppercase; margin-bottom: 10px; }
+.journey-track { display: flex; align-items: center; gap: 0; position: relative; height: 24px; }
+.journey-fill-bg { position: absolute; left: 0; top: 50%; transform: translateY(-50%); width: 100%; height: 3px; background: var(--border); border-radius: 2px; }
+.journey-fill { position: absolute; left: 0; top: 50%; transform: translateY(-50%); height: 3px; background: var(--gold); border-radius: 2px; transition: width 0.5s ease; }
+.journey-dots { display: flex; justify-content: space-between; width: 100%; position: relative; z-index: 1; }
+.journey-dot { width: 12px; height: 12px; border-radius: 50%; border: 2px solid var(--border); background: var(--bg-void); transition: all 0.3s; }
+.journey-dot.completed { background: var(--green); border-color: var(--green); }
+.journey-dot.current { background: var(--gold); border-color: var(--gold); box-shadow: 0 0 8px rgba(200,169,106,0.4); }
+.journey-dot.locked { background: var(--bg-void); border-color: #222; }
+/* VOLUME ROW */
+.volume-list { border: 0.5px solid var(--border); border-radius: var(--radius-lg); overflow: hidden; }
+.volume-row { display: flex; align-items: stretch; background: var(--bg-card); cursor: pointer; transition: background 0.2s; border-bottom: 0.5px solid var(--border); }
+.volume-row:last-child { border-bottom: none; }
+.volume-row:hover { background: var(--bg-elevated); }
+.volume-spine { width: 52px; min-width: 52px; display: flex; align-items: center; justify-content: center; border-right: 0.5px solid var(--border); position: relative; }
+.volume-spine::before { content: ''; position: absolute; left: 0; top: 0; bottom: 0; width: 3px; }
+.volume-spine-num { font-family: var(--font-display); font-size: 16px; font-weight: 500; color: var(--text-dim); }
+.volume-body { flex: 1; padding: 14px 16px; min-width: 0; }
+.volume-title { font-family: var(--font-display); font-size: 13px; font-weight: 400; color: var(--text-primary); letter-spacing: 0.3px; margin-bottom: 2px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.volume-desc { font-family: var(--font-body); font-size: 12px; color: var(--text-dim); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; margin-bottom: 8px; }
+.volume-progress-bar { height: 3px; background: var(--border); border-radius: 2px; overflow: hidden; }
+.volume-progress-fill { height: 100%; border-radius: 2px; transition: width 0.3s; }
+.volume-right { display: flex; align-items: center; gap: 10px; padding: 14px 16px 14px 0; }
+.section-dots { display: flex; gap: 5px; }
+.section-dot { width: 8px; height: 8px; border-radius: 50%; }
+.section-dot.done { background: var(--green); }
+.section-dot.active { background: var(--gold); }
+.section-dot.sealed { background: #222; border: 1px solid #333; }
+.volume-badge { font-family: var(--font-ui); font-size: 10px; font-weight: 500; padding: 3px 10px; border-radius: 12px; white-space: nowrap; }
+.badge-completed { color: var(--green); background: #55bb6612; border: 0.5px solid #55bb6622; }
+.badge-active { color: var(--gold); background: var(--gold-bg); border: 0.5px solid var(--gold-border); }
+.badge-sealed { color: var(--text-dim); background: #1a1a2212; border: 0.5px solid #1a1a2244; }
+.badge-locked { color: var(--pink); background: #cc669912; border: 0.5px solid #cc669922; }
+/* BOND CONTEXT CARDS */
+.context-cards { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-bottom: 16px; }
+.context-card { background: var(--bg-card); border: 0.5px solid var(--border); border-radius: var(--radius-md); padding: 14px; }
+.context-card-label { font-family: var(--font-ui); font-size: 10px; color: var(--text-dim); letter-spacing: 0.5px; margin-bottom: 3px; }
+.context-card-value { font-family: var(--font-display); font-size: 14px; font-weight: 500; color: var(--text-primary); }
+/* SPELL EMPTY STATE */
+.spell-empty { text-align: center; padding: 60px 20px; }
+.spell-empty-icon { font-size: 32px; color: var(--text-faint); margin-bottom: 12px; }
+.spell-empty-text { font-family: var(--font-body); font-size: 16px; color: var(--text-dim); font-style: italic; }
+.spell-empty-sub { font-family: var(--font-ui); font-size: 12px; color: var(--text-faint); margin-top: 6px; }
+.spell-stats { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-bottom: 16px; }
+/* DETAIL OVERLAY */
+.detail-overlay { display: none; position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(4,4,8,0.88); z-index: 100; overflow-y: auto; padding: 40px 20px; }
+.detail-overlay.open { display: block; }
+.detail-panel { max-width: 520px; margin: 0 auto; background: var(--bg-surface); border: 0.5px solid var(--gold-border); border-radius: var(--radius-lg); overflow: hidden; position: relative; }
+.detail-accent { height: 3px; }
+.detail-panel-header { padding: 24px 24px 16px; position: relative; }
+.detail-close { position: absolute; top: 16px; right: 16px; cursor: pointer; color: var(--text-dim); font-size: 22px; line-height: 1; padding: 2px 6px; border-radius: 4px; transition: color 0.2s; z-index: 2; }
+.detail-close:hover { color: var(--gold); }
+.detail-vol-num { position: absolute; top: 12px; right: 50px; font-family: var(--font-display); font-size: 64px; font-weight: 500; color: #ffffff06; line-height: 1; pointer-events: none; }
+.detail-title { font-family: var(--font-display); font-size: 18px; font-weight: 500; color: var(--text-primary); letter-spacing: 0.5px; margin-bottom: 6px; }
+.detail-desc { font-family: var(--font-body); font-size: 14px; color: var(--text-secondary); line-height: 1.5; }
+.detail-panel-body { padding: 20px 24px 24px; }
+.detail-sections { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 16px; }
+.detail-section-card { background: var(--bg-card); border: 0.5px solid var(--border); border-radius: var(--radius-sm); padding: 12px; }
+.detail-section-name { font-family: var(--font-ui); font-size: 11px; color: var(--text-dim); margin-bottom: 4px; text-transform: capitalize; }
+.detail-section-badge { font-family: var(--font-ui); font-size: 10px; font-weight: 500; padding: 2px 8px; border-radius: 10px; display: inline-block; margin-bottom: 6px; }
+.detail-section-progress { height: 2px; background: var(--border); border-radius: 1px; overflow: hidden; }
+.detail-section-fill { height: 100%; border-radius: 1px; }
+.detail-stats { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 18px; }
+.detail-stat { background: var(--bg-card); border-radius: var(--radius-sm); padding: 10px 12px; }
+.detail-stat-label { font-family: var(--font-ui); font-size: 10px; color: var(--text-dim); margin-bottom: 2px; }
+.detail-stat-value { font-family: var(--font-display); font-size: 14px; font-weight: 500; color: var(--gold); }
+.detail-action-btn { display: block; width: 100%; padding: 14px; background: var(--gold); color: var(--bg-void); border: none; border-radius: var(--radius-md); font-family: var(--font-display); font-size: 13px; font-weight: 500; letter-spacing: 1px; cursor: pointer; text-align: center; text-decoration: none; transition: opacity 0.2s; }
+.detail-action-btn:hover { opacity: 0.9; }
+.detail-action-btn.disabled { background: var(--bg-elevated); color: var(--text-dim); cursor: not-allowed; pointer-events: none; }
+/* MESSAGE */
+.lib-message { max-width: 860px; margin: 8px auto; padding: 10px 16px; border-radius: var(--radius-sm); font-family: var(--font-body); font-size: 14px; display: none; }
+.lib-message.visible { display: block; }
+.lib-message.error { background: #cc444412; color: #cc6666; border: 0.5px solid #cc444422; }
+.lib-message.info { background: var(--gold-bg); color: var(--gold-dim); border: 0.5px solid var(--gold-border); }
+/* RESPONSIVE */
+@media (max-width: 768px) {
+  .lib-page { padding: 16px 16px 60px; }
+  .lib-hero { padding: 20px; }
+  .lib-hero-stats { gap: 16px; }
+  .lib-tab { padding: 12px 16px; font-size: 10px; }
+  .context-cards, .spell-stats { grid-template-columns: 1fr; }
+  .volume-right { display: none; }
+  .detail-overlay { padding: 20px 12px; }
+  .detail-sections { grid-template-columns: 1fr; }
+  .site-nav { gap: 0.35rem; padding: 0.55rem 0.65rem; }
+  .site-nav a, .site-nav button { padding: 0.5rem 0.7rem; font-size: 0.78rem; }
+}
+</style>
 </head>
 <body>
-  <div class="cloud-layer"></div>
-  <div class="rune-layer"></div>
-  <div class="lightning-flash"></div>
 
-  <nav>
+<div class="site-nav-wrap">
+  <nav class="site-nav">
     <a href="/index.html">Home</a>
     <a href="/lore.html">Lore</a>
     <a href="/dashboard.html">Dashboard</a>
@@ -710,173 +168,107 @@
     <a href="/library.html" class="active">Library</a>
     <button type="button" id="logout-button">Logout</button>
   </nav>
+</div>
 
-  <main class="library-page">
-    <div class="library-frame">
-      <section class="record-header">
-        <div class="record-header-main">
-          <span class="record-eyebrow">Sacred Archives</span>
-          <h1>The Inner Record Hall</h1>
-          <p class="record-session-line" id="session-line">Loading library access...</p>
-          <p class="record-header-copy">
-            A unified archive where personal cultivation and shared bond volumes may coexist
-            without losing their separate truths. What is yours remains recorded. What is shared
-            remains sanctified.
-          </p>
-        </div>
+<div id="lib-message" class="lib-message"></div>
 
-        <div class="record-header-actions">
-          <a href="/store.html" class="primary">Visit Store</a>
-          <a href="/dashboard.html" class="secondary">Back to Dashboard</a>
-        </div>
+<main class="lib-page">
 
-        <div class="record-status-strip">
-          <div class="record-status-card">
-            <span>Realm</span>
-            <strong id="header-realm">—</strong>
-          </div>
-          <div class="record-status-card">
-            <span>Bond Stage</span>
-            <strong id="header-bond-stage">—</strong>
-          </div>
-          <div class="record-status-card">
-            <span>Meditation</span>
-            <strong id="header-meditation">—</strong>
-          </div>
-          <div class="record-status-card">
-            <span>Library Bearer</span>
-            <strong id="header-user">—</strong>
-          </div>
-        </div>
-      </section>
-
-      <p id="page-message" class="library-banner is-hidden"></p>
-
-      <section class="record-section">
-        <div class="section-header">
-          <div>
-            <span>Active Altar</span>
-            <h2>Selected Record on the Altar</h2>
-            <p>The altar changes between personal cultivation and shared bond records.</p>
-          </div>
-
-          <div class="view-toggle">
-            <button id="toggle-cultivation" class="active" type="button">Cultivation View</button>
-            <button id="toggle-bond" type="button">Bond View</button>
-          </div>
-        </div>
-
-        <div class="altar-grid">
-          <div class="altar-main">
-            <div class="altar-top">
-              <div>
-                <div class="altar-type" id="altar-type">Cultivation Volume</div>
-                <h3 id="altar-title">—</h3>
-                <p class="altar-copy" id="altar-copy">—</p>
-              </div>
-
-              <div class="state-badge">
-                <span id="altar-state-label">State</span>
-                <strong id="altar-state-value">—</strong>
-              </div>
-            </div>
-
-            <div class="altar-meta-grid" id="altar-meta-grid"></div>
-            <div class="altar-actions" id="altar-actions"></div>
-          </div>
-
-          <div class="altar-side">
-            <div class="altar-type" id="summary-title">Cultivation Summary</div>
-            <div class="summary-stack" id="summary-stack"></div>
-          </div>
-        </div>
-      </section>
-
-      <section class="record-section">
-        <div class="shrine-grid">
-          <div class="shrine-card">
-            <div class="shrine-head">
-              <div>
-                <span class="record-eyebrow">Shrine Gate</span>
-                <h3>Cultivation Shrine</h3>
-                <p>Personal cultivation volumes across the canon realm shelf rest here.</p>
-              </div>
-              <button id="activate-cultivation-shrine" class="shrine-toggle active" type="button">
-                Active Shrine
-              </button>
-            </div>
-
-            <div class="shelf-shell">
-              <div class="shelf-title">Cultivation Codex Shelf</div>
-              <div id="cultivation-shelf" class="shelf-grid cultivation-grid"></div>
-              <p class="shelf-note">
-                Selecting a cultivation spine raises that volume onto the altar above.
-              </p>
-            </div>
-          </div>
-
-          <div class="shrine-card">
-            <div class="shrine-head">
-              <div>
-                <span class="record-eyebrow">Shrine Gate</span>
-                <h3>Bond Shrine</h3>
-                <p>Shared partner volumes from Seed to Eternity rest upon this sacred shelf.</p>
-              </div>
-              <button id="activate-bond-shrine" class="shrine-toggle inactive" type="button">
-                Enter Shrine
-              </button>
-            </div>
-
-            <div class="shelf-shell">
-              <div class="shelf-title">Bond Codex Shelf</div>
-              <div id="bond-shelf" class="shelf-grid bond-grid"></div>
-              <p class="shelf-note">
-                When the Bond Shrine is active, the altar and the chamber below open to shared pair progress.
-              </p>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      <section class="record-section">
-        <div class="section-header">
-          <div>
-            <span>Deep Archive</span>
-            <h2>Opened Record Chamber</h2>
-            <p>One chamber below changes according to the active shrine and selected volume.</p>
-          </div>
-
-          <div class="view-toggle">
-            <button id="archive-cultivation" class="active" type="button">Cultivation Record</button>
-            <button id="archive-bond" type="button">Bond Record</button>
-          </div>
-        </div>
-
-        <div class="archive-panel">
-          <div class="archive-top">
-            <div>
-              <div class="archive-type" id="archive-type">Expanded Cultivation Record</div>
-              <h3 id="archive-title">—</h3>
-              <p class="archive-copy" id="archive-copy">—</p>
-            </div>
-
-            <div class="focus-chip">
-              <span>Current Focus</span>
-              <strong id="archive-focus">—</strong>
-            </div>
-          </div>
-
-          <div id="archive-grid" class="scroll-grid"></div>
-        </div>
-      </section>
+  <!-- HERO -->
+  <section class="lib-hero" id="lib-hero">
+    <div class="lib-hero-eyebrow">Sacred Archives</div>
+    <div class="lib-hero-name" id="hero-name">Loading...</div>
+    <div class="lib-hero-realm" id="hero-realm">—</div>
+    <div class="lib-hero-stats">
+      <div class="lib-hero-stat">
+        <span class="lib-hero-stat-value" id="hero-volumes">—</span>
+        <span class="lib-hero-stat-label">VOLUMES</span>
+      </div>
+      <div class="lib-hero-stat">
+        <span class="lib-hero-stat-value" id="hero-completed">—</span>
+        <span class="lib-hero-stat-label">COMPLETED</span>
+      </div>
+      <div class="lib-hero-stat">
+        <span class="lib-hero-stat-value" id="hero-bond-stage">—</span>
+        <span class="lib-hero-stat-label">BOND STAGE</span>
+      </div>
+      <div class="lib-hero-stat">
+        <span class="lib-hero-stat-value" id="hero-meditation">—</span>
+        <span class="lib-hero-stat-label">MEDITATION</span>
+      </div>
     </div>
-  </main>
+  </section>
 
-  <footer>
-    The Ascendant Path • Personal and Bond Library • Record of cultivation and sacred union
-  </footer>
+  <!-- TABS -->
+  <div class="lib-tabs">
+    <div class="lib-tab active" data-tab="cultivation">CULTIVATION <span class="tab-count" id="tab-count-cultivation"></span></div>
+    <div class="lib-tab" data-tab="bond">BOND <span class="tab-count" id="tab-count-bond"></span></div>
+    <div class="lib-tab" data-tab="spells">SPELL BOOKS <span class="tab-count" id="tab-count-spells"></span></div>
+  </div>
 
-  <script>
+  <!-- CULTIVATION SECTION -->
+  <section class="lib-section active" id="section-cultivation">
+    <div class="lib-section-header">
+      <div class="lib-section-title">Cultivation Volumes</div>
+      <div class="lib-section-desc">Personal cultivation journey across the ten canon realms</div>
+    </div>
+    <div class="journey-bar" id="journey-bar">
+      <div class="journey-label">REALM PROGRESSION</div>
+      <div class="journey-track">
+        <div class="journey-fill-bg"></div>
+        <div class="journey-fill" id="journey-fill"></div>
+        <div class="journey-dots" id="journey-dots"></div>
+      </div>
+    </div>
+    <div class="volume-list" id="cultivation-volumes"></div>
+  </section>
+
+  <!-- BOND SECTION -->
+  <section class="lib-section" id="section-bond">
+    <div class="lib-section-header">
+      <div class="lib-section-title">Bond Volumes</div>
+      <div class="lib-section-desc">Shared partner volumes from Seed to Eternity</div>
+    </div>
+    <div class="context-cards" id="bond-context-cards"></div>
+    <div class="volume-list" id="bond-volumes"></div>
+  </section>
+
+  <!-- SPELL BOOKS SECTION -->
+  <section class="lib-section" id="section-spells">
+    <div class="lib-section-header">
+      <div class="lib-section-title">Spell Books</div>
+      <div class="lib-section-desc">Arcane techniques and spell records</div>
+    </div>
+    <div class="spell-stats" id="spell-stats"></div>
+    <div id="spell-content"></div>
+  </section>
+
+</main>
+
+<!-- DETAIL OVERLAY -->
+<div class="detail-overlay" id="detail-overlay">
+  <div class="detail-panel">
+    <div class="detail-accent" id="detail-accent"></div>
+    <div class="detail-panel-header">
+      <div class="detail-close" id="detail-close">&times;</div>
+      <div class="detail-vol-num" id="detail-vol-num"></div>
+      <div class="detail-title" id="detail-title"></div>
+      <div class="detail-desc" id="detail-desc"></div>
+    </div>
+    <div class="detail-panel-body">
+      <div class="detail-sections" id="detail-sections"></div>
+      <div class="detail-stats" id="detail-stats"></div>
+      <a class="detail-action-btn" id="detail-action" href="#">Open Volume</a>
+    </div>
+  </div>
+</div>
+
+<footer style="text-align:center; padding:32px 16px; font-family:var(--font-ui); font-size:11px; color:var(--text-faint); letter-spacing:0.5px;">
+  The Ascendant Path &bull; Sacred Archives
+</footer>
+
+<script>
+    // ── Constants ──────────────────────────────────────────────────
     const LOGIN_PAGE_URL = "/login.html";
     const VERIFY_SESSION_URL = "/.netlify/functions/verify-session";
     const LOGOUT_URL = "/.netlify/functions/logout";
@@ -925,18 +317,28 @@
       { volume_number: 5, item_name: "The Spirit of Eternity" }
     ];
 
+    const REALM_SPINE_COLORS = {
+      1: '#5a9acc', 2: '#44bb88', 3: '#7755cc', 4: '#cc7733', 5: '#cc9933',
+      6: '#aa44cc', 7: '#7744cc', 8: '#cc4444', 9: '#ccaa33', 10: '#eebb33'
+    };
+    const BOND_SPINE_COLOR = '#cc6699';
+    const SPELL_SPINE_COLOR = '#aa77dd';
+
+    // ── State ──────────────────────────────────────────────────
     const state = {
       session: null,
       payload: null,
-      activeMode: "cultivation",
+      activeTab: "cultivation",
       selectedCultivationIndex: 0,
       selectedBondIndex: 0,
       requestedPartnershipUuid: "",
       requestedLegacyPartnershipId: ""
     };
 
-    function safeText(value, fallback = "") {
-      const text = String(value ?? "").trim();
+    // ── Preserved Utility Functions ──────────────────────────────
+    function safeText(value, fallback) {
+      if (fallback === undefined) fallback = "";
+      const text = String(value == null ? "" : value).trim();
       return text || fallback;
     }
 
@@ -944,7 +346,8 @@
       return safeText(value).toLowerCase();
     }
 
-    function safeNumber(value, fallback = 0) {
+    function safeNumber(value, fallback) {
+      if (fallback === undefined) fallback = 0;
       const num = Number(value);
       return Number.isFinite(num) ? num : fallback;
     }
@@ -965,36 +368,39 @@
         .replaceAll("'", "&#39;");
     }
 
-    function titleCase(value, fallback = "Unknown") {
+    function titleCase(value, fallback) {
+      if (fallback === undefined) fallback = "Unknown";
       const text = safeLower(value);
       if (!text) return fallback;
-
       return text
         .replaceAll("_", " ")
         .replaceAll("-", " ")
         .split(" ")
         .filter(Boolean)
-        .map(part => part.charAt(0).toUpperCase() + part.slice(1))
+        .map(function(part) { return part.charAt(0).toUpperCase() + part.slice(1); })
         .join(" ");
     }
 
-    function formatPercent(value, digits = 1) {
-      const num = safeNumber(value, 0);
-      return `${num.toFixed(digits)}%`;
+    function formatPercent(value, digits) {
+      if (digits === undefined) digits = 1;
+      var num = safeNumber(value, 0);
+      return num.toFixed(digits) + "%";
     }
 
     function formatDateTime(value) {
       if (!value) return "Unknown";
-      const date = new Date(value);
+      var date = new Date(value);
       if (Number.isNaN(date.getTime())) return "Unknown";
       return date.toLocaleString();
     }
 
-    function formatRealmLabel(value, fallback = "Unknown Realm") {
-      const lowered = safeLower(value);
+    function formatRealmLabel(value, fallback) {
+      if (fallback === undefined) fallback = "Unknown Realm";
+      var lowered = safeLower(value);
       return REALM_DISPLAY_MAP[lowered] || safeText(value, fallback);
     }
 
+    // ── Preserved URL / Query Helpers ────────────────────────────
     function getQueryPartnershipUuid() {
       return safeText(new URLSearchParams(window.location.search).get("partnership_uuid"));
     }
@@ -1003,29 +409,17 @@
       return safeText(new URLSearchParams(window.location.search).get("partnership_id"));
     }
 
+    // ── Preserved Session Helpers ────────────────────────────────
     function clearClientSessionArtifacts() {
-      const keysToRemove = [
-        "session",
-        "sessionToken",
-        "session_token",
-        "websiteSession",
-        "website_session",
-        "member",
-        "memberState",
-        "member_state",
-        "user",
-        "user_state",
-        "sl_username",
-        "slUsername",
-        "avatar_key",
-        "avatarKey",
-        "selected_partnership_uuid",
-        "selectedPartnershipUuid"
+      var keysToRemove = [
+        "session", "sessionToken", "session_token", "websiteSession",
+        "website_session", "member", "memberState", "member_state",
+        "user", "user_state", "sl_username", "slUsername",
+        "avatar_key", "avatarKey", "selected_partnership_uuid", "selectedPartnershipUuid"
       ];
-
-      for (const key of keysToRemove) {
-        try { localStorage.removeItem(key); } catch (_) {}
-        try { sessionStorage.removeItem(key); } catch (_) {}
+      for (var i = 0; i < keysToRemove.length; i++) {
+        try { localStorage.removeItem(keysToRemove[i]); } catch (_) {}
+        try { sessionStorage.removeItem(keysToRemove[i]); } catch (_) {}
       }
     }
 
@@ -1034,57 +428,43 @@
       window.location.href = LOGIN_PAGE_URL;
     }
 
-    async function authFetch(url, options = {}) {
-      const response = await fetch(url, {
-        ...options,
+    async function authFetch(url, options) {
+      if (!options) options = {};
+      var response = await fetch(url, {
+        method: options.method || "GET",
         credentials: "include",
         cache: "no-store",
-        headers: {
-          Accept: "application/json",
-          ...(options.headers || {})
-        }
+        headers: Object.assign({ Accept: "application/json" }, options.headers || {}),
+        body: options.body || undefined
       });
-
       if (response.status === 401 || response.status === 403) {
         redirectToLogin();
         throw new Error("Your session has expired. Please sign in again.");
       }
-
       return response;
     }
 
+    // ── verifySession (FIXED: includes payload.viewer) ───────────
     async function verifySession() {
-      const response = await authFetch(VERIFY_SESSION_URL, {
-        method: "GET"
-      });
+      var response = await authFetch(VERIFY_SESSION_URL, { method: "GET" });
+      var rawText = await response.text();
+      var payload = null;
+      try { payload = rawText ? JSON.parse(rawText) : null; } catch(e) { payload = null; }
 
-      const rawText = await response.text();
-      let payload = null;
-
-      try {
-        payload = rawText ? JSON.parse(rawText) : null;
-      } catch {
-        payload = null;
-      }
-
-      if (!response.ok || !payload?.success) {
+      if (!response.ok || !payload || !payload.success) {
         redirectToLogin();
-        throw new Error(payload?.message || "Unable to verify session.");
+        throw new Error((payload && payload.message) || "Unable to verify session.");
       }
 
-      const member =
-        payload.member ||
-        payload.session?.member ||
-        payload.user ||
-        null;
+      var member = payload.member || payload.viewer || (payload.session && payload.session.member) || payload.user || null;
 
       state.session = {
-        sl_avatar_key: safeText(member?.sl_avatar_key || member?.avatar_key),
-        sl_username: safeText(member?.sl_username || member?.username),
-        display_name: safeText(member?.display_name),
-        character_name: safeText(member?.character_name),
-        realm_display_name: safeText(member?.realm_display_name),
-        realm_name: safeText(member?.realm_name)
+        sl_avatar_key: safeText(member && (member.sl_avatar_key || member.avatar_key)),
+        sl_username: safeText(member && (member.sl_username || member.username)),
+        display_name: safeText(member && member.display_name),
+        character_name: safeText(member && member.character_name),
+        realm_display_name: safeText(member && member.realm_display_name),
+        realm_name: safeText(member && member.realm_name)
       };
 
       return payload;
@@ -1092,10 +472,7 @@
 
     async function logoutUser() {
       try {
-        await fetch(LOGOUT_URL, {
-          method: "POST",
-          credentials: "include"
-        });
+        await fetch(LOGOUT_URL, { method: "POST", credentials: "include" });
       } catch (error) {
         console.error("Logout request error:", error);
       } finally {
@@ -1104,76 +481,55 @@
       }
     }
 
+    // ── Preserved Partnership Context ────────────────────────────
     function getSelectedPartnershipContext() {
-      const payload = state.payload || {};
-      const bondLibrary = payload.bond_library || {};
-      const basePartnership =
-        payload.selected_partnership ||
-        payload.partnership ||
-        bondLibrary.partnership ||
-        {};
+      var payload = state.payload || {};
+      var bondLibrary = payload.bond_library || {};
+      var basePartnership = payload.selected_partnership || payload.partnership || bondLibrary.partnership || {};
+      var basePartner = basePartnership.partner || (payload.partnership && payload.partnership.partner) || (payload.selected_partnership && payload.selected_partnership.partner) || bondLibrary.partner || {};
 
-      const basePartner =
-        basePartnership.partner ||
-        payload.partnership?.partner ||
-        payload.selected_partnership?.partner ||
-        bondLibrary.partner ||
-        {};
-
-      const partnershipUuid = safeText(
-        basePartnership.partnership_uuid ||
-        basePartnership.id ||
-        payload.partnership?.partnership_uuid ||
-        payload.partnership?.id ||
-        payload.selected_partnership?.partnership_uuid ||
-        payload.selected_partnership?.id ||
-        bondLibrary.partnership_uuid ||
-        bondLibrary.selected_partnership_uuid ||
-        bondLibrary.partnership?.partnership_uuid ||
-        bondLibrary.partnership?.id ||
+      var partnershipUuid = safeText(
+        basePartnership.partnership_uuid || basePartnership.id ||
+        (payload.partnership && payload.partnership.partnership_uuid) ||
+        (payload.partnership && payload.partnership.id) ||
+        (payload.selected_partnership && payload.selected_partnership.partnership_uuid) ||
+        (payload.selected_partnership && payload.selected_partnership.id) ||
+        bondLibrary.partnership_uuid || bondLibrary.selected_partnership_uuid ||
+        (bondLibrary.partnership && bondLibrary.partnership.partnership_uuid) ||
+        (bondLibrary.partnership && bondLibrary.partnership.id) ||
         state.requestedPartnershipUuid
       );
 
-      const legacyPartnershipId = safeText(
-        basePartnership.partnership_id ||
-        basePartnership.legacy_partnership_id ||
-        payload.partnership?.partnership_id ||
-        payload.selected_partnership?.partnership_id ||
-        bondLibrary.partnership_id ||
-        bondLibrary.legacy_partnership_id ||
+      var legacyPartnershipId = safeText(
+        basePartnership.partnership_id || basePartnership.legacy_partnership_id ||
+        (payload.partnership && payload.partnership.partnership_id) ||
+        (payload.selected_partnership && payload.selected_partnership.partnership_id) ||
+        bondLibrary.partnership_id || bondLibrary.legacy_partnership_id ||
         state.requestedLegacyPartnershipId
       );
 
-      const partnerDisplayName = safeText(
-        basePartner.display_name ||
-        basePartner.character_name ||
-        basePartnership.partner_display_name ||
-        bondLibrary.partner_display_name
+      var partnerDisplayName = safeText(
+        basePartner.display_name || basePartner.character_name ||
+        basePartnership.partner_display_name || bondLibrary.partner_display_name
       );
 
-      const partnerUsername = safeText(
-        basePartner.sl_username ||
-        basePartner.username ||
-        basePartnership.partner_sl_username ||
-        bondLibrary.partner_sl_username
+      var partnerUsername = safeText(
+        basePartner.sl_username || basePartner.username ||
+        basePartnership.partner_sl_username || bondLibrary.partner_sl_username
       );
 
-      const hasPartner = safeBoolean(
-        basePartnership.has_partner ??
-        payload.partnership?.has_partner ??
-        payload.selected_partnership?.has_partner ??
-        bondLibrary.has_partner ??
-        bondLibrary.available ??
-        !!(partnerDisplayName || partnerUsername)
-      );
+      var hasPartnerRaw = basePartnership.has_partner;
+      if (hasPartnerRaw == null) hasPartnerRaw = payload.partnership && payload.partnership.has_partner;
+      if (hasPartnerRaw == null) hasPartnerRaw = payload.selected_partnership && payload.selected_partnership.has_partner;
+      if (hasPartnerRaw == null) hasPartnerRaw = bondLibrary.has_partner;
+      if (hasPartnerRaw == null) hasPartnerRaw = bondLibrary.available;
+      if (hasPartnerRaw == null) hasPartnerRaw = !!(partnerDisplayName || partnerUsername);
+      var hasPartner = safeBoolean(hasPartnerRaw);
 
-      const partnershipStatus = safeText(
-        basePartnership.partnership_status ||
-        basePartnership.status ||
-        payload.partnership?.partnership_status ||
-        payload.partnership?.status ||
-        payload.selected_partnership?.partnership_status ||
-        payload.selected_partnership?.status ||
+      var partnershipStatus = safeText(
+        basePartnership.partnership_status || basePartnership.status ||
+        (payload.partnership && (payload.partnership.partnership_status || payload.partnership.status)) ||
+        (payload.selected_partnership && (payload.selected_partnership.partnership_status || payload.selected_partnership.status)) ||
         bondLibrary.partnership_status
       );
 
@@ -1188,60 +544,48 @@
     }
 
     function syncLibraryUrlFromState() {
-      const params = new URLSearchParams();
-      const context = getSelectedPartnershipContext();
-
+      var params = new URLSearchParams();
+      var context = getSelectedPartnershipContext();
       if (safeText(context.partnership_uuid)) {
         params.set("partnership_uuid", context.partnership_uuid);
       } else if (safeText(context.partnership_id)) {
         params.set("partnership_id", context.partnership_id);
       }
-
-      const nextUrl = `${window.location.pathname}${params.toString() ? "?" + params.toString() : ""}`;
-      const currentUrl = `${window.location.pathname}${window.location.search}`;
-
+      var nextUrl = window.location.pathname + (params.toString() ? "?" + params.toString() : "");
+      var currentUrl = window.location.pathname + window.location.search;
       if (nextUrl !== currentUrl) {
         window.history.replaceState({}, "", nextUrl);
       }
     }
 
-    function buildOpenedRecordUrl(mode, volumeNumber, partnershipUuid = "", partnershipId = "") {
-      const safeVolume = safeNumber(volumeNumber, 0);
-      const params = new URLSearchParams();
-
-      if (safeVolume > 0) {
-        params.set("volume", String(safeVolume));
-      }
-
+    // ── Preserved URL Builders ───────────────────────────────────
+    function buildOpenedRecordUrl(mode, volumeNumber, partnershipUuid, partnershipId) {
+      var safeVolume = safeNumber(volumeNumber, 0);
+      var params = new URLSearchParams();
+      if (safeVolume > 0) params.set("volume", String(safeVolume));
       if (safeLower(mode) === "bond") {
-        if (safeText(partnershipUuid)) {
-          params.set("partnership_uuid", partnershipUuid);
-        } else if (safeText(partnershipId)) {
-          params.set("partnership_id", partnershipId);
-        }
-
-        return `/bond-book.html${params.toString() ? "?" + params.toString() : ""}`;
+        if (safeText(partnershipUuid)) params.set("partnership_uuid", partnershipUuid);
+        else if (safeText(partnershipId)) params.set("partnership_id", partnershipId);
+        return "/bond-book.html" + (params.toString() ? "?" + params.toString() : "");
       }
-
-      return `/cultivation-book.html${params.toString() ? "?" + params.toString() : ""}`;
+      return "/cultivation-book.html" + (params.toString() ? "?" + params.toString() : "");
     }
 
     function buildPartnershipRecordUrl() {
-      const context = getSelectedPartnershipContext();
-
+      var context = getSelectedPartnershipContext();
       if (safeText(context.partnership_uuid)) {
-        return `/partnership-record.html?partnership_uuid=${encodeURIComponent(context.partnership_uuid)}`;
+        return "/partnership-record.html?partnership_uuid=" + encodeURIComponent(context.partnership_uuid);
       }
-
       if (safeText(context.partnership_id)) {
-        return `/partnership.html?partnership_id=${encodeURIComponent(context.partnership_id)}`;
+        return "/partnership.html?partnership_id=" + encodeURIComponent(context.partnership_id);
       }
-
       return "/partnership.html";
     }
 
-    function getRealmLabelFromVolume(volumeNumber, fallback = "Unknown Realm") {
-      const safeVolume = safeNumber(volumeNumber, 0);
+    // ── Preserved Realm / Item Helpers ───────────────────────────
+    function getRealmLabelFromVolume(volumeNumber, fallback) {
+      if (fallback === undefined) fallback = "Unknown Realm";
+      var safeVolume = safeNumber(volumeNumber, 0);
       if (safeVolume >= 1 && safeVolume <= REALM_SEQUENCE.length) {
         return REALM_SEQUENCE[safeVolume - 1];
       }
@@ -1250,51 +594,47 @@
 
     function getCultivationItemRealmLabel(item) {
       if (!item) return "Unknown Realm";
-
-      const fromVolume = getRealmLabelFromVolume(safeNumber(item.volume_number, 0), "");
+      var fromVolume = getRealmLabelFromVolume(safeNumber(item.volume_number, 0), "");
       if (fromVolume) return fromVolume;
+      return formatRealmLabel(item.realm_display_name || item.realm_name, "Unknown Realm");
+    }
 
-      return formatRealmLabel(
-        item.realm_display_name || item.realm_name,
-        "Unknown Realm"
+    function getCurrentRealmName() {
+      var p = state.payload || {};
+      var userRealm = formatRealmLabel(
+        (p.user && (p.user.realm_display_name || p.user.realm_name)) ||
+        (state.session && (state.session.realm_display_name || state.session.realm_name)),
+        ""
       );
+      if (userRealm) return userRealm;
+      var selected = getSelectedCultivationItem();
+      if (selected) return getCultivationItemRealmLabel(selected);
+      var items = getCultivationItems();
+      var latest = items[items.length - 1];
+      if (latest) return getCultivationItemRealmLabel(latest);
+      return "Unknown Realm";
     }
 
-    function setMessage(text, tone = "info") {
-      const el = document.getElementById("page-message");
-
-      if (!text) {
-        el.textContent = "";
-        el.className = "library-banner is-hidden";
-        return;
-      }
-
-      el.textContent = text;
-      el.className = tone === "error" ? "library-banner error" : "library-banner";
-    }
-
+    // ── Preserved Data Accessors ─────────────────────────────────
     function getCultivationItems() {
-      return Array.isArray(state.payload?.items) ? state.payload.items : [];
+      return Array.isArray(state.payload && state.payload.items) ? state.payload.items : [];
     }
 
     function getBondLibrary() {
-      return state.payload?.bond_library || null;
+      return (state.payload && state.payload.bond_library) || null;
     }
 
     function getBondVolumesForShelf() {
-      const bondLibrary = getBondLibrary();
-      const purchased = Array.isArray(bondLibrary?.volumes) ? bondLibrary.volumes : [];
-
-      const purchasedMap = new Map();
-      purchased.forEach(volume => {
+      var bondLibrary = getBondLibrary();
+      var purchased = Array.isArray(bondLibrary && bondLibrary.volumes) ? bondLibrary.volumes : [];
+      var purchasedMap = new Map();
+      purchased.forEach(function(volume) {
         purchasedMap.set(safeNumber(volume.volume_number, 0), volume);
       });
-
-      return BOND_VOLUME_FALLBACKS.map(fallback => {
+      return BOND_VOLUME_FALLBACKS.map(function(fallback) {
         if (purchasedMap.has(fallback.volume_number)) {
           return purchasedMap.get(fallback.volume_number);
         }
-
         return {
           volume_number: fallback.volume_number,
           item_name: fallback.item_name,
@@ -1308,626 +648,474 @@
     }
 
     function getSelectedCultivationItem() {
-      const items = getCultivationItems();
+      var items = getCultivationItems();
       if (!items.length) return null;
-
-      const index = Math.max(0, Math.min(state.selectedCultivationIndex, items.length - 1));
+      var index = Math.max(0, Math.min(state.selectedCultivationIndex, items.length - 1));
       return items[index];
     }
 
     function getSelectedBondVolume() {
-      const volumes = getBondVolumesForShelf();
+      var volumes = getBondVolumesForShelf();
       if (!volumes.length) return null;
-
-      const index = Math.max(0, Math.min(state.selectedBondIndex, volumes.length - 1));
+      var index = Math.max(0, Math.min(state.selectedBondIndex, volumes.length - 1));
       return volumes[index];
     }
 
-    function updateSessionLine(user) {
-      const sessionLine = document.getElementById("session-line");
-
-      if (!user) {
-        sessionLine.textContent = "Loading library access...";
-        return;
-      }
-
-      const displayName =
-        safeText(user.character_name) ||
-        safeText(user.display_name) ||
-        safeText(user.sl_username) ||
-        "Cultivator";
-
-      const username = safeText(user.sl_username);
-      const context = getSelectedPartnershipContext();
-
-      let baseLine = username
-        ? `Library opened for ${displayName} • @${username}`
-        : `Library opened for ${displayName}`;
-
-      if (state.activeMode === "bond" && context.has_partner) {
-        const partnerLabel = safeText(
-          context.partner_display_name || context.partner_username,
-          "Focused Partner"
-        );
-        baseLine += ` • Bond context: ${partnerLabel}`;
-      }
-
-      sessionLine.textContent = baseLine;
-    }
-
-    function getCurrentRealmName() {
-      const userRealm = formatRealmLabel(
-        state.payload?.user?.realm_display_name ||
-        state.payload?.user?.realm_name ||
-        state.session?.realm_display_name ||
-        state.session?.realm_name,
-        ""
-      );
-
-      if (userRealm) return userRealm;
-
-      const selected = getSelectedCultivationItem();
-      if (selected) return getCultivationItemRealmLabel(selected);
-
-      const items = getCultivationItems();
-      const latest = items[items.length - 1];
-      if (latest) return getCultivationItemRealmLabel(latest);
-
-      return "Unknown Realm";
-    }
-
-    function renderHeaderStrip() {
-      const context = getSelectedPartnershipContext();
-      const headerBondStage =
-        state.payload?.bond_library?.summary?.bond_stage ||
-        "Bond Seed";
-
-      document.getElementById("header-realm").textContent = safeText(getCurrentRealmName(), "Unknown Realm");
-      document.getElementById("header-bond-stage").textContent = safeText(headerBondStage, "Bond Seed");
-      document.getElementById("header-meditation").textContent = state.payload?.meditation?.is_active
-        ? "Active"
-        : "Inactive";
-
-      const user =
-        state.payload?.user?.display_name ||
-        state.payload?.user?.sl_username ||
-        state.session?.display_name ||
-        state.session?.sl_username ||
-        "Unknown Cultivator";
-
-      document.getElementById("header-user").textContent =
-        state.activeMode === "bond" && context.has_partner
-          ? `${user} • ${safeText(context.partner_display_name || context.partner_username, "Focused Partner")}`
-          : user;
-    }
-
-    function renderToggleStates() {
-      const cultivationActive = state.activeMode === "cultivation";
-
-      document.getElementById("toggle-cultivation").classList.toggle("active", cultivationActive);
-      document.getElementById("toggle-bond").classList.toggle("active", !cultivationActive);
-      document.getElementById("archive-cultivation").classList.toggle("active", cultivationActive);
-      document.getElementById("archive-bond").classList.toggle("active", !cultivationActive);
-
-      const cultivationShrineButton = document.getElementById("activate-cultivation-shrine");
-      const bondShrineButton = document.getElementById("activate-bond-shrine");
-
-      cultivationShrineButton.className = cultivationActive
-        ? "shrine-toggle active"
-        : "shrine-toggle inactive";
-
-      bondShrineButton.className = cultivationActive
-        ? "shrine-toggle inactive"
-        : "shrine-toggle active";
-    }
-
-    function createMetaBlock(label, value) {
-      return `
-        <div class="meta-block">
-          <span>${escapeHtml(label)}</span>
-          <strong>${escapeHtml(value)}</strong>
-        </div>
-      `;
-    }
-
-    function createSummaryChip(label, value) {
-      return `
-        <div class="summary-chip">
-          <span>${escapeHtml(label)}</span>
-          <strong>${escapeHtml(value)}</strong>
-        </div>
-      `;
-    }
-
-    function createActionButton(label, kind = "secondary", onClickName = "") {
-      if (onClickName) {
-        return `<button type="button" class="action-button ${escapeHtml(kind)}" data-action="${escapeHtml(onClickName)}">${escapeHtml(label)}</button>`;
-      }
-
-      return `<button type="button" class="action-button ${escapeHtml(kind)}">${escapeHtml(label)}</button>`;
-    }
-
-    function createActionLink(label, href, kind = "secondary") {
-      return `<a href="${escapeHtml(href)}" class="action-button ${escapeHtml(kind)}">${escapeHtml(label)}</a>`;
-    }
-
-    function renderCultivationAltar() {
-      const selected = getSelectedCultivationItem();
-      const summary = state.payload?.summary || {};
-
-      document.getElementById("altar-type").textContent = "Cultivation Volume";
-      document.getElementById("summary-title").textContent = "Cultivation Summary";
-
-      if (!selected) {
-        document.getElementById("altar-title").textContent = "No Cultivation Volume Selected";
-        document.getElementById("altar-copy").textContent = "No personal cultivation volume is currently available.";
-        document.getElementById("altar-state-label").textContent = "State";
-        document.getElementById("altar-state-value").textContent = "Dormant";
-        document.getElementById("altar-meta-grid").innerHTML = createMetaBlock("Status", "No recorded volume");
-        document.getElementById("altar-actions").innerHTML = "";
-        document.getElementById("summary-stack").innerHTML = createSummaryChip("Owned Volumes", "0");
-        return;
-      }
-
-      const openedRecordUrl = buildOpenedRecordUrl("cultivation", safeNumber(selected.volume_number, 0));
-
-      document.getElementById("altar-title").textContent =
-        `${getCultivationItemRealmLabel(selected)} — Volume ${safeNumber(selected.volume_number, 0)}`;
-      document.getElementById("altar-copy").textContent =
-        safeText(
-          selected.description,
-          "The selected personal volume rises onto the altar here, showing status, progress, and the current section being cultivated."
-        );
-      document.getElementById("altar-state-label").textContent = "State";
-      document.getElementById("altar-state-value").textContent =
-        titleCase(selected.volume_status, "Unknown");
-
-      const activeTimer =
-        selected.section_timers?.[safeLower(selected.current_section)] || null;
-
-      document.getElementById("altar-meta-grid").innerHTML = [
-        createMetaBlock("Title", safeText(selected.item_name, "Unnamed Volume")),
-        createMetaBlock(
-          "Current Section",
-          safeText(selected.current_section_label || selected.current_section, "None")
-        ),
-        createMetaBlock(
-          "Insight",
-          `${safeNumber(selected.insight_current, 0)} / ${safeNumber(selected.insight_required, 100)}`
-        ),
-        createMetaBlock(
-          "Time State",
-          safeText(activeTimer?.display_timer_state || activeTimer?.timer_state || selected.volume_status, "Unknown")
-        )
-      ].join("");
-
-      document.getElementById("altar-actions").innerHTML = [
-        createActionLink("Open Volume", openedRecordUrl, "primary"),
-        createActionLink("Continue Study", openedRecordUrl, "secondary"),
-        createActionButton("View Section Timers", "muted", "scroll-archive")
-      ].join("");
-
-      document.getElementById("summary-stack").innerHTML = [
-        createSummaryChip("Owned Volumes", String(safeNumber(summary.total_owned_volumes, 0))),
-        createSummaryChip("Completed Volumes", String(safeNumber(summary.completed_volumes, 0))),
-        createSummaryChip("Active Volumes", String(safeNumber(summary.active_volumes, 0))),
-        createSummaryChip("Ready Now", String(safeNumber(summary.eligible_volumes, 0)))
-      ].join("");
-    }
-
-    function renderBondAltar() {
-      const bondLibrary = getBondLibrary();
-      const selected = getSelectedBondVolume();
-      const context = getSelectedPartnershipContext();
-
-      const partnerName = safeText(
-        context.partner_display_name ||
-        context.partner_username,
-        "Unbound"
-      );
-
-      document.getElementById("altar-type").textContent = "Bond Volume";
-      document.getElementById("summary-title").textContent = "Bond Summary";
-
-      document.getElementById("altar-title").textContent = selected
-        ? `${safeText(selected.item_name, "Unnamed Bond Volume")} — Volume ${safeNumber(selected.volume_number, 0)}`
-        : "No Bond Volume Selected";
-
-      document.getElementById("altar-copy").textContent = selected
-        ? safeText(
-            selected.description,
-            "The selected shared bond volume rises onto the altar here, showing partner-linked progress, bond stage, and the current shared book."
-          )
-        : safeText(
-            bondLibrary?.message,
-            "Bond Shrine remains dormant until a valid shared bond record exists."
-          );
-
-      document.getElementById("altar-state-label").textContent = "Shared State";
-      document.getElementById("altar-state-value").textContent =
-        bondLibrary?.active_session?.status
-          ? titleCase(bondLibrary.active_session.status)
-          : (selected?.is_placeholder ? "Dormant" : titleCase(selected?.volume_status, "Dormant"));
-
-      const activeBookName =
-        selected?.active_book_name ||
-        selected?.current_focus_book_name ||
-        (Array.isArray(selected?.books)
-          ? selected.books.find(book => safeBoolean(book.is_active) || safeBoolean(book.is_current_book))?.book_name
-          : "") ||
-        "No active book";
-
-      document.getElementById("altar-meta-grid").innerHTML = [
-        createMetaBlock("Focused Partner", partnerName),
-        createMetaBlock(
-          "Partnership State",
-          safeText(context.partnership_status, context.has_partner ? "Focused" : "Unbound")
-        ),
-        createMetaBlock("Bond Stage", safeText(bondLibrary?.summary?.bond_stage, "Bond Seed")),
-        createMetaBlock("Current Book", safeText(activeBookName, "No active book"))
-      ].join("");
-
-      const bondOpenedRecordUrl =
-        selected && !selected.is_placeholder
-          ? buildOpenedRecordUrl(
-              "bond",
-              safeNumber(selected.volume_number, 0),
-              context.partnership_uuid,
-              context.partnership_id
-            )
-          : "";
-
-      const partnershipRecordUrl = buildPartnershipRecordUrl();
-
-      if (selected && !selected.is_placeholder && context.has_partner) {
-        document.getElementById("altar-actions").innerHTML = [
-          createActionLink("Open Shared Volume", bondOpenedRecordUrl, "primary"),
-          createActionLink("View Bond Record", bondOpenedRecordUrl, "secondary"),
-          createActionLink("Check Partner State", partnershipRecordUrl, "muted")
-        ].join("");
-      } else if (context.has_partner) {
-        document.getElementById("altar-actions").innerHTML = [
-          `<span class="action-button primary disabled">Open Shared Volume</span>`,
-          `<span class="action-button secondary disabled">View Bond Record</span>`,
-          createActionLink("Check Partner State", partnershipRecordUrl, "muted")
-        ].join("");
-      } else {
-        document.getElementById("altar-actions").innerHTML = [
-          `<span class="action-button primary disabled">Open Shared Volume</span>`,
-          `<span class="action-button secondary disabled">View Bond Record</span>`,
-          createActionLink("Go to Partnership Hall", "/partnership.html", "muted")
-        ].join("");
-      }
-
-      const bondSummary = bondLibrary?.summary || {};
-      document.getElementById("summary-stack").innerHTML = [
-        createSummaryChip("Purchased Volumes", String(safeNumber(bondSummary.purchased_volumes, 0))),
-        createSummaryChip("Completed Books", String(safeNumber(bondSummary.completed_books, 0))),
-        createSummaryChip(
-          "Active Book",
-          bondSummary.active_book_number ? `Book ${safeNumber(bondSummary.active_book_number, 0)}` : "—"
-        ),
-        createSummaryChip(
-          "Shared Session",
-          bondLibrary?.active_session?.status ? titleCase(bondLibrary.active_session.status) : "Dormant"
-        )
-      ].join("");
-    }
-
-    function getCultivationSpineMeta(item, isSelected) {
-      const status = safeLower(item?.volume_status);
-
-      if (isSelected) return { marker: "SEL", label: "Selected" };
-      if (status === "completed_volume") return { marker: "✓", label: "Completed" };
-      if (status === "under_comprehension") return { marker: "✦", label: "Active" };
-      if (item?.eligible_for_comprehension) return { marker: "○", label: "Ready" };
-      return { marker: "🔒", label: "Sealed" };
-    }
-
-    function getBondSpineMeta(volume, isSelected) {
-      const status = safeLower(volume?.volume_status);
-
-      if (isSelected) return { marker: "SEL", label: "Selected" };
-      if (status === "completed") return { marker: "✓", label: "Completed" };
-      if (["active", "in_progress", "cultivating", "underway", "owned", "unlocked", "available", "paused"].includes(status) && !volume?.is_placeholder) {
-        return { marker: "✦", label: "Owned" };
-      }
-      if (!volume?.is_placeholder) return { marker: "○", label: "Owned" };
-      return { marker: "🔒", label: "Sealed" };
-    }
-
-    function renderCultivationShelf() {
-      const shelf = document.getElementById("cultivation-shelf");
-      const items = getCultivationItems();
-
-      if (!items.length) {
-        shelf.innerHTML = `<div class="empty-card">No cultivation volumes are recorded yet.</div>`;
-        return;
-      }
-
-      shelf.innerHTML = items.map((item, index) => {
-        const isSelected = state.activeMode === "cultivation" && index === state.selectedCultivationIndex;
-        const meta = getCultivationSpineMeta(item, isSelected);
-
-        return `
-          <button
-            type="button"
-            class="shelf-spine ${isSelected ? "active" : ""}"
-            data-cultivation-index="${index}"
-          >
-            <div class="spine-subtle">Spine</div>
-            <div class="spine-code">V${safeNumber(item.volume_number, index + 1)}</div>
-            <div class="spine-marker">${escapeHtml(meta.marker)}</div>
-            <div class="spine-state">${escapeHtml(meta.label)}</div>
-          </button>
-        `;
-      }).join("");
-
-      shelf.querySelectorAll("[data-cultivation-index]").forEach(button => {
-        button.addEventListener("click", () => {
-          state.selectedCultivationIndex = safeNumber(button.getAttribute("data-cultivation-index"), 0);
-          state.activeMode = "cultivation";
-          renderAll();
-          scrollToSection(".record-section");
-        });
-      });
-    }
-
-    function renderBondShelf() {
-      const shelf = document.getElementById("bond-shelf");
-      const bondLibrary = getBondLibrary();
-      const context = getSelectedPartnershipContext();
-
-      if (!context.has_partner && !bondLibrary?.available) {
-        shelf.innerHTML = `<div class="empty-card">Bond Shrine remains dormant until a valid focused partnership exists.</div>`;
-        return;
-      }
-
-      const volumes = getBondVolumesForShelf();
-
-      shelf.innerHTML = volumes.map((volume, index) => {
-        const isSelected = state.activeMode === "bond" && index === state.selectedBondIndex;
-        const meta = getBondSpineMeta(volume, isSelected);
-
-        return `
-          <button
-            type="button"
-            class="shelf-spine ${isSelected ? "active" : ""} ${volume.is_placeholder ? "unavailable" : ""}"
-            data-bond-index="${index}"
-          >
-            <div class="spine-subtle">Spine</div>
-            <div class="spine-code">B${safeNumber(volume.volume_number, index + 1)}</div>
-            <div class="spine-marker">${escapeHtml(meta.marker)}</div>
-            <div class="spine-state">${escapeHtml(meta.label)}</div>
-          </button>
-        `;
-      }).join("");
-
-      shelf.querySelectorAll("[data-bond-index]").forEach(button => {
-        button.addEventListener("click", () => {
-          state.selectedBondIndex = safeNumber(button.getAttribute("data-bond-index"), 0);
-          state.activeMode = "bond";
-          renderAll();
-          scrollToSection(".record-section");
-        });
-      });
-    }
-
-    function renderArchiveCultivation() {
-      const selected = getSelectedCultivationItem();
-      const grid = document.getElementById("archive-grid");
-
-      document.getElementById("archive-type").textContent = "Expanded Cultivation Record";
-      document.getElementById("archive-title").textContent = selected
-        ? `Section Scrolls of ${safeText(selected.item_name, "Unnamed Volume")}`
-        : "No Section Scrolls Available";
-
-      document.getElementById("archive-copy").textContent = selected
-        ? "When a cultivation volume is active, this chamber opens the internal section record, timers, and comprehension state."
-        : "No cultivation record is currently available for expansion.";
-
-      document.getElementById("archive-focus").textContent = selected
-        ? safeText(selected.current_section_book_title || selected.current_section_label || selected.current_section, "None")
-        : "—";
-
-      if (!selected) {
-        grid.innerHTML = `<div class="empty-card">There is no cultivation volume selected.</div>`;
-        return;
-      }
-
-      const keys = ["base", "early", "middle", "late"];
-
-      grid.innerHTML = keys.map(key => {
-        const timer = selected.section_timers?.[key] || null;
-        const title = safeText(selected.section_book_titles?.[key], `${titleCase(key)} Scripture`);
-        const status = safeText(timer?.display_timer_state || titleCase(selected.sections?.[key], "Unknown"));
-        const progress = safeNumber(timer?.progress_percent, 0);
-
-        return `
-          <div class="scroll-card">
-            <div class="scroll-label">Section</div>
-            <div class="scroll-title">${escapeHtml(title)}</div>
-            <div class="scroll-meta">Status: <strong>${escapeHtml(status)}</strong></div>
-            <div class="scroll-meta">Remaining: <strong>${escapeHtml(safeText(timer?.human_remaining, "Unknown"))}</strong></div>
-            <div class="scroll-meta">Progress: <strong>${escapeHtml(progress.toFixed(1))}%</strong></div>
-            <div class="progress-track">
-              <div class="progress-bar" style="width: ${progress}%"></div>
-            </div>
-          </div>
-        `;
-      }).join("");
-    }
-
-    function renderArchiveBond() {
-      const selected = getSelectedBondVolume();
-      const bondLibrary = getBondLibrary();
-      const context = getSelectedPartnershipContext();
-      const grid = document.getElementById("archive-grid");
-
-      document.getElementById("archive-type").textContent = "Expanded Bond Record";
-      document.getElementById("archive-title").textContent = selected
-        ? `Shared Book Sequence of ${safeText(selected.item_name, "Unnamed Bond Volume")}`
-        : "No Shared Bond Record";
-
-      document.getElementById("archive-copy").textContent = selected
-        ? "When a bond volume is active, this chamber swaps into the selected partnership's shared pair record, partner state, and current book progress."
-        : safeText(
-            bondLibrary?.message,
-            "Bond Shrine remains dormant until a valid shared bond record exists."
-          );
-
-      const activeBook =
-        selected?.active_book_name ||
-        selected?.current_focus_book_name ||
-        (Array.isArray(selected?.books)
-          ? selected.books.find(book => safeBoolean(book.is_active) || safeBoolean(book.is_current_book))?.book_name
-          : "") ||
-        "No active book";
-
-      const focusLabel = context.has_partner
-        ? `${activeBook} • ${safeText(context.partner_display_name || context.partner_username, "Focused Partner")}`
-        : activeBook;
-
-      document.getElementById("archive-focus").textContent = focusLabel;
-
-      if (!bondLibrary?.available && !context.has_partner) {
-        grid.innerHTML = `<div class="empty-card">Bond Shrine is dormant. Form a partnership and purchase shared bond volumes to awaken this chamber.</div>`;
-        return;
-      }
-
-      if (!selected || !Array.isArray(selected.books) || !selected.books.length) {
-        grid.innerHTML = `<div class="empty-card">${
-          selected?.is_placeholder
-            ? "This bond volume has not been purchased yet."
-            : "No shared bond books are recorded for this volume yet."
-        }</div>`;
-        return;
-      }
-
-      grid.innerHTML = selected.books.map(book => {
-        const progress = safeNumber(book.progress_percent, 0);
-
-        return `
-          <div class="scroll-card">
-            <div class="scroll-label">Bond Book</div>
-            <div class="scroll-title">${escapeHtml(book.book_name || `Book ${safeNumber(book.book_number, 0)}`)}</div>
-            <div class="scroll-meta">Status: <strong>${escapeHtml(titleCase(book.status, "Unknown"))}</strong></div>
-            <div class="scroll-meta">Updated: <strong>${escapeHtml(formatDateTime(book.updated_at))}</strong></div>
-            <div class="scroll-meta">Progress: <strong>${escapeHtml(progress.toFixed(1))}%</strong></div>
-            <div class="progress-track">
-              <div class="progress-bar" style="width: ${progress}%"></div>
-            </div>
-          </div>
-        `;
-      }).join("");
-    }
-
-    function renderAltar() {
-      if (state.activeMode === "bond") {
-        renderBondAltar();
-      } else {
-        renderCultivationAltar();
-      }
-    }
-
-    function renderArchive() {
-      if (state.activeMode === "bond") {
-        renderArchiveBond();
-      } else {
-        renderArchiveCultivation();
-      }
-    }
-
-    function renderAll() {
-      updateSessionLine(state.payload?.user || state.session);
-      renderHeaderStrip();
-      renderToggleStates();
-      renderCultivationShelf();
-      renderBondShelf();
-      renderAltar();
-      renderArchive();
-      wireDynamicActions();
-      syncLibraryUrlFromState();
-    }
-
-    function wireDynamicActions() {
-      document.querySelectorAll("[data-action='scroll-archive']").forEach(button => {
-        button.addEventListener("click", () => {
-          scrollToSection(".archive-panel");
-        });
-      });
-    }
-
-    function scrollToSection(selector) {
-      document.querySelector(selector)?.scrollIntoView({
-        behavior: "smooth",
-        block: "start"
-      });
-    }
-
+    // ── Preserved Default Index Pickers ──────────────────────────
     function pickDefaultCultivationIndex(items) {
-      const activeIndex = items.findIndex(item => safeLower(item.volume_status) === "under_comprehension");
+      var activeIndex = items.findIndex(function(item) { return safeLower(item.volume_status) === "under_comprehension"; });
       if (activeIndex >= 0) return activeIndex;
-
-      const eligibleIndex = items.findIndex(item => !!item.eligible_for_comprehension);
+      var eligibleIndex = items.findIndex(function(item) { return !!item.eligible_for_comprehension; });
       if (eligibleIndex >= 0) return eligibleIndex;
-
       return items.length ? items.length - 1 : 0;
     }
 
     function pickDefaultBondIndex() {
-      const bondLibrary = getBondLibrary();
-      const volumes = getBondVolumesForShelf();
-
-      const activeVolumeNumber = safeNumber(
-        bondLibrary?.summary?.active_volume_number ||
-        bondLibrary?.current_volume_number,
+      var bondLibrary = getBondLibrary();
+      var volumes = getBondVolumesForShelf();
+      var activeVolumeNumber = safeNumber(
+        (bondLibrary && bondLibrary.summary && bondLibrary.summary.active_volume_number) ||
+        (bondLibrary && bondLibrary.current_volume_number),
         0
       );
-
-      const activeIndex = volumes.findIndex(volume => safeNumber(volume.volume_number, 0) === activeVolumeNumber);
+      var activeIndex = volumes.findIndex(function(v) { return safeNumber(v.volume_number, 0) === activeVolumeNumber; });
       if (activeIndex >= 0) return activeIndex;
-
-      const purchasedIndex = volumes.findIndex(volume => !volume.is_placeholder);
+      var purchasedIndex = volumes.findIndex(function(v) { return !v.is_placeholder; });
       if (purchasedIndex >= 0) return purchasedIndex;
-
       return 0;
     }
 
+    // ── Message ──────────────────────────────────────────────────
+    function setMessage(text, tone) {
+      var el = document.getElementById("lib-message");
+      if (!text) {
+        el.textContent = "";
+        el.className = "lib-message";
+        return;
+      }
+      el.textContent = text;
+      el.className = "lib-message visible " + (tone === "error" ? "error" : "info");
+    }
+
+    // ── NEW: Hero Render ─────────────────────────────────────────
+    function renderHero() {
+      var user = (state.payload && state.payload.user) || state.session || {};
+      var displayName = safeText(user.character_name) || safeText(user.display_name) || safeText(user.sl_username) || "Cultivator";
+      document.getElementById("hero-name").textContent = displayName;
+      document.getElementById("hero-realm").textContent = getCurrentRealmName();
+
+      var summary = (state.payload && state.payload.summary) || {};
+      document.getElementById("hero-volumes").textContent = String(safeNumber(summary.total_owned_volumes, 0));
+      document.getElementById("hero-completed").textContent = String(safeNumber(summary.completed_volumes, 0));
+
+      var bondLib = getBondLibrary();
+      document.getElementById("hero-bond-stage").textContent = safeText(bondLib && bondLib.summary && bondLib.summary.bond_stage, "Seed");
+      document.getElementById("hero-meditation").textContent = (state.payload && state.payload.meditation && state.payload.meditation.is_active) ? "Active" : "Inactive";
+    }
+
+    // ── NEW: Tab Switching ───────────────────────────────────────
+    function switchTab(tabName) {
+      state.activeTab = tabName;
+      var tabs = document.querySelectorAll(".lib-tab");
+      var sections = document.querySelectorAll(".lib-section");
+      tabs.forEach(function(tab) {
+        tab.classList.toggle("active", tab.getAttribute("data-tab") === tabName);
+      });
+      sections.forEach(function(sec) {
+        sec.classList.toggle("active", sec.id === "section-" + tabName);
+      });
+    }
+
+    function updateTabCounts() {
+      var cultItems = getCultivationItems();
+      var bondVolumes = getBondVolumesForShelf().filter(function(v) { return !v.is_placeholder; });
+      document.getElementById("tab-count-cultivation").textContent = cultItems.length ? "(" + cultItems.length + ")" : "";
+      document.getElementById("tab-count-bond").textContent = bondVolumes.length ? "(" + bondVolumes.length + ")" : "";
+      document.getElementById("tab-count-spells").textContent = "(0)";
+    }
+
+    // ── NEW: Journey Bar ─────────────────────────────────────────
+    function renderJourneyBar() {
+      var items = getCultivationItems();
+      var dotsContainer = document.getElementById("journey-dots");
+      var fillBar = document.getElementById("journey-fill");
+
+      var completedCount = 0;
+      var currentRealm = 0;
+      var itemMap = {};
+      items.forEach(function(item) {
+        var vn = safeNumber(item.volume_number, 0);
+        itemMap[vn] = item;
+        var status = safeLower(item.volume_status);
+        if (status === "completed_volume") completedCount++;
+        if (status === "under_comprehension" && vn > currentRealm) currentRealm = vn;
+      });
+
+      if (currentRealm === 0 && completedCount > 0) currentRealm = completedCount;
+
+      var dots = "";
+      for (var r = 1; r <= 10; r++) {
+        var item = itemMap[r];
+        var status = item ? safeLower(item.volume_status) : "";
+        var dotClass = "journey-dot locked";
+        if (status === "completed_volume") dotClass = "journey-dot completed";
+        else if (status === "under_comprehension") dotClass = "journey-dot current";
+        else if (item && item.eligible_for_comprehension) dotClass = "journey-dot current";
+        dots += '<div class="' + dotClass + '" title="' + escapeHtml(REALM_SEQUENCE[r - 1]) + '"></div>';
+      }
+      dotsContainer.innerHTML = dots;
+
+      var fillPercent = currentRealm > 0 ? ((currentRealm - 0.5) / 10) * 100 : (completedCount / 10) * 100;
+      fillBar.style.width = Math.min(fillPercent, 100) + "%";
+    }
+
+    // ── NEW: Cultivation Volume Rows ─────────────────────────────
+    function getVolumeStatusInfo(item) {
+      var status = safeLower(item.volume_status);
+      if (status === "completed_volume") return { badge: "Completed", badgeClass: "badge-completed", dotClass: "done" };
+      if (status === "under_comprehension") return { badge: "Active", badgeClass: "badge-active", dotClass: "active" };
+      if (item.eligible_for_comprehension) return { badge: "Ready", badgeClass: "badge-locked", dotClass: "active" };
+      return { badge: "Sealed", badgeClass: "badge-sealed", dotClass: "sealed" };
+    }
+
+    function renderCultivationVolumes() {
+      var container = document.getElementById("cultivation-volumes");
+      var items = getCultivationItems();
+
+      if (!items.length) {
+        container.innerHTML = '<div style="padding:32px;text-align:center;color:var(--text-dim);font-family:var(--font-body);font-style:italic;">No cultivation volumes recorded yet.</div>';
+        return;
+      }
+
+      container.innerHTML = items.map(function(item, index) {
+        var vn = safeNumber(item.volume_number, index + 1);
+        var realmLabel = getCultivationItemRealmLabel(item);
+        var spineColor = REALM_SPINE_COLORS[vn] || '#c8a96a';
+        var statusInfo = getVolumeStatusInfo(item);
+        var desc = safeText(item.item_name, realmLabel);
+
+        // Section dots
+        var sectionKeys = ["base", "early", "middle", "late"];
+        var sectionDots = sectionKeys.map(function(key) {
+          var sectionStatus = item.sections && item.sections[key] ? safeLower(item.sections[key]) : "";
+          var timer = item.section_timers && item.section_timers[key];
+          var dotCls = "section-dot sealed";
+          if (sectionStatus === "completed" || sectionStatus === "complete") dotCls = "section-dot done";
+          else if (timer || sectionStatus === "cultivating" || sectionStatus === "active" || sectionStatus === "in_progress") dotCls = "section-dot active";
+          return '<div class="' + dotCls + '"></div>';
+        }).join("");
+
+        // Progress
+        var insightCur = safeNumber(item.insight_current, 0);
+        var insightReq = safeNumber(item.insight_required, 100);
+        var progress = insightReq > 0 ? Math.min((insightCur / insightReq) * 100, 100) : 0;
+
+        return '<div class="volume-row" data-cultivation-index="' + index + '">' +
+          '<div class="volume-spine" style="--spine-color:' + spineColor + '">' +
+            '<style>.volume-row[data-cultivation-index="' + index + '"] .volume-spine::before{background:' + spineColor + '}</style>' +
+            '<span class="volume-spine-num">' + vn + '</span>' +
+          '</div>' +
+          '<div class="volume-body">' +
+            '<div class="volume-title">' + escapeHtml(realmLabel) + '</div>' +
+            '<div class="volume-desc">' + escapeHtml(desc) + '</div>' +
+            '<div class="volume-progress-bar"><div class="volume-progress-fill" style="width:' + progress.toFixed(1) + '%;background:' + spineColor + '"></div></div>' +
+          '</div>' +
+          '<div class="volume-right">' +
+            '<div class="section-dots">' + sectionDots + '</div>' +
+            '<span class="volume-badge ' + statusInfo.badgeClass + '">' + statusInfo.badge + '</span>' +
+          '</div>' +
+        '</div>';
+      }).join("");
+
+      container.querySelectorAll(".volume-row").forEach(function(row) {
+        row.addEventListener("click", function() {
+          var idx = safeNumber(row.getAttribute("data-cultivation-index"), 0);
+          state.selectedCultivationIndex = idx;
+          openDetailOverlay("cultivation", idx);
+        });
+      });
+    }
+
+    // ── NEW: Bond Volume Rows ────────────────────────────────────
+    function getBondVolumeStatusInfo(volume) {
+      var status = safeLower(volume.volume_status);
+      if (status === "completed") return { badge: "Completed", badgeClass: "badge-completed" };
+      if (volume.is_placeholder) return { badge: "Sealed", badgeClass: "badge-sealed" };
+      if (["active", "in_progress", "cultivating", "underway", "owned", "unlocked", "available", "paused"].includes(status)) {
+        return { badge: "Owned", badgeClass: "badge-active" };
+      }
+      return { badge: "Owned", badgeClass: "badge-active" };
+    }
+
+    function renderBondVolumes() {
+      var container = document.getElementById("bond-volumes");
+      var context = getSelectedPartnershipContext();
+      var bondLibrary = getBondLibrary();
+
+      if (!context.has_partner && !(bondLibrary && bondLibrary.available)) {
+        container.innerHTML = '<div style="padding:32px;text-align:center;color:var(--text-dim);font-family:var(--font-body);font-style:italic;">Bond Shrine remains dormant until a valid focused partnership exists.</div>';
+        return;
+      }
+
+      var volumes = getBondVolumesForShelf();
+
+      container.innerHTML = volumes.map(function(volume, index) {
+        var vn = safeNumber(volume.volume_number, index + 1);
+        var statusInfo = getBondVolumeStatusInfo(volume);
+        var title = safeText(volume.item_name, "Bond Volume " + vn);
+        var booksTotal = safeNumber(volume.books_total, 4);
+        var booksCompleted = safeNumber(volume.books_completed, 0);
+        var progress = booksTotal > 0 ? Math.min((booksCompleted / booksTotal) * 100, 100) : 0;
+
+        var bookDots = "";
+        if (Array.isArray(volume.books) && volume.books.length) {
+          bookDots = volume.books.map(function(book) {
+            var bs = safeLower(book.status);
+            var cls = "section-dot sealed";
+            if (bs === "completed" || bs === "complete") cls = "section-dot done";
+            else if (bs === "active" || bs === "in_progress" || bs === "cultivating") cls = "section-dot active";
+            return '<div class="' + cls + '"></div>';
+          }).join("");
+        } else {
+          for (var b = 0; b < booksTotal; b++) {
+            bookDots += '<div class="section-dot ' + (b < booksCompleted ? 'done' : 'sealed') + '"></div>';
+          }
+        }
+
+        var rowOpacity = volume.is_placeholder ? 'opacity:0.5;' : '';
+
+        return '<div class="volume-row" data-bond-index="' + index + '" style="' + rowOpacity + '">' +
+          '<div class="volume-spine">' +
+            '<style>.volume-row[data-bond-index="' + index + '"] .volume-spine::before{background:' + BOND_SPINE_COLOR + '}</style>' +
+            '<span class="volume-spine-num">' + vn + '</span>' +
+          '</div>' +
+          '<div class="volume-body">' +
+            '<div class="volume-title">' + escapeHtml(title) + '</div>' +
+            '<div class="volume-desc">Bond Volume ' + vn + ' &bull; ' + booksCompleted + '/' + booksTotal + ' books</div>' +
+            '<div class="volume-progress-bar"><div class="volume-progress-fill" style="width:' + progress.toFixed(1) + '%;background:' + BOND_SPINE_COLOR + '"></div></div>' +
+          '</div>' +
+          '<div class="volume-right">' +
+            '<div class="section-dots">' + bookDots + '</div>' +
+            '<span class="volume-badge ' + statusInfo.badgeClass + '">' + statusInfo.badge + '</span>' +
+          '</div>' +
+        '</div>';
+      }).join("");
+
+      container.querySelectorAll(".volume-row").forEach(function(row) {
+        row.addEventListener("click", function() {
+          var idx = safeNumber(row.getAttribute("data-bond-index"), 0);
+          state.selectedBondIndex = idx;
+          openDetailOverlay("bond", idx);
+        });
+      });
+    }
+
+    // ── NEW: Bond Context Cards ──────────────────────────────────
+    function renderBondContextCards() {
+      var container = document.getElementById("bond-context-cards");
+      var context = getSelectedPartnershipContext();
+      var bondLib = getBondLibrary();
+      var bondSummary = (bondLib && bondLib.summary) || {};
+
+      container.innerHTML =
+        '<div class="context-card">' +
+          '<div class="context-card-label">FOCUSED PARTNER</div>' +
+          '<div class="context-card-value">' + escapeHtml(safeText(context.partner_display_name || context.partner_username, "Unbound")) + '</div>' +
+        '</div>' +
+        '<div class="context-card">' +
+          '<div class="context-card-label">BOND STAGE</div>' +
+          '<div class="context-card-value">' + escapeHtml(safeText(bondSummary.bond_stage, "Bond Seed")) + '</div>' +
+        '</div>' +
+        '<div class="context-card">' +
+          '<div class="context-card-label">PARTNERSHIP</div>' +
+          '<div class="context-card-value">' + escapeHtml(safeText(context.partnership_status, context.has_partner ? "Active" : "None")) + '</div>' +
+        '</div>';
+    }
+
+    // ── NEW: Spell Books Section ─────────────────────────────────
+    function renderSpellSection() {
+      var statsContainer = document.getElementById("spell-stats");
+      var contentContainer = document.getElementById("spell-content");
+
+      statsContainer.innerHTML =
+        '<div class="context-card"><div class="context-card-label">KNOWN SPELLS</div><div class="context-card-value">0</div></div>' +
+        '<div class="context-card"><div class="context-card-label">MASTERED</div><div class="context-card-value">0</div></div>' +
+        '<div class="context-card"><div class="context-card-label">AVAILABLE</div><div class="context-card-value">0</div></div>';
+
+      contentContainer.innerHTML =
+        '<div class="spell-empty">' +
+          '<div class="spell-empty-icon">&#x2727;</div>' +
+          '<div class="spell-empty-text">No spell books have been acquired yet</div>' +
+          '<div class="spell-empty-sub">Spell books will appear here once unlocked through cultivation or the Sacred Treasury</div>' +
+        '</div>';
+    }
+
+    // ── NEW: Detail Overlay ──────────────────────────────────────
+    function openDetailOverlay(mode, index) {
+      var overlay = document.getElementById("detail-overlay");
+      var accentBar = document.getElementById("detail-accent");
+      var volNum = document.getElementById("detail-vol-num");
+      var titleEl = document.getElementById("detail-title");
+      var descEl = document.getElementById("detail-desc");
+      var sectionsEl = document.getElementById("detail-sections");
+      var statsEl = document.getElementById("detail-stats");
+      var actionBtn = document.getElementById("detail-action");
+
+      if (mode === "cultivation") {
+        var items = getCultivationItems();
+        var item = items[index];
+        if (!item) return;
+
+        var vn = safeNumber(item.volume_number, index + 1);
+        var spineColor = REALM_SPINE_COLORS[vn] || '#c8a96a';
+        var realmLabel = getCultivationItemRealmLabel(item);
+
+        accentBar.style.background = spineColor;
+        volNum.textContent = vn;
+        titleEl.textContent = realmLabel;
+        descEl.textContent = safeText(item.item_name, "Cultivation Volume " + vn);
+
+        // Section cards (2x2)
+        var sectionKeys = ["base", "early", "middle", "late"];
+        sectionsEl.innerHTML = sectionKeys.map(function(key) {
+          var timer = item.section_timers && item.section_timers[key];
+          var sectionStatus = item.sections && item.sections[key] ? safeLower(item.sections[key]) : "sealed";
+          var bookTitle = (item.section_book_titles && item.section_book_titles[key]) || (titleCase(key) + " Scripture");
+          var progress = safeNumber(timer && timer.progress_percent, 0);
+
+          var badgeColor, badgeText, badgeBg;
+          if (sectionStatus === "completed" || sectionStatus === "complete") {
+            badgeColor = "var(--green)"; badgeBg = "#55bb6612"; badgeText = "Complete";
+          } else if (timer || sectionStatus === "cultivating" || sectionStatus === "active") {
+            badgeColor = "var(--gold)"; badgeBg = "var(--gold-bg)"; badgeText = safeText(timer && (timer.display_timer_state || timer.timer_state), "Active");
+          } else {
+            badgeColor = "var(--text-dim)"; badgeBg = "#1a1a2212"; badgeText = "Sealed";
+          }
+
+          return '<div class="detail-section-card">' +
+            '<div class="detail-section-name">' + escapeHtml(bookTitle) + '</div>' +
+            '<span class="detail-section-badge" style="color:' + badgeColor + ';background:' + badgeBg + ';border:0.5px solid ' + badgeColor + '22">' + escapeHtml(badgeText) + '</span>' +
+            '<div class="detail-section-progress"><div class="detail-section-fill" style="width:' + progress.toFixed(1) + '%;background:' + spineColor + '"></div></div>' +
+          '</div>';
+        }).join("");
+
+        // Stats grid
+        var insightCur = safeNumber(item.insight_current, 0);
+        var insightReq = safeNumber(item.insight_required, 100);
+        var activeTimer = item.section_timers && item.section_timers[safeLower(item.current_section)];
+        statsEl.innerHTML =
+          '<div class="detail-stat"><div class="detail-stat-label">INSIGHT</div><div class="detail-stat-value">' + insightCur + ' / ' + insightReq + '</div></div>' +
+          '<div class="detail-stat"><div class="detail-stat-label">CURRENT SECTION</div><div class="detail-stat-value">' + escapeHtml(safeText(item.current_section_label || item.current_section, "None")) + '</div></div>' +
+          '<div class="detail-stat"><div class="detail-stat-label">TIME STATE</div><div class="detail-stat-value">' + escapeHtml(safeText(activeTimer && (activeTimer.display_timer_state || activeTimer.timer_state), titleCase(item.volume_status, "Unknown"))) + '</div></div>' +
+          '<div class="detail-stat"><div class="detail-stat-label">REMAINING</div><div class="detail-stat-value">' + escapeHtml(safeText(activeTimer && activeTimer.human_remaining, "—")) + '</div></div>';
+
+        var openUrl = buildOpenedRecordUrl("cultivation", vn);
+        actionBtn.href = openUrl;
+        actionBtn.textContent = "Open Cultivation Volume";
+        actionBtn.className = "detail-action-btn";
+
+      } else if (mode === "bond") {
+        var volumes = getBondVolumesForShelf();
+        var volume = volumes[index];
+        if (!volume) return;
+
+        var vn2 = safeNumber(volume.volume_number, index + 1);
+        var context = getSelectedPartnershipContext();
+
+        accentBar.style.background = BOND_SPINE_COLOR;
+        volNum.textContent = vn2;
+        titleEl.textContent = safeText(volume.item_name, "Bond Volume " + vn2);
+        descEl.textContent = "Shared bond volume with " + safeText(context.partner_display_name || context.partner_username, "your partner");
+
+        // Book cards
+        if (Array.isArray(volume.books) && volume.books.length) {
+          sectionsEl.innerHTML = volume.books.map(function(book) {
+            var progress = safeNumber(book.progress_percent, 0);
+            var bs = safeLower(book.status);
+            var badgeColor, badgeBg, badgeText;
+            if (bs === "completed" || bs === "complete") {
+              badgeColor = "var(--green)"; badgeBg = "#55bb6612"; badgeText = "Complete";
+            } else if (bs === "active" || bs === "in_progress" || bs === "cultivating") {
+              badgeColor = "var(--gold)"; badgeBg = "var(--gold-bg)"; badgeText = titleCase(bs);
+            } else {
+              badgeColor = "var(--text-dim)"; badgeBg = "#1a1a2212"; badgeText = titleCase(bs, "Sealed");
+            }
+            return '<div class="detail-section-card">' +
+              '<div class="detail-section-name">' + escapeHtml(book.book_name || "Book " + safeNumber(book.book_number, 0)) + '</div>' +
+              '<span class="detail-section-badge" style="color:' + badgeColor + ';background:' + badgeBg + ';border:0.5px solid ' + badgeColor + '22">' + escapeHtml(badgeText) + '</span>' +
+              '<div class="detail-section-progress"><div class="detail-section-fill" style="width:' + progress.toFixed(1) + '%;background:' + BOND_SPINE_COLOR + '"></div></div>' +
+            '</div>';
+          }).join("");
+        } else {
+          sectionsEl.innerHTML = '<div style="grid-column:1/-1;text-align:center;padding:16px;color:var(--text-dim);font-style:italic;">' + (volume.is_placeholder ? "Volume not yet purchased" : "No books recorded") + '</div>';
+        }
+
+        var booksTotal = safeNumber(volume.books_total, 4);
+        var booksCompleted = safeNumber(volume.books_completed, 0);
+        statsEl.innerHTML =
+          '<div class="detail-stat"><div class="detail-stat-label">BOOKS</div><div class="detail-stat-value">' + booksCompleted + ' / ' + booksTotal + '</div></div>' +
+          '<div class="detail-stat"><div class="detail-stat-label">PARTNER</div><div class="detail-stat-value">' + escapeHtml(safeText(context.partner_display_name || context.partner_username, "Unbound")) + '</div></div>' +
+          '<div class="detail-stat"><div class="detail-stat-label">BOND STATUS</div><div class="detail-stat-value">' + escapeHtml(safeText(context.partnership_status, "—")) + '</div></div>' +
+          '<div class="detail-stat"><div class="detail-stat-label">VOLUME STATE</div><div class="detail-stat-value">' + escapeHtml(titleCase(volume.volume_status, volume.is_placeholder ? "Sealed" : "Unknown")) + '</div></div>';
+
+        if (!volume.is_placeholder && context.has_partner) {
+          var bondUrl = buildOpenedRecordUrl("bond", vn2, context.partnership_uuid, context.partnership_id);
+          actionBtn.href = bondUrl;
+          actionBtn.textContent = "Open Bond Volume";
+          actionBtn.className = "detail-action-btn";
+        } else {
+          actionBtn.href = "#";
+          actionBtn.textContent = volume.is_placeholder ? "Not Yet Purchased" : "No Active Partnership";
+          actionBtn.className = "detail-action-btn disabled";
+        }
+      }
+
+      overlay.classList.add("open");
+      document.body.style.overflow = "hidden";
+    }
+
+    function closeDetailOverlay() {
+      document.getElementById("detail-overlay").classList.remove("open");
+      document.body.style.overflow = "";
+    }
+
+    // ── Render All ───────────────────────────────────────────────
+    function renderAll() {
+      renderHero();
+      updateTabCounts();
+      renderJourneyBar();
+      renderCultivationVolumes();
+      renderBondContextCards();
+      renderBondVolumes();
+      renderSpellSection();
+      syncLibraryUrlFromState();
+    }
+
+    // ── Preserved: loadLibrary ───────────────────────────────────
     async function loadLibrary() {
       setMessage("");
 
       try {
-        const params = new URLSearchParams();
-
+        var params = new URLSearchParams();
         if (safeText(state.requestedPartnershipUuid)) {
           params.set("partnership_uuid", state.requestedPartnershipUuid);
         } else if (safeText(state.requestedLegacyPartnershipId)) {
           params.set("partnership_id", state.requestedLegacyPartnershipId);
         }
 
-        const url = `/.netlify/functions/list-my-library${params.toString() ? `?${params.toString()}` : ""}`;
+        var url = "/.netlify/functions/list-my-library" + (params.toString() ? "?" + params.toString() : "");
+        var response = await authFetch(url, { method: "GET" });
+        var rawText = await response.text();
+        var data = null;
+        try { data = rawText ? JSON.parse(rawText) : null; } catch(e) { data = null; }
 
-        const response = await authFetch(url, {
-          method: "GET"
-        });
-
-        const rawText = await response.text();
-        let data = null;
-
-        try {
-          data = rawText ? JSON.parse(rawText) : null;
-        } catch {
-          data = null;
-        }
-
-        if (!response.ok || !data?.success) {
-          throw new Error(data?.message || "Failed to load library.");
+        if (!response.ok || !data || !data.success) {
+          throw new Error((data && data.message) || "Failed to load library.");
         }
 
         state.payload = data;
 
-        const resolvedContext = getSelectedPartnershipContext();
+        var resolvedContext = getSelectedPartnershipContext();
         if (safeText(resolvedContext.partnership_uuid)) {
           state.requestedPartnershipUuid = resolvedContext.partnership_uuid;
           state.requestedLegacyPartnershipId = "";
@@ -1935,22 +1123,21 @@
           state.requestedLegacyPartnershipId = resolvedContext.partnership_id;
         }
 
-        const cultivationItems = getCultivationItems();
+        var cultivationItems = getCultivationItems();
         state.selectedCultivationIndex = pickDefaultCultivationIndex(cultivationItems);
         state.selectedBondIndex = pickDefaultBondIndex();
 
         if (
           (safeText(state.requestedPartnershipUuid) || safeText(state.requestedLegacyPartnershipId)) &&
-          (data.bond_library?.available || resolvedContext.has_partner)
+          ((data.bond_library && data.bond_library.available) || resolvedContext.has_partner)
         ) {
-          state.activeMode = "bond";
-        } else if (!data.bond_library?.available && !resolvedContext.has_partner && state.activeMode === "bond") {
-          state.activeMode = "cultivation";
+          state.activeTab = "bond";
+          switchTab("bond");
         }
 
         renderAll();
 
-        const warnings = Array.isArray(data.warnings) ? data.warnings.filter(Boolean) : [];
+        var warnings = Array.isArray(data.warnings) ? data.warnings.filter(Boolean) : [];
         if (warnings.length) {
           setMessage(warnings.join(" "), "info");
         }
@@ -1970,47 +1157,37 @@
       }
     }
 
+    // ── Wire Events ──────────────────────────────────────────────
     function wireEvents() {
-      document.getElementById("toggle-cultivation").addEventListener("click", () => {
-        state.activeMode = "cultivation";
-        renderAll();
+      // Tab clicks
+      document.querySelectorAll(".lib-tab").forEach(function(tab) {
+        tab.addEventListener("click", function() {
+          switchTab(tab.getAttribute("data-tab"));
+        });
       });
 
-      document.getElementById("toggle-bond").addEventListener("click", () => {
-        state.activeMode = "bond";
-        renderAll();
-      });
-
-      document.getElementById("archive-cultivation").addEventListener("click", () => {
-        state.activeMode = "cultivation";
-        renderAll();
-      });
-
-      document.getElementById("archive-bond").addEventListener("click", () => {
-        state.activeMode = "bond";
-        renderAll();
-      });
-
-      document.getElementById("activate-cultivation-shrine").addEventListener("click", () => {
-        state.activeMode = "cultivation";
-        renderAll();
-      });
-
-      document.getElementById("activate-bond-shrine").addEventListener("click", () => {
-        state.activeMode = "bond";
-        renderAll();
-      });
-
-      document.getElementById("logout-button").addEventListener("click", async () => {
+      // Logout
+      document.getElementById("logout-button").addEventListener("click", async function() {
         await logoutUser();
+      });
+
+      // Detail overlay close
+      document.getElementById("detail-close").addEventListener("click", closeDetailOverlay);
+      document.getElementById("detail-overlay").addEventListener("click", function(e) {
+        if (e.target === this) closeDetailOverlay();
+      });
+
+      // Escape key closes overlay
+      document.addEventListener("keydown", function(e) {
+        if (e.key === "Escape") closeDetailOverlay();
       });
     }
 
+    // ── Init ─────────────────────────────────────────────────────
     async function init() {
       state.requestedPartnershipUuid = getQueryPartnershipUuid();
       state.requestedLegacyPartnershipId = getQueryLegacyPartnershipId();
 
-      updateSessionLine(null);
       wireEvents();
 
       try {
@@ -2020,7 +1197,7 @@
         return;
       }
 
-      updateSessionLine(state.session);
+      renderHero();
       await loadLibrary();
     }
 
