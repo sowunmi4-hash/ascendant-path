@@ -5,46 +5,27 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Opened Record | The Ascendant Path</title>
   <link rel="stylesheet" href="/css/style.css" />
+  <link rel="stylesheet" href="/css/cultivation-book.css" />
   <style>
-    @import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@400;500;600&family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400&display=swap');
-
     :root {
-      --bg-void: #060608;
-      --bg-deep: #0a0a10;
-      --bg-surface: #0e0e16;
-      --bg-card: #0a0a12;
-      --bg-card-hover: #0e0e16;
-      --bg-elevated: #1a1a24;
-      --gold: #c8a96a;
-      --gold-dim: #a08548;
-      --gold-bright: #e8cc8a;
-      --gold-bg: #c8a96a0a;
-      --gold-border: #c8a96a1a;
-      --gold-glow: #c8a96a22;
-      --green: #55bb66;
-      --green-soft: #55bb6614;
-      --blue: #5a9acc;
-      --blue-soft: #5a9acc14;
-      --amber: #dd9944;
-      --amber-soft: #dd994414;
-      --danger: #cc4444;
-      --danger-soft: #cc444414;
-      --text-primary: #ddd5c8;
-      --text-secondary: #555044;
-      --text-dim: #333028;
-      --text-faint: #222018;
-      --border: #1a1a22;
-      --border-hover: #2a2a33;
-      --track: #1a1a22;
-      --font-display: 'Cinzel', serif;
-      --font-body: 'Cormorant Garamond', serif;
-      --font-ui: system-ui, -apple-system, sans-serif;
-      --radius-sm: 6px;
-      --radius-md: 10px;
-      --radius-lg: 14px;
+      --panel-bg: linear-gradient(180deg, rgba(16, 22, 38, 0.88), rgba(8, 12, 22, 0.96));
+      --panel-border: rgba(255, 255, 255, 0.08);
+      --panel-shadow: 0 18px 42px rgba(0, 0, 0, 0.24);
+      --soft-text: rgba(225, 232, 255, 0.78);
+      --dim-text: rgba(196, 208, 255, 0.62);
+      --bright-text: #f3f7ff;
+      --gold: #fff0c7;
+      --gold-soft: rgba(255, 240, 199, 0.12);
+      --green: #88e487;
+      --green-soft: rgba(136, 228, 135, 0.14);
+      --blue: #8ea8ff;
+      --blue-soft: rgba(142, 168, 255, 0.14);
+      --amber: #ffbe69;
+      --amber-soft: rgba(255, 190, 105, 0.14);
+      --danger: #ff8c8c;
+      --danger-soft: rgba(255, 140, 140, 0.14);
+      --track: rgba(255, 255, 255, 0.08);
     }
-
-    body { background: var(--bg-void); color: var(--text-primary); }
 
     .record-page {
       width: min(1380px, calc(100% - 2rem));
@@ -58,68 +39,48 @@
 
     .is-hidden { display: none !important; }
 
-    /* ── NAV ── */
-    nav {
-      display: flex;
-      justify-content: center;
-      flex-wrap: wrap;
-      gap: 0.55rem;
-      padding: 0.75rem 0.9rem;
-      border-radius: 999px;
-      background: linear-gradient(180deg, rgba(255,255,255,0.03), rgba(255,255,255,0.01)), rgba(6,10,18,0.74);
-      border: 0.5px solid rgba(255,255,255,0.06);
-      box-shadow: 0 14px 34px rgba(0,0,0,0.22);
-      backdrop-filter: blur(10px);
-      position: relative;
-      z-index: 10;
-    }
-    nav a {
-      padding: 0.62rem 0.92rem;
-      border-radius: 999px;
-      border: 0.5px solid rgba(255,255,255,0.04);
-      background: rgba(255,255,255,0.02);
-      color: var(--text-secondary);
-      font-family: var(--font-ui);
-      font-size: 0.84rem;
-      text-decoration: none;
-      transition: all 0.2s ease;
-    }
-    nav a:hover {
-      transform: translateY(-1px);
-      border-color: rgba(200,169,106,0.22);
-      background: rgba(255,255,255,0.04);
-      color: var(--text-primary);
-    }
-    nav a.active {
-      color: var(--gold);
-      border-color: rgba(200,169,106,0.28);
-      background: rgba(200,169,106,0.10);
-    }
-
-    /* ── HERO ── */
     .record-hero {
       position: relative;
       overflow: hidden;
-      min-height: 220px;
+      min-height: 310px;
       padding: 1.7rem 1.7rem 1.55rem;
-      border: 0.5px solid var(--border);
-      border-radius: var(--radius-lg);
+      border: 1px solid var(--panel-border);
+      box-shadow: var(--shadow-lg, 0 18px 42px rgba(0, 0, 0, 0.24));
+      border-radius: 20px;
       background:
-        radial-gradient(ellipse at 20% 30%, rgba(200,169,106,0.06), transparent 50%),
-        radial-gradient(ellipse at 80% 60%, rgba(90,154,204,0.04), transparent 50%),
-        var(--bg-card);
+        linear-gradient(180deg, rgba(7, 10, 18, 0.18), rgba(7, 10, 18, 0.88)),
+        radial-gradient(circle at 16% 18%, rgba(255, 240, 199, 0.10), transparent 24%),
+        radial-gradient(circle at 78% 18%, rgba(142, 168, 255, 0.16), transparent 24%),
+        url("https://images.unsplash.com/photo-1518562180175-34a163b1a9a6?auto=format&fit=crop&w=1800&q=80")
+        center 52% / cover no-repeat;
     }
+
+    .record-hero::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(90deg, rgba(6,10,18,0.9) 0%, rgba(6,10,18,0.48) 45%, rgba(6,10,18,0.9) 100%);
+      pointer-events: none;
+    }
+
+    .record-hero::after {
+      content: "";
+      position: absolute;
+      inset: auto 0 0;
+      height: 132px;
+      background: linear-gradient(180deg, transparent, rgba(6,10,18,0.78));
+      pointer-events: none;
+    }
+
     .record-hero > * { position: relative; z-index: 1; }
 
     .hero-kicker {
       display: inline-block;
-      font-family: var(--font-ui);
-      font-size: 9px;
-      font-weight: 500;
-      letter-spacing: 2px;
+      font-size: 0.78rem;
+      letter-spacing: 0.18em;
       text-transform: uppercase;
-      color: var(--text-secondary);
-      margin-bottom: 0.3rem;
+      color: #bfd0ff;
+      margin-bottom: 0.2rem;
     }
 
     .hero-top-row {
@@ -132,21 +93,18 @@
 
     .hero-title-wrap h1 {
       margin: 0;
-      font-family: var(--font-display);
-      font-size: 17px;
-      font-weight: 500;
-      line-height: 1.3;
-      color: var(--gold);
-      letter-spacing: 1.5px;
+      font-size: clamp(2.2rem, 4vw, 3.35rem);
+      line-height: 1;
+      color: #ffffff;
+      text-shadow: 0 6px 18px rgba(0,0,0,0.34);
     }
 
     .hero-subtitle {
       margin: 0.55rem 0 0;
       max-width: 780px;
-      font-family: var(--font-body);
-      color: var(--text-primary);
+      color: rgba(228,235,255,0.84);
       line-height: 1.6;
-      font-size: 14px;
+      font-size: 0.96rem;
     }
 
     .hero-state-badge {
@@ -154,24 +112,25 @@
       display: inline-flex;
       align-items: center;
       gap: 0.55rem;
-      padding: 0.55rem 0.85rem;
+      padding: 0.78rem 1rem;
       border-radius: 999px;
-      border: 0.5px solid var(--border);
-      background: var(--bg-card);
-      color: var(--text-primary);
-      font-family: var(--font-ui);
-      font-size: 11px;
-      font-weight: 500;
-      letter-spacing: 0.5px;
+      border: 1px solid rgba(255,255,255,0.08);
+      background: rgba(255,255,255,0.07);
+      color: #f6f8ff;
+      font-size: 0.92rem;
+      font-weight: 700;
+      backdrop-filter: blur(10px);
     }
+
     .hero-state-badge::before {
       content: "";
-      width: 8px;
-      height: 8px;
+      width: 10px;
+      height: 10px;
       border-radius: 50%;
       background: currentColor;
-      box-shadow: 0 0 8px currentColor;
+      box-shadow: 0 0 12px currentColor;
     }
+
     .hero-state-badge.cultivating { color: var(--green); }
     .hero-state-badge.paused { color: var(--amber); }
     .hero-state-badge.cooldown { color: var(--amber); }
@@ -179,217 +138,156 @@
     .hero-state-badge.reopened { color: var(--blue); }
     .hero-state-badge.breakthrough { color: var(--gold); }
     .hero-state-badge.complete { color: var(--green); }
-    .hero-state-badge.idle { color: var(--text-secondary); }
+    .hero-state-badge.idle { color: #d9e2ff; }
 
     .hero-meta-row {
       display: flex;
       flex-wrap: wrap;
-      gap: 0.6rem;
-      margin-top: 0.8rem;
+      gap: 0.8rem;
+      margin-top: 1rem;
     }
-    .hero-meta-pill {
-      border-radius: 8px;
-      padding: 0.5rem 0.75rem;
-      background: var(--bg-card);
-      border: 0.5px solid var(--border);
-      color: var(--text-primary);
-      font-family: var(--font-ui);
-      font-size: 12px;
-    }
-    .hero-message { margin: 0; text-align: center; font-family: var(--font-body); }
 
-    /* ── VESSEL-GATE PANEL ── */
+    .hero-meta-pill {
+      border-radius: 999px;
+      padding: 0.64rem 0.92rem;
+      background: rgba(255,255,255,0.08);
+      border: 1px solid rgba(255,255,255,0.08);
+      color: #eef3ff;
+      font-size: 0.92rem;
+    }
+
+    .hero-message { margin: 0; text-align: center; }
+
     .vessel-gate-panel {
       display: grid;
       grid-template-columns: 1fr 1fr;
       gap: 0;
-      border-radius: var(--radius-lg);
+      border-radius: 12px;
       overflow: hidden;
-      border: 0.5px solid var(--gold-border);
+      border: 1px solid #c8a96a22;
       transition: border-color 0.5s ease;
     }
-    .vessel-gate-panel.state-cultivating { border-color: #55bb6633; }
-    .vessel-gate-panel.state-open        { border-color: #c8a96a55; }
-    .vessel-gate-panel.state-active      { border-color: #dd994433; }
-    .vessel-gate-panel.state-damaged     { border-color: #cc444433; }
+    .vessel-gate-panel.state-cultivating { border-color: #3a608055; }
+    .vessel-gate-panel.state-open        { border-color: #c8a96a88; }
+    .vessel-gate-panel.state-active      { border-color: #e8a84055; }
+    .vessel-gate-panel.state-damaged     { border-color: #7a202055; }
     .vessel-gate-panel.state-complete    { border-color: #c8a96a33; }
-    .vessel-gate-panel.state-sealed      { border-color: var(--border); }
-
+    .vessel-gate-panel.state-sealed      { border-color: #222; }
     .vessel-side {
-      background: var(--bg-void);
+      background: #08090f;
       position: relative;
       display: flex;
       flex-direction: column;
       align-items: center;
       justify-content: center;
       padding: 1.5rem 1rem 1rem;
-      border-right: 0.5px solid var(--border);
+      border-right: 1px solid #ffffff0f;
       min-height: 380px;
     }
-    .vessel-side-head { position: absolute; top: 12px; left: 14px; }
+    .vessel-side-head {
+      position: absolute;
+      top: 12px;
+      left: 14px;
+    }
     .vessel-side-kicker {
-      font-family: var(--font-ui);
-      font-size: 9px;
+      font-size: 10px;
       font-weight: 500;
-      color: var(--text-secondary);
+      color: rgba(255,255,255,0.25);
       text-transform: uppercase;
-      letter-spacing: 2px;
+      letter-spacing: 0.08em;
       margin: 0 0 2px;
     }
     .vessel-side-title {
-      font-family: var(--font-display);
       font-size: 13px;
-      font-weight: 400;
-      color: var(--text-primary);
+      font-weight: 500;
+      color: rgba(255,255,255,0.6);
       margin: 0;
-      letter-spacing: 0.5px;
     }
-    .vessel-canvas-wrap { position: relative; width: 340px; height: 340px; }
-    .vessel-qi-bar-wrap { position: absolute; bottom: 12px; left: 14px; right: 14px; }
+    .vessel-canvas-wrap {
+      position: relative;
+      width: 340px;
+      height: 340px;
+    }
+    .vessel-qi-bar-wrap {
+      position: absolute;
+      bottom: 12px;
+      left: 14px;
+      right: 14px;
+    }
     .vessel-qi-bar-label {
-      font-family: var(--font-ui);
-      font-size: 9px;
-      color: var(--text-secondary);
+      font-size: 10px;
+      color: rgba(255,255,255,0.3);
       text-transform: uppercase;
-      letter-spacing: 2px;
+      letter-spacing: 0.06em;
       margin: 0 0 4px;
     }
-    .vessel-qi-bar-label span { color: var(--gold); margin-left: 4px; }
-    .vessel-qi-bar-track { height: 3px; background: var(--track); border-radius: 2px; overflow: hidden; }
-    .vessel-qi-bar-fill { height: 100%; border-radius: 2px; transition: width 0.8s ease; }
-
-    /* ── GATE SIDE (cosmic eye) ── */
+    .vessel-qi-bar-label span {
+      color: #c8a96a;
+      margin-left: 4px;
+    }
+    .vessel-qi-bar-track {
+      height: 3px;
+      background: rgba(255,255,255,0.06);
+      border-radius: 2px;
+      overflow: hidden;
+    }
+    .vessel-qi-bar-fill {
+      height: 100%;
+      border-radius: 2px;
+      transition: width 0.8s ease;
+    }
     .gate-side {
       position: relative;
       min-height: 380px;
       display: flex;
       flex-direction: column;
-      background: var(--bg-card);
     }
-    .gate-side .gate-wrap { flex: 1; border-radius: 0; border: none; border-color: transparent; }
-    .gate-side .gate-scene { flex: 1; height: auto; min-height: 280px; background: var(--bg-card); border-radius: 0; }
-
-    /* ── GATE HEADER/FOOTER ── */
-    .gate-header {
-      padding: 14px 16px 6px;
-    }
-    .gate-kicker {
-      font-family: var(--font-ui);
-      font-size: 9px;
-      font-weight: 500;
-      color: var(--gold-dim);
-      text-transform: uppercase;
-      letter-spacing: 2px;
-    }
-    .gate-title {
-      font-family: var(--font-display);
-      font-size: 14px;
-      font-weight: 400;
-      color: var(--text-primary);
-      letter-spacing: 0.5px;
-      margin: 4px 0 0;
-    }
-    .gate-desc {
-      font-family: var(--font-body);
-      font-size: 13px;
-      color: var(--text-secondary);
-      margin: 4px 0 0;
-      line-height: 1.5;
-    }
-    .gate-footer { padding: 10px 16px 14px; }
-    .gate-chips {
-      display: flex;
-      gap: 8px;
-      flex-wrap: wrap;
-      margin-bottom: 10px;
-    }
-    .gate-chip {
-      padding: 8px 12px;
-      border-radius: 8px;
-      display: flex;
-      flex-direction: column;
-      gap: 2px;
-    }
-    .gate-chip span {
-      font-family: var(--font-ui);
-      font-size: 9px;
-      text-transform: uppercase;
-      letter-spacing: 1.5px;
-    }
-    .gate-chip strong {
-      font-family: var(--font-display);
-      font-size: 13px;
-      font-weight: 400;
-    }
-    #gate-action-btn, #gate-action-btn-off {
-      width: 100%;
-      padding: 12px;
+    .gate-side .gate-wrap {
+      flex: 1;
+      border-radius: 0;
       border: none;
-      border-radius: 8px;
-      font-family: var(--font-display);
-      font-size: 12px;
-      font-weight: 500;
-      letter-spacing: 0.8px;
-      cursor: pointer;
-      transition: opacity 0.2s, transform 0.1s;
+      border-color: transparent;
     }
-    #gate-action-btn:hover { opacity: 0.92; }
-    #gate-action-btn:active { transform: scale(0.98); }
-    #gate-action-btn:disabled { opacity: 0.5; cursor: not-allowed; }
-    #gate-action-btn-off {
-      cursor: default;
+    .gate-side .gate-scene {
+      flex: 1;
+      height: auto;
+      min-height: 280px;
+      background: #0a0a14;
+      border-radius: 0;
     }
-    #gate-sub-note {
-      font-family: var(--font-body);
-      font-size: 12px;
-      margin: 6px 0 0;
-      line-height: 1.5;
-    }
-    #gate-flash {
-      position: absolute;
-      inset: 0;
-      background: white;
-      opacity: 0;
-      pointer-events: none;
-      transition: opacity 0.3s;
-      z-index: 5;
-    }
-
-    /* ── STATS BAR ── */
     .record-stats-bar {
-      background: var(--bg-card);
-      border: 0.5px solid var(--border);
-      border-radius: var(--radius-lg);
+      background: #0d0a00;
+      border: 0.5px solid #c8a96a22;
+      border-radius: 12px;
       padding: 1rem 1.25rem;
     }
-    .record-stats-row { display: flex; gap: 10px; margin-bottom: 1rem; }
+    .record-stats-row {
+      display: flex;
+      gap: 10px;
+      margin-bottom: 1rem;
+    }
     .record-stat-box {
       flex: 1;
-      background: var(--bg-void);
-      border: 0.5px solid var(--border);
-      border-radius: var(--radius-md);
+      background: #0a0800;
+      border: 0.5px solid #c8a96a22;
+      border-radius: 8px;
       padding: 10px 14px;
     }
     .record-stat-box span {
       display: block;
-      font-family: var(--font-ui);
-      font-size: 9px;
+      font-size: 10px;
       font-weight: 500;
-      color: var(--text-secondary);
+      color: #c8a96a88;
       text-transform: uppercase;
-      letter-spacing: 2px;
+      letter-spacing: 0.08em;
       margin-bottom: 4px;
     }
     .record-stat-box strong {
       display: block;
-      font-family: var(--font-display);
-      font-size: 16px;
-      font-weight: 400;
-      color: var(--text-primary);
-      letter-spacing: 0.5px;
+      font-size: 18px;
+      font-weight: 500;
+      color: #c8a96a;
     }
-
-    /* ── LOWER GRID ── */
     .record-lower-grid {
       display: grid;
       grid-template-columns: 1fr 1fr;
@@ -397,51 +295,30 @@
       align-items: start;
     }
 
-    /* ── PANELS ── */
     .record-panel {
       position: relative;
-      background: var(--bg-card);
-      border: 0.5px solid var(--border);
-      border-radius: var(--radius-lg);
+      background: var(--panel-bg);
+      border-top: 1px solid var(--panel-border);
+      border-bottom: 1px solid var(--panel-border);
+      box-shadow: var(--panel-shadow);
       overflow: hidden;
     }
+
     .record-panel::before {
       content: "";
       position: absolute;
-      left: 0; top: 0; right: 0;
-      height: 3px;
-      background: var(--gold);
-      opacity: 0.3;
-    }
-    .record-panel-head { padding: 1rem 1rem 0; }
-    .record-panel-kicker {
-      margin: 0;
-      padding-left: 0.25rem;
-      font-family: var(--font-ui);
-      font-size: 9px;
-      letter-spacing: 2px;
-      text-transform: uppercase;
-      color: var(--text-secondary);
-    }
-    .record-panel-title {
-      margin: 0.35rem 0 0;
-      padding-left: 0.25rem;
-      font-family: var(--font-display);
-      color: var(--text-primary);
-      font-size: 16px;
-      font-weight: 400;
-      letter-spacing: 0.5px;
-    }
-    .record-panel-subtitle {
-      margin: 0.45rem 0 0;
-      padding-left: 0.25rem;
-      font-family: var(--font-body);
-      color: var(--text-secondary);
-      line-height: 1.55;
-      font-size: 13px;
+      left: 0;
+      top: 18px;
+      bottom: 18px;
+      width: 2px;
+      background: linear-gradient(180deg, rgba(142,168,255,0.32), rgba(255,240,199,0.18));
     }
 
-    /* ── PATH NODES (section cards) ── */
+    .record-panel-head { padding: 1rem 1rem 0; }
+    .record-panel-kicker { margin: 0; padding-left: 0.25rem; font-size: 0.76rem; letter-spacing: 0.14em; text-transform: uppercase; color: var(--dim-text); }
+    .record-panel-title { margin: 0.35rem 0 0; padding-left: 0.25rem; color: #fff; font-size: 1.3rem; }
+    .record-panel-subtitle { margin: 0.45rem 0 0; padding-left: 0.25rem; color: var(--soft-text); line-height: 1.55; font-size: 0.94rem; }
+
     .path-panel { min-height: 100%; display: grid; gap: 0.95rem; padding-bottom: 1rem; }
     .path-list { display: grid; gap: 0.85rem; padding: 0 1rem 1rem; margin-top: 0.25rem; }
 
@@ -450,100 +327,129 @@
       display: grid;
       gap: 0.55rem;
       padding: 0.95rem 0.95rem 0.95rem 1rem;
-      background: var(--bg-card);
-      border: 0.5px solid var(--border);
-      border-radius: var(--radius-md);
-      border-top: 3px solid var(--border);
-      transition: transform 0.2s ease, border-color 0.2s ease;
+      background: rgba(255,255,255,0.035);
+      border: 1px solid rgba(255,255,255,0.06);
+      border-radius: 16px;
+      transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
       overflow: hidden;
     }
+
     .path-node + .path-node::before {
       content: "";
       position: absolute;
-      left: 24px; top: -15px;
-      width: 1px; height: 15px;
-      background: var(--border);
+      left: 24px;
+      top: -15px;
+      width: 2px;
+      height: 15px;
+      background: linear-gradient(180deg, rgba(142,168,255,0.35), rgba(255,255,255,0));
     }
-    .path-node.current { border-top-color: var(--green); border-color: #55bb6633; }
-    .path-node.damaged { border-top-color: var(--danger); border-color: #cc444433; background: #0e080a; }
-    .path-node.reopened { border-top-color: var(--blue); border-color: #5a9acc33; }
-    .path-node.comprehended { border-top-color: var(--green); border-color: #55bb6622; }
+
+    .path-node.current {
+      border-color: rgba(127,214,106,0.22);
+      box-shadow: 0 0 0 1px rgba(127,214,106,0.14);
+      transform: translateY(-1px);
+    }
+
+    .path-node.damaged {
+      border-color: rgba(255,140,140,0.2);
+      background: linear-gradient(180deg, rgba(72,24,30,0.34), rgba(16,12,18,0.94));
+    }
+
+    .path-node.reopened {
+      border-color: rgba(142,168,255,0.2);
+      background: linear-gradient(180deg, rgba(23,32,56,0.42), rgba(9,13,22,0.94));
+    }
+
+    .path-node.comprehended {
+      border-color: rgba(136,228,135,0.18);
+    }
+
     .path-node.breakthrough_pending,
     .path-node.breakthrough_active,
     .path-node.breakthrough_ready,
-    .path-node.breakthrough_cooldown { border-top-color: var(--gold); border-color: #c8a96a33; }
-    .path-node.breakthrough_cooldown { border-top-color: var(--amber); border-color: #dd994433; }
+    .path-node.breakthrough_cooldown {
+      border-color: rgba(255,240,199,0.2);
+      background: linear-gradient(180deg, rgba(54,46,22,0.24), rgba(12,10,15,0.92));
+    }
+
+    .path-node.breakthrough_cooldown {
+      border-color: rgba(255,190,105,0.2);
+      background: linear-gradient(180deg, rgba(54,34,16,0.24), rgba(12,10,15,0.92));
+    }
 
     .path-node-top { display: flex; justify-content: space-between; gap: 0.75rem; align-items: flex-start; }
-    .path-node-title { margin: 0; font-family: var(--font-display); color: var(--text-primary); font-size: 14px; font-weight: 400; letter-spacing: 0.5px; }
-    .path-node-book { margin: 0.3rem 0 0; font-family: var(--font-body); color: var(--text-secondary); line-height: 1.45; font-size: 13px; }
+    .path-node-title { margin: 0; color: #fff; font-size: 1.05rem; }
+    .path-node-book { margin: 0.3rem 0 0; color: var(--soft-text); line-height: 1.45; font-size: 0.88rem; }
 
     .path-node-state {
       white-space: nowrap;
-      font-family: var(--font-ui);
-      font-size: 9px;
-      font-weight: 500;
-      letter-spacing: 1px;
+      font-size: 0.72rem;
+      letter-spacing: 0.08em;
       text-transform: uppercase;
-      padding: 4px 10px;
-      border-radius: 8px;
-      border: 0.5px solid var(--border);
-      background: var(--bg-void);
-      color: var(--text-secondary);
+      padding: 0.35rem 0.55rem;
+      border-radius: 999px;
+      border: 1px solid rgba(255,255,255,0.08);
+      background: rgba(255,255,255,0.06);
+      color: #eef3ff;
     }
-    .path-node-state.cultivating { color: var(--green); background: var(--green-soft); border-color: #55bb6622; }
-    .path-node-state.complete { color: var(--gold); background: var(--gold-bg); border-color: var(--gold-border); }
-    .path-node-state.open { color: var(--blue); background: var(--blue-soft); border-color: #5a9acc22; }
-    .path-node-state.paused { color: var(--amber); background: var(--amber-soft); border-color: #dd994422; }
-    .path-node-state.damaged { color: var(--danger); background: var(--danger-soft); border-color: #cc444422; }
-    .path-node-state.comprehended { color: var(--green); background: var(--green-soft); border-color: #55bb6622; }
+
+    .path-node-state.cultivating { color: var(--green); background: var(--green-soft); }
+    .path-node-state.complete { color: var(--gold); background: var(--gold-soft); }
+    .path-node-state.open { color: var(--blue); background: var(--blue-soft); }
+    .path-node-state.paused { color: var(--amber); background: var(--amber-soft); }
+    .path-node-state.damaged { color: var(--danger); background: var(--danger-soft); }
+    .path-node-state.comprehended { color: var(--green); background: var(--green-soft); }
     .path-node-state.breakthrough_pending,
     .path-node-state.breakthrough_active,
-    .path-node-state.breakthrough_ready { color: var(--gold); background: var(--gold-bg); border-color: var(--gold-border); }
-    .path-node-state.breakthrough_cooldown { color: var(--amber); background: var(--amber-soft); border-color: #dd994422; }
-    .path-node-state.sealed { color: var(--text-dim); }
+    .path-node-state.breakthrough_ready { color: var(--gold); background: var(--gold-soft); }
+    .path-node-state.breakthrough_cooldown { color: var(--amber); background: var(--amber-soft); }
+    .path-node-state.sealed { color: rgba(235,241,255,0.74); }
 
-    .mini-track { width: 100%; height: 4px; background: var(--track); border-radius: 3px; overflow: hidden; }
-    .mini-fill { height: 100%; width: 0%; border-radius: 3px; background: var(--gold); transition: width 0.25s ease; }
-    .path-node.current .mini-fill { background: var(--green); }
-    .path-node.damaged .mini-fill { background: var(--danger); }
+    .mini-track { width: 100%; height: 8px; background: var(--track); border-radius: 999px; overflow: hidden; }
+    .mini-fill { height: 100%; width: 0%; border-radius: 999px; background: linear-gradient(135deg, #8ea8ff, #7fd66a); transition: width 0.25s ease; }
+    .path-node.damaged .mini-fill { background: linear-gradient(135deg, #ff8c8c, #ffbe69); }
     .path-node.breakthrough_pending .mini-fill,
     .path-node.breakthrough_active .mini-fill,
-    .path-node.breakthrough_ready .mini-fill { background: var(--gold); }
-    .path-node.breakthrough_cooldown .mini-fill { background: var(--amber); }
+    .path-node.breakthrough_ready .mini-fill { background: linear-gradient(135deg, #fff0c7, #ffbe69); }
+    .path-node.breakthrough_cooldown .mini-fill { background: linear-gradient(135deg, #ffbe69, #8ea8ff); }
 
-    .path-node-meta { display: flex; justify-content: space-between; gap: 0.75rem; font-family: var(--font-ui); font-size: 11px; color: var(--text-secondary); }
-    .path-node-note { margin: 0; font-family: var(--font-body); color: var(--text-dim); line-height: 1.5; font-size: 13px; }
+    .path-node-meta { display: flex; justify-content: space-between; gap: 0.75rem; font-size: 0.84rem; color: var(--soft-text); }
+    .path-node-note { margin: 0; color: var(--dim-text); line-height: 1.5; font-size: 0.84rem; }
 
-    /* ── ALTAR (not actively shown but keep styles) ── */
     .altar-panel { display: grid; gap: 1rem; padding: 1rem; min-height: 100%; }
+
     .altar-visual {
       position: relative;
       min-height: 390px;
       display: grid;
       place-items: center;
-      border-radius: var(--radius-lg);
+      border-radius: 24px;
       overflow: hidden;
       background:
-        radial-gradient(circle at center, rgba(200,169,106,0.06), transparent 38%),
-        var(--bg-card);
-      border: 0.5px solid var(--border);
+        radial-gradient(circle at center, rgba(142,168,255,0.12), transparent 38%),
+        linear-gradient(180deg, rgba(10,16,28,0.92), rgba(5,9,18,0.96));
+      border: 1px solid rgba(255,255,255,0.06);
     }
-    .altar-visual::before, .altar-visual::after {
+
+    .altar-visual::before,
+    .altar-visual::after {
       content: "";
       position: absolute;
       inset: 14% 18%;
       border-radius: 50%;
-      border: 0.5px solid rgba(200,169,106,0.10);
+      border: 1px solid rgba(142,168,255,0.12);
       animation: altarSpin 28s linear infinite;
     }
+
     .altar-visual::after {
       inset: 22% 26%;
       animation-direction: reverse;
       animation-duration: 18s;
-      border-color: rgba(200,169,106,0.08);
+      border-color: rgba(255,240,199,0.12);
     }
+
     .altar-stage { position: relative; width: min(320px, 72%); aspect-ratio: 1; display: grid; place-items: center; }
+
     .altar-core {
       position: relative;
       width: 58%;
@@ -552,208 +458,224 @@
       display: grid;
       place-items: center;
       background:
-        radial-gradient(circle at 35% 35%, rgba(255,255,255,0.20), rgba(255,255,255,0) 26%),
-        radial-gradient(circle at 50% 50%, rgba(200,169,106,0.2), rgba(100,80,40,0.15) 56%, rgba(20,16,8,0.2) 78%, rgba(0,0,0,0) 100%);
-      box-shadow: 0 0 40px rgba(200,169,106,0.15), 0 0 90px rgba(200,169,106,0.05);
+        radial-gradient(circle at 35% 35%, rgba(255,255,255,0.28), rgba(255,255,255,0) 26%),
+        radial-gradient(circle at 50% 50%, rgba(142,168,255,0.3), rgba(65,91,170,0.2) 56%, rgba(21,30,60,0.2) 78%, rgba(0,0,0,0) 100%);
+      box-shadow: 0 0 40px rgba(142,168,255,0.22), 0 0 90px rgba(142,168,255,0.08);
       animation: altarPulse 4.2s ease-in-out infinite;
       overflow: hidden;
     }
-    .altar-core::before { content: ""; position: absolute; inset: 10%; border-radius: 50%; border: 0.5px solid rgba(255,255,255,0.08); opacity: 0.6; }
-    .altar-core::after { content: ""; position: absolute; inset: 0; background: linear-gradient(180deg, rgba(255,255,255,0.08), rgba(255,255,255,0)), radial-gradient(circle at 50% 80%, rgba(200,169,106,0.12), transparent 32%); mix-blend-mode: screen; pointer-events: none; }
-    .altar-ring { position: absolute; inset: 4%; border-radius: 50%; border: 1px dashed rgba(255,255,255,0.06); animation: altarSpin 22s linear infinite; }
-    .altar-ring.ring-two { inset: 0; animation-direction: reverse; animation-duration: 30s; border-color: rgba(200,169,106,0.10); }
-    .altar-ring.ring-three { inset: -5%; animation-duration: 40s; border-color: rgba(200,169,106,0.08); }
+
+    .altar-core::before { content: ""; position: absolute; inset: 10%; border-radius: 50%; border: 1px solid rgba(255,255,255,0.12); opacity: 0.6; }
+    .altar-core::after { content: ""; position: absolute; inset: 0; background: linear-gradient(180deg, rgba(255,255,255,0.12), rgba(255,255,255,0)), radial-gradient(circle at 50% 80%, rgba(127,214,106,0.18), transparent 32%); mix-blend-mode: screen; pointer-events: none; }
+
+    .altar-ring { position: absolute; inset: 4%; border-radius: 50%; border: 1px dashed rgba(255,255,255,0.1); animation: altarSpin 22s linear infinite; }
+    .altar-ring.ring-two { inset: 0; animation-direction: reverse; animation-duration: 30s; border-color: rgba(142,168,255,0.16); }
+    .altar-ring.ring-three { inset: -5%; animation-duration: 40s; border-color: rgba(255,240,199,0.12); }
+
     .altar-fracture {
       display: none;
       position: absolute;
       inset: 18%;
       background:
-        linear-gradient(120deg, transparent 0 42%, rgba(204,68,68,0.75) 47%, transparent 52%),
-        linear-gradient(65deg, transparent 0 38%, rgba(221,153,68,0.55) 43%, transparent 48%);
+        linear-gradient(120deg, transparent 0 42%, rgba(255,120,120,0.85) 47%, transparent 52%),
+        linear-gradient(65deg, transparent 0 38%, rgba(255,190,105,0.65) 43%, transparent 48%);
       filter: blur(0.4px);
       opacity: 0.8;
       animation: fracturePulse 2.2s ease-in-out infinite;
       pointer-events: none;
     }
+
     .altar-particles { position: absolute; inset: 0; pointer-events: none; }
-    .altar-particle { position: absolute; width: 5px; height: 5px; border-radius: 50%; background: rgba(200,169,106,0.6); box-shadow: 0 0 10px rgba(200,169,106,0.5); animation: floatParticle 7s linear infinite; opacity: 0.7; }
+    .altar-particle { position: absolute; width: 6px; height: 6px; border-radius: 50%; background: rgba(142,168,255,0.78); box-shadow: 0 0 12px rgba(142,168,255,0.72); animation: floatParticle 7s linear infinite; opacity: 0.75; }
     .altar-particle:nth-child(2) { left: 18%; top: 68%; animation-duration: 8s; animation-delay: -2s; }
     .altar-particle:nth-child(3) { left: 72%; top: 66%; animation-duration: 9s; animation-delay: -4s; }
     .altar-particle:nth-child(4) { left: 26%; top: 24%; animation-duration: 10s; animation-delay: -6s; }
     .altar-particle:nth-child(5) { left: 62%; top: 24%; animation-duration: 8.5s; animation-delay: -1s; }
     .altar-particle:nth-child(6) { left: 50%; top: 12%; animation-duration: 11s; animation-delay: -3s; }
 
-    .altar-visual[data-state="cultivating"] .altar-core { box-shadow: 0 0 46px rgba(85,187,102,0.2), 0 0 100px rgba(85,187,102,0.06); animation-duration: 3.2s; }
+    .altar-visual[data-state="cultivating"] .altar-core { box-shadow: 0 0 46px rgba(127,214,106,0.28), 0 0 100px rgba(127,214,106,0.1); animation-duration: 3.2s; }
     .altar-visual[data-state="paused"] .altar-core,
     .altar-visual[data-state="cooldown"] .altar-core { opacity: 0.76; filter: saturate(0.8); animation-duration: 6s; }
-    .altar-visual[data-state="damaged"] .altar-core { box-shadow: 0 0 44px rgba(204,68,68,0.2), 0 0 100px rgba(204,68,68,0.06); filter: saturate(0.84); }
+    .altar-visual[data-state="damaged"] .altar-core { box-shadow: 0 0 44px rgba(255,140,140,0.28), 0 0 100px rgba(255,140,140,0.08); filter: saturate(0.84); }
     .altar-visual[data-state="damaged"] .altar-fracture { display: block; }
-    .altar-visual[data-state="breakthrough"] .altar-core { box-shadow: 0 0 52px rgba(200,169,106,0.2), 0 0 110px rgba(200,169,106,0.06); }
-    .altar-visual[data-state="complete"] .altar-core { box-shadow: 0 0 52px rgba(85,187,102,0.2), 0 0 110px rgba(85,187,102,0.06); }
+    .altar-visual[data-state="breakthrough"] .altar-core { box-shadow: 0 0 52px rgba(255,240,199,0.28), 0 0 110px rgba(255,240,199,0.1); }
+    .altar-visual[data-state="complete"] .altar-core { box-shadow: 0 0 52px rgba(127,214,106,0.28), 0 0 110px rgba(127,214,106,0.1); }
 
     .altar-center-text { position: absolute; inset: 0; display: grid; align-content: center; justify-items: center; gap: 0.35rem; text-align: center; z-index: 2; padding: 1rem; }
-    .altar-center-kicker { font-family: var(--font-ui); font-size: 9px; letter-spacing: 2px; text-transform: uppercase; color: var(--text-secondary); }
-    .altar-center-value { font-family: var(--font-display); color: var(--text-primary); font-size: 24px; line-height: 1; font-weight: 500; }
-    .altar-center-caption { font-family: var(--font-body); color: var(--text-secondary); font-size: 13px; line-height: 1.45; max-width: 220px; }
+    .altar-center-kicker { font-size: 0.72rem; letter-spacing: 0.12em; text-transform: uppercase; color: var(--dim-text); }
+    .altar-center-value { color: #fff; font-size: 1.9rem; line-height: 1; font-weight: 700; }
+    .altar-center-caption { color: var(--soft-text); font-size: 0.9rem; line-height: 1.45; max-width: 220px; }
 
     .altar-focus-panel { display: grid; gap: 0.95rem; }
     .altar-focus-top { display: flex; justify-content: space-between; gap: 1rem; align-items: flex-start; flex-wrap: wrap; }
-    .altar-focus-title { margin: 0; font-family: var(--font-display); color: var(--text-primary); font-size: 16px; font-weight: 400; letter-spacing: 0.5px; }
-    .altar-focus-book { margin: 0.35rem 0 0; font-family: var(--font-body); color: var(--text-secondary); line-height: 1.55; font-size: 13px; }
-    .altar-focus-badge {
-      border-radius: 8px;
-      padding: 6px 12px;
-      background: var(--bg-card);
-      border: 0.5px solid var(--border);
-      font-family: var(--font-ui);
-      color: var(--text-primary);
-      font-size: 11px;
-      font-weight: 500;
-      white-space: nowrap;
-    }
+    .altar-focus-title { margin: 0; color: #fff; font-size: 1.45rem; }
+    .altar-focus-book { margin: 0.35rem 0 0; color: var(--soft-text); line-height: 1.55; font-size: 0.94rem; }
+    .altar-focus-badge { border-radius: 999px; padding: 0.58rem 0.85rem; background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.08); color: #eef3ff; font-size: 0.86rem; font-weight: 700; white-space: nowrap; }
 
     .altar-progress-grid { display: grid; grid-template-columns: repeat(3, minmax(0,1fr)); gap: 0.75rem; }
-    .altar-stat {
-      padding: 10px 12px;
-      border-radius: var(--radius-md);
-      background: var(--bg-void);
-      border: 0.5px solid var(--border);
-    }
-    .altar-stat span { display: block; font-family: var(--font-ui); font-size: 9px; letter-spacing: 2px; text-transform: uppercase; color: var(--text-secondary); }
-    .altar-stat strong { display: block; margin-top: 0.28rem; font-family: var(--font-display); color: var(--text-primary); font-size: 13px; line-height: 1.4; font-weight: 400; }
+    .altar-stat { padding: 0.9rem 0.95rem; border-radius: 16px; background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.06); }
+    .altar-stat span { display: block; font-size: 0.72rem; letter-spacing: 0.08em; text-transform: uppercase; color: var(--dim-text); }
+    .altar-stat strong { display: block; margin-top: 0.28rem; color: #fff; font-size: 1rem; line-height: 1.4; }
 
-    /* ── ACTION BUTTONS ── */
     .action-well { display: grid; gap: 0.75rem; padding-top: 0.2rem; }
     .action-primary, .action-secondary {
-      min-height: 48px;
+      min-height: 54px;
       display: inline-flex;
       align-items: center;
       justify-content: center;
       text-decoration: none;
-      font-family: var(--font-display);
-      font-weight: 500;
-      font-size: 13px;
-      letter-spacing: 0.8px;
-      padding: 0.85rem 1rem;
+      font-weight: 700;
+      padding: 0.95rem 1rem;
       position: relative;
       transition: 0.2s ease;
       text-align: center;
       cursor: pointer;
-      border-radius: 8px;
+      border-radius: 14px;
     }
+
     .action-primary {
       border: none;
-      background: var(--gold);
-      color: var(--bg-void);
+      background: linear-gradient(135deg, #7fd66a, #4fae48);
+      color: #081506;
+      box-shadow: 0 14px 30px rgba(79,174,72,0.28);
     }
-    .action-primary:hover { opacity: 0.92; }
-    .action-primary:active { transform: scale(0.98); }
+
     .action-primary[aria-disabled="true"], .action-secondary[aria-disabled="true"] {
-      opacity: 0.5;
+      opacity: 0.62;
       pointer-events: none;
       cursor: default;
     }
+
     .action-secondary {
-      background: var(--bg-card);
-      border: 0.5px solid var(--border);
-      color: var(--text-primary);
+      background: rgba(255,255,255,0.04);
+      border-top: 1px solid rgba(255,255,255,0.07);
+      border-bottom: 1px solid rgba(255,255,255,0.07);
+      color: #eef3ff;
+      box-shadow: 0 14px 30px rgba(0,0,0,0.18);
     }
-    .action-note { margin: 0; font-family: var(--font-body); color: var(--text-secondary); line-height: 1.58; font-size: 13px; }
 
-    /* ── CONTEXT CARDS ── */
+    .action-secondary::before {
+      content: "";
+      position: absolute;
+      left: 0;
+      top: 12px;
+      bottom: 12px;
+      width: 2px;
+      background: linear-gradient(180deg, rgba(142,168,255,0.28), rgba(255,240,199,0.16));
+    }
+
+    .action-note { margin: 0; color: var(--soft-text); line-height: 1.58; font-size: 0.93rem; }
+
     .context-panel { display: grid; gap: 0.95rem; padding: 1rem; align-content: start; }
-    .context-card {
-      display: grid;
-      gap: 0.75rem;
-      padding: 0.95rem 1rem;
-      border-radius: var(--radius-md);
-      background: var(--bg-card);
-      border: 0.5px solid var(--border);
-    }
-    .context-card h3 { margin: 0; font-family: var(--font-display); color: var(--text-primary); font-size: 14px; font-weight: 400; letter-spacing: 0.5px; }
-    .context-card p { margin: 0; font-family: var(--font-body); color: var(--text-secondary); line-height: 1.55; font-size: 13px; }
-    .context-card.danger { border-color: #cc444422; background: #0e080a; }
-    .context-card.breakthrough { border-color: #c8a96a22; background: #0e0c08; }
-    .context-card.cooldown { border-color: #dd994422; background: #0e0a06; }
-    .context-list { display: grid; gap: 0.65rem; }
-    .context-row { display: flex; justify-content: space-between; gap: 0.8rem; font-family: var(--font-ui); font-size: 12px; color: var(--text-secondary); }
-    .context-row span:first-child { color: var(--text-dim); }
-    .context-row strong { text-align: right; color: var(--text-primary); font-weight: 500; }
+    .context-card { display: grid; gap: 0.75rem; padding: 0.95rem 1rem; border-radius: 18px; background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.06); }
+    .context-card h3 { margin: 0; color: #fff; font-size: 1.05rem; }
+    .context-card p { margin: 0; color: var(--soft-text); line-height: 1.55; font-size: 0.92rem; }
+    .context-card.danger { background: linear-gradient(180deg, rgba(72,24,30,0.3), rgba(14,10,16,0.92)); border-color: rgba(255,140,140,0.14); }
+    .context-card.breakthrough { background: linear-gradient(180deg, rgba(54,46,22,0.24), rgba(12,10,15,0.92)); border-color: rgba(255,240,199,0.14); }
+    .context-card.cooldown { background: linear-gradient(180deg, rgba(54,34,16,0.24), rgba(12,10,15,0.92)); border-color: rgba(255,190,105,0.14); }
 
-    /* ── FOOTER / BREAKTHROUGH ── */
+    .context-list { display: grid; gap: 0.65rem; }
+    .context-row { display: flex; justify-content: space-between; gap: 0.8rem; color: var(--soft-text); font-size: 0.92rem; }
+    .context-row span:first-child { color: var(--dim-text); }
+    .context-row strong { text-align: right; color: #fff; }
+
     .record-footer-band {
       display: grid;
       gap: 1rem;
       padding: 1rem;
-      background: var(--bg-card);
-      border: 0.5px solid var(--border);
-      border-radius: var(--radius-lg);
+      background: linear-gradient(90deg, rgba(255,240,199,0.03), rgba(255,240,199,0.07), rgba(255,240,199,0.03));
     }
-    .record-footer-head { display: flex; justify-content: space-between; align-items: flex-end; gap: 1rem; flex-wrap: wrap; }
-    .record-footer-head h2 { margin: 0.2rem 0 0; font-family: var(--font-display); color: var(--text-primary); font-size: 16px; font-weight: 400; letter-spacing: 0.5px; }
-    .record-footer-head p { margin: 0.3rem 0 0; font-family: var(--font-body); color: var(--text-secondary); font-size: 13px; }
 
-    .breakthrough-grid { display: grid; grid-template-columns: repeat(3, minmax(0,1fr)); gap: 0.85rem; }
-    .breakthrough-chip {
-      padding: 10px 12px;
-      border-radius: var(--radius-md);
-      background: var(--bg-void);
-      border: 0.5px solid var(--border);
+    .record-footer-head {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-end;
+      gap: 1rem;
+      flex-wrap: wrap;
     }
+
+    .record-footer-head h2 { margin: 0.2rem 0 0; color: #fff; font-size: 1.35rem; }
+    .record-footer-head p { margin: 0.3rem 0 0; color: var(--soft-text); font-size: 0.95rem; }
+
+    .breakthrough-grid {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0,1fr));
+      gap: 0.85rem;
+    }
+
+    .breakthrough-chip {
+      padding: 0.95rem 1rem;
+      border-radius: 16px;
+      background: rgba(255,255,255,0.06);
+      border: 1px solid rgba(255,255,255,0.08);
+    }
+
     .breakthrough-chip span {
       display: block;
-      font-family: var(--font-ui);
-      font-size: 9px;
-      letter-spacing: 2px;
+      font-size: 0.72rem;
+      letter-spacing: 0.08em;
       text-transform: uppercase;
-      color: var(--text-secondary);
+      color: rgba(242,233,206,0.7);
     }
+
     .breakthrough-chip strong {
       display: block;
       margin-top: 0.28rem;
-      font-family: var(--font-display);
-      color: var(--text-primary);
-      font-size: 13px;
-      font-weight: 400;
+      color: #fff2c7;
+      font-size: 1rem;
       line-height: 1.35;
     }
-    .breakthrough-actions { display: none; gap: 0.8rem; padding-top: 0.15rem; align-items: start; }
-    .breakthrough-actions.active { display: grid; }
+
+    .breakthrough-actions {
+      display: none;
+      gap: 0.8rem;
+      padding-top: 0.15rem;
+      align-items: start;
+    }
+
+    .breakthrough-actions.active {
+      display: grid;
+    }
+
     .breakthrough-entry-button {
       max-width: 340px;
-      background: var(--gold);
-      color: var(--bg-void);
-      font-family: var(--font-display);
+      background: linear-gradient(135deg, #fff0c7, #ffbe69);
+      color: #151007;
+      box-shadow: 0 14px 30px rgba(255,190,105,0.24);
     }
-    .breakthrough-entry-note { margin: 0; font-family: var(--font-body); color: var(--text-secondary); line-height: 1.58; font-size: 13px; }
 
-    /* ── EMPTY / ERROR STATES ── */
+    .breakthrough-entry-note {
+      margin: 0;
+      color: var(--soft-text);
+      line-height: 1.58;
+      font-size: 0.93rem;
+    }
+
     .empty-state-panel {
       position: relative;
       display: grid;
       gap: 1rem;
-      padding: 1.5rem;
-      background: var(--bg-card);
-      border: 0.5px solid var(--border);
-      border-radius: var(--radius-lg);
+      padding: 1.2rem 0 1rem;
+      border-top: 1px solid rgba(255,255,255,0.05);
+      border-bottom: 1px solid rgba(255,255,255,0.05);
+      background: linear-gradient(90deg, rgba(255,255,255,0.02), rgba(255,255,255,0), rgba(255,255,255,0.02));
     }
-    .empty-state-panel h2, .empty-state-panel p { margin: 0; padding: 0; }
-    .empty-state-panel h2 { font-family: var(--font-display); color: var(--text-primary); font-size: 16px; font-weight: 400; }
-    .empty-state-panel p { font-family: var(--font-body); color: var(--text-secondary); line-height: 1.55; font-size: 14px; }
-    .empty-state-actions { display: flex; gap: 0.75rem; flex-wrap: wrap; }
+
+    .empty-state-panel h2, .empty-state-panel p { margin: 0; padding: 0 0.15rem; }
+    .empty-state-panel h2 { color: #fff; }
+    .empty-state-panel p { color: var(--soft-text); line-height: 1.55; }
+    .empty-state-actions { display: flex; gap: 0.75rem; flex-wrap: wrap; padding: 0 0.15rem; }
     .empty-state-actions a { min-width: 180px; }
     .login-error {
       margin: 0;
       padding: 0.85rem 1rem;
-      border: 0.5px solid #cc444422;
-      border-radius: var(--radius-md);
-      background: #0e080a;
-      font-family: var(--font-body);
-      color: #cc8888;
+      border-top: 1px solid rgba(218,114,114,0.38);
+      border-bottom: 1px solid rgba(218,114,114,0.22);
+      background: linear-gradient(180deg, rgba(90,22,22,0.26), rgba(52,14,14,0.18));
+      color: rgba(255,222,222,0.92);
       line-height: 1.55;
     }
 
-    /* ── ANIMATIONS ── */
     @keyframes altarSpin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
     @keyframes altarPulse { 0%,100% { transform: scale(1); filter: brightness(0.96); } 50% { transform: scale(1.03); filter: brightness(1.08); } }
     @keyframes fracturePulse { 0%,100% { opacity: 0.45; } 50% { opacity: 0.95; } }
@@ -763,46 +685,20 @@
       100% { transform: translateY(-170px) scale(1.15); opacity: 0; }
     }
 
-    /* ── RESPONSIVE ── */
     @media (max-width: 1180px) {
       .vessel-gate-panel { grid-template-columns: 1fr; }
       .record-lower-grid { grid-template-columns: 1fr; }
       .breakthrough-grid { grid-template-columns: repeat(2, minmax(0,1fr)); }
     }
+
     @media (max-width: 740px) {
       .record-page { width: min(100% - 1rem, 1380px); margin-top: 1rem; }
-      .record-hero { min-height: 180px; padding: 1.2rem 1rem 1.1rem; }
+      .record-hero { min-height: 258px; padding: 1.2rem 1rem 1.1rem; border-radius: 16px; }
       .altar-progress-grid, .breakthrough-grid { grid-template-columns: 1fr; }
       .empty-state-actions { flex-direction: column; }
       .empty-state-actions a { width: 100%; }
       .breakthrough-entry-button { max-width: none; width: 100%; }
     }
-
-    /* ── Hero Stats Strip ── */
-    .hero-stats-strip {
-      display: flex; flex-wrap: wrap; gap: 10px; justify-content: center;
-      margin: -8px auto 24px; max-width: 700px;
-    }
-    .stat-chip {
-      display: flex; flex-direction: column; align-items: center;
-      background: var(--bg-card); border: 0.5px solid var(--border);
-      border-radius: 10px; padding: 10px 18px; min-width: 120px; flex: 1;
-    }
-    .stat-chip-label {
-      font-family: 'Cinzel', serif; font-size: 10px; letter-spacing: 1.2px;
-      text-transform: uppercase; color: var(--gold); margin-bottom: 4px;
-    }
-    .stat-chip-value {
-      font-family: 'Cormorant Garamond', serif; font-size: 16px;
-      color: var(--text-primary); font-weight: 500;
-    }
-
-    @media (max-width: 480px) {
-      .hero-stats-strip { gap: 6px; }
-      .stat-chip { min-width: 70px; padding: 8px 10px; }
-      .stat-chip-value { font-size: 14px; }
-    }
-
   </style>
 </head>
 <body>
@@ -835,13 +731,6 @@
         <div class="hero-meta-pill" id="hero-focus-pill">No active focus</div>
       </div>
     </section>
-
-    <div class="hero-stats-strip" id="hero-stats-strip">
-      <div class="stat-chip"><span class="stat-chip-label">Realm</span><span class="stat-chip-value" id="stat-realm">--</span></div>
-      <div class="stat-chip"><span class="stat-chip-label">Stage</span><span class="stat-chip-value" id="stat-stage">--</span></div>
-      <div class="stat-chip"><span class="stat-chip-label">Status</span><span class="stat-chip-value" id="stat-status">--</span></div>
-      <div class="stat-chip"><span class="stat-chip-label">Qi</span><span class="stat-chip-value" id="stat-qi">--</span></div>
-    </div>
 
     <p id="page-message" class="summary is-hidden hero-message"></p>
 
@@ -898,9 +787,9 @@
       <div class="record-lower-grid">
         <section class="record-panel path-panel">
           <div class="record-panel-head">
-            <p class="record-panel-kicker">Scroll Path</p>
+            <p class="record-panel-kicker">Section Path</p>
             <h2 class="record-panel-title">Cultivation Route</h2>
-            <p class="record-panel-subtitle">Each scroll reflects live backend truth: sealed, opened, active, damaged, breakthrough-gated, or complete.</p>
+            <p class="record-panel-subtitle">Each section reflects live backend truth: sealed, opened, active, damaged, breakthrough-gated, or complete.</p>
           </div>
           <div class="path-list" id="path-list"></div>
         </section>
@@ -927,7 +816,6 @@
     const DASHBOARD_ENDPOINT = "/.netlify/functions/load-dashboard-state";
     const MEMBER_STATE_ENDPOINT = "/.netlify/functions/load-member-state";
     const BOOK_STATE_ENDPOINT = "/.netlify/functions/load-cultivation-book-state";
-    const REPAIR_ENDPOINT = "/.netlify/functions/repair-cultivation-book";
 
     const state = {
       member: null,
@@ -1411,7 +1299,7 @@
         safeText(store?.realm_name, realmFromVolume(store?.volume_number));
 
       document.getElementById("hero-focus-pill").textContent = focus
-        ? "Focus • " + toTitle(focus.section_key, "Scroll")
+        ? "Focus • " + toTitle(focus.section_key, "Section")
         : "No active focus";
 
       const badgeMap = {
@@ -1443,7 +1331,7 @@
         var sectionsObj = state.record && state.record.sections ? state.record.sections : {};
         var sections = Object.values(sectionsObj);
         if (!sections.length) {
-          pathList.innerHTML = '<p style="color:rgba(255,255,255,0.3);font-size:13px;">No scrolls available.</p>';
+          pathList.innerHTML = '<p style="color:rgba(255,255,255,0.3);font-size:13px;">No sections available.</p>';
           return;
         }
         pathList.innerHTML = sections.map(function(s, idx) {
@@ -1461,7 +1349,7 @@
           return '<div class="path-node-wrap" id="'+nodeId+'">'
             +'<div class="path-node-header" onclick="togglePathNode(\''+nodeId+'\')" style="cursor:pointer;display:flex;align-items:center;justify-content:space-between;padding:10px 12px;background:rgba(255,255,255,0.04);border:0.5px solid rgba(255,255,255,0.06);border-radius:8px;margin-bottom:4px;">'
             +'<div style="flex:1;">'
-            +'<p style="font-size:13px;font-weight:500;color:#fff;margin:0 0 1px;">'+toTitle(s.section_key||s.key||'Scroll')+'</p>'
+            +'<p style="font-size:13px;font-weight:500;color:#fff;margin:0 0 1px;">'+toTitle(s.section_key||s.key||'Section')+'</p>'
             +'<p style="font-size:11px;color:rgba(255,255,255,0.35);margin:0;">'+safeText(s.book_title||s.title,'')+'</p>'
             +'</div>'
             +'<div style="display:flex;align-items:center;gap:8px;">'
@@ -1861,227 +1749,32 @@
     function stopGateVessel() {
       if (_vesselRafId) { cancelAnimationFrame(_vesselRafId); _vesselRafId = null; }
     }
-    /* ═══════════════════════════════════════
-       CINEMATIC SYSTEM — 4 animated transitions
-       ═══════════════════════════════════════ */
-
     function runFigureDropCinematic() {
+      var canvas = document.getElementById('vessel-canvas');
+      if (!canvas) return;
       var urlParams = new URLSearchParams(window.location.search);
-      var btResult = urlParams.get('breakthrough');
-      var repairResult = urlParams.get('repair');
-      if (btResult === 'success') { runCinematic_SuccessAscension(); }
-      else if (btResult === 'failed') { runCinematic_FailureTrap(); }
-      else if (repairResult === 'complete') { runCinematic_RepairGlide(); }
-    }
-
-    function _cleanupCinematicParams() {
-      var url = new URL(window.location.href);
-      url.searchParams.delete('breakthrough');
-      url.searchParams.delete('repair');
-      window.history.replaceState({}, '', url);
-    }
-
-    function _drawCinematicFigure(ctx, w, h, scale, color, glowColor, glowAlpha) {
-      ctx.clearRect(0, 0, w, h);
-      ctx.save();
-      ctx.translate(w / 2, h / 2);
-      ctx.scale(scale, scale);
-      if (glowAlpha > 0) {
-        var glow = ctx.createRadialGradient(0, 0, 8, 0, 0, 50);
-        glow.addColorStop(0, glowColor.replace(')', ',' + glowAlpha + ')').replace('rgb(', 'rgba('));
-        glow.addColorStop(1, 'transparent');
-        ctx.fillStyle = glow;
-        ctx.fillRect(-60, -60, 120, 120);
-      }
-      ctx.fillStyle = color; ctx.strokeStyle = color; ctx.lineWidth = 2;
-      ctx.beginPath(); ctx.arc(0, -25, 8, 0, Math.PI * 2); ctx.fill();
-      ctx.beginPath(); ctx.moveTo(0, -17); ctx.lineTo(0, 5); ctx.stroke();
-      ctx.beginPath(); ctx.moveTo(-15, -5); ctx.quadraticCurveTo(-5, -10, 0, -5); ctx.quadraticCurveTo(5, -10, 15, -5); ctx.stroke();
-      ctx.beginPath(); ctx.moveTo(-12, 18); ctx.quadraticCurveTo(-3, 8, 0, 5); ctx.quadraticCurveTo(3, 8, 12, 18); ctx.stroke();
-      ctx.restore();
-    }
-
-    function _createCinematicOverlay() {
-      var overlay = document.createElement('div');
-      overlay.id = 'cinematic-overlay';
-      overlay.style.cssText = 'position:fixed;top:0;left:0;width:100vw;height:100vh;pointer-events:none;z-index:9999;';
-      var fig = document.createElement('canvas');
-      fig.width = 120; fig.height = 160;
-      fig.style.cssText = 'position:absolute;pointer-events:none;';
-      overlay.appendChild(fig);
-      document.body.appendChild(overlay);
-      return { overlay: overlay, fig: fig };
-    }
-
-    /* ── CINEMATIC 1: Success Ascension ── */
-    function runCinematic_SuccessAscension() {
-      _cinematicActive = true; _cinematicType = 'success';
-      var vesselCanvas = document.getElementById('vessel-canvas');
-      var portalCanvas = document.getElementById('gate-canvas');
-      if (!vesselCanvas || !portalCanvas) { _cleanupCinematicParams(); _cinematicActive = false; return; }
-      var vR = vesselCanvas.getBoundingClientRect();
-      var pR = portalCanvas.getBoundingClientRect();
-      var els = _createCinematicOverlay();
-      vesselCanvas.style.opacity = '0';
-      var sX = pR.left + pR.width/2 - 60, sY = pR.top + pR.height/2 - 80;
-      var eX = vR.left + vR.width/2 - 60, eY = vR.top + vR.height/2 - 80;
-      var t0 = performance.now(), dur = 2500;
-      function tick(now) {
-        var t = Math.min(1, (now - t0) / dur);
-        var fCtx = els.fig.getContext('2d');
-        var x, y, sc, ga, op;
-        if (t < 0.48) {
-          var p = t / 0.48, e = 1 - Math.pow(1-p, 2);
-          x = sX; y = sY - e * pR.height * 0.4;
-          sc = 0.3 + e*0.15; ga = e*0.6; op = 0.4 + e*0.6;
-        } else if (t < 0.6) {
-          var p = (t-0.48)/0.12;
-          var rY = sY - pR.height*0.4;
-          x = sX + p*(eX-sX); y = rY + p*(eY-rY);
-          sc = 0.45 + p*0.2; ga = 0.6; op = 1;
+      if (urlParams.get('breakthrough') !== 'success') return;
+      // Figure starts above canvas and drops into position
+      var dropProgress = 0;
+      var dropRAF;
+      function dropFrame() {
+        dropProgress = Math.min(1, dropProgress + 0.012);
+        var ease = 1 - Math.pow(1 - dropProgress, 3);
+        canvas.style.transform = 'translateY(' + ((1 - ease) * -120) + 'px)';
+        canvas.style.opacity = String(ease);
+        if (dropProgress < 1) {
+          dropRAF = requestAnimationFrame(dropFrame);
         } else {
-          var p = (t-0.6)/0.4, e = 1-Math.pow(1-p,3);
-          x = eX; y = eY; sc = 0.65+e*0.35; ga = 0.6*(1-e); op = 1;
-        }
-        els.fig.style.left = x+'px'; els.fig.style.top = y+'px'; els.fig.style.opacity = String(op);
-        _drawCinematicFigure(fCtx, 120, 160, sc, '#c8a96a', 'rgba(200,169,106', ga);
-        if (t < 1) { requestAnimationFrame(tick); }
-        else {
-          els.overlay.remove();
-          vesselCanvas.style.opacity = '1'; vesselCanvas.style.transition = 'opacity 0.3s';
-          _cinematicActive = false; _cinematicType = null; _cleanupCinematicParams();
+          canvas.style.transform = '';
+          canvas.style.opacity = '';
+          var url = new URL(window.location.href);
+          url.searchParams.delete('breakthrough');
+          window.history.replaceState({}, '', url);
         }
       }
-      requestAnimationFrame(tick);
-    }
-
-    /* ── CINEMATIC 2: Failure Trap ── */
-    function runCinematic_FailureTrap() {
-      _cinematicActive = true; _cinematicType = 'failure';
-      var vesselCanvas = document.getElementById('vessel-canvas');
-      var portalCanvas = document.getElementById('gate-canvas');
-      if (!vesselCanvas || !portalCanvas) { _cleanupCinematicParams(); _cinematicActive = false; return; }
-      var vR = vesselCanvas.getBoundingClientRect();
-      var pR = portalCanvas.getBoundingClientRect();
-      var els = _createCinematicOverlay();
-      vesselCanvas.style.opacity = '0';
-      var sX = vR.left + vR.width/2 - 60, sY = vR.top + vR.height/2 - 80;
-      var eX = pR.left + pR.width/2 - 60, eY = pR.top + pR.height/2 - 80;
-      var t0 = performance.now(), dur = 1800;
-      function tick(now) {
-        var t = Math.min(1, (now - t0) / dur);
-        var fCtx = els.fig.getContext('2d');
-        if (t < 0.33) {
-          var p = t/0.33, e = p*p;
-          var x = sX + e*(eX-sX), y = sY + e*(eY-sY);
-          var sc = 1.0 - e*0.65, ga = e*0.4, op = 1.0 - e*0.3;
-          els.fig.style.left = x+'px'; els.fig.style.top = y+'px'; els.fig.style.opacity = String(op);
-          _drawCinematicFigure(fCtx, 120, 160, sc, '#884444', 'rgba(204,68,68', ga);
-        } else if (t < 0.44) {
-          var p = (t-0.33)/0.11;
-          els.fig.style.opacity = String(0.7 - p*0.5);
-          var sc = 0.35 - p*0.25;
-          _drawCinematicFigure(fCtx, 120, 160, Math.max(0.05, sc), '#884444', 'rgba(204,68,68', 0.4);
-        } else {
-          els.fig.style.display = 'none';
-          _portalState = 'damaged';
-          if (_portalCracks.length < 6 || !_portalCracks[0].sg) {
-            _portalCracks = [];
-            for (var i = 0; i < 10; i++) {
-              var ca = -2.5+Math.random()*5, cl = 20+Math.random()*45, sg = [];
-              var cpx = 0, cpy = 0;
-              for (var k = 0; k < 5; k++) {
-                cpx += Math.cos(ca+Math.random()*0.5-0.25)*(cl/5);
-                cpy += Math.sin(ca+Math.random()*0.5-0.25)*(cl/5);
-                sg.push({ x: cpx, y: cpy });
-              }
-              _portalCracks.push({ sg: sg, al: 0.2+Math.random()*0.5 });
-            }
-          }
-          if (t >= 1) {
-            els.overlay.remove();
-            _cinematicActive = false; _cinematicType = null; _cleanupCinematicParams();
-            renderBreakthroughFooter();
-            return;
-          }
-        }
-        if (t < 1) requestAnimationFrame(tick);
-      }
-      requestAnimationFrame(tick);
-    }
-
-    /* ── CINEMATIC 3: Repair Glide ── */
-    function runCinematic_RepairGlide() {
-      _cinematicActive = true; _cinematicType = 'repair';
-      var vesselCanvas = document.getElementById('vessel-canvas');
-      var portalCanvas = document.getElementById('gate-canvas');
-      if (!vesselCanvas || !portalCanvas) { _cleanupCinematicParams(); _cinematicActive = false; return; }
-      var vR = vesselCanvas.getBoundingClientRect();
-      var pR = portalCanvas.getBoundingClientRect();
-      var els = _createCinematicOverlay();
-      els.fig.style.display = 'none';
-      vesselCanvas.style.opacity = '0';
-      var sX = pR.left + pR.width/2 - 60, sY = pR.top + pR.height/2 - 80;
-      var eX = vR.left + vR.width/2 - 60, eY = vR.top + vR.height/2 - 80;
-      var t0 = performance.now(), dur = 2000;
-      _portalState = 'damaged';
-      function tick(now) {
-        var t = Math.min(1, (now - t0) / dur);
-        var fCtx = els.fig.getContext('2d');
-        if (t < 0.2) {
-          // Cracks healing — eye stays damaged but transitioning
-        } else if (t < 0.4) {
-          var p = (t-0.2)/0.2;
-          _portalState = 'sealed';
-          els.fig.style.display = '';
-          els.fig.style.left = sX+'px'; els.fig.style.top = sY+'px';
-          els.fig.style.opacity = String(p*0.6);
-          _drawCinematicFigure(fCtx, 120, 160, 0.3, '#b4966a', 'rgba(180,150,100', p*0.3);
-        } else if (t < 0.9) {
-          var p = (t-0.4)/0.5, e = 1-Math.pow(1-p,2);
-          _portalState = 'sealed';
-          els.fig.style.display = '';
-          els.fig.style.left = (sX + e*(eX-sX))+'px';
-          els.fig.style.top = (sY + e*(eY-sY))+'px';
-          els.fig.style.opacity = String(0.6 + e*0.4);
-          _drawCinematicFigure(fCtx, 120, 160, 0.3+e*0.7, '#b4966a', 'rgba(180,150,100', 0.3*(1-e));
-        } else {
-          _portalState = 'cultivating';
-          els.overlay.remove();
-          vesselCanvas.style.opacity = '1'; vesselCanvas.style.transition = 'opacity 0.3s';
-          _cinematicActive = false; _cinematicType = null; _cleanupCinematicParams();
-          renderBreakthroughFooter();
-          return;
-        }
-        requestAnimationFrame(tick);
-      }
-      setTimeout(function() { requestAnimationFrame(tick); }, 300);
-    }
-
-    /* ── CINEMATIC 4: Unlock Transition ── */
-    function runCinematic_UnlockTransition() {
-      _cinematicActive = true; _cinematicType = 'unlock';
-      var portalCanvas = document.getElementById('gate-canvas');
-      if (!portalCanvas) { _cinematicActive = false; return; }
-      var pR = portalCanvas.getBoundingClientRect();
-      var overlay = document.createElement('div');
-      overlay.style.cssText = 'position:fixed;top:0;left:0;width:100vw;height:100vh;pointer-events:none;z-index:9999;';
-      var shimmer = document.createElement('div');
-      shimmer.style.cssText = 'position:absolute;border-radius:50%;pointer-events:none;background:radial-gradient(circle,rgba(200,169,106,0.4) 0%,transparent 70%);width:200px;height:100px;opacity:0;';
-      shimmer.style.left = (pR.left + pR.width/2 - 100)+'px';
-      shimmer.style.top = (pR.top + pR.height/2 - 50)+'px';
-      overlay.appendChild(shimmer);
-      document.body.appendChild(overlay);
-      var t0 = performance.now(), dur = 1000;
-      function tick(now) {
-        var t = Math.min(1, (now-t0)/dur);
-        if (t < 0.3) { _portalState = 'locked'; shimmer.style.opacity = '0'; }
-        else if (t < 0.7) { var p=(t-0.3)/0.4; _portalState = 'sealed'; shimmer.style.opacity = String(Math.sin(p*Math.PI)*0.8); }
-        else { var p=(t-0.7)/0.3; _portalState = 'cultivating'; shimmer.style.opacity = String((1-p)*0.3); }
-        if (t < 1) requestAnimationFrame(tick);
-        else { overlay.remove(); _cinematicActive = false; _cinematicType = null; renderBreakthroughFooter(); }
-      }
-      requestAnimationFrame(tick);
+      canvas.style.opacity = '0';
+      canvas.style.transform = 'translateY(-120px)';
+      setTimeout(function() { dropRAF = requestAnimationFrame(dropFrame); }, 600);
     }
 
 
@@ -2093,8 +1786,6 @@
     var _portalEnterStartTime = 0;
     var _portalMotes = [];
     var _portalCracks = [];
-    var _cinematicActive = false;
-    var _cinematicType = null;
     var _portalVeins = [];
     var _portalOuterPts = [];
     var _portalDustPts = [];
@@ -2141,9 +1832,6 @@
 
     function startPortalCanvas() {
       initPortalParticles();
-      // Preload the meditation figure for the enter animation
-      var _gender = safeLower(state.member && (state.member.gender || state.member.sl_gender)) || 'male';
-      loadGateFigure(_gender, function(c) {});
       if (_portalRaf) return;
       var canvas = document.getElementById('portal-canvas');
       if (!canvas) return;
@@ -2170,7 +1858,7 @@
         var cx = W / 2, cy = H * 0.42, gY = H - 50;
         var entering = _portalEntering;
         var enterE = entering ? t - _portalEnterStartTime : 0;
-        var closed = st === 'sealed' || st === 'cultivating' || st === 'complete' || st === 'locked';
+        var closed = st === 'sealed' || st === 'cultivating' || st === 'complete';
         var damaged = st === 'damaged';
         var inten = closed ? 0.08 : damaged ? 0.15 : entering ? Math.min(1.3, 0.5+enterE*0.4) : 0.45;
 
@@ -2215,10 +1903,6 @@
 
         if (damaged) {
           drawEyeDamaged(ctx, cx, cy, eyeW, rc, t);
-          drawTrappedFigure(ctx, cx, cy, rc, t);
-        }
-        if (st === 'locked') {
-          drawEyeLocked(ctx, cx, cy, eyeW, rc, t);
         }
 
         var eGlow = ctx.createRadialGradient(cx, gY-10, 0, cx, gY-10, 70);
@@ -2472,121 +2156,42 @@
       }
     }
 
-
-    function drawEyeLocked(ctx, cx, cy, eyeW, rc, t) {
-      // Closed eye shape
-      ctx.beginPath();
-      ctx.moveTo(cx - eyeW, cy);
-      ctx.quadraticCurveTo(cx, cy - eyeW * 0.12, cx + eyeW, cy);
-      ctx.strokeStyle = rc.dim + '88';
-      ctx.lineWidth = 2;
-      ctx.stroke();
-      // Bottom lid
-      ctx.beginPath();
-      ctx.moveTo(cx - eyeW * 0.7, cy + 2);
-      ctx.quadraticCurveTo(cx, cy + eyeW * 0.06, cx + eyeW * 0.7, cy + 2);
-      ctx.strokeStyle = rc.dim + '44';
-      ctx.lineWidth = 1;
-      ctx.stroke();
-      // Dim slit glow
-      var slitGrad = ctx.createRadialGradient(cx, cy, 0, cx, cy, eyeW * 0.3);
-      slitGrad.addColorStop(0, rc.dim + '33');
-      slitGrad.addColorStop(1, 'transparent');
-      ctx.fillStyle = slitGrad;
-      ctx.fillRect(cx - eyeW * 0.4, cy - eyeW * 0.2, eyeW * 0.8, eyeW * 0.4);
-      // Lock icon
-      var lockW = 14, lockH = 12, lockX = cx - lockW / 2, lockY = cy - lockH / 2 + 2;
-      ctx.fillStyle = '#44403888';
-      ctx.fillRect(lockX, lockY, lockW, lockH);
-      ctx.strokeStyle = '#44403899';
-      ctx.lineWidth = 1;
-      ctx.strokeRect(lockX, lockY, lockW, lockH);
-      ctx.beginPath();
-      ctx.arc(cx, lockY, lockW * 0.35, Math.PI, 0);
-      ctx.strokeStyle = '#444038aa';
-      ctx.lineWidth = 2;
-      ctx.stroke();
-      ctx.beginPath();
-      ctx.arc(cx, lockY + lockH * 0.35, 2, 0, Math.PI * 2);
-      ctx.fillStyle = '#222018';
-      ctx.fill();
-      // Very dim runes
-      var runes = '\u7384\u5929\u9053\u6CD5\u5143\u795E\u6C14\u529B';
-      ctx.font = '9px serif';
-      ctx.fillStyle = rc.rune + '08';
-      for (var i = 0; i < runes.length; i++) {
-        var angle = (i / runes.length) * Math.PI * 2 + t * 0.02;
-        var runeR = eyeW * 0.65;
-        ctx.fillText(runes[i], cx + Math.cos(angle) * runeR - 4, cy + Math.sin(angle) * runeR * 0.35 + 3);
-      }
-    }
-
-    function drawTrappedFigure(ctx, cx, cy, rc, t) {
-      var pulse = 0.18 + Math.sin(t * 1.2) * 0.05;
-      ctx.save();
-      ctx.globalAlpha = pulse;
-      ctx.strokeStyle = '#332222';
-      ctx.lineWidth = 1.5;
-      ctx.lineCap = 'round';
-      ctx.beginPath(); ctx.arc(cx, cy - 12, 4, 0, Math.PI * 2); ctx.stroke();
-      ctx.beginPath(); ctx.moveTo(cx, cy - 8); ctx.lineTo(cx, cy + 4); ctx.stroke();
-      ctx.beginPath(); ctx.moveTo(cx - 7, cy - 2); ctx.lineTo(cx, cy - 5); ctx.lineTo(cx + 7, cy - 2); ctx.stroke();
-      ctx.beginPath(); ctx.moveTo(cx - 5, cy + 12); ctx.lineTo(cx, cy + 4); ctx.lineTo(cx + 5, cy + 12); ctx.stroke();
-      ctx.restore();
-    }
-
     function drawEyeEnterAnim(ctx, cx, cy, irisR, pupilR, rc, t, enterE, gY) {
       if (enterE < 1.8) {
-        // Ease-in: figure slides from above-left, descends & shrinks into eye center
-        var wp = Math.min(1, enterE / 1.4);
-        var ease = wp < 0.5 ? 2 * wp * wp : 1 - Math.pow(-2 * wp + 2, 2) / 2;
+        var wp = Math.min(1, enterE/1.4);
+        var figStartX = cx - 100;
+        var fx = figStartX+(cx-figStartX)*wp;
+        var fy = gY;
+        var alpha = enterE > 1.2 ? Math.max(0, 1-(enterE-1.2)/0.6) : 0.85;
+        var scale = enterE > 1 ? Math.max(0.1, 1-(enterE-1)*1.2) : 1;
+        ctx.save(); ctx.translate(fx, fy); ctx.scale(scale, scale); ctx.translate(-fx, -fy);
+        ctx.globalAlpha = alpha; ctx.fillStyle = '#ddd0a0'; ctx.strokeStyle = '#ddd0a0'; ctx.lineWidth = 2;
+        ctx.beginPath(); ctx.arc(fx, fy-38, 5, 0, 6.28); ctx.fill();
+        ctx.beginPath(); ctx.moveTo(fx, fy-33); ctx.lineTo(fx, fy-14); ctx.stroke();
+        ctx.beginPath(); ctx.moveTo(fx, fy-28); ctx.lineTo(fx-8, fy-21); ctx.stroke();
+        ctx.beginPath(); ctx.moveTo(fx, fy-28); ctx.lineTo(fx+8, fy-21); ctx.stroke();
+        ctx.beginPath(); ctx.moveTo(fx, fy-14); ctx.lineTo(fx-5, fy); ctx.stroke();
+        ctx.beginPath(); ctx.moveTo(fx, fy-14); ctx.lineTo(fx+5, fy); ctx.stroke();
+        ctx.restore();
 
-        // Figure starts above the eye (from vessel area) and glides to eye center
-        var figStartX = cx - 60;
-        var figStartY = gY - 120;
-        var fx = figStartX + (cx - figStartX) * ease;
-        var fy = figStartY + (cy - figStartY) * ease;
-
-        // Figure shrinks from full size down to tiny as it enters the pupil
-        var figSize = 70 * (1 - ease * 0.88);
-        var alpha = enterE > 1.2 ? Math.max(0, 1 - (enterE - 1.2) / 0.5) : 0.9;
-
-        if (_gateFigureCache && figSize > 2) {
-          ctx.save();
-          ctx.globalAlpha = alpha;
-          // Draw golden glow behind figure
-          var glowR = figSize * 0.7;
-          var grd = ctx.createRadialGradient(fx, fy, 0, fx, fy, glowR);
-          grd.addColorStop(0, rc.glow + '33');
-          grd.addColorStop(1, 'transparent');
-          ctx.fillStyle = grd;
-          ctx.beginPath(); ctx.arc(fx, fy, glowR, 0, Math.PI * 2); ctx.fill();
-          // Draw actual meditation figure from cached SVG
-          ctx.drawImage(_gateFigureCache, fx - figSize * 0.5, fy - figSize * 0.6, figSize, figSize);
-          ctx.restore();
-        } else if (figSize > 2) {
-          // Fallback: draw a simple silhouette circle if SVG hasn't loaded
-          ctx.save();
-          ctx.globalAlpha = alpha;
-          ctx.fillStyle = '#ddd0a0';
-          ctx.beginPath(); ctx.arc(fx, fy - figSize * 0.15, figSize * 0.25, 0, Math.PI * 2); ctx.fill();
-          ctx.restore();
-        }
-
-        // Portal glow as figure approaches
         if (enterE > 0.7) {
-          var pA = Math.min(1, (enterE - 0.7) * 2);
-          var pGrd = ctx.createRadialGradient(cx, cy, 0, cx, cy, irisR * 2.5);
-          pGrd.addColorStop(0, rc.glow + '44'); pGrd.addColorStop(1, 'transparent');
-          ctx.fillStyle = pGrd; ctx.globalAlpha = pA * 0.4;
-          ctx.beginPath(); ctx.arc(cx, cy, irisR * 2.5, 0, Math.PI * 2); ctx.fill(); ctx.globalAlpha = 1;
+          var pA = Math.min(1, (enterE-0.7)*2);
+          var pGrd = ctx.createRadialGradient(cx, cy, 0, cx, cy, irisR*2.5);
+          pGrd.addColorStop(0, rc.glow+'44'); pGrd.addColorStop(1, 'transparent');
+          ctx.fillStyle = pGrd; ctx.globalAlpha = pA*0.4;
+          ctx.beginPath(); ctx.arc(cx, cy, irisR*2.5, 0, 6.28); ctx.fill(); ctx.globalAlpha = 1;
         }
       }
-      // White flash after figure enters
       if (enterE > 1.8 && enterE < 3) {
-        var fA = Math.max(0, 1 - (enterE - 1.8) / 0.6);
-        ctx.fillStyle = rc.glow; ctx.globalAlpha = fA * 0.18;
+        var fA = Math.max(0, 1-(enterE-1.8)/0.6);
+        ctx.fillStyle = rc.glow; ctx.globalAlpha = fA*0.18;
         ctx.fillRect(0, 0, ctx.canvas.width, ctx.canvas.height); ctx.globalAlpha = 1;
+      }
+
+      if (enterE < 2) {
+        var figAlpha2 = 0.85;
+        if (enterE > 1.2) figAlpha2 = 0;
+        if (figAlpha2 <= 0) return;
       }
     }
 
@@ -2676,36 +2281,6 @@
       } catch(e) { return 'Next Stage'; }
     }
 
-
-    function isNextVolumeNeeded() {
-      try {
-        var store = getStore();
-        var focus = getFocusRecord();
-        var sections = getSections();
-        if (!store || !focus) return false;
-        var KEYS = ['base','early','middle','late'];
-        var sec = safeLower(focus.section_key || '');
-        var idx = KEYS.indexOf(sec);
-        if (idx !== KEYS.length - 1) return false;
-        var lastSec = sections['late'] || null;
-        if (!lastSec) return false;
-        var st = safeLower(lastSec.stage_status || lastSec.ui_state || '');
-        if (st !== 'complete' && st !== 'comprehended') return false;
-        var access = getAccess();
-        if (access && access.next_volume_locked) return true;
-        if (state.record && state.record.next_volume_owned === false) return true;
-        return false;
-      } catch(e) { return false; }
-    }
-
-    function getNextVolumeName() {
-      try {
-        var store = getStore();
-        var vol = safeNumber(store && store.volume_number, 0);
-        return realmFromVolume(vol + 1) + ' \u2014 Volume ' + (vol + 1);
-      } catch(e) { return 'Next Volume'; }
-    }
-
     function renderBreakthroughFooter() {
       try {
         var store = getStore();
@@ -2726,8 +2301,6 @@
           gateState = 'open';
         } else if (v2Status === 'idle' && store && store.section_completed) {
           gateState = 'complete';
-        } else if (isNextVolumeNeeded()) {
-          gateState = 'locked';
         } else if (v2Status === 'cultivating' || v2Status === 'paused') {
           gateState = 'cultivating';
         } else if (store && store.section_row_exists) {
@@ -2772,8 +2345,8 @@
 
         if (kicker) kicker.textContent = 'Ascension Threshold';
         if (kicker) kicker.style.color = rc.pri;
-        var titles = { sealed:'The Eye is Closed', cultivating:'The Eye Stirs', complete:"Awaiting Heaven's Judgment", open:'The Eye Opens', active:'In Tribulation', damaged:'The Eye is Fractured', locked:'The Eye is Sealed' };
-        var descs = { sealed:'Continue cultivating to open the cosmic eye.', cultivating:'Qi flows through you. The eye stirs beneath its lids.', complete:'Comprehension is complete. The heavens judge your readiness.', open:'The cosmic eye gazes upon you. Step into its pupil to face tribulation.', active:'You are within the tribulation chamber.', damaged:'The eye is fractured. Repair required.', locked:'Acquire the next volume to continue your path.' };
+        var titles = { sealed:'The Eye is Closed', cultivating:'The Eye Stirs', complete:"Awaiting Heaven's Judgment", open:'The Eye Opens', active:'In Tribulation', damaged:'The Eye is Fractured' };
+        var descs = { sealed:'Continue cultivating to open the cosmic eye.', cultivating:'Qi flows through you. The eye stirs beneath its lids.', complete:'Comprehension is complete. The heavens judge your readiness.', open:'The cosmic eye gazes upon you. Step into its pupil to face tribulation.', active:'You are within the tribulation chamber.', damaged:'The eye is fractured. Repair required.' };
         if (titleEl) { titleEl.textContent = titles[gateState] || 'Portal'; titleEl.style.color = ''; }
         if (descEl) descEl.textContent = descs[gateState] || '';
 
@@ -2784,7 +2357,7 @@
         var fromLabel = volumeNumber > 0 ? realmFromVolume(volumeNumber) : '--';
         var chips = [];
         if (gateState === 'sealed') {
-          chips = [{label:'Scroll',val:'Not Opened',lc:'#444',vc:'#555',bg:'#111',bc:'#222'}];
+          chips = [{label:'Section',val:'Not Opened',lc:'#444',vc:'#555',bg:'#111',bc:'#222'}];
         } else if (gateState === 'cultivating') {
           var remSecs = focus ? safeNumber(focus.remaining_display_seconds || focus.remaining_seconds, 0) : 0;
           chips = [
@@ -2807,17 +2380,10 @@
           ];
         } else if (gateState === 'damaged') {
           var repairCp  = focus ? safeNumber(focus.repair_cp_cost, 0) : 0;
-          var resumeSecs = focus ? safeNumber(focus.repair_resume_from_seconds, 0) : 0;
-          var reqSecs = focus ? safeNumber(focus.required_seconds, 1) : 1;
-          var resumePct = reqSecs > 0 ? Math.round((resumeSecs / reqSecs) * 100) : 0;
+          var resumePct = focus ? safeNumber(focus.repair_resume_from_percent || focus.retained_comprehension_percent, 0) : 0;
           chips = [
             {label:'Repair Cost', val:repairCp+' CP', lc:'#7a202088',vc:'#cc4444',bg:'#150808',bc:'#7a202055'},
             {label:'Resume From', val:resumePct+'%',  lc:'#7a202088',vc:'#cc4444',bg:'#150808',bc:'#7a202055'}
-          ];
-        } else if (gateState === 'locked') {
-          chips = [
-            {label:'Status', val:'Volume Complete', lc:'#c8a96a66',vc:'#c8a96a',bg:'#1a1400',bc:'#c8a96a33'},
-            {label:'Next',   val:getNextVolumeName(), lc:'#44403888',vc:'#444038',bg:'#111008',bc:'#44403833'}
           ];
         }
         if (chipsEl) {
@@ -2852,20 +2418,7 @@
         } else if (gateState === 'active') {
           if (actionBtn) { actionBtn.style.display = 'block'; actionBtn.style.background = '#e8a840'; actionBtn.style.color = '#1a0f00'; actionBtn.textContent = 'Return to Breakthrough Chamber'; actionBtn.onclick = function() { window.location.href = getBreakthroughRoute(); }; }
         } else if (gateState === 'damaged') {
-          var repairCost = focus ? safeNumber(focus.repair_cp_cost, 0) : 0;
-          if (actionBtn) {
-            actionBtn.style.display = 'block'; actionBtn.style.background = '#7a2020'; actionBtn.style.color = '#ffe0e0';
-            actionBtn.textContent = 'Repair Scroll \u2014 ' + repairCost + ' CP'; actionBtn.disabled = false;
-            actionBtn.onclick = function() { handleRepairRecord(actionBtn, subNote); };
-          }
-          if (subNote) { subNote.textContent = 'Your scroll is damaged. Pay the repair cost to restore your progress.'; subNote.style.color = '#cc444488'; }
-        } else if (gateState === 'locked') {
-          if (actionBtn) {
-            actionBtn.style.display = 'block'; actionBtn.style.background = '#1a1400'; actionBtn.style.color = '#444038';
-            actionBtn.textContent = 'Acquire ' + getNextVolumeName();
-            actionBtn.onclick = function() { window.location.href = '/store.html'; };
-          }
-          if (subNote) { subNote.textContent = 'You have completed this volume. Acquire the next to continue ascending.'; subNote.style.color = '#44403888'; }
+          if (actionBtn) { actionBtn.style.display = 'block'; actionBtn.style.background = '#7a2020'; actionBtn.style.color = '#ffe0e0'; actionBtn.textContent = 'Repair the Record'; actionBtn.onclick = null; }
         }
       } catch(e) {
         console.error('renderBreakthroughFooter error:', e);
@@ -2918,98 +2471,6 @@
         }, 3200);
       } catch(e) {
         window.location.href = getBreakthroughRoute();
-      }
-    }
-
-
-    /* ── Populate hero stats strip ── */
-    function updateStatsStrip() {
-      var realmEl = document.getElementById('stat-realm');
-      var stageEl = document.getElementById('stat-stage');
-      var statusEl = document.getElementById('stat-status');
-      var qiEl    = document.getElementById('stat-qi');
-      if (!state) return;
-      var store = getStore ? getStore() : null;
-      var mem = state.member || state.user || {};
-      var record = getRecord ? getRecord() : null;
-      var sections = record && record.sections ? record.sections : {};
-      // Realm from store or member
-      if (realmEl) realmEl.textContent = toTitle((store && store.realm_name) || mem.current_realm_name, '--');
-      // Stage: find the focus section's stage or current stage
-      if (stageEl) {
-        var focusSection = getFocusRecord ? getFocusRecord() : null;
-        var stageName = '';
-        if (focusSection && focusSection.stage_name) { stageName = focusSection.stage_name; }
-        else if (focusSection && focusSection.section_key) { stageName = toTitle(focusSection.section_key, ''); }
-        else if (focusSection && focusSection.current_stage) { stageName = 'Stage ' + focusSection.current_stage; }
-        else if (mem.current_stage_name) { stageName = mem.current_stage_name; }
-        else if (mem.current_stage) { stageName = 'Stage ' + mem.current_stage; }
-        else if (state.user && state.user.realm_stage_key) { stageName = toTitle(state.user.realm_stage_key.split(':').pop(), ''); }
-        stageEl.textContent = stageName || '--';
-      }
-      // Status from book UI state
-      if (statusEl) {
-        var bookState = getBookUiState ? getBookUiState() : null;
-        if (bookState) {
-          statusEl.textContent = toTitle(bookState, '--');
-        } else {
-          var st = mem.v2_cultivation_status || mem.cultivation_status || '--';
-          statusEl.textContent = toTitle(st, '--');
-        }
-      }
-      // Qi from member/user
-      if (qiEl) {
-        var qi = safeNumber(mem.qi_current, null);
-        var qiMax = safeNumber(mem.qi_maximum, null);
-        if (qi != null && qiMax != null) {
-          qiEl.textContent = qi.toLocaleString() + ' / ' + qiMax.toLocaleString();
-        } else if (qi != null) {
-          qiEl.textContent = qi.toLocaleString();
-        } else {
-          qiEl.textContent = '--';
-        }
-      }
-    }
-
-
-    async function handleRepairRecord(btn, noteEl) {
-      if (!btn || btn.disabled) return;
-      var avatarKey = (state && state.member && state.member.sl_avatar_key) ||
-                      (state && state.user && state.user.sl_avatar_key) || '';
-      var username = (state && state.member && state.member.sl_username) ||
-                     (state && state.user && state.user.sl_username) || '';
-      if (!avatarKey && !username) {
-        if (noteEl) noteEl.textContent = 'Unable to identify cultivator.';
-        return;
-      }
-      btn.disabled = true;
-      btn.textContent = 'Repairing...';
-      if (noteEl) noteEl.textContent = 'Mending the fractured scroll...';
-      try {
-        var resp = await fetch(REPAIR_ENDPOINT, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          credentials: 'include',
-          body: JSON.stringify({ sl_avatar_key: avatarKey, username: username })
-        });
-        var data = await resp.json();
-        if (resp.ok && data && !data.error) {
-          btn.textContent = 'Scroll Restored';
-          btn.style.background = '#2a6630';
-          btn.style.color = '#88ff88';
-          if (noteEl) noteEl.textContent = 'The fractures have mended. Resuming cultivation...';
-          setTimeout(function() { window.location.href = window.location.pathname + '?volume=' + (state.requestedVolumeNumber || '') + '&repair=complete'; }, 1500);
-        } else {
-          btn.disabled = false;
-          btn.textContent = 'Repair the Scroll';
-          btn.style.background = '#7a2020';
-          btn.style.color = '#ffe0e0';
-          if (noteEl) noteEl.textContent = (data && data.message) || 'Repair failed. Check your cultivation points.';
-        }
-      } catch(e) {
-        btn.disabled = false;
-        btn.textContent = 'Repair the Scroll';
-        if (noteEl) noteEl.textContent = 'Connection error. Try again.';
       }
     }
 
@@ -3184,7 +2645,6 @@
       }
 
       clearNotFound();
-      updateStatsStrip();
       renderHero();
       renderPath();
       renderAltar();

@@ -898,9 +898,9 @@
       <div class="record-lower-grid">
         <section class="record-panel path-panel">
           <div class="record-panel-head">
-            <p class="record-panel-kicker">Scroll Path</p>
+            <p class="record-panel-kicker">Section Path</p>
             <h2 class="record-panel-title">Cultivation Route</h2>
-            <p class="record-panel-subtitle">Each scroll reflects live backend truth: sealed, opened, active, damaged, breakthrough-gated, or complete.</p>
+            <p class="record-panel-subtitle">Each section reflects live backend truth: sealed, opened, active, damaged, breakthrough-gated, or complete.</p>
           </div>
           <div class="path-list" id="path-list"></div>
         </section>
@@ -1411,7 +1411,7 @@
         safeText(store?.realm_name, realmFromVolume(store?.volume_number));
 
       document.getElementById("hero-focus-pill").textContent = focus
-        ? "Focus • " + toTitle(focus.section_key, "Scroll")
+        ? "Focus • " + toTitle(focus.section_key, "Section")
         : "No active focus";
 
       const badgeMap = {
@@ -1443,7 +1443,7 @@
         var sectionsObj = state.record && state.record.sections ? state.record.sections : {};
         var sections = Object.values(sectionsObj);
         if (!sections.length) {
-          pathList.innerHTML = '<p style="color:rgba(255,255,255,0.3);font-size:13px;">No scrolls available.</p>';
+          pathList.innerHTML = '<p style="color:rgba(255,255,255,0.3);font-size:13px;">No sections available.</p>';
           return;
         }
         pathList.innerHTML = sections.map(function(s, idx) {
@@ -1461,7 +1461,7 @@
           return '<div class="path-node-wrap" id="'+nodeId+'">'
             +'<div class="path-node-header" onclick="togglePathNode(\''+nodeId+'\')" style="cursor:pointer;display:flex;align-items:center;justify-content:space-between;padding:10px 12px;background:rgba(255,255,255,0.04);border:0.5px solid rgba(255,255,255,0.06);border-radius:8px;margin-bottom:4px;">'
             +'<div style="flex:1;">'
-            +'<p style="font-size:13px;font-weight:500;color:#fff;margin:0 0 1px;">'+toTitle(s.section_key||s.key||'Scroll')+'</p>'
+            +'<p style="font-size:13px;font-weight:500;color:#fff;margin:0 0 1px;">'+toTitle(s.section_key||s.key||'Section')+'</p>'
             +'<p style="font-size:11px;color:rgba(255,255,255,0.35);margin:0;">'+safeText(s.book_title||s.title,'')+'</p>'
             +'</div>'
             +'<div style="display:flex;align-items:center;gap:8px;">'
@@ -1861,227 +1861,32 @@
     function stopGateVessel() {
       if (_vesselRafId) { cancelAnimationFrame(_vesselRafId); _vesselRafId = null; }
     }
-    /* ═══════════════════════════════════════
-       CINEMATIC SYSTEM — 4 animated transitions
-       ═══════════════════════════════════════ */
-
     function runFigureDropCinematic() {
+      var canvas = document.getElementById('vessel-canvas');
+      if (!canvas) return;
       var urlParams = new URLSearchParams(window.location.search);
-      var btResult = urlParams.get('breakthrough');
-      var repairResult = urlParams.get('repair');
-      if (btResult === 'success') { runCinematic_SuccessAscension(); }
-      else if (btResult === 'failed') { runCinematic_FailureTrap(); }
-      else if (repairResult === 'complete') { runCinematic_RepairGlide(); }
-    }
-
-    function _cleanupCinematicParams() {
-      var url = new URL(window.location.href);
-      url.searchParams.delete('breakthrough');
-      url.searchParams.delete('repair');
-      window.history.replaceState({}, '', url);
-    }
-
-    function _drawCinematicFigure(ctx, w, h, scale, color, glowColor, glowAlpha) {
-      ctx.clearRect(0, 0, w, h);
-      ctx.save();
-      ctx.translate(w / 2, h / 2);
-      ctx.scale(scale, scale);
-      if (glowAlpha > 0) {
-        var glow = ctx.createRadialGradient(0, 0, 8, 0, 0, 50);
-        glow.addColorStop(0, glowColor.replace(')', ',' + glowAlpha + ')').replace('rgb(', 'rgba('));
-        glow.addColorStop(1, 'transparent');
-        ctx.fillStyle = glow;
-        ctx.fillRect(-60, -60, 120, 120);
-      }
-      ctx.fillStyle = color; ctx.strokeStyle = color; ctx.lineWidth = 2;
-      ctx.beginPath(); ctx.arc(0, -25, 8, 0, Math.PI * 2); ctx.fill();
-      ctx.beginPath(); ctx.moveTo(0, -17); ctx.lineTo(0, 5); ctx.stroke();
-      ctx.beginPath(); ctx.moveTo(-15, -5); ctx.quadraticCurveTo(-5, -10, 0, -5); ctx.quadraticCurveTo(5, -10, 15, -5); ctx.stroke();
-      ctx.beginPath(); ctx.moveTo(-12, 18); ctx.quadraticCurveTo(-3, 8, 0, 5); ctx.quadraticCurveTo(3, 8, 12, 18); ctx.stroke();
-      ctx.restore();
-    }
-
-    function _createCinematicOverlay() {
-      var overlay = document.createElement('div');
-      overlay.id = 'cinematic-overlay';
-      overlay.style.cssText = 'position:fixed;top:0;left:0;width:100vw;height:100vh;pointer-events:none;z-index:9999;';
-      var fig = document.createElement('canvas');
-      fig.width = 120; fig.height = 160;
-      fig.style.cssText = 'position:absolute;pointer-events:none;';
-      overlay.appendChild(fig);
-      document.body.appendChild(overlay);
-      return { overlay: overlay, fig: fig };
-    }
-
-    /* ── CINEMATIC 1: Success Ascension ── */
-    function runCinematic_SuccessAscension() {
-      _cinematicActive = true; _cinematicType = 'success';
-      var vesselCanvas = document.getElementById('vessel-canvas');
-      var portalCanvas = document.getElementById('gate-canvas');
-      if (!vesselCanvas || !portalCanvas) { _cleanupCinematicParams(); _cinematicActive = false; return; }
-      var vR = vesselCanvas.getBoundingClientRect();
-      var pR = portalCanvas.getBoundingClientRect();
-      var els = _createCinematicOverlay();
-      vesselCanvas.style.opacity = '0';
-      var sX = pR.left + pR.width/2 - 60, sY = pR.top + pR.height/2 - 80;
-      var eX = vR.left + vR.width/2 - 60, eY = vR.top + vR.height/2 - 80;
-      var t0 = performance.now(), dur = 2500;
-      function tick(now) {
-        var t = Math.min(1, (now - t0) / dur);
-        var fCtx = els.fig.getContext('2d');
-        var x, y, sc, ga, op;
-        if (t < 0.48) {
-          var p = t / 0.48, e = 1 - Math.pow(1-p, 2);
-          x = sX; y = sY - e * pR.height * 0.4;
-          sc = 0.3 + e*0.15; ga = e*0.6; op = 0.4 + e*0.6;
-        } else if (t < 0.6) {
-          var p = (t-0.48)/0.12;
-          var rY = sY - pR.height*0.4;
-          x = sX + p*(eX-sX); y = rY + p*(eY-rY);
-          sc = 0.45 + p*0.2; ga = 0.6; op = 1;
+      if (urlParams.get('breakthrough') !== 'success') return;
+      // Figure starts above canvas and drops into position
+      var dropProgress = 0;
+      var dropRAF;
+      function dropFrame() {
+        dropProgress = Math.min(1, dropProgress + 0.012);
+        var ease = 1 - Math.pow(1 - dropProgress, 3);
+        canvas.style.transform = 'translateY(' + ((1 - ease) * -120) + 'px)';
+        canvas.style.opacity = String(ease);
+        if (dropProgress < 1) {
+          dropRAF = requestAnimationFrame(dropFrame);
         } else {
-          var p = (t-0.6)/0.4, e = 1-Math.pow(1-p,3);
-          x = eX; y = eY; sc = 0.65+e*0.35; ga = 0.6*(1-e); op = 1;
-        }
-        els.fig.style.left = x+'px'; els.fig.style.top = y+'px'; els.fig.style.opacity = String(op);
-        _drawCinematicFigure(fCtx, 120, 160, sc, '#c8a96a', 'rgba(200,169,106', ga);
-        if (t < 1) { requestAnimationFrame(tick); }
-        else {
-          els.overlay.remove();
-          vesselCanvas.style.opacity = '1'; vesselCanvas.style.transition = 'opacity 0.3s';
-          _cinematicActive = false; _cinematicType = null; _cleanupCinematicParams();
+          canvas.style.transform = '';
+          canvas.style.opacity = '';
+          var url = new URL(window.location.href);
+          url.searchParams.delete('breakthrough');
+          window.history.replaceState({}, '', url);
         }
       }
-      requestAnimationFrame(tick);
-    }
-
-    /* ── CINEMATIC 2: Failure Trap ── */
-    function runCinematic_FailureTrap() {
-      _cinematicActive = true; _cinematicType = 'failure';
-      var vesselCanvas = document.getElementById('vessel-canvas');
-      var portalCanvas = document.getElementById('gate-canvas');
-      if (!vesselCanvas || !portalCanvas) { _cleanupCinematicParams(); _cinematicActive = false; return; }
-      var vR = vesselCanvas.getBoundingClientRect();
-      var pR = portalCanvas.getBoundingClientRect();
-      var els = _createCinematicOverlay();
-      vesselCanvas.style.opacity = '0';
-      var sX = vR.left + vR.width/2 - 60, sY = vR.top + vR.height/2 - 80;
-      var eX = pR.left + pR.width/2 - 60, eY = pR.top + pR.height/2 - 80;
-      var t0 = performance.now(), dur = 1800;
-      function tick(now) {
-        var t = Math.min(1, (now - t0) / dur);
-        var fCtx = els.fig.getContext('2d');
-        if (t < 0.33) {
-          var p = t/0.33, e = p*p;
-          var x = sX + e*(eX-sX), y = sY + e*(eY-sY);
-          var sc = 1.0 - e*0.65, ga = e*0.4, op = 1.0 - e*0.3;
-          els.fig.style.left = x+'px'; els.fig.style.top = y+'px'; els.fig.style.opacity = String(op);
-          _drawCinematicFigure(fCtx, 120, 160, sc, '#884444', 'rgba(204,68,68', ga);
-        } else if (t < 0.44) {
-          var p = (t-0.33)/0.11;
-          els.fig.style.opacity = String(0.7 - p*0.5);
-          var sc = 0.35 - p*0.25;
-          _drawCinematicFigure(fCtx, 120, 160, Math.max(0.05, sc), '#884444', 'rgba(204,68,68', 0.4);
-        } else {
-          els.fig.style.display = 'none';
-          _portalState = 'damaged';
-          if (_portalCracks.length < 6 || !_portalCracks[0].sg) {
-            _portalCracks = [];
-            for (var i = 0; i < 10; i++) {
-              var ca = -2.5+Math.random()*5, cl = 20+Math.random()*45, sg = [];
-              var cpx = 0, cpy = 0;
-              for (var k = 0; k < 5; k++) {
-                cpx += Math.cos(ca+Math.random()*0.5-0.25)*(cl/5);
-                cpy += Math.sin(ca+Math.random()*0.5-0.25)*(cl/5);
-                sg.push({ x: cpx, y: cpy });
-              }
-              _portalCracks.push({ sg: sg, al: 0.2+Math.random()*0.5 });
-            }
-          }
-          if (t >= 1) {
-            els.overlay.remove();
-            _cinematicActive = false; _cinematicType = null; _cleanupCinematicParams();
-            renderBreakthroughFooter();
-            return;
-          }
-        }
-        if (t < 1) requestAnimationFrame(tick);
-      }
-      requestAnimationFrame(tick);
-    }
-
-    /* ── CINEMATIC 3: Repair Glide ── */
-    function runCinematic_RepairGlide() {
-      _cinematicActive = true; _cinematicType = 'repair';
-      var vesselCanvas = document.getElementById('vessel-canvas');
-      var portalCanvas = document.getElementById('gate-canvas');
-      if (!vesselCanvas || !portalCanvas) { _cleanupCinematicParams(); _cinematicActive = false; return; }
-      var vR = vesselCanvas.getBoundingClientRect();
-      var pR = portalCanvas.getBoundingClientRect();
-      var els = _createCinematicOverlay();
-      els.fig.style.display = 'none';
-      vesselCanvas.style.opacity = '0';
-      var sX = pR.left + pR.width/2 - 60, sY = pR.top + pR.height/2 - 80;
-      var eX = vR.left + vR.width/2 - 60, eY = vR.top + vR.height/2 - 80;
-      var t0 = performance.now(), dur = 2000;
-      _portalState = 'damaged';
-      function tick(now) {
-        var t = Math.min(1, (now - t0) / dur);
-        var fCtx = els.fig.getContext('2d');
-        if (t < 0.2) {
-          // Cracks healing — eye stays damaged but transitioning
-        } else if (t < 0.4) {
-          var p = (t-0.2)/0.2;
-          _portalState = 'sealed';
-          els.fig.style.display = '';
-          els.fig.style.left = sX+'px'; els.fig.style.top = sY+'px';
-          els.fig.style.opacity = String(p*0.6);
-          _drawCinematicFigure(fCtx, 120, 160, 0.3, '#b4966a', 'rgba(180,150,100', p*0.3);
-        } else if (t < 0.9) {
-          var p = (t-0.4)/0.5, e = 1-Math.pow(1-p,2);
-          _portalState = 'sealed';
-          els.fig.style.display = '';
-          els.fig.style.left = (sX + e*(eX-sX))+'px';
-          els.fig.style.top = (sY + e*(eY-sY))+'px';
-          els.fig.style.opacity = String(0.6 + e*0.4);
-          _drawCinematicFigure(fCtx, 120, 160, 0.3+e*0.7, '#b4966a', 'rgba(180,150,100', 0.3*(1-e));
-        } else {
-          _portalState = 'cultivating';
-          els.overlay.remove();
-          vesselCanvas.style.opacity = '1'; vesselCanvas.style.transition = 'opacity 0.3s';
-          _cinematicActive = false; _cinematicType = null; _cleanupCinematicParams();
-          renderBreakthroughFooter();
-          return;
-        }
-        requestAnimationFrame(tick);
-      }
-      setTimeout(function() { requestAnimationFrame(tick); }, 300);
-    }
-
-    /* ── CINEMATIC 4: Unlock Transition ── */
-    function runCinematic_UnlockTransition() {
-      _cinematicActive = true; _cinematicType = 'unlock';
-      var portalCanvas = document.getElementById('gate-canvas');
-      if (!portalCanvas) { _cinematicActive = false; return; }
-      var pR = portalCanvas.getBoundingClientRect();
-      var overlay = document.createElement('div');
-      overlay.style.cssText = 'position:fixed;top:0;left:0;width:100vw;height:100vh;pointer-events:none;z-index:9999;';
-      var shimmer = document.createElement('div');
-      shimmer.style.cssText = 'position:absolute;border-radius:50%;pointer-events:none;background:radial-gradient(circle,rgba(200,169,106,0.4) 0%,transparent 70%);width:200px;height:100px;opacity:0;';
-      shimmer.style.left = (pR.left + pR.width/2 - 100)+'px';
-      shimmer.style.top = (pR.top + pR.height/2 - 50)+'px';
-      overlay.appendChild(shimmer);
-      document.body.appendChild(overlay);
-      var t0 = performance.now(), dur = 1000;
-      function tick(now) {
-        var t = Math.min(1, (now-t0)/dur);
-        if (t < 0.3) { _portalState = 'locked'; shimmer.style.opacity = '0'; }
-        else if (t < 0.7) { var p=(t-0.3)/0.4; _portalState = 'sealed'; shimmer.style.opacity = String(Math.sin(p*Math.PI)*0.8); }
-        else { var p=(t-0.7)/0.3; _portalState = 'cultivating'; shimmer.style.opacity = String((1-p)*0.3); }
-        if (t < 1) requestAnimationFrame(tick);
-        else { overlay.remove(); _cinematicActive = false; _cinematicType = null; renderBreakthroughFooter(); }
-      }
-      requestAnimationFrame(tick);
+      canvas.style.opacity = '0';
+      canvas.style.transform = 'translateY(-120px)';
+      setTimeout(function() { dropRAF = requestAnimationFrame(dropFrame); }, 600);
     }
 
 
@@ -2093,8 +1898,6 @@
     var _portalEnterStartTime = 0;
     var _portalMotes = [];
     var _portalCracks = [];
-    var _cinematicActive = false;
-    var _cinematicType = null;
     var _portalVeins = [];
     var _portalOuterPts = [];
     var _portalDustPts = [];
@@ -2141,9 +1944,6 @@
 
     function startPortalCanvas() {
       initPortalParticles();
-      // Preload the meditation figure for the enter animation
-      var _gender = safeLower(state.member && (state.member.gender || state.member.sl_gender)) || 'male';
-      loadGateFigure(_gender, function(c) {});
       if (_portalRaf) return;
       var canvas = document.getElementById('portal-canvas');
       if (!canvas) return;
@@ -2170,7 +1970,7 @@
         var cx = W / 2, cy = H * 0.42, gY = H - 50;
         var entering = _portalEntering;
         var enterE = entering ? t - _portalEnterStartTime : 0;
-        var closed = st === 'sealed' || st === 'cultivating' || st === 'complete' || st === 'locked';
+        var closed = st === 'sealed' || st === 'cultivating' || st === 'complete';
         var damaged = st === 'damaged';
         var inten = closed ? 0.08 : damaged ? 0.15 : entering ? Math.min(1.3, 0.5+enterE*0.4) : 0.45;
 
@@ -2215,10 +2015,6 @@
 
         if (damaged) {
           drawEyeDamaged(ctx, cx, cy, eyeW, rc, t);
-          drawTrappedFigure(ctx, cx, cy, rc, t);
-        }
-        if (st === 'locked') {
-          drawEyeLocked(ctx, cx, cy, eyeW, rc, t);
         }
 
         var eGlow = ctx.createRadialGradient(cx, gY-10, 0, cx, gY-10, 70);
@@ -2472,121 +2268,42 @@
       }
     }
 
-
-    function drawEyeLocked(ctx, cx, cy, eyeW, rc, t) {
-      // Closed eye shape
-      ctx.beginPath();
-      ctx.moveTo(cx - eyeW, cy);
-      ctx.quadraticCurveTo(cx, cy - eyeW * 0.12, cx + eyeW, cy);
-      ctx.strokeStyle = rc.dim + '88';
-      ctx.lineWidth = 2;
-      ctx.stroke();
-      // Bottom lid
-      ctx.beginPath();
-      ctx.moveTo(cx - eyeW * 0.7, cy + 2);
-      ctx.quadraticCurveTo(cx, cy + eyeW * 0.06, cx + eyeW * 0.7, cy + 2);
-      ctx.strokeStyle = rc.dim + '44';
-      ctx.lineWidth = 1;
-      ctx.stroke();
-      // Dim slit glow
-      var slitGrad = ctx.createRadialGradient(cx, cy, 0, cx, cy, eyeW * 0.3);
-      slitGrad.addColorStop(0, rc.dim + '33');
-      slitGrad.addColorStop(1, 'transparent');
-      ctx.fillStyle = slitGrad;
-      ctx.fillRect(cx - eyeW * 0.4, cy - eyeW * 0.2, eyeW * 0.8, eyeW * 0.4);
-      // Lock icon
-      var lockW = 14, lockH = 12, lockX = cx - lockW / 2, lockY = cy - lockH / 2 + 2;
-      ctx.fillStyle = '#44403888';
-      ctx.fillRect(lockX, lockY, lockW, lockH);
-      ctx.strokeStyle = '#44403899';
-      ctx.lineWidth = 1;
-      ctx.strokeRect(lockX, lockY, lockW, lockH);
-      ctx.beginPath();
-      ctx.arc(cx, lockY, lockW * 0.35, Math.PI, 0);
-      ctx.strokeStyle = '#444038aa';
-      ctx.lineWidth = 2;
-      ctx.stroke();
-      ctx.beginPath();
-      ctx.arc(cx, lockY + lockH * 0.35, 2, 0, Math.PI * 2);
-      ctx.fillStyle = '#222018';
-      ctx.fill();
-      // Very dim runes
-      var runes = '\u7384\u5929\u9053\u6CD5\u5143\u795E\u6C14\u529B';
-      ctx.font = '9px serif';
-      ctx.fillStyle = rc.rune + '08';
-      for (var i = 0; i < runes.length; i++) {
-        var angle = (i / runes.length) * Math.PI * 2 + t * 0.02;
-        var runeR = eyeW * 0.65;
-        ctx.fillText(runes[i], cx + Math.cos(angle) * runeR - 4, cy + Math.sin(angle) * runeR * 0.35 + 3);
-      }
-    }
-
-    function drawTrappedFigure(ctx, cx, cy, rc, t) {
-      var pulse = 0.18 + Math.sin(t * 1.2) * 0.05;
-      ctx.save();
-      ctx.globalAlpha = pulse;
-      ctx.strokeStyle = '#332222';
-      ctx.lineWidth = 1.5;
-      ctx.lineCap = 'round';
-      ctx.beginPath(); ctx.arc(cx, cy - 12, 4, 0, Math.PI * 2); ctx.stroke();
-      ctx.beginPath(); ctx.moveTo(cx, cy - 8); ctx.lineTo(cx, cy + 4); ctx.stroke();
-      ctx.beginPath(); ctx.moveTo(cx - 7, cy - 2); ctx.lineTo(cx, cy - 5); ctx.lineTo(cx + 7, cy - 2); ctx.stroke();
-      ctx.beginPath(); ctx.moveTo(cx - 5, cy + 12); ctx.lineTo(cx, cy + 4); ctx.lineTo(cx + 5, cy + 12); ctx.stroke();
-      ctx.restore();
-    }
-
     function drawEyeEnterAnim(ctx, cx, cy, irisR, pupilR, rc, t, enterE, gY) {
       if (enterE < 1.8) {
-        // Ease-in: figure slides from above-left, descends & shrinks into eye center
-        var wp = Math.min(1, enterE / 1.4);
-        var ease = wp < 0.5 ? 2 * wp * wp : 1 - Math.pow(-2 * wp + 2, 2) / 2;
+        var wp = Math.min(1, enterE/1.4);
+        var figStartX = cx - 100;
+        var fx = figStartX+(cx-figStartX)*wp;
+        var fy = gY;
+        var alpha = enterE > 1.2 ? Math.max(0, 1-(enterE-1.2)/0.6) : 0.85;
+        var scale = enterE > 1 ? Math.max(0.1, 1-(enterE-1)*1.2) : 1;
+        ctx.save(); ctx.translate(fx, fy); ctx.scale(scale, scale); ctx.translate(-fx, -fy);
+        ctx.globalAlpha = alpha; ctx.fillStyle = '#ddd0a0'; ctx.strokeStyle = '#ddd0a0'; ctx.lineWidth = 2;
+        ctx.beginPath(); ctx.arc(fx, fy-38, 5, 0, 6.28); ctx.fill();
+        ctx.beginPath(); ctx.moveTo(fx, fy-33); ctx.lineTo(fx, fy-14); ctx.stroke();
+        ctx.beginPath(); ctx.moveTo(fx, fy-28); ctx.lineTo(fx-8, fy-21); ctx.stroke();
+        ctx.beginPath(); ctx.moveTo(fx, fy-28); ctx.lineTo(fx+8, fy-21); ctx.stroke();
+        ctx.beginPath(); ctx.moveTo(fx, fy-14); ctx.lineTo(fx-5, fy); ctx.stroke();
+        ctx.beginPath(); ctx.moveTo(fx, fy-14); ctx.lineTo(fx+5, fy); ctx.stroke();
+        ctx.restore();
 
-        // Figure starts above the eye (from vessel area) and glides to eye center
-        var figStartX = cx - 60;
-        var figStartY = gY - 120;
-        var fx = figStartX + (cx - figStartX) * ease;
-        var fy = figStartY + (cy - figStartY) * ease;
-
-        // Figure shrinks from full size down to tiny as it enters the pupil
-        var figSize = 70 * (1 - ease * 0.88);
-        var alpha = enterE > 1.2 ? Math.max(0, 1 - (enterE - 1.2) / 0.5) : 0.9;
-
-        if (_gateFigureCache && figSize > 2) {
-          ctx.save();
-          ctx.globalAlpha = alpha;
-          // Draw golden glow behind figure
-          var glowR = figSize * 0.7;
-          var grd = ctx.createRadialGradient(fx, fy, 0, fx, fy, glowR);
-          grd.addColorStop(0, rc.glow + '33');
-          grd.addColorStop(1, 'transparent');
-          ctx.fillStyle = grd;
-          ctx.beginPath(); ctx.arc(fx, fy, glowR, 0, Math.PI * 2); ctx.fill();
-          // Draw actual meditation figure from cached SVG
-          ctx.drawImage(_gateFigureCache, fx - figSize * 0.5, fy - figSize * 0.6, figSize, figSize);
-          ctx.restore();
-        } else if (figSize > 2) {
-          // Fallback: draw a simple silhouette circle if SVG hasn't loaded
-          ctx.save();
-          ctx.globalAlpha = alpha;
-          ctx.fillStyle = '#ddd0a0';
-          ctx.beginPath(); ctx.arc(fx, fy - figSize * 0.15, figSize * 0.25, 0, Math.PI * 2); ctx.fill();
-          ctx.restore();
-        }
-
-        // Portal glow as figure approaches
         if (enterE > 0.7) {
-          var pA = Math.min(1, (enterE - 0.7) * 2);
-          var pGrd = ctx.createRadialGradient(cx, cy, 0, cx, cy, irisR * 2.5);
-          pGrd.addColorStop(0, rc.glow + '44'); pGrd.addColorStop(1, 'transparent');
-          ctx.fillStyle = pGrd; ctx.globalAlpha = pA * 0.4;
-          ctx.beginPath(); ctx.arc(cx, cy, irisR * 2.5, 0, Math.PI * 2); ctx.fill(); ctx.globalAlpha = 1;
+          var pA = Math.min(1, (enterE-0.7)*2);
+          var pGrd = ctx.createRadialGradient(cx, cy, 0, cx, cy, irisR*2.5);
+          pGrd.addColorStop(0, rc.glow+'44'); pGrd.addColorStop(1, 'transparent');
+          ctx.fillStyle = pGrd; ctx.globalAlpha = pA*0.4;
+          ctx.beginPath(); ctx.arc(cx, cy, irisR*2.5, 0, 6.28); ctx.fill(); ctx.globalAlpha = 1;
         }
       }
-      // White flash after figure enters
       if (enterE > 1.8 && enterE < 3) {
-        var fA = Math.max(0, 1 - (enterE - 1.8) / 0.6);
-        ctx.fillStyle = rc.glow; ctx.globalAlpha = fA * 0.18;
+        var fA = Math.max(0, 1-(enterE-1.8)/0.6);
+        ctx.fillStyle = rc.glow; ctx.globalAlpha = fA*0.18;
         ctx.fillRect(0, 0, ctx.canvas.width, ctx.canvas.height); ctx.globalAlpha = 1;
+      }
+
+      if (enterE < 2) {
+        var figAlpha2 = 0.85;
+        if (enterE > 1.2) figAlpha2 = 0;
+        if (figAlpha2 <= 0) return;
       }
     }
 
@@ -2676,36 +2393,6 @@
       } catch(e) { return 'Next Stage'; }
     }
 
-
-    function isNextVolumeNeeded() {
-      try {
-        var store = getStore();
-        var focus = getFocusRecord();
-        var sections = getSections();
-        if (!store || !focus) return false;
-        var KEYS = ['base','early','middle','late'];
-        var sec = safeLower(focus.section_key || '');
-        var idx = KEYS.indexOf(sec);
-        if (idx !== KEYS.length - 1) return false;
-        var lastSec = sections['late'] || null;
-        if (!lastSec) return false;
-        var st = safeLower(lastSec.stage_status || lastSec.ui_state || '');
-        if (st !== 'complete' && st !== 'comprehended') return false;
-        var access = getAccess();
-        if (access && access.next_volume_locked) return true;
-        if (state.record && state.record.next_volume_owned === false) return true;
-        return false;
-      } catch(e) { return false; }
-    }
-
-    function getNextVolumeName() {
-      try {
-        var store = getStore();
-        var vol = safeNumber(store && store.volume_number, 0);
-        return realmFromVolume(vol + 1) + ' \u2014 Volume ' + (vol + 1);
-      } catch(e) { return 'Next Volume'; }
-    }
-
     function renderBreakthroughFooter() {
       try {
         var store = getStore();
@@ -2726,8 +2413,6 @@
           gateState = 'open';
         } else if (v2Status === 'idle' && store && store.section_completed) {
           gateState = 'complete';
-        } else if (isNextVolumeNeeded()) {
-          gateState = 'locked';
         } else if (v2Status === 'cultivating' || v2Status === 'paused') {
           gateState = 'cultivating';
         } else if (store && store.section_row_exists) {
@@ -2772,8 +2457,8 @@
 
         if (kicker) kicker.textContent = 'Ascension Threshold';
         if (kicker) kicker.style.color = rc.pri;
-        var titles = { sealed:'The Eye is Closed', cultivating:'The Eye Stirs', complete:"Awaiting Heaven's Judgment", open:'The Eye Opens', active:'In Tribulation', damaged:'The Eye is Fractured', locked:'The Eye is Sealed' };
-        var descs = { sealed:'Continue cultivating to open the cosmic eye.', cultivating:'Qi flows through you. The eye stirs beneath its lids.', complete:'Comprehension is complete. The heavens judge your readiness.', open:'The cosmic eye gazes upon you. Step into its pupil to face tribulation.', active:'You are within the tribulation chamber.', damaged:'The eye is fractured. Repair required.', locked:'Acquire the next volume to continue your path.' };
+        var titles = { sealed:'The Eye is Closed', cultivating:'The Eye Stirs', complete:"Awaiting Heaven's Judgment", open:'The Eye Opens', active:'In Tribulation', damaged:'The Eye is Fractured' };
+        var descs = { sealed:'Continue cultivating to open the cosmic eye.', cultivating:'Qi flows through you. The eye stirs beneath its lids.', complete:'Comprehension is complete. The heavens judge your readiness.', open:'The cosmic eye gazes upon you. Step into its pupil to face tribulation.', active:'You are within the tribulation chamber.', damaged:'The eye is fractured. Repair required.' };
         if (titleEl) { titleEl.textContent = titles[gateState] || 'Portal'; titleEl.style.color = ''; }
         if (descEl) descEl.textContent = descs[gateState] || '';
 
@@ -2784,7 +2469,7 @@
         var fromLabel = volumeNumber > 0 ? realmFromVolume(volumeNumber) : '--';
         var chips = [];
         if (gateState === 'sealed') {
-          chips = [{label:'Scroll',val:'Not Opened',lc:'#444',vc:'#555',bg:'#111',bc:'#222'}];
+          chips = [{label:'Section',val:'Not Opened',lc:'#444',vc:'#555',bg:'#111',bc:'#222'}];
         } else if (gateState === 'cultivating') {
           var remSecs = focus ? safeNumber(focus.remaining_display_seconds || focus.remaining_seconds, 0) : 0;
           chips = [
@@ -2807,17 +2492,10 @@
           ];
         } else if (gateState === 'damaged') {
           var repairCp  = focus ? safeNumber(focus.repair_cp_cost, 0) : 0;
-          var resumeSecs = focus ? safeNumber(focus.repair_resume_from_seconds, 0) : 0;
-          var reqSecs = focus ? safeNumber(focus.required_seconds, 1) : 1;
-          var resumePct = reqSecs > 0 ? Math.round((resumeSecs / reqSecs) * 100) : 0;
+          var resumePct = focus ? safeNumber(focus.repair_resume_from_percent || focus.retained_comprehension_percent, 0) : 0;
           chips = [
             {label:'Repair Cost', val:repairCp+' CP', lc:'#7a202088',vc:'#cc4444',bg:'#150808',bc:'#7a202055'},
             {label:'Resume From', val:resumePct+'%',  lc:'#7a202088',vc:'#cc4444',bg:'#150808',bc:'#7a202055'}
-          ];
-        } else if (gateState === 'locked') {
-          chips = [
-            {label:'Status', val:'Volume Complete', lc:'#c8a96a66',vc:'#c8a96a',bg:'#1a1400',bc:'#c8a96a33'},
-            {label:'Next',   val:getNextVolumeName(), lc:'#44403888',vc:'#444038',bg:'#111008',bc:'#44403833'}
           ];
         }
         if (chipsEl) {
@@ -2852,20 +2530,11 @@
         } else if (gateState === 'active') {
           if (actionBtn) { actionBtn.style.display = 'block'; actionBtn.style.background = '#e8a840'; actionBtn.style.color = '#1a0f00'; actionBtn.textContent = 'Return to Breakthrough Chamber'; actionBtn.onclick = function() { window.location.href = getBreakthroughRoute(); }; }
         } else if (gateState === 'damaged') {
-          var repairCost = focus ? safeNumber(focus.repair_cp_cost, 0) : 0;
           if (actionBtn) {
-            actionBtn.style.display = 'block'; actionBtn.style.background = '#7a2020'; actionBtn.style.color = '#ffe0e0';
-            actionBtn.textContent = 'Repair Scroll \u2014 ' + repairCost + ' CP'; actionBtn.disabled = false;
+            actionBtn.style.display = 'block'; actionBtn.style.background = '#7a2020'; actionBtn.style.color = '#ffe0e0'; actionBtn.textContent = 'Repair the Record'; actionBtn.disabled = false;
             actionBtn.onclick = function() { handleRepairRecord(actionBtn, subNote); };
           }
-          if (subNote) { subNote.textContent = 'Your scroll is damaged. Pay the repair cost to restore your progress.'; subNote.style.color = '#cc444488'; }
-        } else if (gateState === 'locked') {
-          if (actionBtn) {
-            actionBtn.style.display = 'block'; actionBtn.style.background = '#1a1400'; actionBtn.style.color = '#444038';
-            actionBtn.textContent = 'Acquire ' + getNextVolumeName();
-            actionBtn.onclick = function() { window.location.href = '/store.html'; };
-          }
-          if (subNote) { subNote.textContent = 'You have completed this volume. Acquire the next to continue ascending.'; subNote.style.color = '#44403888'; }
+          if (subNote) { subNote.textContent = 'Your scripture is damaged. Pay the repair cost to restore your progress.'; subNote.style.color = '#cc444488'; }
         }
       } catch(e) {
         console.error('renderBreakthroughFooter error:', e);
@@ -2968,48 +2637,6 @@
         } else {
           qiEl.textContent = '--';
         }
-      }
-    }
-
-
-    async function handleRepairRecord(btn, noteEl) {
-      if (!btn || btn.disabled) return;
-      var avatarKey = (state && state.member && state.member.sl_avatar_key) ||
-                      (state && state.user && state.user.sl_avatar_key) || '';
-      var username = (state && state.member && state.member.sl_username) ||
-                     (state && state.user && state.user.sl_username) || '';
-      if (!avatarKey && !username) {
-        if (noteEl) noteEl.textContent = 'Unable to identify cultivator.';
-        return;
-      }
-      btn.disabled = true;
-      btn.textContent = 'Repairing...';
-      if (noteEl) noteEl.textContent = 'Mending the fractured scroll...';
-      try {
-        var resp = await fetch(REPAIR_ENDPOINT, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          credentials: 'include',
-          body: JSON.stringify({ sl_avatar_key: avatarKey, username: username })
-        });
-        var data = await resp.json();
-        if (resp.ok && data && !data.error) {
-          btn.textContent = 'Scroll Restored';
-          btn.style.background = '#2a6630';
-          btn.style.color = '#88ff88';
-          if (noteEl) noteEl.textContent = 'The fractures have mended. Resuming cultivation...';
-          setTimeout(function() { window.location.href = window.location.pathname + '?volume=' + (state.requestedVolumeNumber || '') + '&repair=complete'; }, 1500);
-        } else {
-          btn.disabled = false;
-          btn.textContent = 'Repair the Scroll';
-          btn.style.background = '#7a2020';
-          btn.style.color = '#ffe0e0';
-          if (noteEl) noteEl.textContent = (data && data.message) || 'Repair failed. Check your cultivation points.';
-        }
-      } catch(e) {
-        btn.disabled = false;
-        btn.textContent = 'Repair the Scroll';
-        if (noteEl) noteEl.textContent = 'Connection error. Try again.';
       }
     }
 
