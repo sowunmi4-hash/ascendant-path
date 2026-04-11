@@ -2452,6 +2452,7 @@
     function renderPrimaryAction() {
       try {
         var action = getPrimaryActionPayload();
+        state.actionState = action;
         var button = document.getElementById("primary-action-button");
         var note = document.getElementById("action-note");
         var secondary = document.getElementById("secondary-action-button");
