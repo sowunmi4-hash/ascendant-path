@@ -1652,4 +1652,25 @@
         if (!state.displayIsActive) {
           maybeAutoSync();
         }
-  
+        });
+    }
+
+    // Init
+    function init() {
+      state.requestedVolumeNumber = getVolumeNumberFromQuery();
+      state.requestedPartnershipUuid = getPartnershipUuidFromQuery();
+      state.requestedLegacyPartnershipId = getLegacyPartnershipIdFromQuery();
+
+      loadViewerSession().then(function(ok) {
+        if (ok) {
+          return loadBookState();
+        }
+      }).catch(function(err) {
+        console.error('Init error:', err);
+      });
+    }
+
+    document.addEventListener('DOMContentLoaded', init);
+  </script>
+</body>
+</html>
