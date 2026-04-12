@@ -2,14 +2,12 @@
 // Starts personal cultivation using v2 system.
 // Dual auth: ap_session cookie (website) OR sl_avatar_key in body (HUD/LSL).
 //
-// Manual mode behaviour:
-//   - Calls v2_begin_cultivation (or v2_resume_cultivation as fallback) to set
-//     meditation_active = true so auric fills and the HUD shows "Meditating: Yes".
-//   - Immediately calls v2_pause_cultivation to keep scroll progress idle.
+// Manual mode: calls v2_begin_cultivation (or v2_resume fallback) — sets
+//   v2_cultivation_status = 'cultivating' so meditation_active = true in HUD.
+//   sync-meditation-progress skips v2_sync_realm_cultivation in manual mode
+//   so scroll does NOT advance while the HUD shows "Meditating: Yes".
 //
-// Auto mode behaviour (unchanged):
-//   - Calls v2_begin_cultivation / v2_resume_cultivation and lets cultivation run
-//     fully (scroll advances as auric is consumed).
+// Auto mode: same begin/resume sequence, then sync drives scroll normally.
 
 const { createClient } = require("@supabase/supabase-js");
 
@@ -70,7 +68,7 @@ async function resolveAvatarKey(event, body) {
   return null;
 }
 
-// Starts cultivation via begin or resume fallback.
+// Starts cultivation: tries v2_begin_cultivation, falls back to v2_resume_cultivation.
 async function startCultivation(avatarKey) {
   const { data: beginResult, error: beginError } = await supabase
     .schema("library")
@@ -138,6 +136,9 @@ exports.handler = async (event) => {
 
   const preference = (member?.personal_cultivation_preference || "manual").toLowerCase();
 
+  // Manual mode: start cultivation so v2_cultivation_status = 'cultivating'
+  // (makes HUD show "Meditating: Yes"). sync-meditation-progress will skip
+  // v2_sync_realm_cultivation in manual mode, so scroll stays idle.
   if (preference === "manual") {
     const started = await startCultivation(avatarKey);
 
@@ -146,25 +147,17 @@ exports.handler = async (event) => {
       return json(500, { error: "Failed to start meditation", detail: started.error });
     }
 
-    const { error: pauseError } = await supabase
-      .schema("library")
-      .rpc("v2_pause_cultivation", { p_sl_avatar_key: avatarKey });
-
-    if (pauseError) {
-      console.warn("v2_pause_cultivation (manual) warn:", pauseError.message);
-    }
-
     return json(200, {
       success: true,
       action: "meditation_started",
-      message: "Meditation started. Auric is filling. In manual mode, scroll is paused.",
+      message: "Meditation started. Auric is filling. Scroll is paused — use the cultivation book to advance when ready.",
       cultivation_preference: "manual",
       auric_filling: true,
       cultivation_active: false
     });
   }
 
-  // Auto mode
+  // Auto mode: start cultivation and let sync drive scroll normally.
   const started = await startCultivation(avatarKey);
 
   if (!started.success) {
