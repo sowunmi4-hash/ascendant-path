@@ -1870,6 +1870,8 @@
       var btResult = urlParams.get('breakthrough');
       var repairResult = urlParams.get('repair');
       if (btResult === 'success') { runCinematic_SuccessAscension(); }
+      else if (btResult === 'failed_damaged') { runCinematic_FailureTrap(); }
+      else if (btResult === 'failed_stable') { runCinematic_StableFailure(); }
       else if (btResult === 'failed') { runCinematic_FailureTrap(); }
       else if (repairResult === 'complete') { runCinematic_RepairGlide(); }
     }
@@ -1879,6 +1881,75 @@
       url.searchParams.delete('breakthrough');
       url.searchParams.delete('repair');
       window.history.replaceState({}, '', url);
+    }
+
+    /* ── CINEMATIC: Stable Failure (pushed back, no damage) ── */
+    function runCinematic_StableFailure() {
+      _cinematicActive = true; _cinematicType = 'stable_fail';
+      var vesselCanvas = document.getElementById('vessel-canvas');
+      var portalCanvas = document.getElementById('gate-canvas');
+      if (!vesselCanvas || !portalCanvas) { _cleanupCinematicParams(); _cinematicActive = false; return; }
+
+      var els = _createCinematicOverlay();
+      var overlay = els.overlay; var fig = els.fig;
+      var fCtx = fig.getContext('2d');
+
+      // Figure appears at portal eye area, drifts back upward and fades — rejected but unbroken
+      var portalRect = portalCanvas.getBoundingClientRect();
+      var vesselRect = vesselCanvas.getBoundingClientRect();
+      var startX = portalRect.left + portalRect.width * 0.5 - 60;
+      var startY = portalRect.top + portalRect.height * 0.42 - 80;
+      var endX = vesselRect.left + vesselRect.width * 0.3 - 60;
+      var endY = vesselRect.top + vesselRect.height * 0.3 - 80;
+
+      fig.style.left = startX + 'px';
+      fig.style.top  = startY + 'px';
+
+      var duration = 2000;
+      var startTime = performance.now();
+
+      function animate(now) {
+        var elapsed = now - startTime;
+        var p = Math.min(1, elapsed / duration);
+        var ease = p < 0.5 ? 2 * p * p : 1 - Math.pow(-2 * p + 2, 2) / 2;
+
+        // Figure drifts from portal back toward vessel, with a slight wobble (pushed back)
+        var wobble = Math.sin(p * Math.PI * 4) * (1 - ease) * 8;
+        var curX = startX + (endX - startX) * ease + wobble;
+        var curY = startY + (endY - startY) * ease;
+        fig.style.left = curX + 'px';
+        fig.style.top  = curY + 'px';
+
+        // Scale: starts small (at eye), grows to normal
+        var sc = 0.2 + ease * 0.8;
+        // Dim amber color — rejected but not damaged
+        var ga = 0.3 + ease * 0.5;
+        _drawCinematicFigure(fCtx, 120, 160, sc, '#b89040', 'rgba(184,144,64', ga);
+
+        // Flash the portal eye briefly at the start
+        if (p < 0.3) {
+          var pCtx = portalCanvas.getContext('2d');
+          pCtx.save();
+          var flashA = (1 - p / 0.3) * 0.15;
+          pCtx.fillStyle = 'rgba(255,200,100,' + flashA + ')';
+          pCtx.fillRect(0, 0, portalCanvas.width, portalCanvas.height);
+          pCtx.restore();
+        }
+
+        if (p < 1) {
+          requestAnimationFrame(animate);
+        } else {
+          // Fade out
+          fig.style.transition = 'opacity 0.4s';
+          fig.style.opacity = '0';
+          setTimeout(function() {
+            if (overlay.parentNode) overlay.parentNode.removeChild(overlay);
+            _cinematicActive = false;
+            _cleanupCinematicParams();
+          }, 500);
+        }
+      }
+      requestAnimationFrame(animate);
     }
 
     function _drawCinematicFigure(ctx, w, h, scale, color, glowColor, glowAlpha) {
@@ -2537,13 +2608,13 @@
 
     function drawEyeEnterAnim(ctx, cx, cy, irisR, pupilR, rc, t, enterE, gY) {
       if (enterE < 1.8) {
-        // Ease-in: figure slides from above-left, descends & shrinks into eye center
+        // Ease-in: figure descends from TOP of canvas, shrinks into eye center
         var wp = Math.min(1, enterE / 1.4);
         var ease = wp < 0.5 ? 2 * wp * wp : 1 - Math.pow(-2 * wp + 2, 2) / 2;
 
-        // Figure starts above the eye (from vessel area) and glides to eye center
-        var figStartX = cx - 60;
-        var figStartY = gY - 120;
+        // Figure starts well ABOVE the eye (near top of canvas) and descends DOWN
+        var figStartX = cx;
+        var figStartY = cy - 140;
         var fx = figStartX + (cx - figStartX) * ease;
         var fy = figStartY + (cy - figStartY) * ease;
 

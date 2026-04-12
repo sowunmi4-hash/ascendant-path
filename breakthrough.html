@@ -1367,6 +1367,21 @@
         bannerIcon = "⚡";
         bannerTitle = "Heaven Rejects the Attempt";
         bannerCopy = safeText(bt.verdict_text, "The cultivator survived but the threshold was broken under pressure. Repair is required before another lawful attempt.");
+        // Auto-redirect back with failure param after showing verdict
+        if (!window._failRedirectScheduled) {
+          window._failRedirectScheduled = true;
+          setTimeout(function() {
+            window.location.href = '/cultivation-book.html?breakthrough=failed_damaged';
+          }, 6000);
+        }
+      } else if (outcome === "failed_stable" || (outcome && outcome.includes && outcome.includes('fail'))) {
+        // Auto-redirect for stable failures too
+        if (!window._failRedirectScheduled) {
+          window._failRedirectScheduled = true;
+          setTimeout(function() {
+            window.location.href = '/cultivation-book.html?breakthrough=failed_stable';
+          }, 6000);
+        }
       }
 
       $("verdict-banner-wrap").innerHTML = `
