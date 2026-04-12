@@ -311,6 +311,20 @@ async function loadV2TimerCatalog(volumeNumber) {
   return timers;
 }
 
+async function checkNextVolumeOwned(slAvatarKey, nextVolumeNumber) {
+  if (!slAvatarKey || !nextVolumeNumber) return false;
+  const { data, error } = await supabase
+    .schema("library")
+    .from("member_library_view")
+    .select("id")
+    .eq("sl_avatar_key", slAvatarKey)
+    .eq("volume_number", nextVolumeNumber)
+    .limit(1)
+    .maybeSingle();
+  if (error) return false;
+  return data !== null;
+}
+
 async function loadV2ActiveBreakthrough(slAvatarKey) {
   if (!slAvatarKey) return null;
 
@@ -984,6 +998,9 @@ async function buildV2CultivationBookState({ member, requestedVolumeNumber }) {
     loadV2ActiveBreakthrough(slAvatarKey)
   ]);
 
+  // Check next volume ownership — needed for late scroll breakthrough gate
+  const nextVolumeOwned = await checkNextVolumeOwned(slAvatarKey, volumeNumber + 1);
+
   const stageBySection = {};
   stageRows.forEach((row) => {
     const key = safeLower(row.section_key);
@@ -1077,6 +1094,7 @@ async function buildV2CultivationBookState({ member, requestedVolumeNumber }) {
     },
 
     access,
+    next_volume_owned: nextVolumeOwned,
     sections: sectionRecords,
     section_summary: sectionSummary,
 

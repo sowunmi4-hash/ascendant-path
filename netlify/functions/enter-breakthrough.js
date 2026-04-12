@@ -11,6 +11,12 @@ const breakthroughSupabase = createClient(
   { db: { schema: "breakthrough" } }
 );
 
+const librarySupabase = createClient(
+  process.env.SUPABASE_URL,
+  process.env.SUPABASE_SECRET_KEY,
+  { db: { schema: "library" } }
+);
+
 function buildResponse(statusCode, body) {
   return {
     statusCode,
@@ -63,13 +69,27 @@ function parseCookies(cookieHeader) {
 async function loadMember(slAvatarKey, slUsername) {
   let query = publicSupabase
     .from("cultivation_members")
-    .select("member_id,sl_avatar_key,sl_username,display_name")
+    .select("member_id,sl_avatar_key,sl_username,display_name,v2_active_stage_key")
     .limit(1);
   if (slAvatarKey) { query = query.eq("sl_avatar_key", slAvatarKey); }
   else if (slUsername) { query = query.eq("sl_username", slUsername); }
   const { data, error } = await query.maybeSingle();
   if (error) throw new Error("Failed to load cultivation member: " + error.message);
   return data || null;
+}
+
+async function checkNextVolumeOwnedForBreakthrough(slAvatarKey, currentVolumeNumber) {
+  if (!slAvatarKey || !currentVolumeNumber) return true; // no info → don't block
+  const nextVolume = currentVolumeNumber + 1;
+  const { data, error } = await librarySupabase
+    .from("member_library_view")
+    .select("id")
+    .eq("sl_avatar_key", slAvatarKey)
+    .eq("volume_number", nextVolume)
+    .limit(1)
+    .maybeSingle();
+  if (error) return true; // DB error → don't block, let RPC handle it
+  return data !== null; // true = owned
 }
 
 async function callV2EnterBreakthrough(slAvatarKey) {
@@ -127,6 +147,24 @@ exports.handler = async function(event) {
         error_code: "avatar_key_required",
         message: "Breakthrough V2 requires sl_avatar_key. This member record has no avatar key populated."
       });
+    }
+
+    // Volume-lock gate: if member is on the late scroll, they must own the next volume
+    const activeStageKey = safeText(member.v2_active_stage_key || body.v2_active_stage_key || "");
+    if (activeStageKey) {
+      const parts = activeStageKey.split(":");
+      const sectionKey = parts.length > 1 ? parts[1].trim().toLowerCase() : "";
+      const currentVolume = safeNumber(parts[0], 0);
+      if (sectionKey === "late" && currentVolume > 0) {
+        const nextVolumeOwned = await checkNextVolumeOwnedForBreakthrough(member.sl_avatar_key, currentVolume);
+        if (!nextVolumeOwned) {
+          return buildResponse(403, {
+            success: false,
+            error_code: "next_volume_required",
+            message: `Volume ${currentVolume + 1} required before breakthrough from the late scroll.`
+          });
+        }
+      }
     }
 
     let result;

@@ -213,6 +213,8 @@
     .vessel-gate-panel.state-active      { border-color: #dd994433; }
     .vessel-gate-panel.state-damaged     { border-color: #cc444433; }
     .vessel-gate-panel.state-complete    { border-color: #c8a96a33; }
+    .vessel-gate-panel.state-locked      { border-color: #44403833; }
+    .volume-lock-notice { font-family: 'Cinzel', serif; color: #555044; font-size: 13px; margin: 0.4rem 0 0; line-height: 1.6; }
     .vessel-gate-panel.state-sealed      { border-color: var(--border); }
 
     .vessel-side {
@@ -826,6 +828,7 @@
             <button class="vessel-action-btn" id="vessel-action-btn" style="display:none;"></button>
             <div class="vessel-action-btn-off" id="vessel-action-btn-off" style="display:none;"></div>
             <p class="vessel-sub-note" id="vessel-sub-note"></p>
+            <p class="volume-lock-notice" id="vessel-volume-lock-notice" style="display:none;"></p>
           </div>
         </div>
 
@@ -2285,7 +2288,7 @@
         var lastSec = sections['late'] || null;
         if (!lastSec) return false;
         var st = safeLower(lastSec.stage_status || lastSec.ui_state || '');
-        if (st !== 'complete' && st !== 'comprehended') return false;
+        if (st !== 'complete' && st !== 'comprehended' && !st.startsWith('breakthrough')) return false;
         var access = getAccess();
         if (access && access.next_volume_locked) return true;
         if (state.record && state.record.next_volume_owned === false) return true;
@@ -2317,12 +2320,12 @@
           gateState = 'damaged';
         } else if (v2Status === 'in_breakthrough' || btState.includes('active') || btState.includes('countdown') || btState.includes('timer')) {
           gateState = 'active';
+        } else if (isNextVolumeNeeded()) {
+          gateState = 'locked';
         } else if (showEntry || v2Status === 'breakthrough_ready') {
           gateState = 'open';
         } else if (v2Status === 'idle' && store && store.section_completed) {
           gateState = 'complete';
-        } else if (isNextVolumeNeeded()) {
-          gateState = 'locked';
         } else if (v2Status === 'cultivating' || v2Status === 'paused') {
           gateState = 'cultivating';
         } else if (store && store.section_row_exists) {
@@ -2340,6 +2343,7 @@
         var actionBtn = document.getElementById('vessel-action-btn');
         var actionBtnOff = document.getElementById('vessel-action-btn-off');
         var subNote = document.getElementById('vessel-sub-note');
+        var lockNotice = document.getElementById('vessel-volume-lock-notice');
         var panel = document.getElementById('vessel-gate-panel');
         if (!panel) return;
 
@@ -2416,6 +2420,7 @@
         if (actionBtn)    actionBtn.style.display    = 'none';
         if (actionBtnOff) actionBtnOff.style.display = 'none';
         if (subNote)      subNote.textContent = '';
+        if (lockNotice)   lockNotice.style.display   = 'none';
 
         if (gateState === 'sealed') {
           if (actionBtnOff) { actionBtnOff.style.display = 'block'; actionBtnOff.style.background = '#111'; actionBtnOff.style.border = '0.5px solid #222'; actionBtnOff.style.color = '#444'; actionBtnOff.textContent = 'Portal Sealed'; }
@@ -2445,12 +2450,12 @@
           }
           if (subNote) { subNote.textContent = 'Your scroll is damaged. Pay the repair cost to restore your progress.'; subNote.style.color = '#cc444488'; }
         } else if (gateState === 'locked') {
-          if (actionBtn) {
-            actionBtn.style.display = 'block'; actionBtn.style.background = '#1a1400'; actionBtn.style.color = '#444038';
-            actionBtn.textContent = 'Acquire ' + getNextVolumeName();
-            actionBtn.onclick = function() { window.location.href = '/store.html'; };
+          var vol = safeNumber(store && store.volume_number, 0);
+          if (lockNotice) {
+            lockNotice.style.display = 'block';
+            lockNotice.textContent = 'Acquire Volume ' + (vol + 1) + ' to continue your breakthrough';
           }
-          if (subNote) { subNote.textContent = 'You have completed this volume. Acquire the next to continue ascending.'; subNote.style.color = '#44403888'; }
+          if (subNote) { subNote.textContent = 'Visit the Library to obtain the next volume before attempting breakthrough.'; subNote.style.color = '#44403866'; }
         }
       } catch(e) {
         console.error('renderBreakthroughFooter error:', e);
