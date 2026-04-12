@@ -150,7 +150,8 @@ async function loadMember(slAvatarKey, slUsername) {
       v2_active_stage_key,
       v2_breakthrough_gate_open,
       v2_stage_needs_repair,
-      v2_accumulated_seconds
+      v2_accumulated_seconds,
+      personal_cultivation_preference
     `)
     .limit(1);
 
@@ -1211,7 +1212,8 @@ async function handler(event) {
         v2_active_stage_key: safeText(member.v2_active_stage_key) || null,
         v2_breakthrough_gate_open: safeBoolean(member.v2_breakthrough_gate_open),
         v2_stage_needs_repair: safeBoolean(member.v2_stage_needs_repair),
-        v2_accumulated_seconds: safeNumber(member.v2_accumulated_seconds, 0)
+        v2_accumulated_seconds: safeNumber(member.v2_accumulated_seconds, 0),
+        personal_cultivation_preference: safeText(member.personal_cultivation_preference, "manual")
       },
       cultivation_record: cultivationRecord,
       warnings

@@ -86,7 +86,8 @@ async function loadMember(slAvatarKey, slUsername) {
       sl_username,
       vestiges,
       v2_cultivation_status,
-      v2_active_stage_key
+      v2_active_stage_key,
+      personal_cultivation_preference
     `)
     .limit(1);
 
@@ -291,7 +292,8 @@ exports.handler = async (event) => {
         sl_avatar_key: safeText(member.sl_avatar_key),
         sl_username: safeText(member.sl_username),
         vestiges: safeNumber(member.vestiges, 0)
-      }
+      },
+      personal_cultivation_preference: safeText(member.personal_cultivation_preference, "manual")
     });
   } catch (error) {
     console.error("start-section-comprehension error:", error);

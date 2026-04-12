@@ -58,6 +58,65 @@
 
     .is-hidden { display: none !important; }
 
+    /* ── CULTIVATION MODE TOGGLE ── */
+    .cult-mode-toggle-panel {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 1.2rem;
+      padding: 0.9rem 1.2rem;
+      background: linear-gradient(180deg, rgba(200,169,106,0.05), rgba(200,169,106,0.02));
+      border: 0.5px solid rgba(200,169,106,0.15);
+      border-radius: var(--radius-md);
+      margin-bottom: 0.9rem;
+    }
+
+    .cult-mode-label {
+      font-family: var(--font-display);
+      font-size: 0.95rem;
+      font-weight: 500;
+      color: var(--text-primary);
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .cult-mode-switch {
+      display: flex;
+      gap: 0.5rem;
+      background: rgba(0,0,0,0.3);
+      border-radius: var(--radius-sm);
+      padding: 0.3rem;
+    }
+
+    .cult-mode-btn {
+      padding: 0.55rem 1rem;
+      background: transparent;
+      border: 0.5px solid transparent;
+      border-radius: var(--radius-sm);
+      color: var(--text-secondary);
+      font-family: var(--font-display);
+      font-size: 0.85rem;
+      font-weight: 500;
+      text-transform: uppercase;
+      letter-spacing: 0.3px;
+      cursor: pointer;
+      transition: all 0.25s ease;
+      white-space: nowrap;
+    }
+
+    .cult-mode-btn:hover {
+      color: var(--text-primary);
+      border-color: rgba(200,169,106,0.2);
+      background: rgba(200,169,106,0.08);
+    }
+
+    .cult-mode-btn.active {
+      background: rgba(200,169,106,0.2);
+      border-color: var(--gold);
+      color: var(--gold);
+      box-shadow: 0 0 12px rgba(200,169,106,0.15);
+    }
+
     /* ── NAV ── */
     nav {
       display: flex;
@@ -828,6 +887,15 @@
 
       </div>
 
+      <!-- Manual/Auto Cultivation Mode Toggle -->
+      <div class="cult-mode-toggle-panel" id="cult-mode-toggle-panel">
+        <div class="cult-mode-label">Cultivation Mode</div>
+        <div class="cult-mode-switch">
+          <button class="cult-mode-btn" id="btn-manual" onclick="setCultivationMode('manual')">Manual</button>
+          <button class="cult-mode-btn" id="btn-auto" onclick="setCultivationMode('auto')">Auto</button>
+        </div>
+      </div>
+
       <div class="record-stats-bar" id="record-stats-bar">
         <div class="record-stats-row">
           <div class="record-stat-box"><span>Progress</span><strong id="altar-progress-value">0%</strong></div>
@@ -887,7 +955,8 @@
       cosmeticTickInterval: null,
       refreshInterval: null,
       displayRemainingSeconds: 0,
-      displayIsActive: false
+      displayIsActive: false,
+      personalCultivationPreference: "manual"
     };
 
     const SECTION_KEYS = ["base", "early", "middle", "late"];
@@ -2514,6 +2583,66 @@
     }
 
 
+    /* ── Cultivation Mode Toggle Functions ── */
+    function initCultivationModeToggle() {
+      const pref = state.personalCultivationPreference || "manual";
+      updateToggleUI(pref);
+    }
+
+    function updateToggleUI(mode) {
+      const btnManual = document.getElementById('btn-manual');
+      const btnAuto = document.getElementById('btn-auto');
+      if (btnManual) {
+        if (mode === 'manual') {
+          btnManual.classList.add('active');
+        } else {
+          btnManual.classList.remove('active');
+        }
+      }
+      if (btnAuto) {
+        if (mode === 'auto') {
+          btnAuto.classList.add('active');
+        } else {
+          btnAuto.classList.remove('active');
+        }
+      }
+    }
+
+    async function setCultivationMode(mode) {
+      if (!['manual', 'auto'].includes(mode)) return;
+      
+      const avatarKey = (state && state.member && state.member.sl_avatar_key) ||
+                        (state && state.user && state.user.sl_avatar_key) || '';
+      
+      if (!avatarKey) {
+        console.error('Cannot set cultivation mode: no avatar key');
+        return;
+      }
+
+      state.personalCultivationPreference = mode;
+      updateToggleUI(mode);
+
+      try {
+        const resp = await fetch('/.netlify/functions/save-personal-cultivation-preference', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          credentials: 'include',
+          body: JSON.stringify({
+            sl_avatar_key: avatarKey,
+            personal_cultivation_preference: mode
+          })
+        });
+        const data = await resp.json();
+        if (!resp.ok) {
+          console.error('Failed to save cultivation preference:', data);
+          return;
+        }
+        console.log('Cultivation mode saved:', mode);
+      } catch (error) {
+        console.error('Error saving cultivation mode:', error);
+      }
+    }
+
     function refreshPageData() {
       // Re-fetch all state from server then re-render — no page reload
       try {
@@ -2845,8 +2974,14 @@
         state.record = nextRecord;
         state.user = nextUser || null;
 
+        // Load personal cultivation preference
+        if (nextUser && nextUser.personal_cultivation_preference) {
+          state.personalCultivationPreference = nextUser.personal_cultivation_preference;
+        }
+
         adoptServerSelectedVolume(state.record);
         syncCosmeticTimer();
+        initCultivationModeToggle();
         renderPage();
 
         if (Array.isArray(data.warnings) && data.warnings.length) {
@@ -2898,8 +3033,14 @@
         state.record = nextRecord;
         state.user = nextUser || null;
 
+        // Load personal cultivation preference
+        if (nextUser && nextUser.personal_cultivation_preference) {
+          state.personalCultivationPreference = nextUser.personal_cultivation_preference;
+        }
+
         adoptServerSelectedVolume(state.record);
         syncCosmeticTimer();
+        initCultivationModeToggle();
         renderPage();
       } catch (error) {
         if (String(error?.message || "") !== "unauthorized") {

@@ -76,19 +76,31 @@ exports.handler = async (event) => {
 
   const partnershipUuid = body.partnership_uuid || body.selected_partnership_uuid || null;
 
-  // Load member to check breakthrough status before syncing
+  // Load member to check breakthrough status and cultivation preference before syncing
   const { data: member } = await supabase
     .from('cultivation_members')
-    .select('v2_cultivation_status')
+    .select('v2_cultivation_status, personal_cultivation_preference')
     .eq('sl_avatar_key', avatarKey)
     .maybeSingle();
 
   if (member && member.v2_cultivation_status === 'in_breakthrough') {
-    return buildResponse(200, {
+    return json(200, {
       success: true,
       synced: false,
       reason: 'in_breakthrough',
       message: 'Auric and CP gains are suspended during breakthrough. The cultivator faces the tribulation.'
+    });
+  }
+
+  // In manual mode, only sync if user explicitly started cultivation (status is 'cultivating')
+  // In auto mode, meditation auto-drives cultivation
+  const preference = (member?.personal_cultivation_preference || 'manual').toLowerCase();
+  if (preference === 'manual' && member && member.v2_cultivation_status !== 'cultivating') {
+    return json(200, {
+      success: true,
+      synced: false,
+      reason: 'manual_mode_idle',
+      message: 'Personal cultivation is in manual mode. Click Begin Cultivation to start burning auric.'
     });
   }
 

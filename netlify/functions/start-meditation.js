@@ -77,6 +77,29 @@ exports.handler = async (event) => {
     return json(401, { error: "Not authenticated" });
   }
 
+  // Load member to check personal cultivation preference
+  const { data: member } = await supabase
+    .from('cultivation_members')
+    .select('personal_cultivation_preference')
+    .eq('sl_avatar_key', avatarKey)
+    .maybeSingle();
+
+  const preference = (member?.personal_cultivation_preference || 'manual').toLowerCase();
+
+  // In manual mode: meditation fills auric but doesn't trigger cultivation start
+  // User must click "Begin Cultivation" button on cultivation-book.html
+  if (preference === 'manual') {
+    return json(200, {
+      success: true,
+      action: "meditation_started",
+      message: "Meditation started. In manual mode, auric fills freely. Click Begin Cultivation on the book to start burning auric on scroll progress.",
+      cultivation_preference: 'manual',
+      auric_filling: true,
+      cultivation_active: false
+    });
+  }
+
+  // In auto mode: meditation auto-triggers cultivation (existing behavior)
   // Try begin first (open/paused stage), fall back to resume if paused
   const { data: beginResult, error: beginError } = await supabase
     .schema("library")
@@ -104,7 +127,7 @@ exports.handler = async (event) => {
       });
     }
 
-    return json(200, { success: true, action: "resumed", ...resumeResult });
+    return json(200, { success: true, action: "resumed", cultivation_preference: 'auto', ...resumeResult });
   }
 
   if (!beginResult?.success) {
@@ -114,5 +137,5 @@ exports.handler = async (event) => {
     });
   }
 
-  return json(200, { success: true, action: "started", ...beginResult });
+  return json(200, { success: true, action: "started", cultivation_preference: 'auto', ...beginResult });
 };
