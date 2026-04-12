@@ -9,11 +9,11 @@
     @import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@400;500;600&family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400&display=swap');
 
     :root {
-      --bg-void: #060608;
+      --bg-void: #07070b;
       --bg-deep: #0a0a10;
-      --bg-surface: #0e0e16;
-      --bg-card: #0a0a12;
-      --bg-card-hover: #0e0e16;
+      --bg-surface: #13131e;
+      --bg-card: #0d0d18;
+      --bg-card-hover: #13131e;
       --bg-elevated: #1a1a24;
       --gold: #c8a96a;
       --gold-dim: #a08548;
@@ -44,7 +44,7 @@
       --radius-lg: 14px;
     }
 
-    body { background: var(--bg-void); color: var(--text-primary); }
+    body { background: radial-gradient(ellipse at 50% 0%, rgba(200,169,106,0.06), transparent 45%), radial-gradient(ellipse at 85% 100%, rgba(200,104,144,0.03), transparent 40%), var(--bg-void); color: var(--text-primary); }
 
     .record-page {
       width: min(1380px, calc(100% - 2rem));
@@ -814,8 +814,8 @@
   </nav>
 
     <!-- Celestial Feed -->
-    <div id="news-ticker-bar" style="width:100%;background:#0a0a12;border-top:0.5px solid rgba(200,169,106,0.15);border-bottom:0.5px solid rgba(200,169,106,0.15);height:34px;display:flex;align-items:center;overflow:hidden;">
-      <div id="ticker-label" style="flex-shrink:0;padding:0 14px;font-size:9px;letter-spacing:0.14em;text-transform:uppercase;color:#c8a96a;font-weight:600;border-right:0.5px solid rgba(200,169,106,0.25);height:100%;display:flex;align-items:center;background:#0a0a12;white-space:nowrap;font-family:'Cinzel',serif;">⬡ Celestial Feed</div>
+    <div id="news-ticker-bar" style="width:100%;background:#0d0d18;border-top:0.5px solid rgba(200,169,106,0.15);border-bottom:0.5px solid rgba(200,169,106,0.15);height:34px;display:flex;align-items:center;overflow:hidden;">
+      <div id="ticker-label" style="flex-shrink:0;padding:0 14px;font-size:9px;letter-spacing:0.14em;text-transform:uppercase;color:#c8a96a;font-weight:600;border-right:0.5px solid rgba(200,169,106,0.25);height:100%;display:flex;align-items:center;background:#0d0d18;white-space:nowrap;font-family:'Cinzel',serif;">⬡ Celestial Feed</div>
       <div style="overflow:hidden;flex:1;position:relative;height:100%;">
         <div id="ticker-track" style="display:flex;align-items:center;height:100%;position:absolute;white-space:nowrap;"></div>
       </div>
