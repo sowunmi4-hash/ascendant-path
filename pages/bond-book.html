@@ -437,6 +437,9 @@ nav a:hover { border-color: rgba(200,169,106,0.22); color: var(--text-primary); 
 </head>
 <body>
 
+<div class="cloud-layer"></div>
+<div class="rune-layer"></div>
+
 <div class="page-wrap">
 
   <!-- NAV -->
@@ -624,15 +627,66 @@ function startAutoRefresh() {
   if (_refreshTimer) return;
   _refreshTimer = setInterval(function(){
     fetchBookState().then(function(data){
-      if (data) {
-        state.pageData = data;
-        state.partner = data.partner || (data.partnership ? data.partnership.counterpart : null) || data.counterpart || null;
-        renderPage();
-      }
+      if (!data) return;
+      // Update data silently — only re-render lightweight parts, not the full DOM
+      state.pageData = data;
+      state.partner = data.partner || (data.partnership ? data.partnership.counterpart : null) || data.counterpart || null;
+      // Only update the context strip and page subtitle — no innerHTML rebuild
+      renderContextStrip();
+      updatePageSubtitle();
+      // Update progress bars and badge labels in-place without destroying canvases
+      updateProgressInPlace();
     });
   }, 12000);
   document.addEventListener('visibilitychange', function(){
-    if (!document.hidden) fetchBookState().then(function(data){ if (data) { state.pageData = data; renderPage(); } });
+    // Only do a full reload when tab becomes visible again after being hidden
+    if (!document.hidden) fetchBookState().then(function(data){
+      if (data) { state.pageData = data; state.partner = data.partner || (data.partnership ? data.partnership.counterpart : null) || data.counterpart || null; renderPage(); }
+    });
+  });
+}
+
+// ── IN-PLACE PROGRESS UPDATE (no DOM rebuild, no canvas restart) ──
+function updateProgressInPlace() {
+  var cb = getCurrentBook();
+  var actions = getActionSet();
+  var action = actions.length > 0 ? actions[0] : null;
+
+  // Self progress
+  var selfPct = (cb && cb.self) ? safeNumber(cb.self.progress_percent, 0) : 0;
+  var selfFill = document.querySelector('#self-panel .progress-fill');
+  var selfVal  = document.querySelector('#self-panel .progress-val');
+  var selfSub  = document.querySelector('#self-panel .progress-sub');
+  if (selfFill) selfFill.style.width = Math.round(selfPct) + '%';
+  if (selfVal)  selfVal.textContent = Math.round(selfPct) + '%';
+  if (selfSub)  selfSub.textContent = (cb && cb.self && safeBoolean(cb.self.offering_complete)) ? 'Offering sealed ✦' : 'Offering pending';
+
+  // Partner progress
+  var partnerPct = (cb && cb.partner) ? safeNumber(cb.partner.progress_percent, 0) : 0;
+  var partnerFill = document.querySelector('.partner-panel .progress-fill');
+  var partnerVal  = document.querySelector('.partner-panel .progress-val');
+  var partnerSub  = document.querySelector('.partner-panel .progress-sub');
+  if (partnerFill) partnerFill.style.width = Math.round(partnerPct) + '%';
+  if (partnerVal)  partnerVal.textContent = Math.round(partnerPct) + '%';
+  if (partnerSub)  partnerSub.textContent = (cb && cb.partner && safeBoolean(cb.partner.offering_complete)) ? 'Offering sealed ✦' : 'Offering pending';
+
+  // Action button label/state — only if button exists
+  var btn = document.getElementById('self-action-btn');
+  if (btn && action) {
+    var isDisabled = action.key === 'blocked' || action.key === 'wait';
+    btn.textContent = action.label;
+    btn.disabled = isDisabled;
+    var noteEl = btn.parentElement ? btn.parentElement.querySelector('.action-note') : null;
+    if (noteEl) noteEl.textContent = action.note;
+  }
+
+  // Badge labels
+  var bs = cb ? safeLower(cb.display_state) : 'idle';
+  var badgeText = formatStateLabel(bs);
+  var badgeClass = (bs === 'active' || bs === 'is_active') ? ' active' : (bs === 'pair_completed' || bs === 'completed') ? ' completed' : '';
+  document.querySelectorAll('.panel-badge').forEach(function(el) {
+    el.textContent = badgeText;
+    el.className = 'panel-badge' + badgeClass;
   });
 }
 
@@ -693,7 +747,7 @@ function handleAction(key) {
 
   authFetch(endpoint, { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify(payload) })
     .then(function(r){ return r.json().then(function(d){
-      if (r.ok && d.success) { setTimeout(loadBookState, 1100); }
+      if (r.ok && d.success) { setTimeout(function(){ loadBookState(); }, 1100); }
       else {
         alert(d.message || 'Action failed. Please try again.');
         if (btn) btn.disabled = false;
@@ -797,11 +851,11 @@ function renderMainContent() {
   el.innerHTML = html;
   attachHandlers();
 
-  // Start canvases after DOM is ready
-  setTimeout(function() {
+  // Start canvases after layout is painted
+  requestAnimationFrame(function() {
     startCanvas('self-canvas', selfGender, true);
     startCanvas('partner-canvas', partnerGender, false);
-  }, 80);
+  });
 }
 
 function buildSelfPanel(cb, bondSession, action, gender, colour) {
