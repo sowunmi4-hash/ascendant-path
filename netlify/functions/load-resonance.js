@@ -1,4 +1,5 @@
 const { createClient } = require("@supabase/supabase-js");
+const { buildScriptUpdate } = require("./script-config");
 
 const supabase = createClient(
   process.env.SUPABASE_URL,
@@ -669,7 +670,8 @@ function buildFallbackResponse({
   mutualFocusReady = false,
   mutualFocusReason = null,
   partnerFocusedPartnershipUuid = null,
-  partnerFocusedPartnershipId = null
+  partnerFocusedPartnershipId = null,
+  scriptUpdate = { upToDate: true }
 }) {
   const memberBondTitle = getBondTitle(memberForResponse);
   const selfMeditating = safeLower(memberForResponse.v2_cultivation_status) === "cultivating";
@@ -720,7 +722,8 @@ function buildFallbackResponse({
     current_position_x: toNumberOrNull(memberForResponse.current_position_x),
     current_position_y: toNumberOrNull(memberForResponse.current_position_y),
     current_position_z: toNumberOrNull(memberForResponse.current_position_z),
-    last_hud_sync_at: memberForResponse.last_hud_sync_at || null
+    last_hud_sync_at: memberForResponse.last_hud_sync_at || null,
+    scriptUpdate
   });
 }
 
@@ -740,6 +743,7 @@ const handler = async (event) => {
     const body = parseBody(event);
     const query = event.queryStringParameters || {};
     const requestSource = { ...query, ...body };
+    const scriptUpdate = buildScriptUpdate(requestSource.script_version);
 
     // --- Session cookie auth ---
     const cookies = parseCookies(event.headers?.cookie || "");
@@ -849,7 +853,8 @@ const handler = async (event) => {
         resolvedPartnership,
         resonanceReason: reason,
         mutualFocusReady: false,
-        mutualFocusReason: reason
+        mutualFocusReason: reason,
+        scriptUpdate
       });
     }
 
@@ -870,7 +875,8 @@ const handler = async (event) => {
         resolvedPartnership,
         resonanceReason: "partner_member_missing",
         mutualFocusReady: false,
-        mutualFocusReason: "partner_member_missing"
+        mutualFocusReason: "partner_member_missing",
+        scriptUpdate
       });
     }
 
@@ -999,7 +1005,8 @@ const handler = async (event) => {
       current_position_x: toNumberOrNull(memberForResponse.current_position_x),
       current_position_y: toNumberOrNull(memberForResponse.current_position_y),
       current_position_z: toNumberOrNull(memberForResponse.current_position_z),
-      last_hud_sync_at: memberForResponse.last_hud_sync_at || null
+      last_hud_sync_at: memberForResponse.last_hud_sync_at || null,
+      scriptUpdate
     });
   } catch (error) {
     console.error("load-resonance server error:", error);
