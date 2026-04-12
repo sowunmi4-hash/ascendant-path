@@ -789,6 +789,7 @@ function buildAlignmentRpcPayloadVariants(memberId, slAvatarKey) {
   return uniquePayloadList([
     memberId ? { p_member_id: memberId } : null,
     slAvatarKey ? { p_sl_avatar_key: slAvatarKey } : null,
+    slAvatarKey ? { p_member_avatar_key: slAvatarKey } : null,
     memberId && slAvatarKey ? { p_member_id: memberId, p_sl_avatar_key: slAvatarKey } : null,
     memberId ? { member_id: memberId } : null,
     slAvatarKey ? { sl_avatar_key: slAvatarKey } : null,

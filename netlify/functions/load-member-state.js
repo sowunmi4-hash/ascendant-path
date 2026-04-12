@@ -592,6 +592,7 @@ function buildAlignmentRpcPayloadVariants(memberId, slAvatarKey) {
   return uniquePayloadList([
     memberId ? { p_member_id: memberId } : null,
     slAvatarKey ? { p_sl_avatar_key: slAvatarKey } : null,
+    slAvatarKey ? { p_member_avatar_key: slAvatarKey } : null,
     memberId && slAvatarKey ? { p_member_id: memberId, p_sl_avatar_key: slAvatarKey } : null,
     memberId ? { member_id: memberId } : null,
     slAvatarKey ? { sl_avatar_key: slAvatarKey } : null,
@@ -832,7 +833,7 @@ async function loadPartnerMemberByAvatarKey(slAvatarKey) {
   const { data, error } = await supabase
     .from("cultivation_members")
     .select(
-      "id,member_id,sl_avatar_key,sl_username,v2_cultivation_status,v2_cultivation_started_at,last_presence_at,last_hud_sync_at,current_region_name,current_position_x,current_position_y,current_position_z,updated_at"
+      "member_id,sl_avatar_key,sl_username,v2_cultivation_status,v2_cultivation_started_at,last_presence_at,last_hud_sync_at,current_region_name,current_position_x,current_position_y,current_position_z,updated_at"
     )
     .eq("sl_avatar_key", slAvatarKey)
     .maybeSingle();
