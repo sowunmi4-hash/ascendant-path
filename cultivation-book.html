@@ -1352,7 +1352,7 @@
         "Preparing the opened record...";
 
       document.getElementById("hero-volume-pill").textContent =
-        "Volume " + (safeNumber(store?.volume_number, 0) || "--");
+        "Tome " + (safeNumber(store?.volume_number, 0) || "--");
 
       document.getElementById("hero-realm-pill").textContent =
         safeText(store?.realm_name, realmFromVolume(store?.volume_number));
@@ -1370,7 +1370,7 @@
         breakthrough_ready: { key: "breakthrough", label: getBreakthroughDisplayState() || "Breakthrough" },
         breakthrough_cooldown: { key: "cooldown", label: getBreakthroughDisplayState() || "Cooldown" },
         complete: { key: "complete", label: "Ready to Complete" },
-        comprehended: { key: "complete", label: "Volume Completed" },
+        comprehended: { key: "complete", label: "Tome Completed" },
         reopened: { key: "reopened", label: "Resumed Record" },
         open: { key: "idle", label: "Awaiting Action" },
         sealed: { key: "idle", label: "Awaiting Action" }
@@ -2294,7 +2294,7 @@
       try {
         var store = getStore();
         var vol = safeNumber(store && store.volume_number, 0);
-        return realmFromVolume(vol + 1) + ' \u2014 Volume ' + (vol + 1);
+        return realmFromVolume(vol + 1) + ' \u2014 Tome ' + (vol + 1);
       } catch(e) { return 'Next Volume'; }
     }
 
@@ -2398,7 +2398,7 @@
           ];
         } else if (gateState === 'locked') {
           chips = [
-            {label:'Status', val:'Volume Complete', lc:'#c8a96a66',vc:'#c8a96a',bg:'#1a1400',bc:'#c8a96a33'},
+            {label:'Status', val:'Tome Complete', lc:'#c8a96a66',vc:'#c8a96a',bg:'#1a1400',bc:'#c8a96a33'},
             {label:'Next',   val:getNextVolumeName(), lc:'#44403888',vc:'#444038',bg:'#111008',bc:'#44403833'}
           ];
         }
