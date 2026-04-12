@@ -8,26 +8,53 @@
   <link rel="stylesheet" href="/css/dashboard.css">
   <style>
     :root {
-      --bg-1: #060810;
-      --bg-2: #0b1020;
-      --panel-bg: rgba(8, 12, 22, 0.82);
-      --panel-border: rgba(255, 255, 255, 0.06);
-      --panel-shadow: 0 22px 56px rgba(0, 0, 0, 0.32);
+      /* ── Ascendant Path Design System ── */
+      --bg-void:    #060608;
+      --bg-deep:    #0a0a10;
+      --bg-surface: #0e0e16;
+      --bg-card:    #0a0a12;
+      --bg-elevated:#1a1a24;
 
-      --text-main: #f7f1df;
-      --text-soft: rgba(247, 241, 223, 0.76);
-      --text-dim: rgba(247, 241, 223, 0.5);
+      /* legacy aliases kept for existing JS/CSS references */
+      --bg-1: #060608;
+      --bg-2: #0a0a10;
+      --panel-bg: rgba(10, 10, 18, 0.88);
+      --panel-border: rgba(200, 169, 106, 0.10);
+      --panel-shadow: 0 22px 56px rgba(0, 0, 0, 0.48);
 
-      --success: #9fe1b2;
-      --warn: #f1cd7a;
-      --danger: #f3a5a5;
-      --info: #c7d7ff;
+      --gold:        #c8a96a;
+      --gold-dim:    #a08548;
+      --gold-bright: #e8cc8a;
+      --gold-bg:     #c8a96a0a;
+      --gold-border: #c8a96a1a;
+      --gold-glow:   #c8a96a22;
+      --gold-soft:   #c8a96a;
+      --rose-gold:   #c86890;
 
-      --blue-accent: rgba(142, 168, 255, 0.42);
-      --blue-accent-strong: rgba(142, 168, 255, 0.68);
-      --blue-panel: rgba(8, 16, 38, 0.88);
-      --blue-panel-deep: rgba(4, 8, 22, 0.96);
-      --gold-soft: #ead7aa;
+      --text-main:    #ddd5c8;
+      --text-soft:    #aaa090;
+      --text-dim:     #555044;
+      --text-primary: #ddd5c8;
+      --text-secondary:#555044;
+
+      --success: #55bb66;
+      --warn:    #dd9944;
+      --danger:  #cc4444;
+      --info:    #5a9acc;
+
+      /* blue aliases removed — use gold system */
+      --blue-accent:       rgba(200,169,106,0.28);
+      --blue-accent-strong:rgba(200,169,106,0.55);
+      --blue-panel:        rgba(10,10,18,0.88);
+      --blue-panel-deep:   rgba(6,6,8,0.96);
+
+      --border:       #1a1a22;
+      --border-hover: #2a2a33;
+      --radius-sm: 6px;
+      --radius-md: 10px;
+      --radius-lg: 14px;
+      --font-display: 'Cinzel', serif;
+      --font-body:    'Cormorant Garamond', serif;
     }
 
     * {
@@ -44,9 +71,10 @@
       margin: 0;
       color: var(--text-main);
       background:
-        radial-gradient(circle at top, rgba(142, 168, 255, 0.08), transparent 28%),
-        radial-gradient(circle at bottom right, rgba(230, 220, 255, 0.06), transparent 22%),
-        linear-gradient(180deg, var(--bg-2), var(--bg-1));
+        radial-gradient(circle at 20% 10%, rgba(200,169,106,0.04), transparent 35%),
+        radial-gradient(circle at 80% 90%, rgba(200,104,144,0.03), transparent 30%),
+        var(--bg-void);
+      font-family: 'Cormorant Garamond', serif;
     }
 
     a {
@@ -2020,6 +2048,35 @@
     .ticker-dot.celestial { background:#c8a96a; }
     .ticker-dot.notice { background:rgba(255,255,255,0.3); }
     .ticker-dot.notice-urgent { background:#c86890; }
+
+    /* ── Cultivation Design Override ── */
+    html, body { background: var(--bg-void) !important; }
+    .dashboard-panel {
+      background: var(--bg-card) !important;
+      border: 0.5px solid var(--border) !important;
+      border-radius: var(--radius-md) !important;
+      box-shadow: none !important;
+    }
+    .dashboard-panel h2, .dashboard-panel h3 {
+      font-family: 'Cinzel', serif !important;
+      color: var(--gold) !important;
+      font-weight: 500 !important;
+    }
+    .dashboard-panel p, .dashboard-panel span, .dashboard-panel div {
+      font-family: 'Cormorant Garamond', serif;
+    }
+    .side-panel { background: var(--bg-card) !important; border: 0.5px solid var(--border) !important; }
+    .sanctum-panel { background: var(--bg-card) !important; border: 0.5px solid var(--border) !important; }
+    /* Ticker items */
+    .ticker-item { font-family: 'Cinzel', serif !important; font-size: 11px !important; letter-spacing: 0.04em !important; }
+    .ticker-item.celestial { color: var(--gold) !important; }
+    .ticker-item.notice { color: var(--text-soft) !important; }
+    .ticker-item.notice-urgent { color: var(--rose-gold) !important; }
+    .ticker-dot.celestial { background: var(--gold) !important; }
+    .ticker-dot.notice-urgent { background: var(--rose-gold) !important; }
+    /* Bottom padding removed since ticker is now at top */
+    body { padding-bottom: 0 !important; }
+    .cloud-layer, .rune-layer { display: none; }
   </style>
 </head>
 <body>
@@ -2044,6 +2101,14 @@
       </div>
       </nav>
     </header>
+
+    <!-- Celestial Feed — top ticker -->
+    <div id="news-ticker-bar" style="width:100%;background:#0a0a12;border-top:0.5px solid rgba(200,169,106,0.15);border-bottom:0.5px solid rgba(200,169,106,0.15);height:34px;display:flex;align-items:center;overflow:hidden;margin-bottom:0;">
+      <div id="ticker-label" style="flex-shrink:0;padding:0 14px;font-size:9px;letter-spacing:0.14em;text-transform:uppercase;color:#c8a96a;font-weight:600;border-right:0.5px solid rgba(200,169,106,0.25);height:100%;display:flex;align-items:center;background:#0a0a12;white-space:nowrap;font-family:'Cinzel',serif;">⬡ Celestial Feed</div>
+      <div style="overflow:hidden;flex:1;position:relative;height:100%;">
+        <div id="ticker-track" style="display:flex;align-items:center;height:100%;position:absolute;white-space:nowrap;"></div>
+      </div>
+    </div>
 
     <main class="dashboard-home-page">
       <section class="dashboard-panel" id="hero-panel">
@@ -3984,7 +4049,7 @@
       noticesPanel.hidden = true;
       resourcesPanel.hidden = true;
     }
-    function buildNewsTicker(world, noticesPayload) {
+    function buildNewsTicker(world, noticesPayload, memberNotifs) {
       var bar = document.getElementById('news-ticker-bar');
       if (!bar) return;
       var track = document.getElementById('ticker-track');
@@ -4005,6 +4070,13 @@
         noticesPayload.notices.forEach(function(n) {
           var urgent = n.priority === 'high' || n.urgent;
           items.push({ type: urgent ? 'notice-urgent' : 'notice', text: n.title + (n.body ? ' — ' + n.body : '') });
+        });
+      }
+      // Member notifications in ticker
+      if (memberNotifs && memberNotifs.length) {
+        memberNotifs.filter(function(n) { return !n.is_read; }).slice(0, 5).forEach(function(n) {
+          var urgent = n.type === 'breakthrough_success' || n.type === 'breakthrough_failure';
+          items.push({ type: urgent ? 'notice-urgent' : 'notice', text: n.title + ' — ' + n.message });
         });
       }
       if (items.length === 0) {
@@ -4251,7 +4323,7 @@
         clockPanel.innerHTML = buildClockPanel(celestialWorld, forecastPayload);
         setTimeout(function() { var el = document.querySelector('#clock-panel .imperial-hex-wrap'); if (el) { var c = document.createElement('canvas'); c.id = 'hex-clock-canvas'; c.width = 480; c.height = 480; c.style.cssText = 'width:100%;max-width:480px;display:block;margin:0 auto;'; el.style.display = 'none'; el.parentNode.insertBefore(c, el); } initHexClock(celestialWorld); }, 100);
         resourcesPanel.innerHTML = buildResourcesPanel(dashboardData);
-        buildNewsTicker(celestialWorld, noticesPayload);
+        buildNewsTicker(celestialWorld, noticesPayload, window._memberNotifs || []);
 
         // Wire vessel with live member data
         if (typeof runVessel === 'function') {
@@ -4343,6 +4415,15 @@
 
       await loadDashboard();
       startRefresh();
+      // Load notifications for ticker + bell
+      try {
+        var notifRes = await fetch('/.netlify/functions/notifications-list', { credentials: 'include' });
+        var notifData = await notifRes.json();
+        window._memberNotifs = notifData.notifications || [];
+        var unreadCount = notifData.unread_count || 0;
+        var badge = document.getElementById('notif-badge');
+        if (badge && unreadCount > 0) { badge.textContent = unreadCount > 99 ? '99+' : unreadCount; badge.style.display = 'flex'; }
+      } catch(e) { window._memberNotifs = []; }
     });
   </script>
 <script>
@@ -4814,12 +4895,7 @@ function runVessel(solidImg, glowImg, brightImg, pct, realmIndex, fSolidImg, fGl
 
 
 </script>
-<div id="news-ticker-bar" style="width:100%;background:#0a0d1a;border-top:1px solid rgba(200,169,106,0.25);height:38px;display:flex;align-items:center;overflow:hidden;position:fixed;bottom:0;left:0;z-index:999;">
-  <div id="ticker-label" style="flex-shrink:0;padding:0 14px;font-size:10px;letter-spacing:0.12em;text-transform:uppercase;color:#c8a96a;font-weight:600;border-right:1px solid rgba(200,169,106,0.3);height:100%;display:flex;align-items:center;background:#0a0d1a;white-space:nowrap;">⬡ Celestial Feed</div>
-  <div style="overflow:hidden;flex:1;position:relative;height:100%;">
-    <div id="ticker-track" style="display:flex;align-items:center;height:100%;position:absolute;white-space:nowrap;"></div>
-  </div>
-</div>
+<!-- ticker moved to top — see below header -->
 
   <script>
     // ── Notification Bell ──
