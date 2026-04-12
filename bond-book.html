@@ -1554,12 +1554,18 @@
 
       var payload = {
         volume_number: vol.volume_number,
-        partnership_uuid: state.requestedPartnershipUuid || ''
+        partnership_uuid: state.requestedPartnershipUuid || '',
+        sl_avatar_key: safeText(state.member ? state.member.sl_avatar_key : ''),
+        sl_username: safeText(state.member ? state.member.sl_username : '')
       };
 
       if (state.requestedLegacyPartnershipId) {
         payload.partnership_id = state.requestedLegacyPartnershipId;
       }
+
+      // Disable button during request
+      var btn = document.getElementById('action-button');
+      if (btn) btn.disabled = true;
 
       authFetch(endpoint, {
         method: 'POST',
@@ -1576,10 +1582,16 @@
             setTimeout(function() {
               loadBookState();
             }, 1500);
+          } else {
+            console.error('Action failed:', data.message || 'Unknown error');
+            alert(data.message || 'Action failed. Please try again.');
+            if (btn) btn.disabled = false;
           }
         });
       }).catch(function(err) {
         console.error('Action error:', err);
+        alert('Connection error. Please try again.');
+        if (btn) btn.disabled = false;
       });
     }
 
@@ -1640,26 +1652,4 @@
         if (!state.displayIsActive) {
           maybeAutoSync();
         }
-      });
-    }
-
-    // Init
-    function init() {
-      state.requestedVolumeNumber = getVolumeNumberFromQuery();
-      state.requestedPartnershipUuid = getPartnershipUuidFromQuery();
-      state.requestedLegacyPartnershipId = getLegacyPartnershipIdFromQuery();
-
-      loadViewerSession().then(function(ok) {
-        if (ok) {
-          return loadBookState();
-        }
-      }).catch(function(err) {
-        console.error('Init error:', err);
-      });
-    }
-
-    document.addEventListener('DOMContentLoaded', init);
-  </script>
-</body>
-</html>
-                                                  
+  
