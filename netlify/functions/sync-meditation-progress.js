@@ -96,21 +96,35 @@ exports.handler = async (event) => {
   const cultivationStatus = member?.v2_cultivation_status || 'idle';
 
   // 'meditating' = base meditation (auric fills freely, scroll is idle).
-  // This applies in Manual mode when the player has NOT yet pressed "Resume Cultivation".
-  // When the player presses "Resume Cultivation" on the website, status becomes 'cultivating'
-  // and the sync falls through to run v2_sync_realm_cultivation normally.
+  // Call v2_sync_auric_gain to fill auric + vestiges based on elapsed time.
   if (cultivationStatus === 'meditating') {
+    const { data: auricResult, error: auricError } = await supabase
+      .schema('library')
+      .rpc('v2_sync_auric_gain', { p_sl_avatar_key: avatarKey });
+
+    if (auricError) {
+      console.error('v2_sync_auric_gain error:', auricError);
+    }
+
     return json(200, {
       success: true,
-      synced: false,
+      synced: auricResult?.synced ?? false,
       reason: 'base_meditation_no_scroll',
       personal_cultivation_status: cultivationStatus,
       v2_cultivation_status:       cultivationStatus,
-      auric_current:               member?.auric_current ?? null,
+      auric_current:               auricResult?.auric_after ?? null,
+      auric_maximum:               auricResult?.auric_maximum ?? null,
+      auric_gained:                auricResult?.auric_gained ?? 0,
+      vestiges:                    auricResult?.vestiges_after ?? null,
       cultivation_preference:      preference,
-      message: 'Base meditation active. Auric fills freely. Use Resume Cultivation on the website to advance scroll.'
+      message: 'Base meditation active. Auric filling.'
     });
   }
+
+  // Fill auric + vestiges before scroll sync
+  const { data: auricResult } = await supabase
+    .schema('library')
+    .rpc('v2_sync_auric_gain', { p_sl_avatar_key: avatarKey });
 
   // v2 cultivation sync
   const { data: syncResult, error: syncError } = await supabase
@@ -166,7 +180,9 @@ exports.handler = async (event) => {
     accumulated_seconds:         syncResult?.accumulated_seconds || 0,
     required_seconds:            syncResult?.required_seconds   || 0,
     breakthrough_gate_open:      syncResult?.breakthrough_gate_open || false,
-    auric_current:                  syncResult?.auric_after ?? null,
+    auric_current:               auricResult?.auric_after ?? syncResult?.auric_after ?? null,
+    auric_maximum:               auricResult?.auric_maximum ?? null,
+    vestiges:                    auricResult?.vestiges_after ?? null,
     ...(bondState || {
       bond_runtime_active: false,
       bond_session_status: "idle"
