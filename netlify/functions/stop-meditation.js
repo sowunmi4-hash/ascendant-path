@@ -74,28 +74,21 @@ exports.handler = async (event) => {
     return json(401, { error: "Not authenticated" });
   }
 
-  const { data: result, error: rpcError } = await supabase
-    .schema("library")
-    .rpc("v2_pause_cultivation", { p_sl_avatar_key: avatarKey });
+  // First check current status — if in pure 'meditating' state (no active scroll session),
+  // v2_pause_cultivation would return not_cultivating. Handle this directly.
+  const { data: member } = await supabase
+    .from("cultivation_members")
+    .select("v2_cultivation_status")
+    .eq("sl_avatar_key", avatarKey)
+    .maybeSingle();
 
-  if (rpcError) {
-    console.error("v2_pause_cultivation error:", rpcError);
-    return json(500, { error: "Failed to stop cultivation", detail: rpcError.message });
-  }
+  if (member?.v2_cultivation_status === "meditating") {
+    // No active scroll session — just clear the meditation status
+    const { error: updateError } = await supabase
+      .from("cultivation_members")
+      .update({ v2_cultivation_status: "paused" })
+      .eq("sl_avatar_key", avatarKey);
 
-  if (!result?.success) {
-    if (result?.error_code === "not_cultivating") {
-      return json(200, {
-        success: true,
-        action: "already_stopped",
-        message: "No active cultivation session found."
-      });
-    }
-    return json(409, {
-      error: result?.message || "Cannot stop cultivation",
-      error_code: result?.error_code || "unknown"
-    });
-  }
-
-  return json(200, { success: true, action: "stopped", ...result });
-};
+    if (updateError) {
+      console.error("Failed to stop meditation:", updateError);
+      return json(500, { error: "Failed to

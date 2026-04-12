@@ -2,12 +2,14 @@
 // Starts personal cultivation using v2 system.
 // Dual auth: ap_session cookie (website) OR sl_avatar_key in body (HUD/LSL).
 //
-// Manual mode: calls v2_begin_cultivation (or v2_resume fallback) — sets
-//   v2_cultivation_status = 'cultivating' so meditation_active = true in HUD.
-//   sync-meditation-progress skips v2_sync_realm_cultivation in manual mode
-//   so scroll does NOT advance while the HUD shows "Meditating: Yes".
+// Manual mode: calls v2_start_meditation — sets v2_cultivation_status = 'meditating'.
+//   HUD shows "Meditating: Yes". Cultivation book is NOT started.
+//   Auric fills freely. Player uses "Resume Cultivation" on website to start scroll.
+//   sync-meditation-progress returns early when status = 'meditating' (no scroll advance).
+//   When player uses "Resume Cultivation", status becomes 'cultivating' and sync runs normally.
 //
-// Auto mode: same begin/resume sequence, then sync drives scroll normally.
+// Auto mode: calls v2_begin_cultivation (or v2_resume fallback) — sets status = 'cultivating'.
+//   HUD shows "Meditating: Yes". Sync drives scroll normally.
 
 const { createClient } = require("@supabase/supabase-js");
 
@@ -136,43 +138,27 @@ exports.handler = async (event) => {
 
   const preference = (member?.personal_cultivation_preference || "manual").toLowerCase();
 
-  // Manual mode: start cultivation so v2_cultivation_status = 'cultivating'
-  // (makes HUD show "Meditating: Yes"). sync-meditation-progress will skip
-  // v2_sync_realm_cultivation in manual mode, so scroll stays idle.
+  // Manual mode: call v2_start_meditation — sets status = 'meditating'.
+  // Does NOT call v2_begin_cultivation, so the cultivation book stays idle.
+  // HUD shows "Meditating: Yes". Player uses "Resume Cultivation" on website to start scroll.
   if (preference === "manual") {
-    const started = await startCultivation(avatarKey);
+    const { data: result, error: rpcError } = await supabase
+      .schema("library")
+      .rpc("v2_start_meditation", { p_sl_avatar_key: avatarKey });
 
-    if (!started.success) {
-      console.error("startCultivation (manual) error:", started.error);
-      return json(500, { error: "Failed to start meditation", detail: started.error });
+    if (rpcError) {
+      console.error("v2_start_meditation error:", rpcError);
+      return json(500, { error: "Failed to start meditation", detail: rpcError.message });
+    }
+
+    if (!result?.success) {
+      console.error("v2_start_meditation failed:", result);
+      return json(500, { error: "Failed to start meditation", detail: result?.message });
     }
 
     return json(200, {
       success: true,
-      action: "meditation_started",
-      message: "Meditation started. Auric is filling. Scroll is paused — use the cultivation book to advance when ready.",
+      action: result.action || "meditation_started",
+      message: "Meditation started. Auric is filling. Use the cultivation book to begin cultivating when ready.",
       cultivation_preference: "manual",
-      auric_filling: true,
-      cultivation_active: false
-    });
-  }
-
-  // Auto mode: start cultivation and let sync drive scroll normally.
-  const started = await startCultivation(avatarKey);
-
-  if (!started.success) {
-    const errCode = started.result?.error_code || "unknown";
-    console.error("startCultivation (auto) error:", started.error);
-    return json(409, {
-      error: started.error,
-      error_code: errCode
-    });
-  }
-
-  return json(200, {
-    success: true,
-    action: started.action,
-    cultivation_preference: "auto",
-    ...started.result
-  });
-};
+      v2_cultivation_status: result.v2_cultivation_status || "med

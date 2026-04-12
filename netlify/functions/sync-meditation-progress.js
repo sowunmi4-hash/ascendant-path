@@ -92,21 +92,23 @@ exports.handler = async (event) => {
     });
   }
 
-  // In manual mode: report current state but never advance scroll progress.
-  // Scroll only advances when the cultivator explicitly uses the cultivation book.
-  // 'cultivating' status is still set (so HUD shows Meditating: Yes) but
-  // v2_sync_realm_cultivation is NOT called here.
   const preference = (member?.personal_cultivation_preference || 'manual').toLowerCase();
-  if (preference === 'manual') {
+  const cultivationStatus = member?.v2_cultivation_status || 'idle';
+
+  // 'meditating' = base meditation (auric fills freely, scroll is idle).
+  // This applies in Manual mode when the player has NOT yet pressed "Resume Cultivation".
+  // When the player presses "Resume Cultivation" on the website, status becomes 'cultivating'
+  // and the sync falls through to run v2_sync_realm_cultivation normally.
+  if (cultivationStatus === 'meditating') {
     return json(200, {
       success: true,
       synced: false,
-      reason: 'manual_mode_no_scroll',
-      personal_cultivation_status: member?.v2_cultivation_status || 'idle',
-      v2_cultivation_status:       member?.v2_cultivation_status || 'idle',
+      reason: 'base_meditation_no_scroll',
+      personal_cultivation_status: cultivationStatus,
+      v2_cultivation_status:       cultivationStatus,
       auric_current:               member?.auric_current ?? null,
-      cultivation_preference:      'manual',
-      message: 'Manual mode: auric fills freely. Use the cultivation book to advance scroll.'
+      cultivation_preference:      preference,
+      message: 'Base meditation active. Auric fills freely. Use Resume Cultivation on the website to advance scroll.'
     });
   }
 
@@ -166,9 +168,4 @@ exports.handler = async (event) => {
     breakthrough_gate_open:      syncResult?.breakthrough_gate_open || false,
     auric_current:                  syncResult?.auric_after ?? null,
     ...(bondState || {
-      bond_runtime_active: false,
-      bond_session_status: "idle"
-    }),
-    focused_partnership_uuid: partnershipUuid || null
-  });
-};
+      bond_runtime_acti
