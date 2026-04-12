@@ -950,7 +950,7 @@ async function loadV2CultivationState(slAvatarKey, member) {
       .schema("breakthrough")
       .from("v2_member_breakthrough_state")
       .select(
-        "id,lifecycle_status,from_volume_number,from_section_key,to_volume_number,to_section_key,target_type,tribulation_family,breakthrough_started_at,breakthrough_ends_at,breakthrough_elapsed_at,breakthrough_duration_seconds,seconds_remaining,progress_pct,battle_status,outcome,verdict_key,verdict_text,verdict_revealed_at,stage_damaged,cooldown_active,cooldown_ends_at,total_attempts,total_failures,created_at,updated_at"
+        "id,lifecycle_status,from_volume_number,from_section_key,to_volume_number,to_section_key,target_type,tribulation_family,breakthrough_started_at,breakthrough_ends_at,breakthrough_elapsed_at,breakthrough_duration_seconds,progress_pct,battle_status,outcome,verdict_key,verdict_text,verdict_revealed_at,stage_damaged,cooldown_active,cooldown_ends_at,total_attempts,total_failures,created_at,updated_at"
       )
       .eq("sl_avatar_key", slAvatarKey)
       .not("lifecycle_status", "in", '("success","failed_stable","failed_damaged","abandoned")')
@@ -1049,7 +1049,9 @@ function buildV2CultivationStateSummary({
       breakthrough_started_at: breakthroughState.breakthrough_started_at || null,
       breakthrough_ends_at: breakthroughState.breakthrough_ends_at || null,
       breakthrough_duration_seconds: safeNumber(breakthroughState.breakthrough_duration_seconds, 0),
-      seconds_remaining: safeNumber(breakthroughState.seconds_remaining, 0),
+      seconds_remaining: breakthroughState.breakthrough_ends_at
+        ? Math.max(0, Math.floor((new Date(breakthroughState.breakthrough_ends_at) - Date.now()) / 1000))
+        : 0,
       progress_pct: safeNumber(breakthroughState.progress_pct, 0),
       battle_status: safeText(breakthroughState.battle_status, "not_started"),
       outcome: safeText(breakthroughState.outcome) || null,
