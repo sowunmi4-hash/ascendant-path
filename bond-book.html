@@ -1013,7 +1013,7 @@
         '<div class="vessel-title">' + formatStateLabel(pairState.is_damaged ? 'damaged' : pairState.is_meditating ? 'active' : 'idle') + '</div>' +
         '</div>' +
         '<div class="vessel-canvas-wrap">' +
-        '<canvas id="vessel-canvas" width="700" height="380"></canvas>' +
+        '<canvas id="vessel-canvas" width="700" height="420"></canvas>' +
         '</div>' +
         '<div class="vessel-qi-bar">' +
         '<div class="vessel-qi-label">Bond Qi Reserve</div>' +
@@ -1111,7 +1111,7 @@
 
       var dpr = window.devicePixelRatio || 1;
       canvas.width = 700 * dpr;
-      canvas.height = 380 * dpr;
+      canvas.height = 420 * dpr;
       state.vesselCtx.scale(dpr, dpr);
 
       runBondVessel(vol, books, pairState);
@@ -1130,18 +1130,18 @@
         var t = (now - start) / 1000;
         var ctx = state.vesselCtx;
 
-        ctx.clearRect(0, 0, 700, 380);
+        ctx.clearRect(0, 0, 700, 420);
 
         // Dark void background
         ctx.save();
         ctx.fillStyle = '#060608';
-        ctx.fillRect(0, 0, 700, 380);
+        ctx.fillRect(0, 0, 700, 420);
         ctx.restore();
 
         // Draw ambient
-        drawAmbientMountains(ctx, 700, 380, t);
-        drawAmbientStarfield(ctx, 700, 380, t);
-        drawAmbientQiVeins(ctx, 700, 380, t);
+        drawAmbientMountains(ctx, 700, 420, t);
+        drawAmbientStarfield(ctx, 700, 420, t);
+        drawAmbientQiVeins(ctx, 700, 420, t);
 
         // Get colors
         var colorA = getGenderColor(state.member);
@@ -1150,14 +1150,14 @@
 
         // Draw cinematic or normal
         if (_cinematic) {
-          runCinematicFrame(ctx, 350, 190, colorA, colorB, pairState);
+          runCinematicFrame(ctx, 350, 210, colorA, colorB, pairState);
           if (_cinematic.elapsed > _cinematic.duration) {
             _cinematic = null;
           } else {
             _cinematic.elapsed += (now - (_vesselStartTime || now)) / 1000;
           }
         } else {
-          drawBondVessel(ctx, 350, 190, colorA, colorB, pairState, t);
+          drawBondVessel(ctx, 350, 210, colorA, colorB, pairState, t);
         }
 
         _vesselStartTime = now;
@@ -1179,7 +1179,7 @@
       ctx.save();
 
       // Platform
-      drawBondPlatform(ctx, cx, cy, 170, 45, colorA, 0.3);
+      drawBondPlatform(ctx, cx, cy, 200, 50, colorA, 0.3);
 
       // Figures
       var figA = state.figureCache[getGenderClass(state.member)] || null;
@@ -1197,8 +1197,8 @@
       }
 
       // Draw figures (cultivation-book scale, wide rectangle layout)
-      var figSize = 200;
-      var spread = 90;
+      var figSize = 250;
+      var spread = 110;
       var floatA = _figDamaged ? 0 : Math.sin(t * 0.8) * 4;
       var floatB = _figDamaged ? 0 : Math.sin(t * 0.8 + 1.5) * 4;
       var tiltA = _figDamaged ? -0.2 : 0;
@@ -1222,15 +1222,15 @@
       ctx.restore();
 
       // Auras
-      drawVesselQiAura(ctx, cx - 90, cy, 55, pct, colorA, colorB, t, 0);
-      drawVesselQiAura(ctx, cx + 90, cy, 55, pct, colorA, colorB, t, Math.PI);
+      drawVesselQiAura(ctx, cx - 110, cy, 65, pct, colorA, colorB, t, 0);
+      drawVesselQiAura(ctx, cx + 110, cy, 65, pct, colorA, colorB, t, Math.PI);
 
       // Bond link
-      drawBondLink(ctx, cx - 90, cy - 20, cx + 90, cy - 20, colorA, colorB, t, _figDamaged);
+      drawBondLink(ctx, cx - 110, cy - 20, cx + 110, cy - 20, colorA, colorB, t, _figDamaged);
 
       // Seal
       if (pct < 0.1) {
-        drawBondSealOnVessel(ctx, cx, cy, 100, colorA, colorB, 0.2 * (1 - pct * 10), t);
+        drawBondSealOnVessel(ctx, cx, cy, 120, colorA, colorB, 0.2 * (1 - pct * 10), t);
       }
 
       ctx.restore();
@@ -1333,10 +1333,10 @@
         ctx.globalAlpha = 1 - progress * 0.2;
         ctx.fillStyle = '#c8a96a44';
         ctx.beginPath();
-        ctx.arc(cx - 90, figY, 50, 0, Math.PI * 2);
+        ctx.arc(cx - 110, figY, 55, 0, Math.PI * 2);
         ctx.fill();
         ctx.beginPath();
-        ctx.arc(cx + 90, figY, 50, 0, Math.PI * 2);
+        ctx.arc(cx + 110, figY, 55, 0, Math.PI * 2);
         ctx.fill();
         ctx.globalAlpha = 1;
       } else if (_cinematic.type === 'fail') {
@@ -1345,10 +1345,10 @@
         ctx.globalAlpha = 1 - progress * 0.5;
         ctx.fillStyle = '#cc444444';
         ctx.beginPath();
-        ctx.arc(cx - 90, failY, 45, 0, Math.PI * 2);
+        ctx.arc(cx - 110, failY, 50, 0, Math.PI * 2);
         ctx.fill();
         ctx.beginPath();
-        ctx.arc(cx + 90, failY, 45, 0, Math.PI * 2);
+        ctx.arc(cx + 110, failY, 50, 0, Math.PI * 2);
         ctx.fill();
         ctx.globalAlpha = 1;
       } else if (_cinematic.type === 'repair') {
