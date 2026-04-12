@@ -6,7 +6,6 @@
 //   - Calls v2_begin_cultivation (or v2_resume_cultivation as fallback) to set
 //     meditation_active = true so auric fills and the HUD shows "Meditating: Yes".
 //   - Immediately calls v2_pause_cultivation to keep scroll progress idle.
-//   - Returns success so the HUD knows meditation has started.
 //
 // Auto mode behaviour (unchanged):
 //   - Calls v2_begin_cultivation / v2_resume_cultivation and lets cultivation run
@@ -44,7 +43,6 @@ function json(status, body) {
 }
 
 async function resolveAvatarKey(event, body) {
-  // Try cookie session first (website callers)
   const cookieHeader = event.headers?.cookie || event.headers?.Cookie || "";
   const cookies = parseCookies(cookieHeader);
   const sessionToken = cookies[COOKIE_NAME] || "";
@@ -59,7 +57,6 @@ async function resolveAvatarKey(event, body) {
     if (sessionRow?.sl_avatar_key) return sessionRow.sl_avatar_key;
   }
 
-  // Fall back to body sl_avatar_key (HUD/LSL callers)
   const avatarKey = (body.sl_avatar_key || "").trim();
   if (avatarKey) {
     const { data: member } = await supabase
@@ -73,10 +70,8 @@ async function resolveAvatarKey(event, body) {
   return null;
 }
 
-// Starts cultivation (begin or resume fallback).
-// Returns { success, action, result, error } where error is non-null on failure.
+// Starts cultivation via begin or resume fallback.
 async function startCultivation(avatarKey) {
-  // Try begin first (handles open/new stage)
   const { data: beginResult, error: beginError } = await supabase
     .schema("library")
     .rpc("v2_begin_cultivation", { p_sl_avatar_key: avatarKey });
@@ -89,7 +84,6 @@ async function startCultivation(avatarKey) {
     return { success: true, action: "started", result: beginResult, error: null };
   }
 
-  // If no open stage, try resuming a paused session
   if (beginResult?.error_code === "no_open_stage") {
     const { data: resumeResult, error: resumeError } = await supabase
       .schema("library")
@@ -111,4 +105,81 @@ async function startCultivation(avatarKey) {
     };
   }
 
-  // already
+  if (beginResult?.error_code === "already_active") {
+    return { success: true, action: "already_active", result: beginResult, error: null };
+  }
+
+  return {
+    success: false,
+    action: null,
+    result: beginResult,
+    error: beginResult?.message || "Cannot start cultivation"
+  };
+}
+
+exports.handler = async (event) => {
+  if (event.httpMethod !== "POST") {
+    return json(405, { error: "Method not allowed" });
+  }
+
+  let body = {};
+  try { body = JSON.parse(event.body || "{}"); } catch { /* ok */ }
+
+  const avatarKey = await resolveAvatarKey(event, body);
+  if (!avatarKey) {
+    return json(401, { error: "Not authenticated" });
+  }
+
+  const { data: member } = await supabase
+    .from("cultivation_members")
+    .select("personal_cultivation_preference")
+    .eq("sl_avatar_key", avatarKey)
+    .maybeSingle();
+
+  const preference = (member?.personal_cultivation_preference || "manual").toLowerCase();
+
+  if (preference === "manual") {
+    const started = await startCultivation(avatarKey);
+
+    if (!started.success) {
+      console.error("startCultivation (manual) error:", started.error);
+      return json(500, { error: "Failed to start meditation", detail: started.error });
+    }
+
+    const { error: pauseError } = await supabase
+      .schema("library")
+      .rpc("v2_pause_cultivation", { p_sl_avatar_key: avatarKey });
+
+    if (pauseError) {
+      console.warn("v2_pause_cultivation (manual) warn:", pauseError.message);
+    }
+
+    return json(200, {
+      success: true,
+      action: "meditation_started",
+      message: "Meditation started. Auric is filling. In manual mode, scroll is paused.",
+      cultivation_preference: "manual",
+      auric_filling: true,
+      cultivation_active: false
+    });
+  }
+
+  // Auto mode
+  const started = await startCultivation(avatarKey);
+
+  if (!started.success) {
+    const errCode = started.result?.error_code || "unknown";
+    console.error("startCultivation (auto) error:", started.error);
+    return json(409, {
+      error: started.error,
+      error_code: errCode
+    });
+  }
+
+  return json(200, {
+    success: true,
+    action: started.action,
+    cultivation_preference: "auto",
+    ...started.result
+  });
+};
