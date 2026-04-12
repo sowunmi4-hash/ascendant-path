@@ -1766,10 +1766,10 @@
 
           var auraC1 = figureAscended ? 'rgba(255,230,120,0.9)' : figureDamaged ? 'rgba(200,80,80,0.7)' : c1;
           var auraC2 = figureAscended ? 'rgba(255,200,60,0.5)'  : figureDamaged ? 'rgba(160,40,40,0.4)'  : c2;
-          var auraPct = figureGone ? qiPct * 0.4 : qiPct;
+          var auraPct = (figureGone || figureDamaged) ? qiPct * 0.3 : qiPct;
           drawVesselQiAura(ctx, cx, cy, baseR, auraPct, auraC1, auraC2, t, start);
 
-          if (figImg && !figureGone) {
+          if (figImg && !figureGone && !figureDamaged) {
             try {
               var figH = baseR * (figureAscended ? 1.9 : figureDamaged ? 1.4 : 1.6);
               var figW = figH;
@@ -2286,7 +2286,6 @@
 
         if (damaged) {
           drawEyeDamaged(ctx, cx, cy, eyeW, rc, t);
-          drawTrappedFigure(ctx, cx, cy, rc, t);
         }
         if (st === 'locked') {
           drawEyeLocked(ctx, cx, cy, eyeW, rc, t);
