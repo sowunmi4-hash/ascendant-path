@@ -2435,12 +2435,19 @@
           if (actionBtn) { actionBtn.style.display = 'block'; actionBtn.style.background = '#e8a840'; actionBtn.style.color = '#1a0f00'; actionBtn.textContent = 'Return to Breakthrough Chamber'; actionBtn.onclick = function() { window.location.href = getBreakthroughRoute(); }; }
         } else if (gateState === 'damaged') {
           var repairCost = focus ? safeNumber(focus.repair_cp_cost, 0) : 0;
+          var focusDamaged = getFocusRecord();
+          var isMeditatingWhileDamaged = focusDamaged && focusDamaged.session_started_at != null;
           if (actionBtn) {
             actionBtn.style.display = 'block'; actionBtn.style.background = '#7a2020'; actionBtn.style.color = '#ffe0e0';
             actionBtn.textContent = 'Repair Scroll \u2014 ' + repairCost + ' CP'; actionBtn.disabled = false;
             actionBtn.onclick = function() { handleRepairRecord(actionBtn, subNote); };
           }
-          if (subNote) { subNote.textContent = 'Your scroll is damaged. Pay the repair cost to restore your progress.'; subNote.style.color = '#cc444488'; }
+          if (isMeditatingWhileDamaged) {
+            if (actionBtnOff) { actionBtnOff.style.display = 'block'; actionBtnOff.style.background = '#0a180a'; actionBtnOff.style.border = '0.5px solid #33662244'; actionBtnOff.style.color = '#44aa66'; actionBtnOff.textContent = 'Meditating \u2014 Scroll Damaged'; }
+            if (subNote) { subNote.textContent = 'Meditation continues while damaged. Repair your scroll to attempt breakthrough again.'; subNote.style.color = '#cc444466'; }
+          } else {
+            if (subNote) { subNote.textContent = 'Your scroll is damaged. Repair to attempt breakthrough. Meditation is available via your HUD.'; subNote.style.color = '#cc444488'; }
+          }
         } else if (gateState === 'locked') {
           if (actionBtn) {
             actionBtn.style.display = 'block'; actionBtn.style.background = '#1a1400'; actionBtn.style.color = '#444038';
