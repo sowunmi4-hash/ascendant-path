@@ -785,6 +785,8 @@
       var isMeditating = safeBoolean(pairState.is_meditating);
       var isDamaged = safeBoolean(pairState.is_damaged);
       var rec = getRecord();
+      var currentBook = rec ? (rec.current_book || rec.actionable_book || null) : null;
+      var bookState = currentBook ? safeText(currentBook.display_state).toLowerCase() : '';
 
       var actions = [];
 
@@ -800,20 +802,54 @@
           label: 'Pause Cultivation',
           title: 'Pause bond meditation'
         });
+      } else if (bookState === 'pair_completed' || bookState === 'completed') {
+        actions.push({
+          key: 'breakthrough',
+          label: 'Enter Breakthrough',
+          title: 'Both partners have completed — enter breakthrough'
+        });
+      } else if (bookState === 'awaiting_partner_completion') {
+        actions.push({
+          key: 'wait',
+          label: 'Awaiting Partner',
+          title: 'Waiting for partner to complete their cultivation'
+        });
+      } else if (bookState === 'active' || bookState === 'is_active') {
+        actions.push({
+          key: 'start',
+          label: 'Continue Cultivation',
+          title: 'Continue cultivating this bond book'
+        });
+      } else if (bookState === 'ready_to_start') {
+        actions.push({
+          key: 'start',
+          label: 'Begin Cultivation',
+          title: 'Begin cultivating together'
+        });
+      } else if (bookState === 'waiting_for_partner_offering') {
+        actions.push({
+          key: 'wait',
+          label: 'Awaiting Partner Offering',
+          title: 'Waiting for partner to offer their cultivation points'
+        });
+      } else if (bookState === 'ready_for_offering' && rec && rec.available) {
+        actions.push({
+          key: 'offer',
+          label: 'Offer Bond',
+          title: 'Offer cultivation points for this bond book'
+        });
+      } else if (rec && rec.available) {
+        actions.push({
+          key: 'start',
+          label: 'Begin Cultivation',
+          title: 'Begin cultivating together'
+        });
       } else {
-        if (rec && rec.is_available) {
-          actions.push({
-            key: 'start',
-            label: 'Begin Cultivation',
-            title: 'Begin cultivating together'
-          });
-        } else {
-          actions.push({
-            key: 'offer',
-            label: 'Offer Bond',
-            title: 'Offer this bond volume'
-          });
-        }
+        actions.push({
+          key: 'offer',
+          label: 'Offer Bond',
+          title: 'Offer this bond volume'
+        });
       }
 
       return actions;
@@ -1034,7 +1070,7 @@
         (actionChip ? actionChip.label : 'No Action') +
         '</button>' +
         '<div class="action-subnote">' +
-        (pairState.is_meditating ? 'Meditating together...' : 'Ready for cultivation') +
+        (pairState.is_meditating ? 'Meditating together...' : actionChip && actionChip.key === 'wait' ? actionChip.title : actionChip && actionChip.key === 'breakthrough' ? 'Both partners have completed' : 'Ready for cultivation') +
         '</div>' +
         '</div>' +
         '</div>' +
@@ -1544,6 +1580,19 @@
     function handleControlAction(actionKey) {
       var vol = getSelectedVolume();
       if (!vol) return;
+
+      // Breakthrough navigates to breakthrough page
+      if (actionKey === 'breakthrough') {
+        var rec = getRecord();
+        var pUuid = state.requestedPartnershipUuid || '';
+        var vNum = vol.volume_number || 1;
+        var bNum = (rec && rec.current_book) ? rec.current_book.book_number : (rec ? rec.selected_book_number : 0);
+        window.location.href = 'breakthrough.html?partnership_uuid=' + encodeURIComponent(pUuid) + '&volume=' + vNum + '&book=' + bNum;
+        return;
+      }
+
+      // Wait states are informational only
+      if (actionKey === 'wait') return;
 
       var endpoint = actionKey === 'offer' ? ENDPOINTS.offerBond :
         actionKey === 'start' ? ENDPOINTS.startBond :
