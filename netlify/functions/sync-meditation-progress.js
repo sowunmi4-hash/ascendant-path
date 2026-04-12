@@ -92,15 +92,21 @@ exports.handler = async (event) => {
     });
   }
 
-  // In manual mode, only sync if user explicitly started cultivation (status is 'cultivating')
-  // In auto mode, meditation auto-drives cultivation
+  // In manual mode: report current state but never advance scroll progress.
+  // Scroll only advances when the cultivator explicitly uses the cultivation book.
+  // 'cultivating' status is still set (so HUD shows Meditating: Yes) but
+  // v2_sync_realm_cultivation is NOT called here.
   const preference = (member?.personal_cultivation_preference || 'manual').toLowerCase();
-  if (preference === 'manual' && member && member.v2_cultivation_status !== 'cultivating') {
+  if (preference === 'manual') {
     return json(200, {
       success: true,
       synced: false,
-      reason: 'manual_mode_idle',
-      message: 'Personal cultivation is in manual mode. Click Begin Cultivation to start burning auric.'
+      reason: 'manual_mode_no_scroll',
+      personal_cultivation_status: member?.v2_cultivation_status || 'idle',
+      v2_cultivation_status:       member?.v2_cultivation_status || 'idle',
+      auric_current:               member?.auric_current ?? null,
+      cultivation_preference:      'manual',
+      message: 'Manual mode: auric fills freely. Use the cultivation book to advance scroll.'
     });
   }
 
