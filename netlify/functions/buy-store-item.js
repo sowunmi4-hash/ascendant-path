@@ -580,7 +580,7 @@ async function resolveBondPurchasePartnership({
     return {
       success: false,
       statusCode: 409,
-      message: "You need an active partnership before buying a Bond Volume."
+      message: "You need an active partnership before buying a Relic."
     };
   }
 
@@ -614,14 +614,14 @@ async function loadBondVolumeState(partnershipId, bondVolumeNumber) {
     .limit(2);
 
   if (error) {
-    throw new Error(`Failed to load bond volume state: ${error.message}`);
+    throw new Error(`Failed to load Relic state: ${error.message}`);
   }
 
   const rows = Array.isArray(data) ? data : [];
 
   if (rows.length > 1) {
     throw new Error(
-      `Duplicate partner_bond_volume_states rows found for partnership ${resolvedPartnershipId} and bond volume ${bondVolumeNumber}.`
+      `Duplicate partner_bond_volume_states rows found for partnership ${resolvedPartnershipId} and Relic ${bondVolumeNumber}.`
     );
   }
 
@@ -650,7 +650,7 @@ async function loadPreviousBondVolumeCompletion(
 
   if (error) {
     throw new Error(
-      `Failed to load previous bond volume state: ${error.message}`
+      `Failed to load previous Relic state: ${error.message}`
     );
   }
 
@@ -658,7 +658,7 @@ async function loadPreviousBondVolumeCompletion(
 
   if (rows.length > 1) {
     throw new Error(
-      `Duplicate previous partner_bond_volume_states rows found for partnership ${resolvedPartnershipId} and bond volume ${previousVolumeNumber}.`
+      `Duplicate previous partner_bond_volume_states rows found for partnership ${resolvedPartnershipId} and Relic ${previousVolumeNumber}.`
     );
   }
 
@@ -969,7 +969,7 @@ async function purchaseBondVolume({
     return buildResponse(409, {
       success: false,
       message:
-        "You must complete the previous Bond Volume before buying this one.",
+        "You must complete the previous Relic before buying this one.",
       required_previous_volume: bondVolumeNumber - 1,
       current_volume: bondVolumeNumber,
       partnership: {
@@ -988,7 +988,7 @@ async function purchaseBondVolume({
     return buildResponse(409, {
       success: false,
       message:
-        "This Bond Volume has already been completed by your partnership.",
+        "This Relic has already been completed by your partnership.",
       bond_volume_state: existingBondState,
       partnership: {
         id: partnershipId,
@@ -1000,7 +1000,7 @@ async function purchaseBondVolume({
   if (buyerRole === "partner_a" && existingBondState?.partner_a_paid) {
     return buildResponse(409, {
       success: false,
-      message: "You have already paid your share for this Bond Volume.",
+      message: "You have already paid your share for this Relic.",
       bond_volume_state: existingBondState,
       partnership: {
         id: partnershipId,
@@ -1012,7 +1012,7 @@ async function purchaseBondVolume({
   if (buyerRole === "partner_b" && existingBondState?.partner_b_paid) {
     return buildResponse(409, {
       success: false,
-      message: "You have already paid your share for this Bond Volume.",
+      message: "You have already paid your share for this Relic.",
       bond_volume_state: existingBondState,
       partnership: {
         id: partnershipId,
@@ -1024,7 +1024,7 @@ async function purchaseBondVolume({
   if (existingBondState?.is_unlocked) {
     return buildResponse(409, {
       success: false,
-      message: "This Bond Volume is already unlocked for your partnership.",
+      message: "This Relic is already unlocked for your partnership.",
       bond_volume_state: existingBondState,
       partnership: {
         id: partnershipId,
@@ -1052,7 +1052,7 @@ async function purchaseBondVolume({
     sl_username: resolvedUsername,
     token_amount: itemPrice,
     related_item_key: item.item_key,
-    notes: `Bond Volume purchase contribution for ${item.item_name}`,
+    notes: `Relic purchase contribution for ${item.item_name}`,
     reference_code: purchaseReferenceCode
   });
 
@@ -1065,7 +1065,7 @@ async function purchaseBondVolume({
       return buildResponse(409, {
         success: false,
         message:
-          "You do not have enough Ascension Tokens to pay your share for this Bond Volume.",
+          "You do not have enough Ascension Tokens to pay your share for this Relic.",
         currency_required: itemPrice,
         currency_balance: currentBalance,
         currency_shortfall: Math.max(0, itemPrice - currentBalance),
@@ -1085,7 +1085,7 @@ async function purchaseBondVolume({
 
     return buildResponse(500, {
       success: false,
-      message: "Failed to deduct Ascension Tokens for this Bond Volume.",
+      message: "Failed to deduct Ascension Tokens for this Relic.",
       error: spendResult.error?.message || "Unknown token deduction error.",
       partnership: {
         id: partnershipId,
@@ -1119,8 +1119,8 @@ async function purchaseBondVolume({
         success: false,
         message:
           stockResult.reason === "out_of_stock"
-            ? "This Bond Volume is out of stock and could not be unlocked. Your Ascension Tokens were refunded."
-            : "This Bond Volume could not be unlocked because the stock changed. Your Ascension Tokens were refunded.",
+            ? "This Relic is out of stock and could not be unlocked. Your Ascension Tokens were refunded."
+            : "This Relic could not be unlocked because the stock changed. Your Ascension Tokens were refunded.",
         item: {
           id: item.id,
           item_key: item.item_key,
@@ -1189,7 +1189,7 @@ async function purchaseBondVolume({
     return buildResponse(500, {
       success: false,
       message:
-        "Purchase failed while applying Bond Volume ownership. Ascension Tokens were refunded.",
+        "Purchase failed while applying Relic ownership. Ascension Tokens were refunded.",
       error: purchaseError.message,
       details: purchaseError.details || null,
       hint: purchaseError.hint || null,
@@ -1232,7 +1232,7 @@ async function purchaseBondVolume({
     return buildResponse(500, {
       success: false,
       message:
-        "Purchase failed while applying Bond Volume ownership. Ascension Tokens were refunded.",
+        "Purchase failed while applying Relic ownership. Ascension Tokens were refunded.",
       partnership: {
         id: partnershipId,
         source: partnershipSource
@@ -1256,7 +1256,7 @@ async function purchaseBondVolume({
 
     return buildResponse(409, {
       success: false,
-      message: "You have already paid your share for this Bond Volume.",
+      message: "You have already paid your share for this Relic.",
       partnership: {
         id: partnershipId,
         source: partnershipSource
@@ -1278,14 +1278,14 @@ async function purchaseBondVolume({
 
   const warnings = [];
   if (purchaseLogError) {
-    warnings.push("Bond Volume purchased, but purchase log entry failed.");
+    warnings.push("Relic purchased, but purchase log entry failed.");
   }
 
   return buildResponse(200, {
     success: true,
     message: purchaseState.is_unlocked
-      ? "Bond Volume unlocked successfully for your partnership."
-      : "Your share for the Bond Volume was paid successfully. Waiting for your partner.",
+      ? "Relic unlocked successfully for your partnership."
+      : "Your share for the Relic was paid successfully. Waiting for your partner.",
     warnings,
     purchase_type: "bond",
     currency_charged: true,

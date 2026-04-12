@@ -565,7 +565,7 @@ async function loadBondBookCatalog(bookId) {
     .maybeSingle();
 
   if (error) {
-    throw new Error(`Failed to load bond book catalog: ${error.message}`);
+    throw new Error(`Failed to load Chronicle catalog: ${error.message}`);
   }
 
   return data || null;
@@ -581,7 +581,7 @@ async function loadBondBookStateById(bookStateId) {
     .maybeSingle();
 
   if (error) {
-    throw new Error(`Failed to load partner bond book state: ${error.message}`);
+    throw new Error(`Failed to load partner Chronicle state: ${error.message}`);
   }
 
   return data || null;
@@ -625,7 +625,7 @@ async function loadPartnerBondBookStates(partnershipUuid) {
     .order("bond_book_number", { ascending: true });
 
   if (error) {
-    throw new Error(`Failed to load bond book states: ${error.message}`);
+    throw new Error(`Failed to load Chronicle states: ${error.message}`);
   }
 
   return data || [];
@@ -691,7 +691,7 @@ async function updateBondBookState(bookStateId, payload) {
     .maybeSingle();
 
   if (error) {
-    throw new Error(`Failed to update bond book state: ${error.message}`);
+    throw new Error(`Failed to update Chronicle state: ${error.message}`);
   }
 
   return data || null;
@@ -775,7 +775,7 @@ async function tryAdvancePartnerBondBook(partnershipUuid, volumeNumber, bookNumb
   });
 
   if (error) {
-    throw new Error(`Failed to advance partner bond book: ${error.message}`);
+    throw new Error(`Failed to advance partner Chronicle: ${error.message}`);
   }
 
   return unwrapRpcPayload(data, "advance_partner_bond_book");
@@ -1062,7 +1062,7 @@ exports.handler = async (event) => {
     if (!sessionRole.is_session_leader) {
       return buildResponse(403, {
         success: false,
-        message: "Only the session leader can finalize bond book completion.",
+        message: "Only the session leader can finalize Chronicle completion.",
         partnership_uuid: partnershipUuid,
         partnership_id: legacyPartnershipId,
         session_role: sessionRole
@@ -1105,14 +1105,14 @@ exports.handler = async (event) => {
     if (!catalogBook) {
       return buildResponse(500, {
         success: false,
-        message: "The active bond book catalog entry could not be found."
+        message: "The active Chronicle catalog entry could not be found."
       });
     }
 
     if (!bookState) {
       return buildResponse(500, {
         success: false,
-        message: "The active partner bond book state could not be found."
+        message: "The active partner Chronicle state could not be found."
       });
     }
 
@@ -1150,7 +1150,7 @@ exports.handler = async (event) => {
     if (!bookReadyForCompletion) {
       return buildResponse(409, {
         success: false,
-        message: `Bond Book ${currentBookNumber} is not ready for completion yet.`,
+        message: `Chronicle ${currentBookNumber} is not ready for completion yet.`,
         partnership_uuid: partnershipUuid,
         partnership_id: legacyPartnershipId,
         session_role: sessionRole,
@@ -1264,10 +1264,10 @@ exports.handler = async (event) => {
     return buildResponse(200, {
       success: true,
       message: volumeCompleted
-        ? `Bond Book ${currentBookNumber} was completed and Volume ${currentVolumeNumber} is now complete.`
+        ? `Chronicle ${currentBookNumber} was completed and Volume ${currentVolumeNumber} is now complete.`
         : nextBook
-          ? `Bond Book ${currentBookNumber} was completed and Book ${nextBookNumber} is now the next target.`
-          : `Bond Book ${currentBookNumber} was completed successfully.`,
+          ? `Chronicle ${currentBookNumber} was completed and Book ${nextBookNumber} is now the next target.`
+          : `Chronicle ${currentBookNumber} was completed successfully.`,
       action: volumeCompleted ? "volume_completed" : "book_completed",
       partnership_resolution: {
         requested_partnership_uuid: requestedPartnershipUuid || null,
@@ -1318,7 +1318,7 @@ exports.handler = async (event) => {
 
     return buildResponse(500, {
       success: false,
-      message: "Failed to complete bond book.",
+      message: "Failed to complete Chronicle.",
       error: error.message || "Unknown error."
     });
   }

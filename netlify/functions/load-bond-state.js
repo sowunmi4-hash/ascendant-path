@@ -1126,15 +1126,15 @@ function buildUnavailableBondRecord({
   if (!resolvedPartnership.has_active_partnership) {
     message = "Bond Shrine remains dormant until a valid active partnership exists.";
   } else if (resolvedPartnership.selected_partnership_required) {
-    message = "Multiple active partnerships were found. Select a partnership first before opening the Bond Book.";
+    message = "Multiple active partnerships were found. Select a partnership first before opening the Relic.";
   } else if (resolvedPartnership.selected_partnership_missing) {
-    message = "The saved selected partnership no longer exists. Re-select a partnership before opening the Bond Book.";
+    message = "The saved selected partnership no longer exists. Re-select a partnership before opening the Relic.";
   } else if (resolvedPartnership.selected_partnership_inactive) {
-    message = "The saved selected partnership is not active. Re-select an active partnership before opening the Bond Book.";
+    message = "The saved selected partnership is not active. Re-select an active partnership before opening the Relic.";
   } else if (resolvedPartnership.selected_partnership_invalid) {
-    message = "The saved selected partnership is invalid for this member. Re-select a valid partnership before opening the Bond Book.";
+    message = "The saved selected partnership is invalid for this member. Re-select a valid partnership before opening the Relic.";
   } else if (resolvedPartnership.explicit_resolution_failed) {
-    message = "The requested partnership could not be resolved for the Bond Book.";
+    message = "The requested partnership could not be resolved for the Relic.";
   }
 
   const partnershipUuid = partnerContext.partnership_uuid || null;
@@ -1343,7 +1343,7 @@ async function buildBondRecord({
         volume_id: safeText(book?.volume_id) || null,
         volume_number: volumeNumber,
         book_number: bookNumber,
-        book_name: safeText(book?.title, `Bond Book ${bookNumber}`),
+        book_name: safeText(book?.title, `Chronicle ${bookNumber}`),
         book_label: `Book ${bookNumber}`,
         description: safeText(book?.description) || null,
 
@@ -1450,7 +1450,7 @@ async function buildBondRecord({
     return {
       id: safeText(volume?.id) || null,
       volume_number: volumeNumber,
-      item_name: safeText(volume?.title, `Bond Volume ${volumeNumber}`),
+      item_name: safeText(volume?.title, `Relic ${volumeNumber}`),
       stage_name: safeText(volume?.stage_name) || null,
       description: firstFilled(storeRow?.description, volume?.description) || null,
       volume_status: volumeStatus,

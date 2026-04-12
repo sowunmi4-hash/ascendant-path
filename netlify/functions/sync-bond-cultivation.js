@@ -286,66 +286,66 @@ function getSyncConflictMessage(displayState, volumeNumber, bookNumber) {
   const state = safeLower(displayState);
 
   if (state === "locked") {
-    return `Bond Book ${bookNumber} in Volume ${volumeNumber} is locked.`;
+    return `Chronicle ${bookNumber} of Relic ${volumeNumber} is locked.`;
   }
 
   if (state === "ready_for_offering") {
-    return `Bond Book ${bookNumber} in Volume ${volumeNumber} still needs your offering first.`;
+    return `Chronicle ${bookNumber} of Relic ${volumeNumber} still needs your offering first.`;
   }
 
   if (state === "waiting_for_partner_offering") {
-    return `Bond Book ${bookNumber} in Volume ${volumeNumber} is waiting for your partner's offering.`;
+    return `Chronicle ${bookNumber} of Relic ${volumeNumber} is waiting for your partner's offering.`;
   }
 
   if (state === "ready_to_start") {
-    return `Bond Book ${bookNumber} in Volume ${volumeNumber} is ready, but you need to start it first.`;
+    return `Chronicle ${bookNumber} of Relic ${volumeNumber} is ready, but you need to start it first.`;
   }
 
   if (state === "paused") {
-    return `Bond Book ${bookNumber} in Volume ${volumeNumber} is paused. Start it again to resume before syncing.`;
+    return `Chronicle ${bookNumber} of Relic ${volumeNumber} is paused. Start it again to resume before syncing.`;
   }
 
-  return `Bond Book ${bookNumber} in Volume ${volumeNumber} cannot be synced from its current state.`;
+  return `Chronicle ${bookNumber} of Relic ${volumeNumber} cannot be synced from its current state.`;
 }
 
 function getInfoOnlyMessage(displayState, volumeNumber, bookNumber) {
   const state = safeLower(displayState);
 
   if (state === "awaiting_partner_completion") {
-    return `Your side of Bond Book ${bookNumber} in Volume ${volumeNumber} is already complete and is waiting for your partner.`;
+    return `Your side of Chronicle ${bookNumber} of Relic ${volumeNumber} is already complete and is waiting for your partner.`;
   }
 
   if (state === "pair_completed") {
-    return `Bond Book ${bookNumber} in Volume ${volumeNumber} has already been pair-completed.`;
+    return `Chronicle ${bookNumber} of Relic ${volumeNumber} has already been pair-completed.`;
   }
 
-  return `Bond Book ${bookNumber} in Volume ${volumeNumber} does not need syncing right now.`;
+  return `Chronicle ${bookNumber} of Relic ${volumeNumber} does not need syncing right now.`;
 }
 
 function getSyncMessage(postDisplayState, volumeNumber, bookNumber, autoPaused) {
   if (autoPaused) {
-    return `Bond cultivation for Bond Book ${bookNumber} in Volume ${volumeNumber} was paused because you are not cultivating.`;
+    return `Bond cultivation for Chronicle ${bookNumber} of Relic ${volumeNumber} was paused because you are not cultivating.`;
   }
 
   const state = safeLower(postDisplayState);
 
   if (state === "awaiting_partner_completion") {
-    return `Your side of Bond Book ${bookNumber} in Volume ${volumeNumber} is now complete and is waiting for your partner.`;
+    return `Your side of Chronicle ${bookNumber} of Relic ${volumeNumber} is now complete and is waiting for your partner.`;
   }
 
   if (state === "pair_completed") {
-    return `Bond Book ${bookNumber} in Volume ${volumeNumber} has now been pair-completed.`;
+    return `Chronicle ${bookNumber} of Relic ${volumeNumber} has now been pair-completed.`;
   }
 
   if (state === "active") {
-    return `Bond cultivation synced for Bond Book ${bookNumber} in Volume ${volumeNumber}.`;
+    return `Bond cultivation synced for Chronicle ${bookNumber} of Relic ${volumeNumber}.`;
   }
 
   if (state === "paused") {
-    return `Bond cultivation for Bond Book ${bookNumber} in Volume ${volumeNumber} is paused.`;
+    return `Bond cultivation for Chronicle ${bookNumber} of Relic ${volumeNumber} is paused.`;
   }
 
-  return `Bond cultivation state loaded for Bond Book ${bookNumber} in Volume ${volumeNumber}.`;
+  return `Bond cultivation state loaded for Chronicle ${bookNumber} of Relic ${volumeNumber}.`;
 }
 
 function getSyncAction(postDisplayState, autoPaused) {
@@ -1496,7 +1496,7 @@ exports.handler = async (event) => {
         book: {
           volume_number: volumeNumber,
           book_number: bookNumber,
-          title: safeText(catalogBook?.title, `Bond Book ${bookNumber}`),
+          title: safeText(catalogBook?.title, `Chronicle ${bookNumber}`),
           description: safeText(catalogBook?.description) || null,
           display_state: preDisplayState,
           required_minutes: requiredMinutes,
@@ -1751,7 +1751,7 @@ exports.handler = async (event) => {
       book: {
         volume_number: volumeNumber,
         book_number: bookNumber,
-        title: safeText(catalogBook?.title, `Bond Book ${bookNumber}`),
+        title: safeText(catalogBook?.title, `Chronicle ${bookNumber}`),
         description: safeText(catalogBook?.description) || null,
         display_state: postDisplayState,
         required_minutes: requiredMinutes,

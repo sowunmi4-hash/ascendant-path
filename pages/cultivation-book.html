@@ -832,7 +832,7 @@
         <div class="hero-state-badge idle" id="hero-state-badge">Preparing</div>
       </div>
       <div class="hero-meta-row">
-        <div class="hero-meta-pill" id="hero-volume-pill">Volume --</div>
+        <div class="hero-meta-pill" id="hero-volume-pill">Tome --</div>
         <div class="hero-meta-pill" id="hero-realm-pill">Loading realm...</div>
         <div class="hero-meta-pill" id="hero-focus-pill">No active focus</div>
       </div>
@@ -1396,7 +1396,7 @@
         "Preparing the opened record...";
 
       document.getElementById("hero-volume-pill").textContent =
-        "Volume " + (safeNumber(store?.volume_number, 0) || "--");
+        "Tome " + (safeNumber(store?.volume_number, 0) || "--");
 
       document.getElementById("hero-realm-pill").textContent =
         safeText(store?.realm_name, realmFromVolume(store?.volume_number));
@@ -1414,7 +1414,7 @@
         breakthrough_ready: { key: "breakthrough", label: getBreakthroughDisplayState() || "Breakthrough" },
         breakthrough_cooldown: { key: "cooldown", label: getBreakthroughDisplayState() || "Cooldown" },
         complete: { key: "complete", label: "Ready to Complete" },
-        comprehended: { key: "complete", label: "Volume Completed" },
+        comprehended: { key: "complete", label: "Tome Completed" },
         reopened: { key: "reopened", label: "Resumed Record" },
         open: { key: "idle", label: "Awaiting Action" },
         sealed: { key: "idle", label: "Awaiting Action" }
@@ -2308,7 +2308,7 @@
           var nextSec = SECTION_KEYS[idx + 1];
           return realmFromVolume(vol) + ' · ' + (nextSec.charAt(0).toUpperCase() + nextSec.slice(1));
         }
-        return realmFromVolume(vol + 1) + ' · Base';
+        return realmFromVolume(vol + 1) + ' · Base Scroll';
       } catch(e) { return 'Next Stage'; }
     }
 
@@ -2339,7 +2339,7 @@
         var store = getStore();
         var vol = safeNumber(store && store.volume_number, 0);
         return realmFromVolume(vol + 1) + ' \u2014 Volume ' + (vol + 1);
-      } catch(e) { return 'Next Volume'; }
+      } catch(e) { return 'Next Tome'; }
     }
 
     function renderBreakthroughFooter() {
@@ -2442,7 +2442,7 @@
           ];
         } else if (gateState === 'locked') {
           chips = [
-            {label:'Status', val:'Volume Complete', lc:'#c8a96a66',vc:'#c8a96a',bg:'#1a1400',bc:'#c8a96a33'},
+            {label:'Status', val:'Tome Complete', lc:'#c8a96a66',vc:'#c8a96a',bg:'#1a1400',bc:'#c8a96a33'},
             {label:'Next',   val:getNextVolumeName(), lc:'#44403888',vc:'#444038',bg:'#111008',bc:'#44403833'}
           ];
         }

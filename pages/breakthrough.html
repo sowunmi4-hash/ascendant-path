@@ -1288,10 +1288,10 @@
 
     function buildStageRouteLabel(bt) {
       const parts = [];
-      if (bt.to_volume_number) parts.push(`Volume ${bt.to_volume_number}`);
+      if (bt.to_volume_number) parts.push(`Tome ${bt.to_volume_number}`);
       if (bt.to_section_key) parts.push(toTitle(bt.to_section_key));
       if (!parts.length) {
-        if (bt.from_volume_number) parts.push(`Volume ${bt.from_volume_number}`);
+        if (bt.from_volume_number) parts.push(`Tome ${bt.from_volume_number}`);
         if (bt.from_section_key) parts.push(toTitle(bt.from_section_key));
       }
       return parts.join(" • ") || "--";
@@ -1690,7 +1690,7 @@
         createInfoRow("Target Type", toTitle(bt.target_type, "--"), "The kind of threshold the chamber is currently judging."),
         createInfoRow("Tribulation Family", toTitle(bt.tribulation_family, "--"), "The tribulation family currently bound to the threshold."),
         createInfoRow("State", safeText(bt.lifecycle_label, getStateLabel()), "The current DB lifecycle being shown through the chamber."),
-        createInfoRow("Stage Route", buildStageRouteLabel(bt), "The volume and section route currently tied to this threshold."),
+        createInfoRow("Stage Route", buildStageRouteLabel(bt), "The Tome and Scroll route currently tied to this threshold."),
         createInfoRow("Repair Burden", stageNeedsRepair ? `${repairCost} CP` : "None", stageNeedsRepair ? "This burden must be paid before another lawful attempt." : "No repair burden is currently blocking the threshold.")
       ].join("");
     }

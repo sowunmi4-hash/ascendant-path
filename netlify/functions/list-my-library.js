@@ -459,7 +459,7 @@ function getBondBookPriority(status) {
 
 function getBondBookTitle(volumeNumber, bookNumber, volumeTitle) {
   const label = BOND_BOOK_LABELS[bookNumber] || ("Book " + (bookNumber || "?"));
-  return (volumeTitle || BOND_VOLUME_DEFAULT_TITLES[volumeNumber] || "Bond Volume") + " \u2014 " + label;
+  return (volumeTitle || BOND_VOLUME_DEFAULT_TITLES[volumeNumber] || "Relic") + " \u2014 " + label;
 }
 
 async function loadPartnerBondCore(partnershipUuid) {
@@ -551,7 +551,7 @@ function buildBondLibraryFromMemberStates(opts) {
 
   candidateVolumes.forEach(function(volumeNumber) {
     const catalogRow = catalogByVolume.get(volumeNumber) || null;
-    const volumeTitle = firstFilled(catalogRow && catalogRow.item_name ? catalogRow.item_name : "", BOND_VOLUME_DEFAULT_TITLES[volumeNumber] || "") || ("Bond Volume " + volumeNumber);
+    const volumeTitle = firstFilled(catalogRow && catalogRow.item_name ? catalogRow.item_name : "", BOND_VOLUME_DEFAULT_TITLES[volumeNumber] || "") || ("Relic " + volumeNumber);
     const description = firstFilled(catalogRow && catalogRow.description ? catalogRow.description : "") || null;
 
     const books = Object.keys(BOND_BOOK_LABELS).map(function(k) { return safeNumber(k, 0); }).filter(function(n) { return n > 0; }).map(function(bookNumber) {

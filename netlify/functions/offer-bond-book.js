@@ -249,30 +249,30 @@ function getOfferMessage(displayState, bookNumber, volumeNumber) {
   const state = safeLower(displayState);
 
   if (state === "waiting_for_partner_offering") {
-    return `Your offering has been placed for Bond Book ${bookNumber} in Volume ${volumeNumber}. Waiting for your partner's offering.`;
+    return `Your offering has been placed for Chronicle ${bookNumber} of Relic ${volumeNumber}. Waiting for your partner's offering.`;
   }
 
   if (state === "ready_to_start") {
-    return `Both offerings are now sealed for Bond Book ${bookNumber} in Volume ${volumeNumber}. The book is ready to start.`;
+    return `Both offerings are now sealed for Chronicle ${bookNumber} of Relic ${volumeNumber}. The book is ready to start.`;
   }
 
   if (state === "active") {
-    return `Bond Book ${bookNumber} in Volume ${volumeNumber} is already active.`;
+    return `Chronicle ${bookNumber} of Relic ${volumeNumber} is already active.`;
   }
 
   if (state === "paused") {
-    return `Bond Book ${bookNumber} in Volume ${volumeNumber} is already paused and can be resumed.`;
+    return `Chronicle ${bookNumber} of Relic ${volumeNumber} is already paused and can be resumed.`;
   }
 
   if (state === "awaiting_partner_completion") {
-    return `Your side of Bond Book ${bookNumber} in Volume ${volumeNumber} is complete and is waiting for your partner.`;
+    return `Your side of Chronicle ${bookNumber} of Relic ${volumeNumber} is complete and is waiting for your partner.`;
   }
 
   if (state === "pair_completed") {
-    return `Bond Book ${bookNumber} in Volume ${volumeNumber} has already been pair-completed.`;
+    return `Chronicle ${bookNumber} of Relic ${volumeNumber} has already been pair-completed.`;
   }
 
-  return `Offering processed for Bond Book ${bookNumber} in Volume ${volumeNumber}.`;
+  return `Offering processed for Chronicle ${bookNumber} of Relic ${volumeNumber}.`;
 }
 
 function getPartnershipResolutionFailureMessage(resolvedPartnership) {
@@ -1234,7 +1234,7 @@ exports.handler = async (event) => {
       book: {
         volume_number: volumeNumber,
         book_number: bookNumber,
-        title: safeText(catalogBook?.title, `Bond Book ${bookNumber}`),
+        title: safeText(catalogBook?.title, `Chronicle ${bookNumber}`),
         description: safeText(catalogBook?.description) || null,
         display_state: displayState,
         required_minutes: requiredMinutes,

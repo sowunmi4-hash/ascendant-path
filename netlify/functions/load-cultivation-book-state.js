@@ -517,7 +517,7 @@ function buildV2SectionRecord({
 
   return {
     section_key: sectionKey,
-    section_label: toTitle(sectionKey, "Base"),
+    section_label: toTitle(sectionKey, "Base Scroll") + (sectionKey ? " Scroll" : ""),
     book_title: getSectionBookTitle(volumeNumber, sectionKey),
 
     stage_status: normalizedStageStatus,
@@ -622,7 +622,7 @@ function buildPrimaryAction(focusRecord, memberCpBalance, volumeNumber) {
     case "volume_not_eligible":
       return {
         type: "disabled",
-        label: `Open ${toTitle(section_key)}`,
+        label: `Open ${toTitle(section_key)} Scroll`,
         endpoint: null,
         section_key,
         note: "Previous volume must be completed before this one can be opened.",
@@ -634,7 +634,7 @@ function buildPrimaryAction(focusRecord, memberCpBalance, volumeNumber) {
       if (memberCpBalance < open_cp_cost) {
         return {
           type: "disabled",
-          label: `Open ${toTitle(section_key)}`,
+          label: `Open ${toTitle(section_key)} Scroll`,
           endpoint: null,
           section_key,
           note: `Requires ${open_cp_cost} CP.`,
@@ -645,7 +645,7 @@ function buildPrimaryAction(focusRecord, memberCpBalance, volumeNumber) {
 
       return {
         type: "api",
-        label: `Open ${toTitle(section_key)}`,
+        label: `Open ${toTitle(section_key)} Scroll`,
         endpoint: "/.netlify/functions/unlock-library-section",
         section_key,
         note: "Spend Cultivation Points to open this stage.",
@@ -660,7 +660,7 @@ function buildPrimaryAction(focusRecord, memberCpBalance, volumeNumber) {
     case "begin_cultivation":
       return {
         type: "api",
-        label: `Begin ${toTitle(section_key)} Cultivation`,
+        label: `Begin ${toTitle(section_key)} Scroll Cultivation`,
         endpoint: "/.netlify/functions/start-section-comprehension",
         section_key,
         note: "Start the cultivation timer for this stage.",
@@ -847,7 +847,7 @@ function buildPrimaryAction(focusRecord, memberCpBalance, volumeNumber) {
 // =========================================================
 
 function buildUiMessage(bookUiState, focusRecord, breakthroughSummary) {
-  const sectionLabel = toTitle(focusRecord?.section_key, "Section");
+  const sectionLabel = toTitle(focusRecord?.section_key, "Scroll") + " Scroll";
 
   switch (bookUiState) {
     case "damaged":
@@ -1081,7 +1081,7 @@ async function buildV2CultivationBookState({ member, requestedVolumeNumber }) {
     section_summary: sectionSummary,
 
     focus_section: focusSectionKey,
-    focus_section_label: toTitle(focusSectionKey, "Base"),
+    focus_section_label: toTitle(focusSectionKey, "Base Scroll") + (focusSectionKey ? " Scroll" : ""),
     focus_section_record: focusRecord,
 
     active_breakthrough: breakthroughSummary,
@@ -1095,7 +1095,7 @@ async function buildV2CultivationBookState({ member, requestedVolumeNumber }) {
     ui: {
       book_ui_state: bookUiState,
       focus_section: focusSectionKey,
-      focus_section_label: toTitle(focusSectionKey, "Base"),
+      focus_section_label: toTitle(focusSectionKey, "Base Scroll") + (focusSectionKey ? " Scroll" : ""),
       message: uiMessage,
       primary_action: primaryAction
     }

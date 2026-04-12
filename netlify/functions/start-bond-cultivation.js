@@ -287,26 +287,26 @@ function getStartConflictMessage(displayState, volumeNumber, bookNumber) {
   const state = safeLower(displayState);
 
   if (state === "locked") {
-    return `Bond Book ${bookNumber} in Volume ${volumeNumber} is locked.`;
+    return `Chronicle ${bookNumber} of Relic ${volumeNumber} is locked.`;
   }
 
   if (state === "ready_for_offering") {
-    return `Bond Book ${bookNumber} in Volume ${volumeNumber} still needs your offering first.`;
+    return `Chronicle ${bookNumber} of Relic ${volumeNumber} still needs your offering first.`;
   }
 
   if (state === "waiting_for_partner_offering") {
-    return `Bond Book ${bookNumber} in Volume ${volumeNumber} is waiting for your partner's offering.`;
+    return `Chronicle ${bookNumber} of Relic ${volumeNumber} is waiting for your partner's offering.`;
   }
 
   if (state === "awaiting_partner_completion") {
-    return `Your side of Bond Book ${bookNumber} in Volume ${volumeNumber} is already complete and is waiting for your partner.`;
+    return `Your side of Chronicle ${bookNumber} of Relic ${volumeNumber} is already complete and is waiting for your partner.`;
   }
 
   if (state === "pair_completed") {
-    return `Bond Book ${bookNumber} in Volume ${volumeNumber} has already been pair-completed.`;
+    return `Chronicle ${bookNumber} of Relic ${volumeNumber} has already been pair-completed.`;
   }
 
-  return `Bond Book ${bookNumber} in Volume ${volumeNumber} cannot be started from its current state.`;
+  return `Chronicle ${bookNumber} of Relic ${volumeNumber} cannot be started from its current state.`;
 }
 
 function getStartMessage(preDisplayState, postDisplayState, volumeNumber, bookNumber, isCultivating) {
@@ -314,32 +314,32 @@ function getStartMessage(preDisplayState, postDisplayState, volumeNumber, bookNu
   const post = safeLower(postDisplayState);
 
   if (post === "active" && pre === "active") {
-    return `Bond cultivation is already active for Bond Book ${bookNumber} in Volume ${volumeNumber}.`;
+    return `Bond cultivation is already active for Chronicle ${bookNumber} of Relic ${volumeNumber}.`;
   }
 
   if (post === "active" && pre === "paused") {
-    return `Bond cultivation resumed for Bond Book ${bookNumber} in Volume ${volumeNumber}.`;
+    return `Bond cultivation resumed for Chronicle ${bookNumber} of Relic ${volumeNumber}.`;
   }
 
   if (post === "active") {
     return isCultivating
-      ? `Bond cultivation started for Bond Book ${bookNumber} in Volume ${volumeNumber}.`
-      : `Bond cultivation opened for Bond Book ${bookNumber} in Volume ${volumeNumber}. Progress will only advance while you are cultivating.`;
+      ? `Bond cultivation started for Chronicle ${bookNumber} of Relic ${volumeNumber}.`
+      : `Bond cultivation opened for Chronicle ${bookNumber} of Relic ${volumeNumber}. Progress will only advance while you are cultivating.`;
   }
 
   if (post === "paused") {
-    return `Bond cultivation for Bond Book ${bookNumber} in Volume ${volumeNumber} is paused.`;
+    return `Bond cultivation for Chronicle ${bookNumber} of Relic ${volumeNumber} is paused.`;
   }
 
   if (post === "awaiting_partner_completion") {
-    return `Your side of Bond Book ${bookNumber} in Volume ${volumeNumber} is complete and is waiting for your partner.`;
+    return `Your side of Chronicle ${bookNumber} of Relic ${volumeNumber} is complete and is waiting for your partner.`;
   }
 
   if (post === "pair_completed") {
-    return `Bond Book ${bookNumber} in Volume ${volumeNumber} has already been pair-completed.`;
+    return `Chronicle ${bookNumber} of Relic ${volumeNumber} has already been pair-completed.`;
   }
 
-  return `Bond cultivation state loaded for Bond Book ${bookNumber} in Volume ${volumeNumber}.`;
+  return `Bond cultivation state loaded for Chronicle ${bookNumber} of Relic ${volumeNumber}.`;
 }
 
 function getStartAction(preDisplayState, postDisplayState) {
@@ -1497,7 +1497,7 @@ exports.handler = async (event) => {
       book: {
         volume_number: volumeNumber,
         book_number: bookNumber,
-        title: safeText(catalogBook?.title, `Bond Book ${bookNumber}`),
+        title: safeText(catalogBook?.title, `Chronicle ${bookNumber}`),
         description: safeText(catalogBook?.description) || null,
         display_state: postDisplayState,
         required_minutes: requiredMinutes,

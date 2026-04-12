@@ -255,26 +255,26 @@ function getStopMessage(displayState, bookNumber, volumeNumber) {
   const state = safeLower(displayState);
 
   if (state === "paused") {
-    return `Your progression for Bond Book ${bookNumber} in Volume ${volumeNumber} is now paused.`;
+    return `Your progression for Chronicle ${bookNumber} of Relic ${volumeNumber} is now paused.`;
   }
 
   if (state === "awaiting_partner_completion") {
-    return `Your side of Bond Book ${bookNumber} in Volume ${volumeNumber} is complete and is waiting for your partner.`;
+    return `Your side of Chronicle ${bookNumber} of Relic ${volumeNumber} is complete and is waiting for your partner.`;
   }
 
   if (state === "ready_to_start") {
-    return `Bond Book ${bookNumber} in Volume ${volumeNumber} is no longer active and is ready to start again.`;
+    return `Chronicle ${bookNumber} of Relic ${volumeNumber} is no longer active and is ready to start again.`;
   }
 
   if (state === "available") {
-    return `Bond Book ${bookNumber} in Volume ${volumeNumber} is no longer active.`;
+    return `Chronicle ${bookNumber} of Relic ${volumeNumber} is no longer active.`;
   }
 
   if (state === "pair_completed") {
-    return `Bond Book ${bookNumber} in Volume ${volumeNumber} has already been pair-completed.`;
+    return `Chronicle ${bookNumber} of Relic ${volumeNumber} has already been pair-completed.`;
   }
 
-  return `Bond cultivation stopped for Bond Book ${bookNumber} in Volume ${volumeNumber}.`;
+  return `Bond cultivation stopped for Chronicle ${bookNumber} of Relic ${volumeNumber}.`;
 }
 
 function getPartnershipResolutionFailureMessage(resolvedPartnership) {
@@ -1440,9 +1440,9 @@ const handler = async (event) => {
     let message = getStopMessage(displayState, requestedBookNumber, requestedVolumeNumber);
 
     if (pauseResult.already_stopped && pauseResult.reason === "completed") {
-      message = `Bond Book ${requestedBookNumber} in Volume ${requestedVolumeNumber} is already completed.`;
+      message = `Chronicle ${requestedBookNumber} of Relic ${requestedVolumeNumber} is already completed.`;
     } else if (pauseResult.already_stopped && pauseResult.reason === "not_active") {
-      message = `Bond Book ${requestedBookNumber} in Volume ${requestedVolumeNumber} is not currently active.`;
+      message = `Chronicle ${requestedBookNumber} of Relic ${requestedVolumeNumber} is not currently active.`;
     }
 
     return buildResponse(200, {
@@ -1504,7 +1504,7 @@ const handler = async (event) => {
       book: {
         volume_number: requestedVolumeNumber,
         book_number: requestedBookNumber,
-        title: safeText(catalogBook?.title, `Bond Book ${requestedBookNumber}`),
+        title: safeText(catalogBook?.title, `Chronicle ${requestedBookNumber}`),
         description: safeText(catalogBook?.description) || null,
         display_state: displayState,
         required_minutes: requiredMinutes,
