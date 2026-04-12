@@ -1367,21 +1367,6 @@
         bannerIcon = "⚡";
         bannerTitle = "Heaven Rejects the Attempt";
         bannerCopy = safeText(bt.verdict_text, "The cultivator survived but the threshold was broken under pressure. Repair is required before another lawful attempt.");
-        // Auto-redirect back with failure param after showing verdict
-        if (!window._failRedirectScheduled) {
-          window._failRedirectScheduled = true;
-          setTimeout(function() {
-            window.location.href = '/cultivation-book.html?breakthrough=failed_damaged';
-          }, 6000);
-        }
-      } else if (outcome === "failed_stable" || (outcome && outcome.includes && outcome.includes('fail'))) {
-        // Auto-redirect for stable failures too
-        if (!window._failRedirectScheduled) {
-          window._failRedirectScheduled = true;
-          setTimeout(function() {
-            window.location.href = '/cultivation-book.html?breakthrough=failed_stable';
-          }, 6000);
-        }
       }
 
       $("verdict-banner-wrap").innerHTML = `
@@ -2158,8 +2143,8 @@
     var bt = state.payload && state.payload.breakthrough;
     if (m) {
       _gender  = m.gender || 'male';
-      var qiC  = parseFloat(m.qi_current)  || 0;
-      var qiM  = parseFloat(m.qi_maximum)  || 1;
+      var qiC  = parseFloat(m.auric_current)  || 0;
+      var qiM  = parseFloat(m.auric_maximum)  || 1;
       _qi      = qiM > 0 ? Math.min(1, Math.max(0.05, qiC/qiM)) : 0.5;
     }
     if (bt) {
@@ -2180,8 +2165,8 @@
       loadFigure(_gender, function() {});
     }
     if (m) {
-      var qiC2 = parseFloat(m.qi_current) || 0;
-      var qiM2 = parseFloat(m.qi_maximum) || 1;
+      var qiC2 = parseFloat(m.auric_current) || 0;
+      var qiM2 = parseFloat(m.auric_maximum) || 1;
       var qiPct = qiM2 > 0 ? Math.round(qiC2 / qiM2 * 100) : 0;
       var elQi = document.getElementById('stat-qi-reserve');
       if (elQi) { elQi.textContent = qiPct + '%'; elQi.className = 'chamber-stat-val' + (qiPct < 30 ? ' danger' : ''); }

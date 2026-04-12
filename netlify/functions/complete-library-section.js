@@ -1570,7 +1570,7 @@ function buildSuccessPayload({
       realm_key: safeText(member.realm_key, ""),
       realm_name: safeText(member.realm_name, "Unknown"),
       realm_display_name: safeText(member.realm_display_name, ""),
-      cultivation_points_current: safeNumber(member.cultivation_points, 0),
+      vestiges_current: safeNumber(member.vestiges, 0),
       v2_active_stage_key: realmStageKey,
       realm_stage_label: realmStageLabel,
       realm_stage_display_name: realmStageDisplayName,

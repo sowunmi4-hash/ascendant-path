@@ -2015,8 +2015,6 @@
         <a href="/lore.html">Lore</a>
         <a href="/dashboard.html" class="active">Dashboard</a>
         <a href="/oracle.html">Ascendant Oracle</a>
-        <a href="/breath-of-celestial.html">Celestial Weather</a>
-        <a href="/celestial-omen.html">Celestial Omen</a>
         <a href="/.netlify/functions/logout" id="logout-button">Logout</a>
       </nav>
     </header>
@@ -2533,15 +2531,15 @@
 
     function getQiPercent(state, fallbackPercent = 0) {
       const current = safeNumber(
-        state?.qi_current ??
+        state?.auric_current ??
         state?.current_qi ??
-        state?.personal_qi_current,
+        state?.personal_auric_current,
         0
       );
       const maximum = safeNumber(
-        state?.qi_maximum ??
+        state?.auric_maximum ??
         state?.max_qi ??
-        state?.personal_qi_maximum,
+        state?.personal_auric_maximum,
         0
       );
 
@@ -3160,14 +3158,14 @@
       const dashboard = data?.dashboard || {};
       const computed = data?.computed || {};
 
-      const qiCurrent = pickNumber(dashboard.shared_qi_current, computed.shared_qi_current);
-      const qiMaximum = pickNumber(dashboard.shared_qi_maximum, computed.shared_qi_maximum);
-      const cultivationPoints = pickNumber(dashboard.shared_cultivation_points, computed.shared_cultivation_points);
-      const cultivationPointsMaximum = pickNumber(dashboard.shared_cultivation_points_maximum, computed.shared_cultivation_points_maximum);
-      const cultivationPointsRemaining = pickNumber(dashboard.shared_cultivation_points_remaining, computed.shared_cultivation_points_remaining);
-      const cultivationPointsCapped = pickBoolean(
-        dashboard.shared_cultivation_points_capped,
-        computed.shared_cultivation_points_capped
+      const auricCurrent = pickNumber(dashboard.shared_auric_current, computed.shared_auric_current);
+      const auricMaximum = pickNumber(dashboard.shared_auric_maximum, computed.shared_auric_maximum);
+      const vestiges = pickNumber(dashboard.shared_vestiges, computed.shared_vestiges);
+      const vestigesMaximum = pickNumber(dashboard.shared_vestiges_maximum, computed.shared_vestiges_maximum);
+      const vestigesRemaining = pickNumber(dashboard.shared_vestiges_remaining, computed.shared_vestiges_remaining);
+      const vestigesCapped = pickBoolean(
+        dashboard.shared_vestiges_capped,
+        computed.shared_vestiges_capped
       );
       const ascensionTokens = pickNumber(dashboard.shared_ascension_tokens, computed.shared_ascension_tokens);
       const mortalEnergy = pickNumber(
@@ -3176,13 +3174,13 @@
       );
 
       return {
-        qiCurrent,
-        qiMaximum,
-        qiPercent: qiMaximum > 0 ? clampPercent((qiCurrent / qiMaximum) * 100) : 0,
-        cultivationPoints,
-        cultivationPointsMaximum,
-        cultivationPointsRemaining,
-        cultivationPointsCapped,
+        auricCurrent,
+        auricMaximum,
+        qiPercent: auricMaximum > 0 ? clampPercent((auricCurrent / auricMaximum) * 100) : 0,
+        vestiges,
+        vestigesMaximum,
+        vestigesRemaining,
+        vestigesCapped,
         ascensionTokens,
         mortalEnergy
       };
@@ -3193,47 +3191,47 @@
       const computed = data?.computed || {};
       const dashboard = data?.dashboard || {};
 
-      const qiCurrent = pickNumber(
-        member.qi_current,
+      const auricCurrent = pickNumber(
+        member.auric_current,
         member.current_qi,
-        member.personal_qi_current,
-        dashboard.personal_qi_current,
-        computed.personal_qi_current,
-        dashboard.shared_qi_current,
-        computed.shared_qi_current
+        member.personal_auric_current,
+        dashboard.personal_auric_current,
+        computed.personal_auric_current,
+        dashboard.shared_auric_current,
+        computed.shared_auric_current
       );
 
-      const qiMaximum = pickNumber(
-        member.qi_maximum,
+      const auricMaximum = pickNumber(
+        member.auric_maximum,
         member.max_qi,
-        member.personal_qi_maximum,
-        dashboard.personal_qi_maximum,
-        computed.personal_qi_maximum,
-        dashboard.shared_qi_maximum,
-        computed.shared_qi_maximum
+        member.personal_auric_maximum,
+        dashboard.personal_auric_maximum,
+        computed.personal_auric_maximum,
+        dashboard.shared_auric_maximum,
+        computed.shared_auric_maximum
       );
 
-      const cultivationPoints = pickNumber(
-        member.cultivation_points,
-        member.cultivation_points_current,
-        member.personal_cultivation_points,
-        dashboard.personal_cultivation_points,
-        computed.personal_cultivation_points,
-        dashboard.shared_cultivation_points,
-        computed.shared_cultivation_points
+      const vestiges = pickNumber(
+        member.vestiges,
+        member.vestiges_current,
+        member.personal_vestiges,
+        dashboard.personal_vestiges,
+        computed.personal_vestiges,
+        dashboard.shared_vestiges,
+        computed.shared_vestiges
       );
 
-      const cultivationPointsMaximum = pickNumber(
-        member.cultivation_points_maximum,
-        member.personal_cultivation_points_maximum,
-        dashboard.personal_cultivation_points_maximum,
-        computed.personal_cultivation_points_maximum,
-        dashboard.shared_cultivation_points_maximum,
-        computed.shared_cultivation_points_maximum
+      const vestigesMaximum = pickNumber(
+        member.vestiges_maximum,
+        member.personal_vestiges_maximum,
+        dashboard.personal_vestiges_maximum,
+        computed.personal_vestiges_maximum,
+        dashboard.shared_vestiges_maximum,
+        computed.shared_vestiges_maximum
       );
 
-      const cultivationPointsRemaining = Math.max(0, cultivationPointsMaximum - cultivationPoints);
-      const cultivationPointsCapped = cultivationPointsMaximum > 0 && cultivationPoints >= cultivationPointsMaximum;
+      const vestigesRemaining = Math.max(0, vestigesMaximum - vestiges);
+      const vestigesCapped = vestigesMaximum > 0 && vestiges >= vestigesMaximum;
 
       const ascensionTokens = pickNumber(
         member.ascension_tokens,
@@ -3254,13 +3252,13 @@
       );
 
       return {
-        qiCurrent,
-        qiMaximum,
-        qiPercent: qiMaximum > 0 ? clampPercent((qiCurrent / qiMaximum) * 100) : 0,
-        cultivationPoints,
-        cultivationPointsMaximum,
-        cultivationPointsRemaining,
-        cultivationPointsCapped,
+        auricCurrent,
+        auricMaximum,
+        qiPercent: auricMaximum > 0 ? clampPercent((auricCurrent / auricMaximum) * 100) : 0,
+        vestiges,
+        vestigesMaximum,
+        vestigesRemaining,
+        vestigesCapped,
         ascensionTokens,
         mortalEnergy
       };
@@ -3828,21 +3826,21 @@
       const mode = resourceSnapshot.mode;
       const prefix = getResourceSubtextPrefix(mode);
 
-      const cpSubtext = resourceSnapshot.cultivationPointsCapped
+      const cpSubtext = resourceSnapshot.vestigesCapped
         ? `${prefix} current stage max`
-        : `${formatNumber(resourceSnapshot.cultivationPointsRemaining)} until ${prefix.toLowerCase()} stage max`;
+        : `${formatNumber(resourceSnapshot.vestigesRemaining)} until ${prefix.toLowerCase()} stage max`;
 
       return `
         <div class="resources-row">
           <div class="resource-card">
             <div class="resource-label">Qi</div>
-            <div class="resource-value">${escapeHtml(formatNumber(resourceSnapshot.qiCurrent))} / ${escapeHtml(formatNumber(resourceSnapshot.qiMaximum))}</div>
+            <div class="resource-value">${escapeHtml(formatNumber(resourceSnapshot.auricCurrent))} / ${escapeHtml(formatNumber(resourceSnapshot.auricMaximum))}</div>
             <div class="resource-subtext">${escapeHtml(prefix)} reserve</div>
           </div>
 
           <div class="resource-card">
             <div class="resource-label">Cultivation Points</div>
-            <div class="resource-value">${escapeHtml(formatNumber(resourceSnapshot.cultivationPoints))} / ${escapeHtml(formatNumber(resourceSnapshot.cultivationPointsMaximum))}</div>
+            <div class="resource-value">${escapeHtml(formatNumber(resourceSnapshot.vestiges))} / ${escapeHtml(formatNumber(resourceSnapshot.vestigesMaximum))}</div>
             <div class="resource-subtext">${escapeHtml(cpSubtext)}</div>
           </div>
 
@@ -4237,8 +4235,8 @@
           const gender = vm.gender || 'male';
           const vesselMode = resolveEffectiveVesselMode(dashboardData);
           const realmIndex = vm.realm_index || 1;
-          const qiCurrent = vm.qi_current || 0;
-          const qiMax = vm.qi_maximum || 1;
+          const auricCurrent = vm.auric_current || 0;
+          const auricMax = vm.auric_maximum || 1;
           const pathCurrent = vm.path_current || '';
           const figureFile = getFigureFile(gender, vesselMode);
           const colors = getColors(gender, vesselMode);
@@ -4277,7 +4275,7 @@
                 const fGlow   = strippedF.replace(/fill="#[0-9A-Fa-f]{6}"/gi, `fill="${partnerDc.glow}"`);
                 const fBright = strippedF.replace(/fill="#[0-9A-Fa-f]{6}"/gi, `fill="${partnerDc.bright}"`);
                 Promise.all([toImg(mSolid),toImg(mGlow),toImg(mBright),toImg(fSolid),toImg(fGlow),toImg(fBright)])
-                  .then(([ms,mg,mb,fs,fg,fb]) => runVessel(ms,mg,mb,Math.min(1,qiCurrent/qiMax),realmIndex,fs,fg,fb,vesselMode,pathCurrent));
+                  .then(([ms,mg,mb,fs,fg,fb]) => runVessel(ms,mg,mb,Math.min(1,auricCurrent/auricMax),realmIndex,fs,fg,fb,vesselMode,pathCurrent));
               });
           } else {
             fetch(figureFile)
@@ -4288,7 +4286,7 @@
                 const glow   = stripped.replace(/fill="#[0-9A-Fa-f]{6}"/gi, `fill="${colors.glow}"`);
                 const bright = stripped.replace(/fill="#[0-9A-Fa-f]{6}"/gi, `fill="${colors.bright}"`);
                 Promise.all([toImg(solid), toImg(glow), toImg(bright)]).then(([s,g,b]) => {
-                  runVessel(s, g, b, Math.min(1, qiCurrent/qiMax), realmIndex, null, null, null, vesselMode, pathCurrent);
+                  runVessel(s, g, b, Math.min(1, auricCurrent/auricMax), realmIndex, null, null, null, vesselMode, pathCurrent);
                 });
               });
           }
@@ -4387,9 +4385,9 @@ function drawYinYang(ctx, W, H, opacity, rotation, pulsePhase) {
 
 function initVessel() {
   const member = window.dashboardData && window.dashboardData.member || window.memberData || {};
-  const qiCurrent = member.qi_current || 2001;
-  const qiMax     = member.qi_maximum || 3000;
-  const pct       = Math.min(1, qiCurrent / qiMax);
+  const auricCurrent = member.auric_current || 2001;
+  const auricMax     = member.auric_maximum || 3000;
+  const pct       = Math.min(1, auricCurrent / auricMax);
   const realmIndex = member.realm_index || 1;
   const gender = member.gender || 'male';
   const vesselMode = member.vessel_mode || member.path_type || 'single';

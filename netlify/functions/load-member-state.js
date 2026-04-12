@@ -78,9 +78,9 @@ const REALM_META_BY_INDEX = {
 const FIELD = {
   avatarKey: "sl_avatar_key",
   username: "sl_username",
-  qiCurrent: "qi_current",
-  qiMaximum: "qi_maximum",
-  cultivationPoints: "cultivation_points",
+  auricCurrent: "auric_current",
+  auricMaximum: "auric_maximum",
+  cultivationPoints: "vestiges",
   v2CultivationStatus: "v2_cultivation_status",
   v2ActiveStageKey: "v2_active_stage_key",
   v2BreakthroughGateOpen: "v2_breakthrough_gate_open",
@@ -879,7 +879,7 @@ async function loadRealmStageProgression(realmKey, realmStageKey) {
   const { data, error } = await supabase
     .from("cultivation_realm_stage_progression")
     .select(
-      "realm_key,realm_stage_key,qi_maximum,normal_gain_per_minute,cultivation_points_maximum,normal_cultivation_points_gain_per_minute"
+      "realm_key,realm_stage_key,auric_maximum,normal_gain_per_minute,vestiges_maximum,normal_vestiges_gain_per_minute"
     )
     .eq("realm_key", normalizedRealmKey)
     .eq("realm_stage_key", normalizedRealmStageKey)
@@ -891,7 +891,7 @@ async function loadRealmStageProgression(realmKey, realmStageKey) {
   const { data: fallback, error: fallbackError } = await supabase
     .from("cultivation_realm_stage_progression")
     .select(
-      "realm_key,realm_stage_key,qi_maximum,normal_gain_per_minute,cultivation_points_maximum,normal_cultivation_points_gain_per_minute"
+      "realm_key,realm_stage_key,auric_maximum,normal_gain_per_minute,vestiges_maximum,normal_vestiges_gain_per_minute"
     )
     .eq("realm_key", "mortal")
     .eq("realm_stage_key", "base")
@@ -1303,15 +1303,15 @@ exports.handler = async (event) => {
       "idle"
     );
 
-    const qiCurrent = safeNumber(memberForResponse.qi_current, 0);
-    const qiMaximum = safeNumber(memberForResponse.qi_maximum, 0);
-    const qiDrainPerMinute = 0;
+    const auricCurrent = safeNumber(memberForResponse.auric_current, 0);
+    const auricMaximum = safeNumber(memberForResponse.auric_maximum, 0);
+    const auricDrainPerMinute = 0;
     const minimumQiRequired = 0;
 
-    const cultivationPointsCurrent = safeNumber(memberForResponse.cultivation_points, 0);
+    const cultivationPointsCurrent = safeNumber(memberForResponse.vestiges, 0);
     const cultivationPointsMaximum = Math.max(
       cultivationPointsCurrent,
-      safeNumber(progressionRow?.cultivation_points_maximum, 0)
+      safeNumber(progressionRow?.vestiges_maximum, 0)
     );
     const cultivationPointsRemaining = Math.max(
       0,
@@ -1322,7 +1322,7 @@ exports.handler = async (event) => {
       cultivationPointsCurrent >= cultivationPointsMaximum;
 
     const normalCpGainPerMinute = safeNumber(
-      progressionRow?.normal_cultivation_points_gain_per_minute,
+      progressionRow?.normal_vestiges_gain_per_minute,
       0
     );
     const normalQiGainPerMinute = safeNumber(
@@ -1359,20 +1359,20 @@ exports.handler = async (event) => {
       realm_stage_label: realmStageLabel,
       cultivation_stage: fullCultivationStage,
 
-      qi_current: qiCurrent,
-      qi_maximum: qiMaximum,
-      qi_drain_per_minute: qiDrainPerMinute,
+      auric_current: auricCurrent,
+      auric_maximum: auricMaximum,
+      auric_drain_per_minute: auricDrainPerMinute,
       minimum_qi_required: minimumQiRequired,
 
-      cultivation_points: cultivationPointsCurrent,
-      cultivation_points_maximum: cultivationPointsMaximum,
-      cultivation_points_remaining: cultivationPointsRemaining,
-      cultivation_points_capped: Boolean(cultivationPointsCapped),
+      vestiges: cultivationPointsCurrent,
+      vestiges_maximum: cultivationPointsMaximum,
+      vestiges_remaining: cultivationPointsRemaining,
+      vestiges_capped: Boolean(cultivationPointsCapped),
 
       normal_qi_gain_per_minute: normalQiGainPerMinute,
       resonance_qi_gain_per_minute: normalQiGainPerMinute > 0 ? normalQiGainPerMinute * 2 : 0,
-      normal_cultivation_points_gain_per_minute: normalCpGainPerMinute,
-      resonance_cultivation_points_gain_per_minute: normalCpGainPerMinute > 0 ? normalCpGainPerMinute * 2 : 0,
+      normal_vestiges_gain_per_minute: normalCpGainPerMinute,
+      resonance_vestiges_gain_per_minute: normalCpGainPerMinute > 0 ? normalCpGainPerMinute * 2 : 0,
 
       v2_cultivation_status: safeText(finalMember.v2_cultivation_status, "idle"),
       v2_active_stage_key: safeText(finalMember.v2_active_stage_key) || null,

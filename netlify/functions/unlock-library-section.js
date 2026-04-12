@@ -168,7 +168,7 @@ async function loadMember(slAvatarKey, slUsername) {
     .from("cultivation_members")
     .select(`
       member_id, sl_avatar_key, sl_username, display_name, character_name,
-      cultivation_points, realm_key, realm_index, realm_name,
+      vestiges, realm_key, realm_index, realm_name,
       v2_active_stage_key, realm_display_name,
       v2_breakthrough_gate_open, v2_cultivation_status,
       v2_accumulated_seconds, v2_cultivation_started_at
@@ -505,7 +505,7 @@ async function handleBondUnlock({ member, storeVolume, libraryRow, volumeNumber,
   const volumeStatus = safeLower(libraryRow.volume_status);
   // Fix 2: use member_id only, no .id fallback
   const memberId = member.member_id;
-  const currentCultivationPoints = safeNumber(member.cultivation_points, 0);
+  const currentCultivationPoints = safeNumber(member.vestiges, 0);
 
   if (volumeStatus === "completed_volume") return buildResponse(409, { success: false, message: `Volume ${volumeNumber} has already been completed.`, volume_status: formatVolumeStatus(libraryRow.volume_status) });
   if (volumeStatus !== "owned" && volumeStatus !== "under_comprehension") return buildResponse(409, { success: false, message: `Volume ${volumeNumber} is not in a usable state for progression.`, volume_status: formatVolumeStatus(libraryRow.volume_status) });
@@ -538,7 +538,7 @@ async function handleBondUnlock({ member, storeVolume, libraryRow, volumeNumber,
       success: true, already_opened: true, message: `${formatSectionName(requestedSection)} is already opened.`,
       requested_section: requestedSection,
       store_volume: { id: storeVolume.id, volume_number: storeVolume.volume_number, realm_name: storeVolume.realm_name, item_name: storeVolume.item_name, item_key: storeVolume.item_key, price_currency: storeVolume.price_currency, price_amount: safeNumber(storeVolume.price_amount, 0) },
-      member: { member_id: memberId, sl_avatar_key: member.sl_avatar_key, sl_username: member.sl_username, cultivation_points_before: currentCultivationPoints, cultivation_points_spent: 0, cultivation_points_after: currentCultivationPoints, v2_active_stage_key: safeText(member.v2_active_stage_key) || null, realm_display_name: safeText(member.realm_display_name || member.realm_name), v2_breakthrough_gate_open: safeBoolean(member.v2_breakthrough_gate_open) },
+      member: { member_id: memberId, sl_avatar_key: member.sl_avatar_key, sl_username: member.sl_username, vestiges_before: currentCultivationPoints, vestiges_spent: 0, vestiges_after: currentCultivationPoints, v2_active_stage_key: safeText(member.v2_active_stage_key) || null, realm_display_name: safeText(member.realm_display_name || member.realm_name), v2_breakthrough_gate_open: safeBoolean(member.v2_breakthrough_gate_open) },
       library: { id: libraryRow.id, volume_status: safeText(libraryRow.volume_status), insight_current: safeNumber(libraryRow.insight_current, 0), insight_required: safeNumber(libraryRow.insight_required, 0), current_section: requestedSection, sections: sectionTruth },
       pricing: { section_name: requestedSection, section_cost: 0, pricing_source: "idempotent_already_opened" },
       repair_state: repairState, breakthrough_state: breakthroughState, access
@@ -549,7 +549,7 @@ async function handleBondUnlock({ member, storeVolume, libraryRow, volumeNumber,
   if (currentCultivationPoints < unlockCost) {
     return buildResponse(409, {
       success: false, message: `Not enough Cultivation Points to open ${formatSectionName(requestedSection)}.`,
-      cultivation_points_current: currentCultivationPoints, cultivation_points_required: unlockCost, cultivation_points_short: unlockCost - currentCultivationPoints,
+      vestiges_current: currentCultivationPoints, vestiges_required: unlockCost, vestiges_short: unlockCost - currentCultivationPoints,
       pricing: { section_name: requestedSection, section_cost: unlockCost, pricing_source: "library.get_cultivation_section_unlock_cost" },
       repair_state: repairState, breakthrough_state: breakthroughState, access
     });
@@ -557,11 +557,11 @@ async function handleBondUnlock({ member, storeVolume, libraryRow, volumeNumber,
 
   const newCultivationPoints = currentCultivationPoints - unlockCost;
   const nowIso = new Date().toISOString();
-  const previousMemberState = { cultivation_points: currentCultivationPoints };
+  const previousMemberState = { vestiges: currentCultivationPoints };
 
   const { error: memberUpdateError } = await publicSupabase
     .from("cultivation_members")
-    .update({ cultivation_points: newCultivationPoints, updated_at: nowIso })
+    .update({ vestiges: newCultivationPoints, updated_at: nowIso })
     .eq("member_id", memberId)
     .eq("sl_avatar_key", member.sl_avatar_key);
 
@@ -578,7 +578,7 @@ async function handleBondUnlock({ member, storeVolume, libraryRow, volumeNumber,
   if (libraryUpdateError || !updatedLibraryRow) {
     const { error: rollbackError } = await publicSupabase
       .from("cultivation_members")
-      .update({ cultivation_points: previousMemberState.cultivation_points, updated_at: new Date().toISOString() })
+      .update({ vestiges: previousMemberState.vestiges, updated_at: new Date().toISOString() })
       .eq("member_id", memberId)
       .eq("sl_avatar_key", member.sl_avatar_key);
     return buildResponse(500, { success: false, message: "Failed to open section after deducting Cultivation Points.", error: libraryUpdateError?.message || "Unknown library update error.", rollback_attempted: true, rollback_failed: !!rollbackError, rollback_error: rollbackError?.message || null });
@@ -588,7 +588,7 @@ async function handleBondUnlock({ member, storeVolume, libraryRow, volumeNumber,
     success: true, already_opened: false, message: `${formatSectionName(requestedSection)} opened successfully for Volume ${volumeNumber}.`,
     requested_section: requestedSection,
     store_volume: { id: storeVolume.id, volume_number: storeVolume.volume_number, realm_name: storeVolume.realm_name, item_name: storeVolume.item_name, item_key: storeVolume.item_key, price_currency: storeVolume.price_currency, price_amount: safeNumber(storeVolume.price_amount, 0) },
-    member: { member_id: memberId, sl_avatar_key: member.sl_avatar_key, sl_username: member.sl_username, cultivation_points_before: currentCultivationPoints, cultivation_points_spent: unlockCost, cultivation_points_after: newCultivationPoints, v2_active_stage_key: safeText(member.v2_active_stage_key) || null, realm_display_name: safeText(member.realm_display_name || member.realm_name), v2_breakthrough_gate_open: safeBoolean(member.v2_breakthrough_gate_open) },
+    member: { member_id: memberId, sl_avatar_key: member.sl_avatar_key, sl_username: member.sl_username, vestiges_before: currentCultivationPoints, vestiges_spent: unlockCost, vestiges_after: newCultivationPoints, v2_active_stage_key: safeText(member.v2_active_stage_key) || null, realm_display_name: safeText(member.realm_display_name || member.realm_name), v2_breakthrough_gate_open: safeBoolean(member.v2_breakthrough_gate_open) },
     library: { id: updatedLibraryRow.id, volume_status: safeText(updatedLibraryRow.volume_status), insight_current: safeNumber(updatedLibraryRow.insight_current, 0), insight_required: safeNumber(updatedLibraryRow.insight_required, 0), current_section: safeText(updatedLibraryRow.current_section) || requestedSection, sections: buildLibrarySectionTruth(updatedLibraryRow) },
     pricing: { section_name: requestedSection, section_cost: unlockCost, pricing_source: "library.get_cultivation_section_unlock_cost" },
     repair_state: repairState, breakthrough_state: breakthroughState, access

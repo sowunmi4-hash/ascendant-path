@@ -132,9 +132,9 @@ exports.handler = async (event) => {
         realm_name: "mortal",
         realm_display_name: "Mortal Realm",
 
-        qi_current: 0,
-        qi_maximum: 500,
-        cultivation_points: 0,
+        auric_current: 0,
+        auric_maximum: 500,
+        vestiges: 0,
 
         v2_cultivation_status: "idle",
         v2_active_stage_key: null,

@@ -141,9 +141,9 @@ async function loadMember(slAvatarKey, slUsername) {
       sl_username,
       display_name,
       character_name,
-      cultivation_points,
-      qi_current,
-      qi_maximum,
+      vestiges,
+      auric_current,
+      auric_maximum,
       realm_name,
       realm_display_name,
       v2_cultivation_status,
@@ -309,20 +309,6 @@ async function loadV2TimerCatalog(volumeNumber) {
   });
 
   return timers;
-}
-
-async function checkNextVolumeOwned(slAvatarKey, nextVolumeNumber) {
-  if (!slAvatarKey || !nextVolumeNumber) return false;
-  const { data, error } = await supabase
-    .schema("library")
-    .from("member_library_view")
-    .select("id")
-    .eq("sl_avatar_key", slAvatarKey)
-    .eq("volume_number", nextVolumeNumber)
-    .limit(1)
-    .maybeSingle();
-  if (error) return false;
-  return data !== null;
 }
 
 async function loadV2ActiveBreakthrough(slAvatarKey) {
@@ -998,9 +984,6 @@ async function buildV2CultivationBookState({ member, requestedVolumeNumber }) {
     loadV2ActiveBreakthrough(slAvatarKey)
   ]);
 
-  // Check next volume ownership — needed for late scroll breakthrough gate
-  const nextVolumeOwned = await checkNextVolumeOwned(slAvatarKey, volumeNumber + 1);
-
   const stageBySection = {};
   stageRows.forEach((row) => {
     const key = safeLower(row.section_key);
@@ -1009,7 +992,7 @@ async function buildV2CultivationBookState({ member, requestedVolumeNumber }) {
     }
   });
 
-  const memberCpBalance = safeNumber(member?.cultivation_points, 0);
+  const memberCpBalance = safeNumber(member?.vestiges, 0);
 
   const sectionRecords = {};
   for (const sectionKey of SECTION_KEYS) {
@@ -1094,7 +1077,6 @@ async function buildV2CultivationBookState({ member, requestedVolumeNumber }) {
     },
 
     access,
-    next_volume_owned: nextVolumeOwned,
     sections: sectionRecords,
     section_summary: sectionSummary,
 
@@ -1219,9 +1201,9 @@ async function handler(event) {
         sl_username: safeText(member.sl_username),
         display_name: safeText(member.display_name) || null,
         character_name: safeText(member.character_name) || null,
-        cultivation_points: safeNumber(member.cultivation_points, 0),
-        qi_current: safeNumber(member.qi_current, 0),
-        qi_maximum: safeNumber(member.qi_maximum, 0),
+        vestiges: safeNumber(member.vestiges, 0),
+        auric_current: safeNumber(member.auric_current, 0),
+        auric_maximum: safeNumber(member.auric_maximum, 0),
         realm_name: safeText(member.realm_name) || null,
         realm_stage_key: member.v2_active_stage_key ? (member.v2_active_stage_key.split(":")[1] || null) : null,
         realm_display_name: safeText(member.realm_display_name) || null,

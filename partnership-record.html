@@ -1587,14 +1587,14 @@
     const yourMemberId = safeText(member?.member_id, "Unknown");
     const partnerMemberId = safeText(partner?.member_id, "Unknown");
 
-    const yourCP = safeNumber(payload?.personal_cultivation_points, 0);
-    const partnerCP = safeNumber(payload?.partner_cultivation_points, 0);
+    const yourCP = safeNumber(payload?.personal_vestiges, 0);
+    const partnerCP = safeNumber(payload?.partner_vestiges, 0);
 
-    const yourQiCurrent = safeNumber(payload?.personal_qi_current, 0);
-    const yourQiMax = safeNumber(payload?.personal_qi_maximum, 0);
+    const yourQiCurrent = safeNumber(payload?.personal_auric_current, 0);
+    const yourQiMax = safeNumber(payload?.personal_auric_maximum, 0);
 
-    const partnerQiCurrent = safeNumber(payload?.partner_qi_current, 0);
-    const partnerQiMax = safeNumber(payload?.partner_qi_maximum, 0);
+    const partnerAuricCurrent = safeNumber(payload?.partner_auric_current, 0);
+    const partnerQiMax = safeNumber(payload?.partner_auric_maximum, 0);
 
     const yourTokens = safeNumber(payload?.personal_ascension_tokens, 0);
     const partnerTokens = safeNumber(payload?.partner_ascension_tokens, 0);
@@ -1614,7 +1614,7 @@
     document.getElementById("partner-identity-line").textContent = `Realm: ${partnerRealm} • Path: ${partnerPath}`;
     document.getElementById("partner-member-id-line").textContent = `Member ID: ${partnerMemberId}`;
     document.getElementById("partner-resources-line").textContent =
-      `CP: ${formatNumber(partnerCP)} • Qi: ${formatNumber(partnerQiCurrent)} / ${formatNumber(partnerQiMax)} • Tokens: ${formatNumber(partnerTokens)} • Mortal Energy: ${formatNumber(partnerEnergy)}`;
+      `CP: ${formatNumber(partnerCP)} • Qi: ${formatNumber(partnerAuricCurrent)} / ${formatNumber(partnerQiMax)} • Tokens: ${formatNumber(partnerTokens)} • Mortal Energy: ${formatNumber(partnerEnergy)}`;
     document.getElementById("partner-presence-line").textContent =
       `Presence: ${formatPresence(payload?.partner_presence_status || "Unknown")} • ${formatPartnerPresenceReason(payload?.partner_presence_reason, payload?.partner_distance_meters)}`;
   }
@@ -1622,16 +1622,16 @@
   function renderLedger(payload) {
     const bond = getBond(payload);
 
-    const personalCP = safeNumber(payload?.personal_cultivation_points, 0);
-    const partnerCP = safeNumber(payload?.partner_cultivation_points, 0);
-    const sharedCP = safeNumber(payload?.shared_cultivation_points, personalCP + partnerCP);
+    const personalCP = safeNumber(payload?.personal_vestiges, 0);
+    const partnerCP = safeNumber(payload?.partner_vestiges, 0);
+    const sharedCP = safeNumber(payload?.shared_vestiges, personalCP + partnerCP);
 
     const personalTokens = safeNumber(payload?.personal_ascension_tokens, 0);
     const partnerTokens = safeNumber(payload?.partner_ascension_tokens, 0);
     const sharedTokens = safeNumber(payload?.shared_ascension_tokens, personalTokens + partnerTokens);
 
-    const sharedQiCurrent = safeNumber(payload?.shared_qi_current, 0);
-    const sharedQiMaximum = safeNumber(payload?.shared_qi_maximum, 0);
+    const sharedAuricCurrent = safeNumber(payload?.shared_auric_current, 0);
+    const sharedAuricMaximum = safeNumber(payload?.shared_auric_maximum, 0);
 
     const personalEnergy = safeNumber(payload?.partner_1_mortal_energy, 0);
     const partnerEnergy = safeNumber(payload?.partner_2_mortal_energy, 0);
@@ -1651,7 +1651,7 @@
       `You: ${formatNumber(personalTokens)} • Partner: ${formatNumber(partnerTokens)}`;
 
     document.getElementById("ledger-shared-qi").textContent =
-      `${formatNumber(sharedQiCurrent)} / ${formatNumber(sharedQiMaximum)}`;
+      `${formatNumber(sharedAuricCurrent)} / ${formatNumber(sharedAuricMaximum)}`;
     document.getElementById("ledger-shared-qi-note").textContent =
       "Combined current and maximum Qi for the selected pair.";
 

@@ -1829,7 +1829,7 @@ exports.handler = async (event) => {
     const memberStageKey = memberRow.v2_active_stage_key?.split(':')[1] || 'base';
     const { data: stageProgression } = await supabase
       .from("cultivation_realm_stage_progression")
-      .select("qi_maximum, cultivation_points_maximum, normal_gain_per_minute")
+      .select("auric_maximum, vestiges_maximum, normal_gain_per_minute")
       .eq("realm_key", memberRow.realm_key || "mortal")
       .eq("realm_stage_key", memberStageKey)
       .maybeSingle();
@@ -1839,32 +1839,32 @@ exports.handler = async (event) => {
       const partnerStageKey = focusPartnerMemberRow.v2_active_stage_key?.split(':')[1] || 'base';
       const { data: _psp } = await supabase
         .from("cultivation_realm_stage_progression")
-        .select("qi_maximum, cultivation_points_maximum")
+        .select("auric_maximum, vestiges_maximum")
         .eq("realm_key", focusPartnerMemberRow.realm_key || "mortal")
         .eq("realm_stage_key", partnerStageKey)
         .maybeSingle();
       partnerStageProgression = _psp;
     }
 
-    const personalQiCurrent = safeNumber(memberRow.qi_current, 0);
-    const personalQiMaximum = safeNumber(stageProgression?.qi_maximum, safeNumber(memberRow.qi_maximum, 0));
+    const personalAuricCurrent = safeNumber(memberRow.auric_current, 0);
+    const personalAuricMaximum = safeNumber(stageProgression?.auric_maximum, safeNumber(memberRow.auric_maximum, 0));
 
-    const partnerQiCurrent = safeNumber(focusPartnerMemberRow?.qi_current, 0);
-    const partnerQiMaximum = safeNumber(partnerStageProgression?.qi_maximum, safeNumber(focusPartnerMemberRow?.qi_maximum, 0));
+    const partnerAuricCurrent = safeNumber(focusPartnerMemberRow?.auric_current, 0);
+    const partnerAuricMaximum = safeNumber(partnerStageProgression?.auric_maximum, safeNumber(focusPartnerMemberRow?.auric_maximum, 0));
 
-    const sharedQiCurrent = resourceShareEnabled ? personalQiCurrent + partnerQiCurrent : personalQiCurrent;
-    const sharedQiMaximum = resourceShareEnabled ? personalQiMaximum + partnerQiMaximum : personalQiMaximum;
-    const sharedQiPercent = sharedQiMaximum > 0
-      ? Math.round(Math.max(0, Math.min(100, (sharedQiCurrent / sharedQiMaximum) * 100)))
+    const sharedAuricCurrent = resourceShareEnabled ? personalAuricCurrent + partnerAuricCurrent : personalAuricCurrent;
+    const sharedAuricMaximum = resourceShareEnabled ? personalAuricMaximum + partnerAuricMaximum : personalAuricMaximum;
+    const sharedQiPercent = sharedAuricMaximum > 0
+      ? Math.round(Math.max(0, Math.min(100, (sharedAuricCurrent / sharedAuricMaximum) * 100)))
       : 0;
 
-    const personalCultivationPoints = safeNumber(memberRow.cultivation_points, 0);
-    const personalCultivationPointsMaximum = safeNumber(stageProgression?.cultivation_points_maximum, 0);
+    const personalCultivationPoints = safeNumber(memberRow.vestiges, 0);
+    const personalCultivationPointsMaximum = safeNumber(stageProgression?.vestiges_maximum, 0);
     const personalCultivationPointsRemaining = Math.max(0, personalCultivationPointsMaximum - personalCultivationPoints);
     const personalCultivationPointsCapped = personalCultivationPointsMaximum > 0 && personalCultivationPoints >= personalCultivationPointsMaximum;
 
-    const partnerCultivationPoints = safeNumber(focusPartnerMemberRow?.cultivation_points, 0);
-    const partnerCultivationPointsMaximum = safeNumber(partnerStageProgression?.cultivation_points_maximum, 0);
+    const partnerCultivationPoints = safeNumber(focusPartnerMemberRow?.vestiges, 0);
+    const partnerCultivationPointsMaximum = safeNumber(partnerStageProgression?.vestiges_maximum, 0);
     const partnerCultivationPointsRemaining = Math.max(0, partnerCultivationPointsMaximum - partnerCultivationPoints);
     const partnerCultivationPointsCapped = partnerCultivationPointsMaximum > 0 && partnerCultivationPoints >= partnerCultivationPointsMaximum;
 
@@ -1979,12 +1979,12 @@ exports.handler = async (event) => {
         path_type: memberRow?.path_type || 'single',
         vessel_mode: vesselMode,
 
-        qi_current: personalQiCurrent,
-        qi_maximum: personalQiMaximum,
-        cultivation_points: personalCultivationPoints,
-        cultivation_points_maximum: personalCultivationPointsMaximum,
-        cultivation_points_remaining: personalCultivationPointsRemaining,
-        cultivation_points_capped: personalCultivationPointsCapped,
+        auric_current: personalAuricCurrent,
+        auric_maximum: personalAuricMaximum,
+        vestiges: personalCultivationPoints,
+        vestiges_maximum: personalCultivationPointsMaximum,
+        vestiges_remaining: personalCultivationPointsRemaining,
+        vestiges_capped: personalCultivationPointsCapped,
 
         alignment_path_key: alignmentState.path_key,
         alignment_path_name: alignmentState.path_name,
@@ -2093,12 +2093,12 @@ exports.handler = async (event) => {
             active_realm_volume_number: focusPartnerActiveRealm.active_realm_volume_number,
             active_realm_book_name: focusPartnerActiveRealm.active_realm_book_name,
 
-            qi_current: partnerQiCurrent,
-            qi_maximum: partnerQiMaximum,
-            cultivation_points: partnerCultivationPoints,
-            cultivation_points_maximum: partnerCultivationPointsMaximum,
-            cultivation_points_remaining: partnerCultivationPointsRemaining,
-            cultivation_points_capped: partnerCultivationPointsCapped,
+            auric_current: partnerAuricCurrent,
+            auric_maximum: partnerAuricMaximum,
+            vestiges: partnerCultivationPoints,
+            vestiges_maximum: partnerCultivationPointsMaximum,
+            vestiges_remaining: partnerCultivationPointsRemaining,
+            vestiges_capped: partnerCultivationPointsCapped,
             partner_selected_partnership_uuid: safeText(focusPartnerSelectedPartnershipUuid) || null,
             partner_focused_partnership_uuid: safeText(focusPartnerFocusedPartnership?.id) || null,
             partner_focused_partnership_id: safeText(focusPartnerFocusedPartnership?.partnership_id) || null,
@@ -2110,12 +2110,12 @@ exports.handler = async (event) => {
             member_id: "",
             realm_display_name: "",
             ascension_tokens_balance: 0,
-            qi_current: 0,
-            qi_maximum: 0,
-            cultivation_points: 0,
-            cultivation_points_maximum: 0,
-            cultivation_points_remaining: 0,
-            cultivation_points_capped: false,
+            auric_current: 0,
+            auric_maximum: 0,
+            vestiges: 0,
+            vestiges_maximum: 0,
+            vestiges_remaining: 0,
+            vestiges_capped: false,
             partner_selected_partnership_uuid: safeText(focusPartnerSelectedPartnershipUuid) || null,
             partner_focused_partnership_uuid: safeText(focusPartnerFocusedPartnership?.id) || null,
             partner_focused_partnership_id: safeText(focusPartnerFocusedPartnership?.partnership_id) || null,
@@ -2130,12 +2130,12 @@ exports.handler = async (event) => {
         realm_display_name: partner1Realm,
         realm_stage_key: memberRealmStageKey,
         realm_stage_label: memberRealmStageLabel,
-        cultivation_points: personalCultivationPoints,
-        cultivation_points_maximum: personalCultivationPointsMaximum,
+        vestiges: personalCultivationPoints,
+        vestiges_maximum: personalCultivationPointsMaximum,
         ascension_tokens_balance: currentMemberTokens,
         mortal_energy: personalMortalEnergy,
-        qi_current: personalQiCurrent,
-        qi_maximum: personalQiMaximum
+        auric_current: personalAuricCurrent,
+        auric_maximum: personalAuricMaximum
       },
 
       partner_2: {
@@ -2146,12 +2146,12 @@ exports.handler = async (event) => {
         realm_display_name: partner2Realm,
         realm_stage_key: focusPartnerRealmStageKey,
         realm_stage_label: focusPartnerRealmStageLabel,
-        cultivation_points: partnerCultivationPoints,
-        cultivation_points_maximum: partnerCultivationPointsMaximum,
+        vestiges: partnerCultivationPoints,
+        vestiges_maximum: partnerCultivationPointsMaximum,
         ascension_tokens_balance: partnerTokens,
         mortal_energy: partnerMortalEnergy,
-        qi_current: partnerQiCurrent,
-        qi_maximum: partnerQiMaximum
+        auric_current: partnerAuricCurrent,
+        auric_maximum: partnerAuricMaximum
       },
 
       computed: {
@@ -2177,22 +2177,22 @@ exports.handler = async (event) => {
         partner_2_mortal_energy: partnerMortalEnergy,
         shared_mortal_energy: sharedMortalEnergy,
 
-        personal_qi_current: personalQiCurrent,
-        personal_qi_maximum: personalQiMaximum,
-        partner_qi_current: partnerQiCurrent,
-        partner_qi_maximum: partnerQiMaximum,
-        shared_qi_current: sharedQiCurrent,
-        shared_qi_maximum: sharedQiMaximum,
+        personal_auric_current: personalAuricCurrent,
+        personal_auric_maximum: personalAuricMaximum,
+        partner_auric_current: partnerAuricCurrent,
+        partner_auric_maximum: partnerAuricMaximum,
+        shared_auric_current: sharedAuricCurrent,
+        shared_auric_maximum: sharedAuricMaximum,
         shared_qi_percent: sharedQiPercent,
 
-        personal_cultivation_points: personalCultivationPoints,
-        personal_cultivation_points_maximum: personalCultivationPointsMaximum,
-        partner_cultivation_points: partnerCultivationPoints,
-        partner_cultivation_points_maximum: partnerCultivationPointsMaximum,
-        shared_cultivation_points: sharedCultivationPoints,
-        shared_cultivation_points_maximum: sharedCultivationPointsMaximum,
-        shared_cultivation_points_remaining: sharedCultivationPointsRemaining,
-        shared_cultivation_points_capped: sharedCultivationPointsCapped,
+        personal_vestiges: personalCultivationPoints,
+        personal_vestiges_maximum: personalCultivationPointsMaximum,
+        partner_vestiges: partnerCultivationPoints,
+        partner_vestiges_maximum: partnerCultivationPointsMaximum,
+        shared_vestiges: sharedCultivationPoints,
+        shared_vestiges_maximum: sharedCultivationPointsMaximum,
+        shared_vestiges_remaining: sharedCultivationPointsRemaining,
+        shared_vestiges_capped: sharedCultivationPointsCapped,
 
         personal_ascension_tokens: currentMemberTokens,
         partner_ascension_tokens: partnerTokens,
@@ -2303,14 +2303,14 @@ exports.handler = async (event) => {
         live_practice_mode: effectiveCultivationMode,
         live_practice_state: effectiveCultivationMode,
 
-        shared_qi_current: sharedQiCurrent,
-        shared_qi_maximum: sharedQiMaximum,
+        shared_auric_current: sharedAuricCurrent,
+        shared_auric_maximum: sharedAuricMaximum,
         shared_qi_percent: sharedQiPercent,
 
-        shared_cultivation_points: sharedCultivationPoints,
-        shared_cultivation_points_maximum: sharedCultivationPointsMaximum,
-        shared_cultivation_points_remaining: sharedCultivationPointsRemaining,
-        shared_cultivation_points_capped: sharedCultivationPointsCapped,
+        shared_vestiges: sharedCultivationPoints,
+        shared_vestiges_maximum: sharedCultivationPointsMaximum,
+        shared_vestiges_remaining: sharedCultivationPointsRemaining,
+        shared_vestiges_capped: sharedCultivationPointsCapped,
 
         shared_ascension_tokens: sharedAscensionTokens,
         shared_mortal_energy: sharedMortalEnergy,

@@ -166,9 +166,9 @@ function getRealmDisplayName(row) {
 function getCultivationPoints(row) {
   return safeNumber(
     pickFirst(
-      row?.cultivation_points,
-      row?.cultivation_points_balance,
-      row?.cultivation_points_total,
+      row?.vestiges,
+      row?.vestiges_balance,
+      row?.vestiges_total,
       row?.cp,
       row?.cp_total
     ),
@@ -179,7 +179,7 @@ function getCultivationPoints(row) {
 function getQiCurrent(row) {
   return safeNumber(
     pickFirst(
-      row?.qi_current,
+      row?.auric_current,
       row?.current_qi
     ),
     0
@@ -189,7 +189,7 @@ function getQiCurrent(row) {
 function getQiMaximum(row) {
   return safeNumber(
     pickFirst(
-      row?.qi_maximum,
+      row?.auric_maximum,
       row?.max_qi,
       row?.qi_cap
     ),
@@ -235,9 +235,9 @@ function buildPublicMember(row) {
     path_type: safeText(row?.path_type, "single"),
     realm_name: safeText(row?.realm_name, ""),
     realm_display_name: getRealmDisplayName(row),
-    cultivation_points: getCultivationPoints(row),
-    qi_current: getQiCurrent(row),
-    qi_maximum: getQiMaximum(row),
+    vestiges: getCultivationPoints(row),
+    auric_current: getQiCurrent(row),
+    auric_maximum: getQiMaximum(row),
     mortal_energy: getMortalEnergy(row),
     last_hud_sync_at: safeText(row?.last_hud_sync_at, "") || null,
     current_region_name: safeText(row?.current_region_name, "") || null,
@@ -257,9 +257,9 @@ function buildEmptyPartner(counterpartAvatarKey, counterpartUsername) {
     path_type: "single",
     realm_name: "",
     realm_display_name: "",
-    cultivation_points: 0,
-    qi_current: 0,
-    qi_maximum: 0,
+    vestiges: 0,
+    auric_current: 0,
+    auric_maximum: 0,
     mortal_energy: 0,
     last_hud_sync_at: null,
     current_region_name: null,

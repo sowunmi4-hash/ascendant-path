@@ -260,8 +260,8 @@ async function loadMember(slAvatarKey, slUsername) {
       sl_avatar_key,
       sl_username,
       display_name,
-      qi_current,
-      cultivation_points,
+      auric_current,
+      vestiges,
       v2_cultivation_status,
       v2_active_stage_key,
       v2_breakthrough_gate_open

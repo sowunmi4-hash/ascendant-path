@@ -1310,14 +1310,14 @@ async function buildBondRecord({
         safeNumber(selfState?.required_minutes, book?.required_minutes || book?.required_shared_minutes || 0)
       );
 
-      const qiDrainPerMinuteEach = Math.max(
+      const auricDrainPerMinuteEach = Math.max(
         0,
-        safeNumber(book?.qi_drain_per_minute_each, 0)
+        safeNumber(book?.auric_drain_per_minute_each, 0)
       );
 
       const requiredQi = Math.max(
         0,
-        safeNumber(selfState?.required_qi, requiredMinutes * qiDrainPerMinuteEach)
+        safeNumber(selfState?.required_qi, requiredMinutes * auricDrainPerMinuteEach)
       );
 
       const selfProgressPercent = computeIndividualProgressPercent(
@@ -1405,7 +1405,7 @@ async function buildBondRecord({
 
         cp_cost_each: Math.max(0, safeNumber(book?.cp_cost_each, 0)),
         token_cost_each: Math.max(0, safeNumber(book?.token_cost_each, 0)),
-        qi_drain_per_minute_each: qiDrainPerMinuteEach,
+        auric_drain_per_minute_each: auricDrainPerMinuteEach,
         required_minutes: requiredMinutes,
         required_qi: requiredQi,
         human_required_minutes: formatMinutes(requiredMinutes),
@@ -1877,7 +1877,7 @@ async function handler(event) {
         sl_avatar_key: safeText(member.sl_avatar_key),
         sl_username: safeText(member.sl_username),
         display_name: safeText(member.display_name) || null,
-        cultivation_points: safeNumber(member.cultivation_points, 0),
+        vestiges: safeNumber(member.vestiges, 0),
         realm_name: safeText(member.realm_name) || null,
         realm_stage_key: getStableRealmStageKey(member),
         realm_stage_label: getStableRealmStageLabel(member),

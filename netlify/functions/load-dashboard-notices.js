@@ -1452,7 +1452,7 @@ function buildNoticeFeed({
     pushNotice(notices, {
       tone: "info",
       priority: 66,
-      type: "cultivation_points_capped",
+      type: "vestiges_capped",
       title: "Current stage cap reached",
       body: "Your Cultivation Points are capped at the current realm stage maximum.",
       action_label: "Review Progress",
@@ -1719,45 +1719,45 @@ exports.handler = async (event) => {
 
     const bondPercent = Number.isFinite(rawBondPercent) ? rawBondPercent : 0;
 
-    const personalQiCurrent = safeNumber(
-      resourceTotals?.personal_qi_current,
-      safeNumber(memberRow.qi_current, 0)
+    const personalAuricCurrent = safeNumber(
+      resourceTotals?.personal_auric_current,
+      safeNumber(memberRow.auric_current, 0)
     );
 
-    const personalQiMaximum = safeNumber(
-      resourceTotals?.personal_qi_maximum,
-      safeNumber(memberRow.qi_maximum, 0)
+    const personalAuricMaximum = safeNumber(
+      resourceTotals?.personal_auric_maximum,
+      safeNumber(memberRow.auric_maximum, 0)
     );
 
-    const partnerQiCurrent = safeNumber(
-      resourceTotals?.partner_qi_current,
-      safeNumber(focusPartnerMemberRow?.qi_current, 0)
+    const partnerAuricCurrent = safeNumber(
+      resourceTotals?.partner_auric_current,
+      safeNumber(focusPartnerMemberRow?.auric_current, 0)
     );
 
-    const partnerQiMaximum = safeNumber(
-      resourceTotals?.partner_qi_maximum,
-      safeNumber(focusPartnerMemberRow?.qi_maximum, 0)
+    const partnerAuricMaximum = safeNumber(
+      resourceTotals?.partner_auric_maximum,
+      safeNumber(focusPartnerMemberRow?.auric_maximum, 0)
     );
 
-    const sharedQiCurrent = safeNumber(
-      resourceTotals?.shared_qi_current,
-      personalQiCurrent + partnerQiCurrent
+    const sharedAuricCurrent = safeNumber(
+      resourceTotals?.shared_auric_current,
+      personalAuricCurrent + partnerAuricCurrent
     );
 
-    const sharedQiMaximum = safeNumber(
-      resourceTotals?.shared_qi_maximum,
-      personalQiMaximum + partnerQiMaximum
+    const sharedAuricMaximum = safeNumber(
+      resourceTotals?.shared_auric_maximum,
+      personalAuricMaximum + partnerAuricMaximum
     );
 
     const sharedQiPercent = safeNumber(
       resourceTotals?.shared_qi_percent,
-      sharedQiMaximum > 0
-        ? Math.round(Math.max(0, Math.min(100, (sharedQiCurrent / sharedQiMaximum) * 100)))
+      sharedAuricMaximum > 0
+        ? Math.round(Math.max(0, Math.min(100, (sharedAuricCurrent / sharedAuricMaximum) * 100)))
         : 0
     );
 
     const sharedCultivationPointsCapped = Boolean(
-      resourceTotals?.shared_cultivation_points_capped
+      resourceTotals?.shared_vestiges_capped
     );
 
     let alignmentDashboardState = null;

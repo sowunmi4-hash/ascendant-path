@@ -142,9 +142,9 @@ function getAvatarKey(row) {
 function getCultivationPoints(row) {
   return safeNumber(
     pickFirst(
-      row?.cultivation_points,
-      row?.cultivation_points_balance,
-      row?.cultivation_points_total,
+      row?.vestiges,
+      row?.vestiges_balance,
+      row?.vestiges_total,
       row?.cp,
       row?.cp_total
     ),
@@ -155,7 +155,7 @@ function getCultivationPoints(row) {
 function getQiCurrent(row) {
   return safeNumber(
     pickFirst(
-      row?.qi_current,
+      row?.auric_current,
       row?.current_qi
     ),
     0
@@ -165,7 +165,7 @@ function getQiCurrent(row) {
 function getQiMaximum(row) {
   return safeNumber(
     pickFirst(
-      row?.qi_maximum,
+      row?.auric_maximum,
       row?.max_qi,
       row?.qi_cap
     ),
@@ -255,9 +255,9 @@ function buildPublicMember(row) {
     path_type: safeText(row.path_type, "single"),
     realm_name: safeText(row.realm_name, ""),
     realm_display_name: getRealmDisplayName(row),
-    cultivation_points: getCultivationPoints(row),
-    qi_current: getQiCurrent(row),
-    qi_maximum: getQiMaximum(row),
+    vestiges: getCultivationPoints(row),
+    auric_current: getQiCurrent(row),
+    auric_maximum: getQiMaximum(row),
     mortal_energy: getMortalEnergy(row),
     last_hud_sync_at: safeText(row.last_hud_sync_at, ""),
     current_region_name: safeText(row.current_region_name, ""),
@@ -921,9 +921,9 @@ function buildEmptyPartner(counterpartAvatarKey, counterpartUsername) {
     path_type: "single",
     realm_name: "",
     realm_display_name: "",
-    cultivation_points: 0,
-    qi_current: 0,
-    qi_maximum: 0,
+    vestiges: 0,
+    auric_current: 0,
+    auric_maximum: 0,
     mortal_energy: 0,
     last_hud_sync_at: "",
     current_region_name: "",
@@ -1102,13 +1102,13 @@ exports.handler = async function handler(event) {
     const partnerAscensionTokens = getWalletBalance(partnerWallet);
     const sharedAscensionTokens = personalAscensionTokens + partnerAscensionTokens;
 
-    const personalQiCurrent = getQiCurrent(memberRow);
-    const personalQiMaximum = getQiMaximum(memberRow);
-    const partnerQiCurrent = getQiCurrent(partnerMemberRow);
-    const partnerQiMaximum = getQiMaximum(partnerMemberRow);
+    const personalAuricCurrent = getQiCurrent(memberRow);
+    const personalAuricMaximum = getQiMaximum(memberRow);
+    const partnerAuricCurrent = getQiCurrent(partnerMemberRow);
+    const partnerAuricMaximum = getQiMaximum(partnerMemberRow);
 
-    const sharedQiCurrent = personalQiCurrent + partnerQiCurrent;
-    const sharedQiMaximum = personalQiMaximum + partnerQiMaximum;
+    const sharedAuricCurrent = personalAuricCurrent + partnerAuricCurrent;
+    const sharedAuricMaximum = personalAuricMaximum + partnerAuricMaximum;
 
     const partner1Realm = getRealmDisplayName(memberRow);
     const partner2Realm = getRealmDisplayName(partnerMemberRow);
@@ -1234,20 +1234,20 @@ exports.handler = async function handler(event) {
       partner_within_range: partnerPresence.partner_within_range,
       partner_distance_meters: partnerPresence.partner_distance_meters,
 
-      personal_cultivation_points: personalCultivationPoints,
-      partner_cultivation_points: partnerCultivationPoints,
-      shared_cultivation_points: sharedCultivationPoints,
+      personal_vestiges: personalCultivationPoints,
+      partner_vestiges: partnerCultivationPoints,
+      shared_vestiges: sharedCultivationPoints,
 
       personal_ascension_tokens: personalAscensionTokens,
       partner_ascension_tokens: partnerAscensionTokens,
       shared_ascension_tokens: sharedAscensionTokens,
 
-      personal_qi_current: personalQiCurrent,
-      personal_qi_maximum: personalQiMaximum,
-      partner_qi_current: partnerQiCurrent,
-      partner_qi_maximum: partnerQiMaximum,
-      shared_qi_current: sharedQiCurrent,
-      shared_qi_maximum: sharedQiMaximum,
+      personal_auric_current: personalAuricCurrent,
+      personal_auric_maximum: personalAuricMaximum,
+      partner_auric_current: partnerAuricCurrent,
+      partner_auric_maximum: partnerAuricMaximum,
+      shared_auric_current: sharedAuricCurrent,
+      shared_auric_maximum: sharedAuricMaximum,
 
       partner_1_mortal_energy: getMortalEnergy(memberRow),
       partner_2_mortal_energy: getMortalEnergy(partnerMemberRow),

@@ -180,10 +180,10 @@ function buildMemberSummary(member = null, wallet = null) {
     realm_display_name: pickRealmName(member),
     path_type: safeText(member.path_type, "") || null,
     mortal_energy: safeNumber(member.mortal_energy, 0),
-    cultivation_points: safeNumber(member.cultivation_points, 0),
+    vestiges: safeNumber(member.vestiges, 0),
     ascension_tokens_balance: getWalletBalance(wallet, member),
-    qi_current: safeNumber(member.qi_current, 0),
-    qi_maximum: safeNumber(member.qi_maximum, 0)
+    auric_current: safeNumber(member.auric_current, 0),
+    auric_maximum: safeNumber(member.auric_maximum, 0)
   };
 }
 
@@ -486,16 +486,16 @@ exports.handler = async function handler(event) {
     const partner1 = buildMemberSummary(requesterMember, requesterWallet);
     const partner2 = buildMemberSummary(recipientMember, recipientWallet);
 
-    const requesterCp = safeNumber(partner1?.cultivation_points, 0);
-    const recipientCp = safeNumber(partner2?.cultivation_points, 0);
+    const requesterCp = safeNumber(partner1?.vestiges, 0);
+    const recipientCp = safeNumber(partner2?.vestiges, 0);
 
     const requesterAt = safeNumber(partner1?.ascension_tokens_balance, 0);
     const recipientAt = safeNumber(partner2?.ascension_tokens_balance, 0);
 
-    const requesterQiCurrent = safeNumber(partner1?.qi_current, 0);
-    const recipientQiCurrent = safeNumber(partner2?.qi_current, 0);
-    const requesterQiMaximum = safeNumber(partner1?.qi_maximum, 0);
-    const recipientQiMaximum = safeNumber(partner2?.qi_maximum, 0);
+    const requesterQiCurrent = safeNumber(partner1?.auric_current, 0);
+    const recipientQiCurrent = safeNumber(partner2?.auric_current, 0);
+    const requesterQiMaximum = safeNumber(partner1?.auric_maximum, 0);
+    const recipientQiMaximum = safeNumber(partner2?.auric_maximum, 0);
 
     return json(200, {
       success: true,
@@ -523,10 +523,10 @@ exports.handler = async function handler(event) {
         partner_1_realm: safeText(partner1?.realm_display_name, "Mortal"),
         partner_2_realm: safeText(partner2?.realm_display_name, "Mortal"),
         realm_line: `Realms: ${safeText(partner1?.realm_display_name, "Mortal")} • ${safeText(partner2?.realm_display_name, "Mortal")}`,
-        shared_cultivation_points: requesterCp + recipientCp,
+        shared_vestiges: requesterCp + recipientCp,
         shared_ascension_tokens: requesterAt + recipientAt,
-        shared_qi_current: requesterQiCurrent + recipientQiCurrent,
-        shared_qi_maximum: requesterQiMaximum + recipientQiMaximum,
+        shared_auric_current: requesterQiCurrent + recipientQiCurrent,
+        shared_auric_maximum: requesterQiMaximum + recipientQiMaximum,
         partner_1_mortal_energy: safeNumber(partner1?.mortal_energy, 0),
         partner_2_mortal_energy: safeNumber(partner2?.mortal_energy, 0)
       }

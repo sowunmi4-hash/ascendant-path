@@ -1414,14 +1414,14 @@ exports.handler = async (event) => {
         )
       );
 
-      const qiDrainPerMinuteEach = Math.max(
+      const auricDrainPerMinuteEach = Math.max(
         0,
-        safeNumber(catalogBook?.qi_drain_per_minute_each, 0)
+        safeNumber(catalogBook?.auric_drain_per_minute_each, 0)
       );
 
       const requiredQi = Math.max(
         0,
-        safeNumber(selfRow?.required_qi, requiredMinutes * qiDrainPerMinuteEach)
+        safeNumber(selfRow?.required_qi, requiredMinutes * auricDrainPerMinuteEach)
       );
 
       const selfProgressPercent = computeIndividualProgressPercent(
@@ -1479,7 +1479,7 @@ exports.handler = async (event) => {
           id: memberId,
           sl_avatar_key: safeText(member?.sl_avatar_key) || null,
           sl_username: safeText(member?.sl_username) || null,
-          cultivation_points: safeNumber(member?.cultivation_points, 0),
+          vestiges: safeNumber(member?.vestiges, 0),
           cultivating: memberCultivation.is_active,
           cultivation_status: memberCultivation.cultivation_status
         },
@@ -1488,7 +1488,7 @@ exports.handler = async (event) => {
           id: partnerMemberId,
           sl_avatar_key: safeText(partnerMember?.sl_avatar_key) || null,
           sl_username: safeText(partnerMember?.sl_username) || null,
-          cultivation_points: safeNumber(partnerMember?.cultivation_points, 0),
+          vestiges: safeNumber(partnerMember?.vestiges, 0),
           cultivating: partnerCultivation.is_active,
           cultivation_status: partnerCultivation.cultivation_status
         },
@@ -1503,7 +1503,7 @@ exports.handler = async (event) => {
           required_qi: requiredQi,
           cp_cost_each: safeNumber(catalogBook?.cp_cost_each, safeNumber(selfRow?.offering_cp_spent, 0)),
           token_cost_each: safeNumber(catalogBook?.token_cost_each, safeNumber(selfRow?.offering_token_spent, 0)),
-          qi_drain_per_minute_each: qiDrainPerMinuteEach,
+          auric_drain_per_minute_each: auricDrainPerMinuteEach,
 
           self: {
             offering_complete: safeBoolean(selfRow?.offering_complete),
@@ -1660,14 +1660,14 @@ exports.handler = async (event) => {
       )
     );
 
-    const qiDrainPerMinuteEach = Math.max(
+    const auricDrainPerMinuteEach = Math.max(
       0,
-      safeNumber(catalogBook?.qi_drain_per_minute_each, 0)
+      safeNumber(catalogBook?.auric_drain_per_minute_each, 0)
     );
 
     const requiredQi = Math.max(
       0,
-      safeNumber(selfRow?.required_qi, requiredMinutes * qiDrainPerMinuteEach)
+      safeNumber(selfRow?.required_qi, requiredMinutes * auricDrainPerMinuteEach)
     );
 
     const selfProgressPercent = computeIndividualProgressPercent(
@@ -1730,8 +1730,8 @@ exports.handler = async (event) => {
         id: getMemberPrimaryId(freshMember || member),
         sl_avatar_key: safeText((freshMember || member)?.sl_avatar_key) || null,
         sl_username: safeText((freshMember || member)?.sl_username) || null,
-        cultivation_points: safeNumber((freshMember || member)?.cultivation_points, 0),
-        qi_current: safeNumber((freshMember || member)?.qi_current, 0),
+        vestiges: safeNumber((freshMember || member)?.vestiges, 0),
+        auric_current: safeNumber((freshMember || member)?.auric_current, 0),
         cultivating: memberCultivation.is_active,
         cultivation_status: memberCultivation.cultivation_status,
         personal_cultivation_paused: pausedPersonalRows.length > 0,
@@ -1742,8 +1742,8 @@ exports.handler = async (event) => {
         id: getMemberPrimaryId(freshPartner || partnerMember),
         sl_avatar_key: safeText((freshPartner || partnerMember)?.sl_avatar_key) || null,
         sl_username: safeText((freshPartner || partnerMember)?.sl_username) || null,
-        cultivation_points: safeNumber((freshPartner || partnerMember)?.cultivation_points, 0),
-        qi_current: safeNumber((freshPartner || partnerMember)?.qi_current, 0),
+        vestiges: safeNumber((freshPartner || partnerMember)?.vestiges, 0),
+        auric_current: safeNumber((freshPartner || partnerMember)?.auric_current, 0),
         cultivating: partnerCultivation.is_active,
         cultivation_status: partnerCultivation.cultivation_status
       },
@@ -1758,7 +1758,7 @@ exports.handler = async (event) => {
         required_qi: requiredQi,
         cp_cost_each: safeNumber(catalogBook?.cp_cost_each, safeNumber(selfRow?.offering_cp_spent, 0)),
         token_cost_each: safeNumber(catalogBook?.token_cost_each, safeNumber(selfRow?.offering_token_spent, 0)),
-        qi_drain_per_minute_each: qiDrainPerMinuteEach,
+        auric_drain_per_minute_each: auricDrainPerMinuteEach,
 
         self: {
           offering_complete: safeBoolean(selfRow?.offering_complete),

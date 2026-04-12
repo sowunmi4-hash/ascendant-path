@@ -334,8 +334,8 @@ async function loadMember(slAvatarKey, slUsername) {
       sl_username,
       display_name,
       character_name,
-      qi_current,
-      cultivation_points,
+      auric_current,
+      vestiges,
       v2_cultivation_status,
       v2_cultivation_started_at,
       v2_accumulated_seconds,
@@ -923,8 +923,8 @@ async function loadPartnerMemberByIdentity({ partnerAvatarKey, partnerUsername }
       sl_username,
       display_name,
       character_name,
-      qi_current,
-      cultivation_points,
+      auric_current,
+      vestiges,
       v2_cultivation_status,
       v2_cultivation_started_at,
       v2_accumulated_seconds,
@@ -1388,14 +1388,14 @@ const handler = async (event) => {
       )
     );
 
-    const qiDrainPerMinuteEach = Math.max(
+    const auricDrainPerMinuteEach = Math.max(
       0,
-      safeNumber(catalogBook?.qi_drain_per_minute_each, 0)
+      safeNumber(catalogBook?.auric_drain_per_minute_each, 0)
     );
 
     const requiredQi = Math.max(
       0,
-      safeNumber(selfRow?.required_qi, requiredMinutes * qiDrainPerMinuteEach)
+      safeNumber(selfRow?.required_qi, requiredMinutes * auricDrainPerMinuteEach)
     );
 
     const selfProgressPercent = computeIndividualProgressPercent(
@@ -1489,7 +1489,7 @@ const handler = async (event) => {
         id: getMemberPrimaryId(freshMember || member),
         sl_avatar_key: safeText((freshMember || member)?.sl_avatar_key) || null,
         sl_username: safeText((freshMember || member)?.sl_username) || null,
-        cultivation_points: safeNumber((freshMember || member)?.cultivation_points, 0),
+        vestiges: safeNumber((freshMember || member)?.vestiges, 0),
         is_cultivating: detectMeditationState(freshMember || member).is_active
       },
 
@@ -1497,7 +1497,7 @@ const handler = async (event) => {
         id: getMemberPrimaryId(freshPartner || partnerMember),
         sl_avatar_key: safeText((freshPartner || partnerMember)?.sl_avatar_key) || null,
         sl_username: safeText((freshPartner || partnerMember)?.sl_username) || null,
-        cultivation_points: safeNumber((freshPartner || partnerMember)?.cultivation_points, 0),
+        vestiges: safeNumber((freshPartner || partnerMember)?.vestiges, 0),
         is_cultivating: detectMeditationState(freshPartner || partnerMember).is_active
       },
 
@@ -1517,7 +1517,7 @@ const handler = async (event) => {
           catalogBook?.token_cost_each,
           safeNumber(selfRow?.offering_token_spent, 0)
         ),
-        qi_drain_per_minute_each: qiDrainPerMinuteEach,
+        auric_drain_per_minute_each: auricDrainPerMinuteEach,
 
         self: {
           offering_complete: safeBoolean(selfRow?.offering_complete),

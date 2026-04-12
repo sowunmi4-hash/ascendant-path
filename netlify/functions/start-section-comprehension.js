@@ -84,7 +84,7 @@ async function loadMember(slAvatarKey, slUsername) {
       member_id,
       sl_avatar_key,
       sl_username,
-      cultivation_points,
+      vestiges,
       v2_cultivation_status,
       v2_active_stage_key
     `)
@@ -290,7 +290,7 @@ exports.handler = async (event) => {
         member_id: safeText(member.member_id) || null,
         sl_avatar_key: safeText(member.sl_avatar_key),
         sl_username: safeText(member.sl_username),
-        cultivation_points: safeNumber(member.cultivation_points, 0)
+        vestiges: safeNumber(member.vestiges, 0)
       }
     });
   } catch (error) {
