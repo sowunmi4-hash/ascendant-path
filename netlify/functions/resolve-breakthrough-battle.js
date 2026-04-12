@@ -30,6 +30,9 @@ const HEAVEN_POWER = {
   6: 220, 7: 290, 8: 370, 9: 460, 10: 600
 };
 
+// Bond breakthroughs: heaven power is doubled (harder threshold, but combined stats)
+const BOND_HEAVEN_POWER_MULTIPLIER = 2.0;
+
 const ROLL_MODIFIERS = {
   1: 0.5, 2: 0.75, 3: 1.0, 4: 1.0, 5: 1.5, 6: 2.0
 };
@@ -209,7 +212,72 @@ exports.handler = async function(event) {
 
     const realmIndex = safeNumber(member.realm_index, 1);
     const clampedRealm = Math.min(Math.max(realmIndex, 1), 10);
-    const heavenPow = HEAVEN_POWER[clampedRealm];
+
+    // -----------------------------------------------------------------------
+    // 2b) Check if this is a bond breakthrough — if so, load partner stats
+    // -----------------------------------------------------------------------
+
+    // Load active breakthrough to check target_type and partnership_id
+    const { data: activeBt } = await breakthroughSupabase
+      .from("v2_member_breakthrough_state")
+      .select("id, target_type, partnership_id, bond_volume_number")
+      .eq("sl_avatar_key", slAvatarKey)
+      .in("lifecycle_status", ["active", "timer_elapsed"])
+      .order("created_at", { ascending: false })
+      .limit(1)
+      .maybeSingle();
+
+    const isBondBreakthrough = activeBt?.target_type === "bond";
+    const partnershipId = activeBt?.partnership_id || null;
+
+    let partnerVitality = 0, partnerWill = 0, partnerResonance = 0, partnerInsight = 0;
+    let partnerAvatarKey = null;
+    let partnerMember = null;
+
+    if (isBondBreakthrough && partnershipId) {
+      // Fetch partnership to find the partner
+      const { data: partnership } = await publicSupabase
+        .schema("partner")
+        .from("cultivation_partnerships")
+        .select("requester_avatar_key, recipient_avatar_key")
+        .eq("id", partnershipId)
+        .maybeSingle();
+
+      if (partnership) {
+        const reqKey = safeText(partnership.requester_avatar_key).toLowerCase();
+        const recKey = safeText(partnership.recipient_avatar_key).toLowerCase();
+        partnerAvatarKey = reqKey === slAvatarKey.toLowerCase() ? partnership.recipient_avatar_key : partnership.requester_avatar_key;
+      }
+
+      if (partnerAvatarKey) {
+        const { data: partnerStats } = await publicSupabase
+          .from("cultivator_stats")
+          .select("vitality, will, resonance, insight")
+          .eq("sl_avatar_key", partnerAvatarKey)
+          .maybeSingle();
+
+        partnerVitality  = safeNumber(partnerStats?.vitality,  0);
+        partnerWill      = safeNumber(partnerStats?.will,      0);
+        partnerResonance = safeNumber(partnerStats?.resonance, 0);
+        partnerInsight   = safeNumber(partnerStats?.insight,   0);
+
+        const { data: pm } = await publicSupabase
+          .from("cultivation_members")
+          .select("member_id, sl_avatar_key, sl_username, realm_index")
+          .eq("sl_avatar_key", partnerAvatarKey)
+          .maybeSingle();
+        partnerMember = pm || null;
+      }
+    }
+
+    // Combined stats: self + partner (partner is 0 for solo breakthroughs)
+    const combinedVitality  = vitality  + partnerVitality;
+    const combinedWill      = will      + partnerWill;
+    const combinedResonance = resonance + partnerResonance;
+    const combinedInsight   = insight   + partnerInsight;
+
+    // Heaven power: doubled for bond breakthroughs
+    const heavenPow = HEAVEN_POWER[clampedRealm] * (isBondBreakthrough ? BOND_HEAVEN_POWER_MULTIPLIER : 1.0);
 
     // -----------------------------------------------------------------------
     // 3) Determine isResonant from alignment state
@@ -218,10 +286,10 @@ exports.handler = async function(event) {
     const isResonant = await resolveIsResonant(slAvatarKey);
 
     // -----------------------------------------------------------------------
-    // 4) Stat-based dice mechanic
+    // 4) Stat-based dice mechanic (combined stats for bond breakthroughs)
     // -----------------------------------------------------------------------
 
-    const basePower    = (vitality * 0.20) + (will * 0.30) + (resonance * 0.25) + (insight * 0.25);
+    const basePower    = (combinedVitality * 0.20) + (combinedWill * 0.30) + (combinedResonance * 0.25) + (combinedInsight * 0.25);
     const roll         = Math.floor(Math.random() * 6) + 1;
     const rollModifier = ROLL_MODIFIERS[roll];
     const finalPower   = basePower * rollModifier;
@@ -304,6 +372,7 @@ exports.handler = async function(event) {
       battle_power:          safeNumber(result.battle_power, Math.round(adjustedPower)),
       heavens_forgiveness:   !!(result.heavens_forgiveness),
       outcome_hidden:        true,
+      is_bond_breakthrough:  isBondBreakthrough,
       dice: {
         roll:             roll,
         roll_modifier:    rollModifier,
@@ -312,8 +381,24 @@ exports.handler = async function(event) {
         heaven_power:     heavenPow,
         realm_index:      clampedRealm,
         is_resonant:      isResonant,
-        alignment_bonus:  alignmentBonus
+        alignment_bonus:  alignmentBonus,
+        is_bond:          isBondBreakthrough,
+        bond_power_multiplier: isBondBreakthrough ? BOND_HEAVEN_POWER_MULTIPLIER : 1.0
       },
+      self_stats: {
+        vitality, will, resonance, insight
+      },
+      ...(isBondBreakthrough ? {
+        partner_stats: {
+          vitality: partnerVitality, will: partnerWill,
+          resonance: partnerResonance, insight: partnerInsight
+        },
+        combined_stats: {
+          vitality: combinedVitality, will: combinedWill,
+          resonance: combinedResonance, insight: combinedInsight
+        },
+        partner_avatar_key: partnerAvatarKey
+      } : {}),
       member: {
         member_id:     safeText(member.member_id) || null,
         sl_avatar_key: safeText(member.sl_avatar_key),

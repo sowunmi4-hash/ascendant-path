@@ -465,6 +465,169 @@
     .orb-scene-title { margin: 0; font-size: 1.35rem; line-height: 1.1; color: #fff; text-wrap: balance; }
     .orb-scene-copy { margin: 0 auto; max-width: 205px; min-height: 6.6em; color: var(--text-soft); line-height: 1.55; font-size: 0.9rem; text-wrap: balance; }
 
+    /* ── BOND BREAKTHROUGH PANEL ── */
+    .bond-panel {
+      display: none;
+      margin-bottom: 1rem;
+    }
+    .bond-panel.active { display: block; }
+
+    .bond-panel-inner {
+      display: grid;
+      grid-template-columns: 1fr auto 1fr;
+      gap: 1rem;
+      align-items: start;
+    }
+
+    .bond-cultivator {
+      background: rgba(13,13,24,0.7);
+      border: 0.5px solid rgba(255,255,255,0.07);
+      border-radius: 10px;
+      padding: 1.1rem 1rem;
+      display: flex;
+      flex-direction: column;
+      gap: 0.55rem;
+    }
+
+    .bond-cultivator.self { border-color: rgba(200,169,106,0.25); }
+    .bond-cultivator.partner { border-color: rgba(200,104,144,0.18); }
+
+    .bond-cultivator-header {
+      display: flex;
+      align-items: center;
+      gap: 0.6rem;
+      margin-bottom: 0.2rem;
+    }
+
+    .bond-figure {
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 18px;
+      flex-shrink: 0;
+    }
+
+    .bond-figure.gold { background: rgba(200,169,106,0.15); box-shadow: 0 0 12px rgba(200,169,106,0.2); }
+    .bond-figure.rose { background: rgba(200,104,144,0.15); box-shadow: 0 0 12px rgba(200,104,144,0.2); }
+
+    .bond-cultivator-name {
+      font-family: 'Cinzel', serif;
+      font-size: 0.78rem;
+      color: #ddd5c8;
+      letter-spacing: 0.04em;
+      line-height: 1.2;
+    }
+
+    .bond-cultivator-realm {
+      font-size: 0.7rem;
+      color: #555044;
+    }
+
+    .bond-stat-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 0.3rem 0.5rem;
+    }
+
+    .bond-stat {
+      display: flex;
+      justify-content: space-between;
+      font-size: 0.72rem;
+      padding: 0.2rem 0;
+      border-bottom: 0.5px solid rgba(255,255,255,0.04);
+    }
+
+    .bond-stat-lbl { color: #555044; text-transform: uppercase; letter-spacing: 0.06em; font-size: 0.65rem; }
+    .bond-stat-val { color: #ddd5c8; font-weight: 500; }
+
+    .bond-status-badge {
+      font-size: 0.68rem;
+      padding: 0.2rem 0.55rem;
+      border-radius: 20px;
+      text-align: center;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      margin-top: 0.3rem;
+    }
+
+    .bond-status-badge.entered { background: rgba(149,227,138,0.12); color: #95e38a; border: 0.5px solid rgba(149,227,138,0.25); }
+    .bond-status-badge.waiting { background: rgba(255,201,119,0.08); color: #ffc977; border: 0.5px solid rgba(255,201,119,0.2); animation: waitPulse 2s ease-in-out infinite; }
+
+    @keyframes waitPulse {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.5; }
+    }
+
+    .bond-vs-divider {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 0.4rem;
+      padding-top: 0.5rem;
+    }
+
+    .bond-vs-glyph {
+      font-family: 'Cinzel', serif;
+      font-size: 1.1rem;
+      color: rgba(200,169,106,0.5);
+      letter-spacing: 0.1em;
+    }
+
+    .bond-vs-line {
+      width: 1px;
+      height: 48px;
+      background: linear-gradient(180deg, transparent, rgba(200,169,106,0.25), transparent);
+    }
+
+    .bond-combined-strip {
+      margin-top: 0.8rem;
+      background: rgba(200,169,106,0.05);
+      border: 0.5px solid rgba(200,169,106,0.15);
+      border-radius: 8px;
+      padding: 0.75rem 1rem;
+    }
+
+    .bond-combined-label {
+      font-size: 0.68rem;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      color: rgba(200,169,106,0.6);
+      margin-bottom: 0.5rem;
+      font-family: 'Cinzel', serif;
+    }
+
+    .bond-combined-stats {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 0.5rem;
+    }
+
+    .bond-combined-stat {
+      text-align: center;
+    }
+
+    .bond-combined-stat-lbl { font-size: 0.6rem; text-transform: uppercase; letter-spacing: 0.08em; color: #555044; }
+    .bond-combined-stat-val { font-size: 1.1rem; font-weight: 500; color: #c8a96a; margin-top: 2px; }
+
+    .bond-heaven-power-note {
+      font-size: 0.7rem;
+      color: rgba(200,169,106,0.5);
+      text-align: center;
+      margin-top: 0.5rem;
+      font-style: italic;
+    }
+
+    @media (max-width: 640px) {
+      .bond-panel-inner { grid-template-columns: 1fr; }
+      .bond-vs-divider { flex-direction: row; padding: 0; }
+      .bond-vs-line { width: 40px; height: 1px; }
+      .bond-combined-stats { grid-template-columns: repeat(2, 1fr); }
+    }
+
     .orb-action-state {
       margin: 0 auto;
       padding: 0.38rem 0.75rem;
@@ -823,6 +986,49 @@
     </div>
   </section>
 
+  <!-- BOND BREAKTHROUGH PANEL -->
+  <section class="panel bond-panel" id="bond-panel">
+    <p class="panel-label" style="margin-bottom:0.75rem;">Bond Tribulation — Dual Cultivators</p>
+    <div class="bond-panel-inner" id="bond-panel-inner">
+      <!-- Self -->
+      <div class="bond-cultivator self" id="bond-self">
+        <div class="bond-cultivator-header">
+          <div class="bond-figure gold" id="bond-self-figure">⬡</div>
+          <div>
+            <div class="bond-cultivator-name" id="bond-self-name">—</div>
+            <div class="bond-cultivator-realm" id="bond-self-realm">—</div>
+          </div>
+        </div>
+        <div class="bond-stat-row" id="bond-self-stats"></div>
+        <div class="bond-status-badge entered" id="bond-self-status">Entered</div>
+      </div>
+      <!-- VS Divider -->
+      <div class="bond-vs-divider">
+        <div class="bond-vs-line"></div>
+        <div class="bond-vs-glyph">☯</div>
+        <div class="bond-vs-line"></div>
+      </div>
+      <!-- Partner -->
+      <div class="bond-cultivator partner" id="bond-partner">
+        <div class="bond-cultivator-header">
+          <div class="bond-figure rose" id="bond-partner-figure">⬡</div>
+          <div>
+            <div class="bond-cultivator-name" id="bond-partner-name">—</div>
+            <div class="bond-cultivator-realm" id="bond-partner-realm">—</div>
+          </div>
+        </div>
+        <div class="bond-stat-row" id="bond-partner-stats"></div>
+        <div class="bond-status-badge waiting" id="bond-partner-status">Awaiting Partner</div>
+      </div>
+    </div>
+    <!-- Combined stats strip -->
+    <div class="bond-combined-strip" id="bond-combined-strip">
+      <div class="bond-combined-label">Combined Cultivation Power</div>
+      <div class="bond-combined-stats" id="bond-combined-stats"></div>
+      <div class="bond-heaven-power-note" id="bond-heaven-power-note">Heaven's power is doubled for a Bond Tribulation — two must stand where one cannot.</div>
+    </div>
+  </section>
+
   <!-- CHAMBER FULL WIDTH -->
   <section class="panel" style="padding:0;overflow:visible;background:transparent;border:none;box-shadow:none;">
     <div class="chamber" id="chamber-wrap">
@@ -1089,9 +1295,110 @@
       return parts.join(" • ") || "--";
     }
 
+    // ── BOND BREAKTHROUGH HELPERS ───────────────────────────────────────────
+
+    function isBondBreakthrough() {
+      return state.payload?.is_bond_breakthrough === true ||
+             safeText(getBreakthrough()?.target_type) === 'bond';
+    }
+
+    function getBondPartner() {
+      return state.payload?.bond_partner || null;
+    }
+
+    function getBondBreakthroughState() {
+      return state.payload?.bond_breakthrough_state || null;
+    }
+
+    function buildStatRows(stats) {
+      if (!stats) return '<div class="bond-stat"><span class="bond-stat-lbl">Stats</span><span class="bond-stat-val">—</span></div>';
+      return [
+        ['Vitality', safeNumber(stats.vitality, 0)],
+        ['Will', safeNumber(stats.will, 0)],
+        ['Resonance', safeNumber(stats.resonance, 0)],
+        ['Insight', safeNumber(stats.insight, 0)]
+      ].map(([lbl, val]) =>
+        `<div class="bond-stat"><span class="bond-stat-lbl">${lbl}</span><span class="bond-stat-val">${val}</span></div>`
+      ).join('');
+    }
+
+    function renderBondPanel() {
+      const panel = document.getElementById('bond-panel');
+      if (!panel) return;
+      const isBond = isBondBreakthrough();
+      panel.classList.toggle('active', isBond);
+      if (!isBond) return;
+
+      const member = state.payload?.member || {};
+      const partner = getBondPartner();
+      const bondState = getBondBreakthroughState();
+
+      // Self
+      const selfName = safeText(member.character_name || member.display_name || member.sl_username, '—');
+      const selfRealm = safeText(member.realm_display_name, '—');
+      const selfGender = safeText(member.gender, 'male');
+      document.getElementById('bond-self-name').textContent = selfName;
+      document.getElementById('bond-self-realm').textContent = selfRealm;
+      document.getElementById('bond-self-figure').textContent = selfGender === 'female' ? '♀' : '♂';
+      document.getElementById('bond-self-figure').className = 'bond-figure ' + (selfGender === 'female' ? 'rose' : 'gold');
+
+      // Self stats
+      const selfStats = member.stats || null;
+      document.getElementById('bond-self-stats').innerHTML = buildStatRows(selfStats);
+
+      // Partner
+      if (partner) {
+        const partnerName = safeText(partner.character_name || partner.display_name || partner.sl_username, 'Bond Partner');
+        const partnerRealm = safeText(partner.realm_display_name, '—');
+        const partnerGender = safeText(partner.gender, 'female');
+        document.getElementById('bond-partner-name').textContent = partnerName;
+        document.getElementById('bond-partner-realm').textContent = partnerRealm;
+        document.getElementById('bond-partner-figure').textContent = partnerGender === 'female' ? '♀' : '♂';
+        document.getElementById('bond-partner-figure').className = 'bond-figure ' + (partnerGender === 'female' ? 'rose' : 'gold');
+
+        // Partner status
+        const partnerEntered = safeBoolean(partner.has_entered);
+        const partnerStatusEl = document.getElementById('bond-partner-status');
+        partnerStatusEl.textContent = partnerEntered ? 'Entered' : 'Awaiting Partner';
+        partnerStatusEl.className = 'bond-status-badge ' + (partnerEntered ? 'entered' : 'waiting');
+
+        // Partner stats
+        document.getElementById('bond-partner-stats').innerHTML = buildStatRows(partner.stats);
+
+        // Combined stats
+        const selfV = safeNumber(selfStats?.vitality, 0);
+        const selfW = safeNumber(selfStats?.will, 0);
+        const selfR = safeNumber(selfStats?.resonance, 0);
+        const selfI = safeNumber(selfStats?.insight, 0);
+        const pV = safeNumber(partner.stats?.vitality, 0);
+        const pW = safeNumber(partner.stats?.will, 0);
+        const pR = safeNumber(partner.stats?.resonance, 0);
+        const pI = safeNumber(partner.stats?.insight, 0);
+
+        const combinedStats = [
+          ['Vitality', selfV + pV],
+          ['Will', selfW + pW],
+          ['Resonance', selfR + pR],
+          ['Insight', selfI + pI]
+        ];
+
+        document.getElementById('bond-combined-stats').innerHTML = combinedStats
+          .map(([lbl, val]) =>
+            `<div class="bond-combined-stat">
+               <div class="bond-combined-stat-lbl">${lbl}</div>
+               <div class="bond-combined-stat-val">${val}</div>
+             </div>`
+          ).join('');
+      }
+    }
+
     function buildThresholdLabel() {
       const bt = getBreakthrough();
       if (!hasActiveBreakthrough()) return "No active threshold";
+      if (isBondBreakthrough()) {
+        const vol = bt.bond_volume_number || bt.from_volume_number;
+        return vol ? `Bond Tribulation • Relic ${vol}` : "Bond Tribulation";
+      }
       const parts = [];
       if (bt.target_type) parts.push(`${toTitle(bt.target_type)} Threshold`);
       const route = buildStageRouteLabel(bt);
@@ -1110,6 +1417,20 @@
       const lifecycle = getLifecycleStatus();
       const bt = getBreakthrough();
       if (!hasActiveBreakthrough()) return "No active breakthrough is presently bound to the chamber. When a lawful threshold is formed, the chamber will display its state here.";
+      if (isBondBreakthrough()) {
+        const partner = getBondPartner();
+        const partnerEntered = partner?.has_entered;
+        if (lifecycle === "countdown" || lifecycle === "pending") {
+          if (!partnerEntered) return "You have entered the Bond Tribulation. Heaven watches both cultivators — your partner must also step forward before the trial can begin.";
+          return "Both cultivators have entered the Bond Tribulation. The storm gathers around two souls. Together you will face what neither could endure alone.";
+        }
+        if (uiState === "in_progress") return "The Bond Tribulation is underway. Two cultivators, one storm. Heaven weighs your combined power against a doubled threshold.";
+        if (lifecycle === "timer_elapsed") return "The trial storm has passed. The hidden battle now waits for formal resolution.";
+        if (lifecycle === "battle_resolved") return "The hidden battle has been resolved. Heaven's Verdict for the bond may now be received.";
+        if (lifecycle === "verdict_revealed") return "Heaven's judgement has been revealed. The Bond Tribulation has reached its conclusion.";
+        if (bt.verdict_text) return bt.verdict_text;
+        return "The Bond Tribulation is active. Two cultivators stand before Heaven's judgement.";
+      }
       if (lifecycle === "countdown" || lifecycle === "pending") return "A threshold has formed. The chamber is drawing the cultivator toward Heaven's trial.";
       if (uiState === "in_progress") return "The hidden battle is underway. The center now carries the tribulation lore, while the single timer below shows the live remaining time.";
       if (lifecycle === "timer_elapsed") return "The timer has elapsed. The hidden battle now waits for formal resolution.";
@@ -1147,6 +1468,29 @@
 
       if (!hasActiveBreakthrough()) {
         return { stageNumber: 0, stageLabel: "Dormant", phase: "Threshold Dormant", title: "No Active Trial", copy: "No breakthrough is currently bound to the chamber. When a lawful threshold is opened, Heaven's gaze will gather here.", progressCopy: "The chamber is empty. No active threshold is currently being judged.", aftermathCopy: "" };
+      }
+
+      // Bond tribulation narratives
+      if (isBondBreakthrough()) {
+        const partner = getBondPartner();
+        const partnerEntered = partner?.has_entered;
+        if (lifecycle === "countdown" || lifecycle === "pending") {
+          if (!partnerEntered) return { stageNumber: 1, stageLabel: "Awaiting Partner", phase: "Awaiting Partner", title: "One Flame Burns Alone", copy: "You have crossed the threshold into the Bond Tribulation, but your partner has not yet arrived. Heaven waits with cold patience. Both cultivators must be present before the storm descends.", progressCopy: "Awaiting your partner. The tribulation cannot begin until both cultivators stand together.", aftermathCopy: "" };
+          return { stageNumber: 2, stageLabel: "Gathering Storm", phase: "Bond Tribulation Gathering", title: "Two Souls, One Storm", copy: "Both cultivators have entered the Bond Tribulation. The spiritual field recognises a dual presence — Heaven now prepares a doubled test, for what binds two together must also be tempered together.", progressCopy: "Both partners have entered. The bond tribulation storm is gathering around two souls.", aftermathCopy: "" };
+        }
+        if (uiState === "in_progress") {
+          if (progressPct < 40) return { stageNumber: 3, stageLabel: "First Combined Trial", phase: "First Combined Trial", title: "Heaven Tests the Bond", copy: "The first waves of the Bond Tribulation descend. They probe not individual strength but the resonance between two cultivators — the gaps, the harmonies, and the shared foundation they have built.", progressCopy: "The opening trial is testing the combined cultivation of both cultivators.", aftermathCopy: "" };
+          if (progressPct < 75) return { stageNumber: 4, stageLabel: "Deep Trial Wave", phase: "Deep Trial Wave", title: "The Bond Is Weighed", copy: "Heaven's trial reaches deeper. It no longer tests flesh alone — it measures whether the bond between these two cultivators is strong enough to bear the weight of what they have built together.", progressCopy: "The deeper waves of the bond tribulation are pressing hard. Combined will and insight are being tested.", aftermathCopy: "" };
+          return { stageNumber: 5, stageLabel: "Final Judgement", phase: "Final Bond Judgement", title: "Heaven Renders Its Verdict", copy: "The final and most powerful strike descends. Heaven weighs two cultivators as one — their combined vitality, will, resonance, and insight — against the doubled power of the Bond Tribulation threshold.", progressCopy: "The final judgement is descending. Heaven will now acknowledge or deny this bond's ascent.", aftermathCopy: "" };
+        }
+        if (lifecycle === "timer_elapsed" || lifecycle === "battle_resolved") {
+          return { stageNumber: 6, stageLabel: "Resolution", phase: "Bond Resolution", title: "The Storm Falls Silent", copy: "The Bond Tribulation storm has faded. Two cultivators stood together before Heaven's judgement — and the verdict is now sealed within the chamber, waiting to be revealed.", progressCopy: "The bond trial is over. The verdict waits to be received.", aftermathCopy: "" };
+        }
+        if (uiState === "resolved") {
+          if (outcome === "success") return { stageNumber: 6, stageLabel: "Resolution", phase: "Bond Resolution", title: "Heaven Acknowledges the Bond", copy: safeText(bt.verdict_text, "Two cultivators stood as one before Heaven's trial, and Heaven has acknowledged the bond. The threshold yielded — not to individual power, but to the combined force of a shared cultivation path."), progressCopy: "The bond tribulation was successful. Both cultivators have advanced.", aftermathCopy: "The bond has been tested and acknowledged by Heaven. What was forged together has now been tempered together." };
+          return { stageNumber: 6, stageLabel: "Resolution", phase: "Bond Resolution", title: "Heaven Withholds the Bond's Crossing", copy: safeText(bt.verdict_text, "The bond tribulation was endured, but Heaven did not grant the ascent. The combined power was not yet sufficient — both cultivators survive, but the bond threshold remains sealed."), progressCopy: "The bond trial ended in failure. Both cultivators endured but did not advance.", aftermathCopy: "Heaven tested the bond and found it wanting. The storm has passed, but the threshold stays closed." };
+        }
+        return { stageNumber: 0, stageLabel: "Bond Active", phase: "Bond Tribulation", title: "Bond Tribulation Active", copy: "The Bond Tribulation is active.", progressCopy: "The bond trial is ongoing.", aftermathCopy: "" };
       }
 
       if (lifecycle === "countdown" || lifecycle === "pending") {
@@ -1254,6 +1598,7 @@
     function buildActionConfig(action) {
       const actionKey = safeText(action?.action);
       switch (actionKey) {
+        case "enter_bond_breakthrough": return { mode: "post", target: "/.netlify/functions/enter-bond-breakthrough" };
         case "resolve_battle": return { mode: "post", target: "/.netlify/functions/resolve-breakthrough-battle" };
         case "reveal_verdict": return { mode: "post", target: "/.netlify/functions/reveal-breakthrough-verdict" };
         case "view_result": return { mode: "refresh", target: "" };
@@ -1289,8 +1634,21 @@
       $("page-note").textContent = buildNoteText();
 
       const disabled = state.submitting || !action || !safeBoolean(action.can_act) || actionConfig.mode === "none";
-      button.textContent = state.submitting ? "Processing..." : safeText(action?.label, "No Action Available");
-      button.disabled = disabled;
+      let buttonLabel = state.submitting ? "Processing..." : safeText(action?.label, "No Action Available");
+
+      // Bond breakthrough: block resolve if partner hasn't entered yet
+      let partnerWaiting = false;
+      if (isBondBreakthrough()) {
+        const partner = getBondPartner();
+        const lifecycle = getLifecycleStatus();
+        if ((lifecycle === "countdown" || lifecycle === "active") && partner && !safeBoolean(partner.has_entered)) {
+          partnerWaiting = true;
+          buttonLabel = "Awaiting Bond Partner…";
+        }
+      }
+
+      button.textContent = buttonLabel;
+      button.disabled = disabled || partnerWaiting;
       button.dataset.mode = actionConfig.mode;
       button.dataset.target = actionConfig.target;
       button.dataset.action = safeText(action?.action);
@@ -1572,6 +1930,7 @@
       const outcome = getOutcome();
       setBodyState(uiState, outcome);
       renderHero();
+      renderBondPanel();
       renderThresholdRecord();
       renderVerdictRecord();
       renderCenter();
@@ -1678,6 +2037,12 @@
           sl_username: safeText(state.payload?.member?.sl_username || state.payload?.viewer?.sl_username),
           breakthrough_state_id: safeText(getBreakthrough()?.breakthrough_state_id || getBreakthrough()?.id)
         };
+
+        // Bond breakthrough: add partnership context
+        if (isBondBreakthrough()) {
+          if (state.payload?.partnership_id) basePayload.partnership_id = state.payload.partnership_id;
+          if (state.payload?.bond_volume_number) basePayload.bond_volume_number = state.payload.bond_volume_number;
+        }
 
         const response = await fetch(config.target, {
           method: "POST",

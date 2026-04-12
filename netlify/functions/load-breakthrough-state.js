@@ -915,6 +915,85 @@ exports.handler = async (event) => {
       lifecycleCatalog
     });
 
+    // If bond breakthrough, fetch partner info
+    let bondPartner = null;
+    let bondBreakthroughState = null;
+    const isBond = breakthroughPayload.target_type === "bond";
+
+    if (isBond && btRow?.partnership_id) {
+      try {
+        const { data: partnership } = await supabase
+          .schema("partner")
+          .from("cultivation_partnerships")
+          .select("requester_avatar_key, recipient_avatar_key")
+          .eq("id", btRow.partnership_id)
+          .maybeSingle();
+
+        if (partnership) {
+          const selfKey = safeText(member.sl_avatar_key).toLowerCase();
+          const partnerKey = safeText(partnership.requester_avatar_key).toLowerCase() === selfKey
+            ? partnership.recipient_avatar_key
+            : partnership.requester_avatar_key;
+
+          const { data: partnerMember } = await supabase
+            .from("cultivation_members")
+            .select("sl_avatar_key, sl_username, display_name, character_name, realm_display_name, realm_index, gender")
+            .eq("sl_avatar_key", partnerKey)
+            .maybeSingle();
+
+          const { data: partnerStats } = await supabase
+            .from("cultivator_stats")
+            .select("vitality, will, resonance, insight")
+            .eq("sl_avatar_key", partnerKey)
+            .maybeSingle();
+
+          const { data: partnerBt } = await supabase
+            .schema("breakthrough")
+            .from("v2_member_breakthrough_state")
+            .select("id, lifecycle_status, countdown_ends_at, breakthrough_ends_at")
+            .eq("sl_avatar_key", partnerKey)
+            .eq("partnership_id", btRow.partnership_id)
+            .not("lifecycle_status", "in", '("success","failed_stable","failed_damaged","abandoned")')
+            .order("created_at", { ascending: false })
+            .limit(1)
+            .maybeSingle();
+
+          bondPartner = {
+            sl_avatar_key: safeText(partnerMember?.sl_avatar_key) || partnerKey,
+            sl_username: safeText(partnerMember?.sl_username) || null,
+            display_name: safeText(partnerMember?.display_name) || null,
+            character_name: safeText(partnerMember?.character_name) || null,
+            realm_display_name: safeText(partnerMember?.realm_display_name) || null,
+            realm_index: safeNumber(partnerMember?.realm_index, 1),
+            gender: partnerMember?.gender || "male",
+            stats: partnerStats ? {
+              vitality: safeNumber(partnerStats.vitality, 0),
+              will: safeNumber(partnerStats.will, 0),
+              resonance: safeNumber(partnerStats.resonance, 0),
+              insight: safeNumber(partnerStats.insight, 0)
+            } : null,
+            breakthrough_state_id: partnerBt?.id || null,
+            lifecycle_status: safeText(partnerBt?.lifecycle_status) || "pending",
+            has_entered: !!partnerBt
+          };
+        }
+
+        // Bond breakthrough state row
+        const { data: bondBtState } = await supabase
+          .schema("breakthrough")
+          .from("bond_breakthrough_state")
+          .select("*")
+          .eq("partnership_id", btRow.partnership_id)
+          .eq("bond_volume_number", btRow.bond_volume_number)
+          .maybeSingle();
+
+        bondBreakthroughState = bondBtState || null;
+      } catch (bondErr) {
+        console.error("load-breakthrough-state bond partner fetch error:", bondErr);
+        warnings.push("Could not load bond partner information.");
+      }
+    }
+
     return json(200, {
       success: true,
 
@@ -955,6 +1034,12 @@ exports.handler = async (event) => {
       has_active_breakthrough: breakthroughPayload.exists,
       lifecycle_status: breakthroughPayload.lifecycle_status,
       next_action: breakthroughPayload.next_action,
+
+      is_bond_breakthrough: isBond,
+      bond_partner: bondPartner,
+      bond_breakthrough_state: bondBreakthroughState,
+      partnership_id: isBond ? (btRow?.partnership_id || null) : null,
+      bond_volume_number: isBond ? (btRow?.bond_volume_number || null) : null,
 
       warnings: warnings.length > 0 ? warnings : null
     });
