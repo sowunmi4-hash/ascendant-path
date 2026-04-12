@@ -796,9 +796,6 @@
         <div class="hero-meta-pill" id="hero-focus-pill">No active focus</div>
       </div>
     </section>
-
-    <div class="hero-stats-strip" id="hero-stats-strip">
-      <div class="stat-chip"><span class="stat-chip-label">Realm</span><span class="stat-chip-value" id="stat-realm">--</span></div>
       <div class="stat-chip"><span class="stat-chip-label">Stage</span><span class="stat-chip-value" id="stat-stage">--</span></div>
       <div class="stat-chip"><span class="stat-chip-label">Status</span><span class="stat-chip-value" id="stat-status">--</span></div>
       <div class="stat-chip"><span class="stat-chip-label">Qi</span><span class="stat-chip-value" id="stat-qi">--</span></div>
@@ -817,7 +814,7 @@
             <canvas id="vessel-canvas" width="400" height="420"></canvas>
           </div>
           <div class="vessel-qi-bar-wrap">
-            <p class="vessel-qi-bar-label">Qi Reserve <span id="vessel-qi-label">0%</span></p>
+            <p class="vessel-qi-bar-label">Auric Reserve <span id="vessel-qi-label">0%</span></p>
             <div class="vessel-qi-bar-track"><div class="vessel-qi-bar-fill" id="vessel-qi-bar-fill"></div></div>
           </div>
           <!-- Vessel Action Area (replaces gate-footer) -->
@@ -835,8 +832,8 @@
         <div class="record-stats-row">
           <div class="record-stat-box"><span>Progress</span><strong id="altar-progress-value">0%</strong></div>
           <div class="record-stat-box"><span>Remaining</span><strong id="altar-remaining-value">0m</strong></div>
-          <div class="record-stat-box"><span>Qi State</span><strong id="altar-qi-value">0 / 0</strong></div>
-          <div class="record-stat-box"><span>Cult. Points</span><strong id="stat-cp-value">0</strong></div>
+          <div class="record-stat-box"><span>Auric</span><strong id="altar-qi-value">0 / 0</strong></div>
+          <div class="record-stat-box"><span>Vestiges</span><strong id="stat-cp-value">0</strong></div>
         </div>
         <div class="action-well">
           <button class="action-primary" id="primary-action-button" aria-disabled="true">Loading...</button>
@@ -2733,7 +2730,6 @@
       }
 
       clearNotFound();
-      updateStatsStrip();
       renderHero();
       renderPath();
       renderAltar();
