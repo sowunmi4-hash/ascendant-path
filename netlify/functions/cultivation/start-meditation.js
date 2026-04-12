@@ -1,15 +1,13 @@
-// start-meditation.js
-// Starts personal cultivation using v2 system.
-// Dual auth: ap_session cookie (website) OR sl_avatar_key in body (HUD/LSL).
+// cultivation/start-meditation.js
+// Starts personal cultivation — Phase 2 rewrite.
+// Dual auth: ap_session cookie OR sl_avatar_key in body.
 //
-// Manual mode: calls v2_start_meditation -- sets v2_cultivation_status = 'meditating'.
-//   HUD shows "Meditating: Yes". Cultivation book is NOT started.
-//   Auric fills freely. Player uses "Resume Cultivation" on website to start scroll.
-//   sync-meditation-progress returns early when status = 'meditating' (no scroll advance).
-//   When player uses "Resume Cultivation", status becomes 'cultivating' and sync runs normally.
+// Manual mode: calls v2_start_meditation (status → 'meditating').
+//   Sets last_hud_sync_at = now() so sync has a clean fill anchor.
+//   HUD shows "Meditating: Yes". Player clicks "Resume Cultivation" to start scroll.
 //
-// Auto mode: calls v2_begin_cultivation (or v2_resume fallback) -- sets status = 'cultivating'.
-//   HUD shows "Meditating: Yes". Sync drives scroll normally.
+// Auto mode: calls v2_begin_cultivation → v2_resume_cultivation fallback.
+//   Sets status = 'cultivating'. Scroll advances on next sync.
 
 const { createClient } = require("@supabase/supabase-js");
 
@@ -28,8 +26,7 @@ function parseCookies(header) {
     if (eq === -1) return;
     const key = trimmed.slice(0, eq).trim();
     const val = trimmed.slice(eq + 1).trim();
-    try { cookies[key] = decodeURIComponent(val); }
-    catch { cookies[key] = val; }
+    try { cookies[key] = decodeURIComponent(val); } catch { cookies[key] = val; }
   });
   return cookies;
 }
@@ -70,51 +67,29 @@ async function resolveAvatarKey(event, body) {
   return null;
 }
 
-// Starts cultivation: tries v2_begin_cultivation, falls back to v2_resume_cultivation.
-async function startCultivation(avatarKey) {
+async function beginScrollCultivation(avatarKey) {
   const { data: beginResult, error: beginError } = await supabase
     .schema("library")
     .rpc("v2_begin_cultivation", { p_sl_avatar_key: avatarKey });
 
-  if (beginError) {
-    return { success: false, action: null, result: null, error: beginError.message };
-  }
-
-  if (beginResult?.success) {
-    return { success: true, action: "started", result: beginResult, error: null };
-  }
+  if (beginError) return { success: false, action: null, result: null, error: beginError.message };
+  if (beginResult?.success) return { success: true, action: "started", result: beginResult, error: null };
 
   if (beginResult?.error_code === "no_open_stage") {
     const { data: resumeResult, error: resumeError } = await supabase
       .schema("library")
       .rpc("v2_resume_cultivation", { p_sl_avatar_key: avatarKey });
 
-    if (resumeError) {
-      return { success: false, action: null, result: null, error: resumeError.message };
-    }
-
-    if (resumeResult?.success) {
-      return { success: true, action: "resumed", result: resumeResult, error: null };
-    }
-
-    return {
-      success: false,
-      action: null,
-      result: resumeResult,
-      error: resumeResult?.message || "Cannot resume cultivation"
-    };
+    if (resumeError) return { success: false, action: null, result: null, error: resumeError.message };
+    if (resumeResult?.success) return { success: true, action: "resumed", result: resumeResult, error: null };
+    return { success: false, action: null, result: resumeResult, error: resumeResult?.message || "Cannot resume" };
   }
 
   if (beginResult?.error_code === "already_active") {
     return { success: true, action: "already_active", result: beginResult, error: null };
   }
 
-  return {
-    success: false,
-    action: null,
-    result: beginResult,
-    error: beginResult?.message || "Cannot start cultivation"
-  };
+  return { success: false, action: null, result: beginResult, error: beginResult?.message || "Cannot start" };
 }
 
 exports.handler = async (event) => {
@@ -126,21 +101,17 @@ exports.handler = async (event) => {
   try { body = JSON.parse(event.body || "{}"); } catch { /* ok */ }
 
   const avatarKey = await resolveAvatarKey(event, body);
-  if (!avatarKey) {
-    return json(401, { error: "Not authenticated" });
-  }
+  if (!avatarKey) return json(401, { error: "Not authenticated" });
 
   const { data: member } = await supabase
     .from("cultivation_members")
-    .select("personal_cultivation_preference")
+    .select("personal_cultivation_preference, cultivation_mode")
     .eq("sl_avatar_key", avatarKey)
     .maybeSingle();
 
-  const preference = (member?.personal_cultivation_preference || "manual").toLowerCase();
+  const preference = (member?.personal_cultivation_preference || member?.cultivation_mode || "manual").toLowerCase();
 
-  // Manual mode: call v2_start_meditation -- sets status = 'meditating'.
-  // Does NOT call v2_begin_cultivation, so the cultivation book stays idle.
-  // HUD shows "Meditating: Yes". Player uses "Resume Cultivation" on website to start scroll.
+  // Manual mode: start meditation only — scroll stays idle
   if (preference === "manual") {
     const { data: result, error: rpcError } = await supabase
       .schema("library")
@@ -152,14 +123,35 @@ exports.handler = async (event) => {
     }
 
     if (!result?.success) {
+      // Already active states — return without error
+      if (["already_active", "already_meditating"].includes(result?.action)) {
+        // Still stamp the anchor in case it's stale
+        await supabase
+          .from("cultivation_members")
+          .update({ last_hud_sync_at: new Date().toISOString() })
+          .eq("sl_avatar_key", avatarKey)
+          .eq("v2_cultivation_status", "meditating"); // only update if still meditating
+        return json(200, {
+          success: true,
+          action: result.action,
+          cultivation_preference: "manual",
+          v2_cultivation_status: result.v2_cultivation_status || "meditating"
+        });
+      }
       console.error("v2_start_meditation failed:", result);
       return json(500, { error: "Failed to start meditation", detail: result?.message });
     }
 
+    // Stamp last_hud_sync_at so the first sync has a clean anchor
+    await supabase
+      .from("cultivation_members")
+      .update({ last_hud_sync_at: new Date().toISOString() })
+      .eq("sl_avatar_key", avatarKey);
+
     return json(200, {
       success: true,
       action: result.action || "meditation_started",
-      message: "Meditation started. Auric is filling. Use the cultivation book to begin cultivating when ready.",
+      message: "Meditation started. Auric and vestiges filling. Use Resume Cultivation to advance your scroll.",
       cultivation_preference: "manual",
       v2_cultivation_status: result.v2_cultivation_status || "meditating",
       auric_filling: true,
@@ -167,8 +159,8 @@ exports.handler = async (event) => {
     });
   }
 
-  // Auto mode: start cultivation and let sync drive scroll normally.
-  const started = await startCultivation(avatarKey);
+  // Auto mode: start scroll cultivation immediately
+  const started = await beginScrollCultivation(avatarKey);
 
   if (!started.success) {
     const errCode = started.result?.error_code || "unknown";

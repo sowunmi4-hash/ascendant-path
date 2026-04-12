@@ -58,65 +58,6 @@
 
     .is-hidden { display: none !important; }
 
-    /* ── CULTIVATION MODE TOGGLE ── */
-    .cult-mode-toggle-panel {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 1.2rem;
-      padding: 0.9rem 1.2rem;
-      background: linear-gradient(180deg, rgba(200,169,106,0.05), rgba(200,169,106,0.02));
-      border: 0.5px solid rgba(200,169,106,0.15);
-      border-radius: var(--radius-md);
-      margin-bottom: 0.9rem;
-    }
-
-    .cult-mode-label {
-      font-family: var(--font-display);
-      font-size: 0.95rem;
-      font-weight: 500;
-      color: var(--text-primary);
-      text-transform: uppercase;
-      letter-spacing: 0.5px;
-    }
-
-    .cult-mode-switch {
-      display: flex;
-      gap: 0.5rem;
-      background: rgba(0,0,0,0.3);
-      border-radius: var(--radius-sm);
-      padding: 0.3rem;
-    }
-
-    .cult-mode-btn {
-      padding: 0.55rem 1rem;
-      background: transparent;
-      border: 0.5px solid transparent;
-      border-radius: var(--radius-sm);
-      color: var(--text-secondary);
-      font-family: var(--font-display);
-      font-size: 0.85rem;
-      font-weight: 500;
-      text-transform: uppercase;
-      letter-spacing: 0.3px;
-      cursor: pointer;
-      transition: all 0.25s ease;
-      white-space: nowrap;
-    }
-
-    .cult-mode-btn:hover {
-      color: var(--text-primary);
-      border-color: rgba(200,169,106,0.2);
-      background: rgba(200,169,106,0.08);
-    }
-
-    .cult-mode-btn.active {
-      background: rgba(200,169,106,0.2);
-      border-color: var(--gold);
-      color: var(--gold);
-      box-shadow: 0 0 12px rgba(200,169,106,0.15);
-    }
-
     /* ── NAV ── */
     nav {
       display: flex;
@@ -677,6 +618,13 @@
       color: var(--text-primary);
     }
     .action-note { margin: 0; font-family: var(--font-body); color: var(--text-secondary); line-height: 1.58; font-size: 13px; }
+    .mode-toggle-row { display: flex; align-items: center; gap: 0.65rem; padding: 0.25rem 0 0.1rem; flex-wrap: wrap; }
+    .mode-toggle-label { font-size: 12px; color: var(--text-secondary); font-family: var(--font-body); }
+    .mode-toggle-btn { font-size: 12px; padding: 4px 12px; border-radius: 4px; border: 0.5px solid #c8a96a44; background: #0d0d1a; color: #c8a96a88; cursor: pointer; font-family: var(--font-body); transition: border-color 0.2s, color 0.2s; }
+    .mode-toggle-btn:hover:not(:disabled) { border-color: #c8a96a88; color: #c8a96a; }
+    .mode-toggle-btn.auto-mode { color: var(--green); border-color: #55bb6644; }
+    .mode-toggle-btn:disabled { opacity: 0.5; cursor: not-allowed; }
+    .mode-toggle-desc { font-size: 11px; color: var(--text-secondary); font-family: var(--font-body); opacity: 0.7; }
 
     /* ── CONTEXT CARDS ── */
     .context-panel { display: grid; gap: 0.95rem; padding: 1rem; align-content: start; }
@@ -850,14 +798,14 @@
         <div class="hero-state-badge idle" id="hero-state-badge">Preparing</div>
       </div>
       <div class="hero-meta-row">
-        <div class="hero-meta-pill" id="hero-volume-pill">Tome --</div>
+        <div class="hero-meta-pill" id="hero-volume-pill">Volume --</div>
         <div class="hero-meta-pill" id="hero-realm-pill">Loading realm...</div>
         <div class="hero-meta-pill" id="hero-focus-pill">No active focus</div>
       </div>
     </section>
       <div class="stat-chip"><span class="stat-chip-label">Stage</span><span class="stat-chip-value" id="stat-stage">--</span></div>
       <div class="stat-chip"><span class="stat-chip-label">Status</span><span class="stat-chip-value" id="stat-status">--</span></div>
-      <div class="stat-chip"><span class="stat-chip-label">Auric</span><span class="stat-chip-value" id="stat-qi">--</span></div>
+      <div class="stat-chip"><span class="stat-chip-label">Qi</span><span class="stat-chip-value" id="stat-qi">--</span></div>
     </div>
 
     <p id="page-message" class="summary is-hidden hero-message"></p>
@@ -887,15 +835,6 @@
 
       </div>
 
-      <!-- Manual/Auto Cultivation Mode Toggle -->
-      <div class="cult-mode-toggle-panel" id="cult-mode-toggle-panel">
-        <div class="cult-mode-label">Cultivation Mode</div>
-        <div class="cult-mode-switch">
-          <button class="cult-mode-btn" id="btn-manual" onclick="setCultivationMode('manual')">Manual</button>
-          <button class="cult-mode-btn" id="btn-auto" onclick="setCultivationMode('auto')">Auto</button>
-        </div>
-      </div>
-
       <div class="record-stats-bar" id="record-stats-bar">
         <div class="record-stats-row">
           <div class="record-stat-box"><span>Progress</span><strong id="altar-progress-value">0%</strong></div>
@@ -907,6 +846,12 @@
           <button class="action-primary" id="primary-action-button" aria-disabled="true">Loading...</button>
           <a href="/cultivation.html" class="action-secondary" id="secondary-action-button">Meditation Page</a>
           <p class="action-note" id="action-note">Checking the next valid altar action...</p>
+          <button class="action-secondary" id="resume-cultivation-btn" style="display:none;">Resume Cultivation</button>
+          <div class="mode-toggle-row" id="mode-toggle-row" style="display:none;">
+            <span class="mode-toggle-label">Mode:</span>
+            <button class="mode-toggle-btn" id="mode-toggle-btn" data-mode="manual">Manual</button>
+            <span class="mode-toggle-desc" id="mode-toggle-desc">Scroll idle until you resume</span>
+          </div>
         </div>
       </div>
 
@@ -955,14 +900,13 @@
       cosmeticTickInterval: null,
       refreshInterval: null,
       displayRemainingSeconds: 0,
-      displayIsActive: false,
-      personalCultivationPreference: "manual"
+      displayIsActive: false
     };
 
     const SECTION_KEYS = ["base", "early", "middle", "late"];
     const REALM_SEQUENCE = [
       "Mortal Realm",
-      "Auric Gathering Realm",
+      "Qi Gathering Realm",
       "Foundation Realm",
       "Core Formation Realm",
       "Nascent Soul Realm",
@@ -1421,7 +1365,7 @@
         "Preparing the opened record...";
 
       document.getElementById("hero-volume-pill").textContent =
-        "Tome " + (safeNumber(store?.volume_number, 0) || "--");
+        "Volume " + (safeNumber(store?.volume_number, 0) || "--");
 
       document.getElementById("hero-realm-pill").textContent =
         safeText(store?.realm_name, realmFromVolume(store?.volume_number));
@@ -1439,7 +1383,7 @@
         breakthrough_ready: { key: "breakthrough", label: getBreakthroughDisplayState() || "Breakthrough" },
         breakthrough_cooldown: { key: "cooldown", label: getBreakthroughDisplayState() || "Cooldown" },
         complete: { key: "complete", label: "Ready to Complete" },
-        comprehended: { key: "complete", label: "Tome Completed" },
+        comprehended: { key: "complete", label: "Volume Completed" },
         reopened: { key: "reopened", label: "Resumed Record" },
         open: { key: "idle", label: "Awaiting Action" },
         sealed: { key: "idle", label: "Awaiting Action" }
@@ -2363,7 +2307,7 @@
       try {
         var store = getStore();
         var vol = safeNumber(store && store.volume_number, 0);
-        return realmFromVolume(vol + 1) + ' \u2014 Tome ' + (vol + 1);
+        return realmFromVolume(vol + 1) + ' \u2014 Volume ' + (vol + 1);
       } catch(e) { return 'Next Volume'; }
     }
 
@@ -2413,7 +2357,7 @@
 
         var realmColors = {
           mortal:              { pri:'#4488cc', sec:'#2a5a99', dim:'#0e1e33', glow:'#66bbff', pt:'#88ddff', iris:'#2266aa', deep:'#061122', vein:'#335588', sclera:'#121828', rune:'#5599dd', particle:'#88ddff' },
-          'auric gathering':      { pri:'#33bb88', sec:'#228866', dim:'#0a2218', glow:'#55eeaa', pt:'#88ffcc', iris:'#1a8855', deep:'#061a0e', vein:'#226644', sclera:'#0e1e16', rune:'#44bb88', particle:'#88ffcc' },
+          'qi gathering':      { pri:'#33bb88', sec:'#228866', dim:'#0a2218', glow:'#55eeaa', pt:'#88ffcc', iris:'#1a8855', deep:'#061a0e', vein:'#226644', sclera:'#0e1e16', rune:'#44bb88', particle:'#88ffcc' },
           foundation:          { pri:'#7755cc', sec:'#5533aa', dim:'#180e33', glow:'#9977ee', pt:'#bbaaff', iris:'#5533aa', deep:'#0e0622', vein:'#443388', sclera:'#161028', rune:'#8866cc', particle:'#bbaaff' },
           'core formation':    { pri:'#cc7733', sec:'#aa5522', dim:'#2a1508', glow:'#eebb55', pt:'#ffcc88', iris:'#aa5511', deep:'#1a0e04', vein:'#885522', sclera:'#1e1610', rune:'#ddaa44', particle:'#ffcc88' },
           'nascent soul':      { pri:'#cc9933', sec:'#aa7722', dim:'#2a1a08', glow:'#eebb44', pt:'#ffdd88', iris:'#aa7711', deep:'#1a1008', vein:'#886622', sclera:'#1e1810', rune:'#ccaa33', particle:'#ffdd88' },
@@ -2467,7 +2411,7 @@
           ];
         } else if (gateState === 'locked') {
           chips = [
-            {label:'Status', val:'Tome Complete', lc:'#c8a96a66',vc:'#c8a96a',bg:'#1a1400',bc:'#c8a96a33'},
+            {label:'Status', val:'Volume Complete', lc:'#c8a96a66',vc:'#c8a96a',bg:'#1a1400',bc:'#c8a96a33'},
             {label:'Next',   val:getNextVolumeName(), lc:'#44403888',vc:'#444038',bg:'#111008',bc:'#44403833'}
           ];
         }
@@ -2583,66 +2527,6 @@
     }
 
 
-    /* ── Cultivation Mode Toggle Functions ── */
-    function initCultivationModeToggle() {
-      const pref = state.personalCultivationPreference || "manual";
-      updateToggleUI(pref);
-    }
-
-    function updateToggleUI(mode) {
-      const btnManual = document.getElementById('btn-manual');
-      const btnAuto = document.getElementById('btn-auto');
-      if (btnManual) {
-        if (mode === 'manual') {
-          btnManual.classList.add('active');
-        } else {
-          btnManual.classList.remove('active');
-        }
-      }
-      if (btnAuto) {
-        if (mode === 'auto') {
-          btnAuto.classList.add('active');
-        } else {
-          btnAuto.classList.remove('active');
-        }
-      }
-    }
-
-    async function setCultivationMode(mode) {
-      if (!['manual', 'auto'].includes(mode)) return;
-      
-      const avatarKey = (state && state.member && state.member.sl_avatar_key) ||
-                        (state && state.user && state.user.sl_avatar_key) || '';
-      
-      if (!avatarKey) {
-        console.error('Cannot set cultivation mode: no avatar key');
-        return;
-      }
-
-      state.personalCultivationPreference = mode;
-      updateToggleUI(mode);
-
-      try {
-        const resp = await fetch('/.netlify/functions/save-personal-cultivation-preference', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          credentials: 'include',
-          body: JSON.stringify({
-            sl_avatar_key: avatarKey,
-            personal_cultivation_preference: mode
-          })
-        });
-        const data = await resp.json();
-        if (!resp.ok) {
-          console.error('Failed to save cultivation preference:', data);
-          return;
-        }
-        console.log('Cultivation mode saved:', mode);
-      } catch (error) {
-        console.error('Error saving cultivation mode:', error);
-      }
-    }
-
     function refreshPageData() {
       // Re-fetch all state from server then re-render — no page reload
       try {
@@ -2686,7 +2570,7 @@
           btn.textContent = 'Repair the Scroll';
           btn.style.background = '#7a2020';
           btn.style.color = '#ffe0e0';
-          if (noteEl) noteEl.textContent = (data && data.message) || 'Repair failed. Check your Vestiges.';
+          if (noteEl) noteEl.textContent = (data && data.message) || 'Repair failed. Check your cultivation points.';
         }
       } catch(e) {
         btn.disabled = false;
@@ -2854,6 +2738,114 @@
       document.getElementById("empty-root").innerHTML = "";
     }
 
+    // ── Cultivation mode helpers (Phase 2) ──────────────────────────────────
+
+    function getCultivationPreference() {
+      var pref = safeLower(
+        (state.member && (state.member.personal_cultivation_preference || state.member.cultivation_mode)) || "manual"
+      );
+      return pref === "auto" ? "auto" : "manual";
+    }
+
+    function renderModeControls() {
+      try {
+        var preference = getCultivationPreference();
+        var v2Status   = safeLower(getV2CultivationStatus());
+
+        var resumeBtn = document.getElementById("resume-cultivation-btn");
+        var modeRow   = document.getElementById("mode-toggle-row");
+        var modeBtn   = document.getElementById("mode-toggle-btn");
+        var modeDesc  = document.getElementById("mode-toggle-desc");
+
+        // "Resume Cultivation" only visible in manual mode when meditating (scroll idle)
+        if (resumeBtn) {
+          var showResume = (preference === "manual") && (v2Status === "meditating");
+          resumeBtn.style.display = showResume ? "" : "none";
+          if (!resumeBtn._handlerAttached) {
+            resumeBtn._handlerAttached = true;
+            resumeBtn.addEventListener("click", function() { handleResumeCultivation(resumeBtn); });
+          }
+        }
+
+        // Mode toggle row — always visible when a record is loaded
+        if (modeRow) modeRow.style.display = "";
+        if (modeBtn) {
+          modeBtn.textContent = preference === "auto" ? "Auto" : "Manual";
+          modeBtn.className   = "mode-toggle-btn" + (preference === "auto" ? " auto-mode" : "");
+          modeBtn.dataset.mode = preference;
+          if (!modeBtn._handlerAttached) {
+            modeBtn._handlerAttached = true;
+            modeBtn.addEventListener("click", function() { handleModeToggle(modeBtn); });
+          }
+        }
+        if (modeDesc) {
+          modeDesc.textContent = preference === "auto"
+            ? "Scroll starts when you meditate"
+            : "Scroll idle until you resume";
+        }
+      } catch (e) {
+        console.error("renderModeControls error:", e);
+      }
+    }
+
+    async function handleResumeCultivation(btn) {
+      if (!btn || btn.disabled) return;
+      btn.disabled = true;
+      btn.textContent = "Starting...";
+      try {
+        var avatarKey = (state.member && state.member.sl_avatar_key) ||
+                        (state.user  && state.user.sl_avatar_key)   || "";
+        var data = await fetchJson("/.netlify/functions/begin-cultivation", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          credentials: "include",
+          body: JSON.stringify({ sl_avatar_key: avatarKey, source_page: "cultivation-book" })
+        });
+        if (data && data.success) {
+          setMessage("Scroll cultivation resumed.", "success");
+          refreshPageData();
+        } else {
+          throw new Error((data && data.error) || "Failed to resume cultivation.");
+        }
+      } catch (e) {
+        btn.disabled = false;
+        btn.textContent = "Resume Cultivation";
+        setMessage(e.message || "Connection error. Try again.", "error");
+      }
+    }
+
+    async function handleModeToggle(btn) {
+      if (!btn || btn.disabled) return;
+      var currentMode = btn.dataset.mode || "manual";
+      var newMode     = currentMode === "manual" ? "auto" : "manual";
+      btn.disabled    = true;
+      btn.textContent = "Saving...";
+      try {
+        var avatarKey = (state.member && state.member.sl_avatar_key) ||
+                        (state.user  && state.user.sl_avatar_key)   || "";
+        var data = await fetchJson("/.netlify/functions/save-preference", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          credentials: "include",
+          body: JSON.stringify({ sl_avatar_key: avatarKey, personal_cultivation_preference: newMode })
+        });
+        if (data && data.success) {
+          if (state.member) {
+            state.member.personal_cultivation_preference = newMode;
+            state.member.cultivation_mode = newMode;
+          }
+          btn.disabled = false;
+          renderModeControls();
+        } else {
+          throw new Error((data && data.error) || "Failed to save preference.");
+        }
+      } catch (e) {
+        btn.disabled = false;
+        btn.textContent = currentMode === "manual" ? "Manual" : "Auto";
+        setMessage(e.message || "Connection error.", "error");
+      }
+    }
+
     function renderPage() {
       const record = getRecord();
 
@@ -2873,6 +2865,7 @@
       renderContext();
       renderBreakthroughFooter();
       renderPrimaryAction();
+      renderModeControls();
       attachActionHandlers();
     }
 
@@ -2974,14 +2967,8 @@
         state.record = nextRecord;
         state.user = nextUser || null;
 
-        // Load personal cultivation preference
-        if (nextUser && nextUser.personal_cultivation_preference) {
-          state.personalCultivationPreference = nextUser.personal_cultivation_preference;
-        }
-
         adoptServerSelectedVolume(state.record);
         syncCosmeticTimer();
-        initCultivationModeToggle();
         renderPage();
 
         if (Array.isArray(data.warnings) && data.warnings.length) {
@@ -3033,14 +3020,8 @@
         state.record = nextRecord;
         state.user = nextUser || null;
 
-        // Load personal cultivation preference
-        if (nextUser && nextUser.personal_cultivation_preference) {
-          state.personalCultivationPreference = nextUser.personal_cultivation_preference;
-        }
-
         adoptServerSelectedVolume(state.record);
         syncCosmeticTimer();
-        initCultivationModeToggle();
         renderPage();
       } catch (error) {
         if (String(error?.message || "") !== "unauthorized") {
