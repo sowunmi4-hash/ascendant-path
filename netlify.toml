@@ -1,2 +1,104 @@
+[build]
+  publish = "."
+
 [functions]
-directory = "netlify/functions"
+  directory = "netlify/functions"
+
+# ─── HTML page redirects ─────────────────────────────────────────────────────
+# Pages moved to /pages/ internally — old root URLs stay intact via 200 rewrites.
+
+[[redirects]]
+  from = "/index.html"
+  to   = "/pages/index.html"
+  status = 200
+
+[[redirects]]
+  from = "/login.html"
+  to   = "/pages/login.html"
+  status = 200
+
+[[redirects]]
+  from = "/dashboard.html"
+  to   = "/pages/dashboard.html"
+  status = 200
+
+[[redirects]]
+  from = "/cultivation.html"
+  to   = "/pages/cultivation.html"
+  status = 200
+
+[[redirects]]
+  from = "/cultivation-book.html"
+  to   = "/pages/cultivation-book.html"
+  status = 200
+
+[[redirects]]
+  from = "/bond-book.html"
+  to   = "/pages/bond-book.html"
+  status = 200
+
+[[redirects]]
+  from = "/elements.html"
+  to   = "/pages/elements.html"
+  status = 200
+
+[[redirects]]
+  from = "/element-request.html"
+  to   = "/pages/element-request.html"
+  status = 200
+
+[[redirects]]
+  from = "/library.html"
+  to   = "/pages/library.html"
+  status = 200
+
+[[redirects]]
+  from = "/lore.html"
+  to   = "/pages/lore.html"
+  status = 200
+
+[[redirects]]
+  from = "/oracle.html"
+  to   = "/pages/oracle.html"
+  status = 200
+
+[[redirects]]
+  from = "/partnership.html"
+  to   = "/pages/partnership.html"
+  status = 200
+
+[[redirects]]
+  from = "/partnership-record.html"
+  to   = "/pages/partnership-record.html"
+  status = 200
+
+[[redirects]]
+  from = "/profile.html"
+  to   = "/pages/profile.html"
+  status = 200
+
+[[redirects]]
+  from = "/store.html"
+  to   = "/pages/store.html"
+  status = 200
+
+[[redirects]]
+  from = "/breakthrough.html"
+  to   = "/pages/breakthrough.html"
+  status = 200
+
+[[redirects]]
+  from = "/celestial-omen.html"
+  to   = "/pages/celestial-omen.html"
+  status = 200
+
+[[redirects]]
+  from = "/breath-of-celestial.html"
+  to   = "/pages/breath-of-celestial.html"
+  status = 200
+
+# Root redirect
+[[redirects]]
+  from = "/"
+  to   = "/pages/index.html"
+  status = 200
