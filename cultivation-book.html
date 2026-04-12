@@ -1682,16 +1682,16 @@
         _starfield.push({
           x: Math.random(),
           y: Math.random(),
-          sz: 0.3 + Math.random() * 1.2,
+          sz: 0.5 + Math.random() * 2.0,
           sp: 0.0003 + Math.random() * 0.001,
           ph: Math.random() * 6.28,
-          bright: 0.15 + Math.random() * 0.35
+          bright: 0.3 + Math.random() * 0.5
         });
       }
     }
 
     function drawAmbientStarfield(ctx, W, H, t, color, qiPct) {
-      if (!_starfield) initStarfield(60);
+      if (!_starfield) initStarfield(90);
       ctx.save();
       for (var i = 0; i < _starfield.length; i++) {
         var s = _starfield[i];
@@ -1699,7 +1699,7 @@
         s.y -= s.sp;
         if (s.y < -0.02) { s.y = 1.02; s.x = Math.random(); }
         var flicker = 0.6 + Math.sin(t * 1.5 + s.ph) * 0.4;
-        var alpha = s.bright * flicker * (0.3 + qiPct * 0.5);
+        var alpha = s.bright * flicker * (0.5 + qiPct * 0.5);
         ctx.globalAlpha = alpha;
         ctx.fillStyle = color;
         ctx.beginPath();
@@ -1713,7 +1713,7 @@
       // Faint mountain silhouette along the bottom edge
       ctx.save();
       ctx.globalAlpha = alpha;
-      ctx.fillStyle = '#0e0e14';
+      ctx.fillStyle = '#1a1a28';
       ctx.beginPath();
       ctx.moveTo(0, H);
       // Left range
@@ -1744,7 +1744,7 @@
       // Subtle mist at mountain base
       var mist = ctx.createLinearGradient(0, H * 0.85, 0, H);
       mist.addColorStop(0, 'rgba(14,14,20,0)');
-      mist.addColorStop(1, 'rgba(14,14,20,' + (alpha * 0.5) + ')');
+      mist.addColorStop(1, 'rgba(26,26,40,' + (alpha * 0.6) + ')');
       ctx.globalAlpha = 1;
       ctx.fillStyle = mist;
       ctx.fillRect(0, H * 0.85, W, H * 0.15);
@@ -1756,10 +1756,10 @@
       ctx.save();
       var veinCount = 6;
       var pulse = 0.5 + Math.sin(t * 0.8) * 0.3;
-      var intensity = alpha * (0.3 + qiPct * 0.5) * pulse;
+      var intensity = alpha * (0.6 + qiPct * 0.4) * pulse;
       ctx.globalAlpha = intensity;
       ctx.strokeStyle = color;
-      ctx.lineWidth = 0.6;
+      ctx.lineWidth = 1.2;
       for (var v = 0; v < veinCount; v++) {
         var angle = (v / veinCount) * Math.PI * 2 + t * 0.02;
         ctx.beginPath();
@@ -1833,10 +1833,10 @@
           // ── Ambient background layers ──
           var ambientColor = 'rgba(' + vesselRGB + ',0.5)';
           var ambientPt = vesselColor;
-          drawAmbientMountains(ctx, W, H, 0.12);
+          drawAmbientMountains(ctx, W, H, 0.35);
           drawAmbientStarfield(ctx, W, H, t, ambientPt, qiPct);
-          drawAmbientQiVeins(ctx, cx, cy, baseR, t, ambientColor, 0.08, qiPct);
-          drawAmbientSeal(ctx, cx, cy, baseR, t, ambientPt, 0.04);
+          drawAmbientQiVeins(ctx, cx, cy, baseR, t, ambientColor, 0.25, qiPct);
+          drawAmbientSeal(ctx, cx, cy, baseR, t, ambientPt, 0.10);
 
           var v2StatusNow = safeLower(getV2CultivationStatus());
           var figureGone     = (v2StatusNow === 'in_breakthrough');
