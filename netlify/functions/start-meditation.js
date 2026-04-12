@@ -2,13 +2,13 @@
 // Starts personal cultivation using v2 system.
 // Dual auth: ap_session cookie (website) OR sl_avatar_key in body (HUD/LSL).
 //
-// Manual mode: calls v2_start_meditation — sets v2_cultivation_status = 'meditating'.
+// Manual mode: calls v2_start_meditation -- sets v2_cultivation_status = 'meditating'.
 //   HUD shows "Meditating: Yes". Cultivation book is NOT started.
 //   Auric fills freely. Player uses "Resume Cultivation" on website to start scroll.
 //   sync-meditation-progress returns early when status = 'meditating' (no scroll advance).
 //   When player uses "Resume Cultivation", status becomes 'cultivating' and sync runs normally.
 //
-// Auto mode: calls v2_begin_cultivation (or v2_resume fallback) — sets status = 'cultivating'.
+// Auto mode: calls v2_begin_cultivation (or v2_resume fallback) -- sets status = 'cultivating'.
 //   HUD shows "Meditating: Yes". Sync drives scroll normally.
 
 const { createClient } = require("@supabase/supabase-js");
@@ -138,7 +138,7 @@ exports.handler = async (event) => {
 
   const preference = (member?.personal_cultivation_preference || "manual").toLowerCase();
 
-  // Manual mode: call v2_start_meditation — sets status = 'meditating'.
+  // Manual mode: call v2_start_meditation -- sets status = 'meditating'.
   // Does NOT call v2_begin_cultivation, so the cultivation book stays idle.
   // HUD shows "Meditating: Yes". Player uses "Resume Cultivation" on website to start scroll.
   if (preference === "manual") {
@@ -161,4 +161,28 @@ exports.handler = async (event) => {
       action: result.action || "meditation_started",
       message: "Meditation started. Auric is filling. Use the cultivation book to begin cultivating when ready.",
       cultivation_preference: "manual",
-      v2_cultivation_status: result.v2_cultivation_status || "med
+      v2_cultivation_status: result.v2_cultivation_status || "meditating",
+      auric_filling: true,
+      cultivation_active: false
+    });
+  }
+
+  // Auto mode: start cultivation and let sync drive scroll normally.
+  const started = await startCultivation(avatarKey);
+
+  if (!started.success) {
+    const errCode = started.result?.error_code || "unknown";
+    console.error("startCultivation (auto) error:", started.error);
+    return json(409, {
+      error: started.error,
+      error_code: errCode
+    });
+  }
+
+  return json(200, {
+    success: true,
+    action: started.action,
+    cultivation_preference: "auto",
+    ...started.result
+  });
+};

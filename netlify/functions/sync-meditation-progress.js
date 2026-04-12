@@ -76,43 +76,43 @@ exports.handler = async (event) => {
 
   const partnershipUuid = body.partnership_uuid || body.selected_partnership_uuid || null;
 
-  // Load member to check breakthrough status and cultivation preference before syncing
+  // Load member to check status before syncing
   const { data: member } = await supabase
-    .from('cultivation_members')
-    .select('v2_cultivation_status, personal_cultivation_preference')
-    .eq('sl_avatar_key', avatarKey)
+    .from("cultivation_members")
+    .select("v2_cultivation_status, personal_cultivation_preference")
+    .eq("sl_avatar_key", avatarKey)
     .maybeSingle();
 
-  if (member && member.v2_cultivation_status === 'in_breakthrough') {
+  if (member && member.v2_cultivation_status === "in_breakthrough") {
     return json(200, {
       success: true,
       synced: false,
-      reason: 'in_breakthrough',
-      message: 'Auric and CP gains are suspended during breakthrough. The cultivator faces the tribulation.'
+      reason: "in_breakthrough",
+      message: "Auric and CP gains are suspended during breakthrough. The cultivator faces the tribulation."
     });
   }
 
-  const preference = (member?.personal_cultivation_preference || 'manual').toLowerCase();
-  const cultivationStatus = member?.v2_cultivation_status || 'idle';
+  const preference = (member?.personal_cultivation_preference || "manual").toLowerCase();
+  const cultivationStatus = member?.v2_cultivation_status || "idle";
 
   // 'meditating' = base meditation (auric fills freely, scroll is idle).
-  // This applies in Manual mode when the player has NOT yet pressed "Resume Cultivation".
-  // When the player presses "Resume Cultivation" on the website, status becomes 'cultivating'
+  // Applies in Manual mode when the player has NOT yet pressed "Resume Cultivation".
+  // When the player presses "Resume Cultivation", status becomes 'cultivating'
   // and the sync falls through to run v2_sync_realm_cultivation normally.
-  if (cultivationStatus === 'meditating') {
+  if (cultivationStatus === "meditating") {
     return json(200, {
       success: true,
       synced: false,
-      reason: 'base_meditation_no_scroll',
+      reason: "base_meditation_no_scroll",
       personal_cultivation_status: cultivationStatus,
-      v2_cultivation_status:       cultivationStatus,
-      auric_current:               member?.auric_current ?? null,
-      cultivation_preference:      preference,
-      message: 'Base meditation active. Auric fills freely. Use Resume Cultivation on the website to advance scroll.'
+      v2_cultivation_status: cultivationStatus,
+      auric_current: member?.auric_current ?? null,
+      cultivation_preference: preference,
+      message: "Base meditation active. Auric fills freely. Use Resume Cultivation on the website to advance scroll."
     });
   }
 
-  // v2 cultivation sync
+  // v2 cultivation sync (status = 'cultivating' in any mode)
   const { data: syncResult, error: syncError } = await supabase
     .schema("library")
     .rpc("v2_sync_realm_cultivation", { p_sl_avatar_key: avatarKey });
@@ -125,19 +125,19 @@ exports.handler = async (event) => {
   // Bond state if partnership context provided
   let bondState = null;
   if (partnershipUuid) {
-    const { data: member } = await supabase
+    const { data: memberRow } = await supabase
       .from("cultivation_members")
       .select("member_id")
       .eq("sl_avatar_key", avatarKey)
       .maybeSingle();
 
-    if (member?.member_id) {
+    if (memberRow?.member_id) {
       const { data: bondBook } = await supabase
         .schema("partner")
         .from("partner_bond_member_book_states")
         .select("bond_volume_number, bond_book_number, status, paused_at, started_at, completed_at")
         .eq("partnership_uuid", partnershipUuid)
-        .eq("member_id", member.member_id)
+        .eq("member_id", memberRow.member_id)
         .is("completed_at", null)
         .not("started_at", "is", null)
         .order("bond_volume_number", { ascending: false })
@@ -166,6 +166,11 @@ exports.handler = async (event) => {
     accumulated_seconds:         syncResult?.accumulated_seconds || 0,
     required_seconds:            syncResult?.required_seconds   || 0,
     breakthrough_gate_open:      syncResult?.breakthrough_gate_open || false,
-    auric_current:                  syncResult?.auric_after ?? null,
+    auric_current:               syncResult?.auric_after ?? null,
     ...(bondState || {
-      bond_runtime_acti
+      bond_runtime_active: false,
+      bond_session_status: "idle"
+    }),
+    focused_partnership_uuid: partnershipUuid || null
+  });
+};

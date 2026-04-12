@@ -1,6 +1,11 @@
 // stop-meditation.js
-// Pauses personal cultivation using v2 system.
+// Stops personal cultivation/meditation using v2 system.
 // Dual auth: ap_session cookie (website) OR sl_avatar_key in body (HUD/LSL).
+//
+// Handles all three states:
+//   'meditating'   -- base meditation, no active scroll session. Just sets status = 'paused'.
+//   'cultivating'  -- active scroll session. Calls v2_pause_cultivation to settle drift_debt.
+//   other          -- returns already_stopped.
 
 const { createClient } = require("@supabase/supabase-js");
 
@@ -74,16 +79,16 @@ exports.handler = async (event) => {
     return json(401, { error: "Not authenticated" });
   }
 
-  // First check current status — if in pure 'meditating' state (no active scroll session),
-  // v2_pause_cultivation would return not_cultivating. Handle this directly.
+  // Check current status first
   const { data: member } = await supabase
     .from("cultivation_members")
     .select("v2_cultivation_status")
     .eq("sl_avatar_key", avatarKey)
     .maybeSingle();
 
+  // 'meditating' = base meditation with no active stage session.
+  // v2_pause_cultivation would return not_cultivating here, so handle directly.
   if (member?.v2_cultivation_status === "meditating") {
-    // No active scroll session — just clear the meditation status
     const { error: updateError } = await supabase
       .from("cultivation_members")
       .update({ v2_cultivation_status: "paused" })
@@ -91,4 +96,40 @@ exports.handler = async (event) => {
 
     if (updateError) {
       console.error("Failed to stop meditation:", updateError);
-      return json(500, { error: "Failed to
+      return json(500, { error: "Failed to stop meditation", detail: updateError.message });
+    }
+
+    return json(200, {
+      success: true,
+      action: "meditation_stopped",
+      message: "Meditation ended. Auric and vestige gains stopped."
+    });
+  }
+
+  // Active scroll session ('cultivating' or 'breakthrough_ready'):
+  // call v2_pause_cultivation to settle drift_debt and close the stage session.
+  const { data: result, error: rpcError } = await supabase
+    .schema("library")
+    .rpc("v2_pause_cultivation", { p_sl_avatar_key: avatarKey });
+
+  if (rpcError) {
+    console.error("v2_pause_cultivation error:", rpcError);
+    return json(500, { error: "Failed to stop cultivation", detail: rpcError.message });
+  }
+
+  if (!result?.success) {
+    if (result?.error_code === "not_cultivating") {
+      return json(200, {
+        success: true,
+        action: "already_stopped",
+        message: "No active cultivation session found."
+      });
+    }
+    return json(409, {
+      error: result?.message || "Cannot stop cultivation",
+      error_code: result?.error_code || "unknown"
+    });
+  }
+
+  return json(200, { success: true, action: "stopped", ...result });
+};
