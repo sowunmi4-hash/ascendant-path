@@ -3,1548 +3,1241 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Bond Book - The Ascendant Path</title>
+<title>Bond Book | The Ascendant Path</title>
 <link rel="stylesheet" href="/css/style.css" />
 <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;500;600;700&family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,400&display=swap" rel="stylesheet">
 <style>
-  :root {
-    --bg-void: #07070b;
-    --bg-deep: #0a0a10;
-    --bg-surface: #13131e;
-    --bg-card: #0d0d18;
-    --bg-elevated: #12121c;
-    --gold: #c8a96a;
-    --gold-dim: #a08548;
-    --gold-bright: #e8cc8a;
-    --gold-border: rgba(200,169,106,0.15);
-    --female-color: #c86890;
-    --male-color: #c8a96a;
-    --text-primary: #e8e4dc;
-    --text-secondary: #9a9488;
-    --text-dim: #5a564e;
-    --border: rgba(200,169,106,0.08);
-    --track: rgba(200,169,106,0.06);
-    --danger: #cc4444;
-    --success: #55bb66;
-    --font-display: 'Cinzel', serif;
-    --font-body: 'Cormorant Garamond', serif;
-    --font-ui: system-ui, -apple-system, sans-serif;
-    --radius-sm: 6px;
-    --radius-md: 10px;
-    --radius-lg: 14px;
-  }
-  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-  html, body {
-    height: 100%;
-    background: radial-gradient(ellipse at 50% 0%, rgba(200,169,106,0.06), transparent 45%), radial-gradient(ellipse at 85% 100%, rgba(200,104,144,0.03), transparent 40%), var(--bg-void);
-    color: var(--text-primary);
-    font-family: var(--font-body);
-    -webkit-font-smoothing: antialiased;
-  }
-  .bond-page {
-        position: relative;
-        z-index: 5;
-    display: flex;
-    flex-direction: column;
-    min-height: 100vh;
-  }
+:root {
+  --bg-void:      #07070b;
+  --bg-deep:      #0a0a10;
+  --bg-surface:   #13131e;
+  --bg-card:      #0d0d18;
+  --bg-elevated:  #12121c;
+  --gold:         #c8a96a;
+  --gold-dim:     #a08548;
+  --gold-bright:  #e8cc8a;
+  --gold-border:  rgba(200,169,106,0.15);
+  --rose:         #c86890;
+  --rose-dim:     #a04868;
+  --rose-border:  rgba(200,104,144,0.15);
+  --text-primary: #ddd5c8;
+  --text-secondary:#555044;
+  --text-dim:     #333028;
+  --border:       rgba(255,255,255,0.06);
+  --track:        rgba(255,255,255,0.04);
+  --danger:       #cc4444;
+  --success:      #55bb66;
+  --font-display: 'Cinzel', serif;
+  --font-body:    'Cormorant Garamond', serif;
+  --font-ui:      system-ui, -apple-system, sans-serif;
+  --radius-sm:    6px;
+  --radius-md:    10px;
+  --radius-lg:    14px;
+}
 
-  /* ── HEADER ── */
-  .page-header {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    padding: 16px 32px;
-    border-bottom: 1px solid var(--border);
-    background: var(--bg-deep);
-  }
-  .page-header h1 {
-    font-family: var(--font-display);
-    font-size: 17px;
-    font-weight: 500;
-    color: var(--gold);
-    letter-spacing: 0.15em;
-  }
-  .page-header-nav {
-    display: flex;
-    gap: 24px;
-  }
-  .page-header-nav a {
-    font-family: var(--font-ui);
-    font-size: 11px;
-    text-transform: uppercase;
-    letter-spacing: 1.5px;
-    color: var(--text-secondary);
-    text-decoration: none;
-    transition: color 0.3s;
-  }
-  .page-header-nav a:hover { color: var(--gold); }
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
-  /* ── CONTEXT STRIP ── */
-  .context-strip {
-    display: flex;
-    align-items: center;
-    gap: 16px;
-    padding: 14px 32px;
-    border-bottom: 1px solid var(--border);
-    background: var(--bg-surface);
-    flex-wrap: wrap;
-  }
-  .stat-chip {
-    font-family: var(--font-ui);
-    font-size: 10px;
-    text-transform: uppercase;
-    letter-spacing: 1.2px;
-    color: var(--text-secondary);
-    background: var(--bg-elevated);
-    padding: 6px 12px;
-    border-radius: var(--radius-sm);
-    border: 1px solid var(--border);
-    white-space: nowrap;
-  }
-  .stat-chip .label { color: var(--text-dim); margin-right: 6px; }
-  .stat-chip .value { color: var(--gold); }
+html, body {
+  min-height: 100%;
+  background:
+    radial-gradient(ellipse at 50% 0%, rgba(200,169,106,0.06), transparent 45%),
+    radial-gradient(ellipse at 85% 100%, rgba(200,104,144,0.03), transparent 40%),
+    var(--bg-void);
+  color: var(--text-primary);
+  font-family: var(--font-body);
+  -webkit-font-smoothing: antialiased;
+}
 
-  /* ── MAIN CONTENT ── */
-  .main-content {
-    flex: 1;
-    padding: 24px 32px 32px;
-    display: flex;
-    flex-direction: column;
-    gap: 24px;
-    max-width: 1100px;
-    margin: 0 auto;
-    width: 100%;
-  }
+/* ── NAV ── */
+.page-wrap {
+  width: min(1100px, calc(100% - 2rem));
+  margin: 1.2rem auto 4rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1.1rem;
+  position: relative;
+  z-index: 3;
+}
 
-  /* ── BOND PANELS ROW ── */
-  .bond-panels-row {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 20px;
-  }
+nav {
+  display: flex;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  padding: 0.7rem 0.9rem;
+  border-radius: 999px;
+  background: linear-gradient(180deg, rgba(255,255,255,0.03), rgba(255,255,255,0.01)), rgba(6,10,18,0.74);
+  border: 0.5px solid rgba(255,255,255,0.06);
+  backdrop-filter: blur(10px);
+}
+nav a {
+  padding: 0.55rem 0.88rem;
+  border-radius: 999px;
+  border: 0.5px solid rgba(255,255,255,0.04);
+  background: rgba(255,255,255,0.02);
+  color: var(--text-secondary);
+  font-family: var(--font-ui);
+  font-size: 0.82rem;
+  text-decoration: none;
+  transition: all 0.2s;
+}
+nav a:hover { border-color: rgba(200,169,106,0.22); color: var(--text-primary); }
 
-  /* ── PANEL (shared styles) ── */
-  .bond-panel {
-    border: 1px solid var(--gold-border);
-    border-radius: var(--radius-lg);
-    overflow: hidden;
-    background: var(--bg-deep);
-    display: flex;
-    flex-direction: column;
-  }
-  .bond-panel.partner-panel {
-    opacity: 0.75;
-    border-color: var(--border);
-  }
-  .panel-header {
-    padding: 14px 18px;
-    border-bottom: 1px solid var(--border);
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-  }
-  .panel-kicker {
-    font-family: var(--font-ui);
-    font-size: 9px;
-    text-transform: uppercase;
-    letter-spacing: 2px;
-    color: var(--text-dim);
-  }
-  .panel-name {
-    font-family: var(--font-display);
-    font-size: 13px;
-    color: var(--gold);
-    letter-spacing: 0.08em;
-  }
-  .panel-status-badge {
-    font-family: var(--font-ui);
-    font-size: 9px;
-    text-transform: uppercase;
-    letter-spacing: 1px;
-    padding: 3px 8px;
-    border-radius: 4px;
-    background: var(--bg-elevated);
-    color: var(--text-secondary);
-    border: 1px solid var(--border);
-  }
-  .panel-status-badge.active { color: var(--success); border-color: rgba(85,187,102,0.2); }
-  .panel-status-badge.completed { color: var(--gold); border-color: var(--gold-border); }
+/* ── NOTIFICATION BELL ── */
+.notif-bell-wrap { position: relative; display: inline-flex; align-items: center; }
+.notif-bell { background: none; border: none; cursor: pointer; color: var(--text-primary); padding: 4px 8px; display: flex; align-items: center; }
+.notif-bell:hover { color: var(--gold); }
+.notif-badge { position: absolute; top: 0; right: 2px; background: var(--gold); color: #060608; font-size: 10px; font-weight: 700; border-radius: 999px; min-width: 16px; height: 16px; display: none; align-items: center; justify-content: center; padding: 0 3px; font-family: var(--font-display); }
+.notif-dropdown { position: absolute; top: calc(100% + 8px); right: 0; width: 300px; background: var(--bg-deep); border: 0.5px solid var(--border); border-radius: var(--radius-md); z-index: 9999; max-height: 380px; overflow-y: auto; box-shadow: 0 8px 32px rgba(0,0,0,0.6); display: none; }
+.notif-item { padding: 11px 14px; border-bottom: 0.5px solid var(--border); cursor: pointer; }
+.notif-item:hover { background: rgba(255,255,255,0.02); }
+.notif-item-title { font-family: var(--font-display); font-size: 11px; color: var(--gold); letter-spacing: 0.05em; }
+.notif-item-body { font-size: 12px; color: var(--text-secondary); margin-top: 3px; }
+.notif-item.unread .notif-item-title { color: var(--text-primary); }
+.notif-empty { padding: 20px; text-align: center; color: var(--text-dim); font-size: 13px; }
 
-  /* ── CANVAS SECTION ── */
-  .panel-canvas-wrap {
-    position: relative;
-    width: 100%;
-    background: var(--bg-void);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    padding: 12px 0;
-  }
-  .panel-canvas-wrap canvas {
-    display: block;
-    width: 100%;
-    max-width: 400px;
-    height: auto;
-  }
+/* ── PAGE TITLE ── */
+.page-title-row {
+  display: flex;
+  align-items: baseline;
+  gap: 0.8rem;
+  padding: 0 0.1rem;
+}
+.page-title {
+  font-family: var(--font-display);
+  font-size: 1.05rem;
+  font-weight: 500;
+  color: var(--gold);
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+}
+.page-subtitle {
+  font-family: var(--font-body);
+  font-size: 0.9rem;
+  color: var(--text-secondary);
+  font-style: italic;
+}
 
-  /* ── PROGRESS SECTION ── */
-  .panel-progress {
-    padding: 14px 18px;
-    border-top: 1px solid var(--border);
-  }
-  .progress-row {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    margin-bottom: 6px;
-  }
-  .progress-label {
-    font-family: var(--font-ui);
-    font-size: 10px;
-    text-transform: uppercase;
-    letter-spacing: 1.5px;
-    color: var(--text-dim);
-  }
-  .progress-value {
-    font-family: var(--font-ui);
-    font-size: 11px;
-    color: var(--gold);
-    letter-spacing: 0.5px;
-  }
-  .progress-track {
-    height: 4px;
-    background: var(--track);
-    border-radius: 3px;
-    overflow: hidden;
-    margin-bottom: 10px;
-  }
-  .progress-fill {
-    height: 100%;
-    border-radius: 3px;
-    background: linear-gradient(90deg, var(--gold-dim), var(--gold));
-    transition: width 0.8s ease;
-  }
-  .progress-fill.female {
-    background: linear-gradient(90deg, #a04868, var(--female-color));
-  }
-  .progress-sub {
-    font-family: var(--font-ui);
-    font-size: 9px;
-    color: var(--text-dim);
-    letter-spacing: 0.5px;
-  }
+/* ── CONTEXT CHIPS ── */
+.context-strip {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  padding: 12px 16px;
+  background: var(--bg-card);
+  border: 0.5px solid var(--border);
+  border-radius: var(--radius-md);
+}
+.stat-chip {
+  font-family: var(--font-ui);
+  font-size: 10px;
+  text-transform: uppercase;
+  letter-spacing: 1.2px;
+  color: var(--text-secondary);
+  background: var(--bg-elevated);
+  padding: 5px 10px;
+  border-radius: var(--radius-sm);
+  border: 0.5px solid var(--border);
+  white-space: nowrap;
+}
+.stat-chip .lbl { color: var(--text-dim); margin-right: 5px; }
+.stat-chip .val { color: var(--gold); }
 
-  /* ── ACTION AREA (self panel only) ── */
-  .panel-action-area {
-    padding: 14px 18px 18px;
-    border-top: 1px solid var(--border);
-  }
-  .action-button {
-    width: 100%;
-    padding: 12px;
-    border: none;
-    border-radius: var(--radius-md);
-    font-family: var(--font-display);
-    font-size: 12px;
-    font-weight: 500;
-    letter-spacing: 0.08em;
-    cursor: pointer;
-    transition: opacity 0.2s, transform 0.1s;
-    background: linear-gradient(135deg, var(--gold-dim), var(--gold));
-    color: var(--bg-void);
-  }
-  .action-button:hover { opacity: 0.9; }
-  .action-button:active { transform: scale(0.98); }
-  .action-button:disabled {
-    background: var(--bg-elevated);
-    color: var(--text-dim);
-    cursor: not-allowed;
-    opacity: 0.6;
-  }
-  .action-subnote {
-    font-family: var(--font-ui);
-    font-size: 9px;
-    color: var(--text-dim);
-    text-align: center;
-    margin-top: 8px;
-    letter-spacing: 0.5px;
-  }
+/* ── DUAL PANELS ── */
+.dual-panels {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+  align-items: start;
+}
 
-  /* ── SHARED BOND SECTION ── */
-  .bond-shared-section {
-    border: 1px solid var(--gold-border);
-    border-radius: var(--radius-lg);
-    background: var(--bg-deep);
-    padding: 20px 24px;
-    display: flex;
-    align-items: center;
-    gap: 24px;
-  }
-  .bond-shared-info {
-    flex: 1;
-    display: flex;
-    flex-direction: column;
-    gap: 8px;
-  }
-  .bond-shared-label {
-    font-family: var(--font-ui);
-    font-size: 9px;
-    text-transform: uppercase;
-    letter-spacing: 2px;
-    color: var(--text-dim);
-  }
-  .bond-shared-title {
-    font-family: var(--font-display);
-    font-size: 15px;
-    color: var(--gold);
-    letter-spacing: 0.08em;
-  }
-  .bond-qi-section {
-    flex: 2;
-    display: flex;
-    flex-direction: column;
-    gap: 6px;
-  }
-  .bond-qi-track {
-    height: 6px;
-    background: var(--track);
-    border-radius: 4px;
-    overflow: hidden;
-  }
-  .bond-qi-fill {
-    height: 100%;
-    border-radius: 4px;
-    background: linear-gradient(90deg, var(--gold-dim), var(--gold), var(--gold-bright));
-    transition: width 0.8s ease;
-  }
-  .bond-qi-text {
-    font-family: var(--font-ui);
-    font-size: 10px;
-    color: var(--text-secondary);
-    letter-spacing: 0.5px;
-    display: flex;
-    justify-content: space-between;
-  }
+/* ── PANEL ── */
+.bb-panel {
+  background: var(--bg-card);
+  border: 0.5px solid var(--border);
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+.bb-panel.self-panel { border-color: rgba(200,169,106,0.18); }
+.bb-panel.partner-panel { border-color: var(--border); opacity: 0.88; }
 
-  /* ── BOOK CARDS ── */
-  .books-section-header {
-    font-family: var(--font-display);
-    font-size: 13px;
-    color: var(--gold);
-    letter-spacing: 0.12em;
-    text-transform: uppercase;
-    margin-bottom: 4px;
-  }
-  .book-cards-grid {
-    display: grid;
-    grid-template-columns: repeat(4, 1fr);
-    gap: 12px;
-  }
-  .book-card {
-    background: var(--bg-card);
-    border: 1px solid var(--border);
-    border-radius: var(--radius-md);
-    padding: 14px;
-    display: flex;
-    flex-direction: column;
-    gap: 10px;
-    position: relative;
-    overflow: hidden;
-  }
-  .book-card-accent {
-    position: absolute;
-    top: 0; left: 0; right: 0;
-    height: 3px;
-    background: var(--text-dim);
-  }
-  .book-card-accent.active { background: var(--female-color); }
-  .book-card-accent.completed { background: var(--success); }
-  .book-card-header {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 8px;
-  }
-  .book-card-name {
-    font-family: var(--font-display);
-    font-size: 12px;
-    color: var(--gold);
-    letter-spacing: 0.06em;
-  }
-  .book-card-badge {
-    font-family: var(--font-ui);
-    font-size: 9px;
-    text-transform: uppercase;
-    letter-spacing: 1px;
-    color: var(--text-dim);
-    white-space: nowrap;
-  }
-  .book-card-progress {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-  }
-  .book-card-progress-bar {
-    flex: 1;
-    height: 3px;
-    background: var(--track);
-    border-radius: 2px;
-    overflow: hidden;
-  }
-  .book-card-progress-fill {
-    height: 100%;
-    border-radius: 2px;
-    background: linear-gradient(90deg, var(--gold-dim), var(--gold));
-  }
-  .book-card-progress-text {
-    font-family: var(--font-ui);
-    font-size: 10px;
-    color: var(--text-secondary);
-    min-width: 28px;
-    text-align: right;
-  }
+/* gender-specific accent border */
+.bb-panel.self-panel.gender-male    { border-color: rgba(200,169,106,0.22); }
+.bb-panel.self-panel.gender-female  { border-color: rgba(200,104,144,0.22); }
+.bb-panel.partner-panel.gender-male { border-color: rgba(200,169,106,0.14); }
+.bb-panel.partner-panel.gender-female { border-color: rgba(200,104,144,0.14); }
 
-  /* ── PATH STRIP ── */
-  .path-strip {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 10px;
-    padding: 8px 0;
-  }
-  .path-book {
-    font-family: var(--font-ui);
-    font-size: 10px;
-    text-transform: uppercase;
-    letter-spacing: 1px;
-    color: var(--text-dim);
-    background: var(--bg-elevated);
-    padding: 6px 12px;
-    border-radius: var(--radius-sm);
-    border: 1px solid var(--border);
-  }
-  .path-book.active {
-    background: rgba(200,169,106,0.12);
-    color: var(--gold);
-    border-color: var(--gold-border);
-  }
-  .path-dot {
-    width: 4px; height: 4px;
-    border-radius: 50%;
-    background: var(--text-dim);
-  }
-  .path-dot.active { background: var(--gold-dim); }
+.panel-header {
+  padding: 12px 16px;
+  border-bottom: 0.5px solid var(--border);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+}
+.panel-kicker {
+  font-family: var(--font-ui);
+  font-size: 9px;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  color: var(--text-dim);
+  margin-bottom: 3px;
+}
+.panel-name {
+  font-family: var(--font-display);
+  font-size: 12px;
+  letter-spacing: 0.07em;
+}
+.panel-name.gold  { color: var(--gold); }
+.panel-name.rose  { color: var(--rose); }
 
-  /* ── ACTION AREA (bottom links) ── */
-  .bottom-actions {
-    display: flex;
-    gap: 24px;
-    padding-top: 12px;
-    border-top: 1px solid var(--border);
-  }
-  .bottom-actions a {
-    font-family: var(--font-ui);
-    font-size: 11px;
-    color: var(--text-secondary);
-    text-decoration: none;
-    letter-spacing: 0.5px;
-    transition: color 0.3s;
-  }
-  .bottom-actions a:hover { color: var(--gold); }
+.panel-badge {
+  font-family: var(--font-ui);
+  font-size: 9px;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  padding: 3px 8px;
+  border-radius: 4px;
+  background: var(--bg-elevated);
+  color: var(--text-secondary);
+  border: 0.5px solid var(--border);
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+.panel-badge.active    { color: var(--success); border-color: rgba(85,187,102,0.25); }
+.panel-badge.completed { color: var(--gold);    border-color: var(--gold-border); }
 
-  /* ── LOADING ── */
-  .loading-state {
-    text-align: center;
-    padding: 60px 20px;
-    color: var(--text-dim);
-    font-family: var(--font-body);
-    font-size: 16px;
-    letter-spacing: 0.05em;
-  }
+/* ── CANVAS SECTION ── */
+.panel-canvas-wrap {
+  position: relative;
+  background: #060608;
+  /* fixed square so canvas always renders correctly */
+  aspect-ratio: 1 / 1;
+  width: 100%;
+  overflow: hidden;
+}
+.panel-canvas-wrap canvas {
+  /* fill the wrapper exactly — JS sets canvas pixel size to match */
+  position: absolute;
+  inset: 0;
+  width: 100% !important;
+  height: 100% !important;
+}
 
-  /* ── RESPONSIVE ── */
-  @media (max-width: 800px) {
-    .bond-panels-row { grid-template-columns: 1fr; }
-    .book-cards-grid { grid-template-columns: repeat(2, 1fr); }
-    .main-content { padding: 16px; }
-    .page-header { padding: 12px 16px; }
-    .context-strip { padding: 10px 16px; }
-    .bond-shared-section { flex-direction: column; gap: 14px; }
-  }
+/* ── PROGRESS ── */
+.panel-progress {
+  padding: 12px 16px;
+  border-top: 0.5px solid var(--border);
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+.progress-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+.progress-lbl { font-family: var(--font-ui); font-size: 9px; text-transform: uppercase; letter-spacing: 1.4px; color: var(--text-dim); }
+.progress-val { font-family: var(--font-ui); font-size: 11px; color: var(--gold); }
+.progress-val.rose { color: var(--rose); }
+.progress-track {
+  height: 3px;
+  background: var(--track);
+  border-radius: 2px;
+  overflow: hidden;
+}
+.progress-fill {
+  height: 100%;
+  border-radius: 2px;
+  background: linear-gradient(90deg, var(--gold-dim), var(--gold));
+  transition: width 0.7s ease;
+}
+.progress-fill.rose { background: linear-gradient(90deg, var(--rose-dim), var(--rose)); }
+.progress-sub { font-family: var(--font-ui); font-size: 9px; color: var(--text-dim); letter-spacing: 0.4px; }
 
+/* ── ACTION AREA ── */
+.panel-action {
+  padding: 12px 16px 14px;
+  border-top: 0.5px solid var(--border);
+}
+.action-btn {
+  width: 100%;
+  padding: 10px;
+  border: none;
+  border-radius: var(--radius-md);
+  font-family: var(--font-display);
+  font-size: 11px;
+  font-weight: 500;
+  letter-spacing: 0.09em;
+  cursor: pointer;
+  transition: opacity 0.2s, transform 0.1s;
+  background: linear-gradient(135deg, var(--gold-dim), var(--gold));
+  color: var(--bg-void);
+}
+.action-btn:hover:not(:disabled) { opacity: 0.88; }
+.action-btn:active:not(:disabled) { transform: scale(0.98); }
+.action-btn:disabled {
+  background: var(--bg-elevated);
+  color: var(--text-dim);
+  cursor: not-allowed;
+  opacity: 0.55;
+}
+.action-note {
+  font-family: var(--font-ui);
+  font-size: 9px;
+  color: var(--text-dim);
+  text-align: center;
+  margin-top: 7px;
+  letter-spacing: 0.4px;
+}
 
+/* ── SHARED BOND ROW ── */
+.bond-shared {
+  background: var(--bg-card);
+  border: 0.5px solid var(--gold-border);
+  border-radius: var(--radius-lg);
+  padding: 16px 20px;
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: 20px;
+  align-items: center;
+}
+.bond-shared-info { display: flex; flex-direction: column; gap: 4px; }
+.bond-shared-kicker { font-family: var(--font-ui); font-size: 9px; text-transform: uppercase; letter-spacing: 2px; color: var(--text-dim); }
+.bond-shared-title { font-family: var(--font-display); font-size: 14px; color: var(--gold); letter-spacing: 0.08em; }
+.bond-shared-sub { font-family: var(--font-ui); font-size: 9px; color: var(--text-secondary); letter-spacing: 0.4px; }
+.bond-qi-block { display: flex; flex-direction: column; gap: 5px; }
+.bond-qi-lbl { font-family: var(--font-ui); font-size: 9px; text-transform: uppercase; letter-spacing: 1.8px; color: var(--text-dim); }
+.bond-qi-track { height: 5px; background: var(--track); border-radius: 3px; overflow: hidden; }
+.bond-qi-fill { height: 100%; border-radius: 3px; background: linear-gradient(90deg, var(--gold-dim), var(--gold), var(--gold-bright)); transition: width 0.7s ease; }
+.bond-qi-text { font-family: var(--font-ui); font-size: 9px; color: var(--text-secondary); display: flex; justify-content: space-between; }
+
+/* ── CHRONICLES ── */
+.section-header {
+  font-family: var(--font-display);
+  font-size: 11px;
+  color: var(--gold);
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+}
+.chronicles-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 10px;
+}
+.chronicle-card {
+  background: var(--bg-card);
+  border: 0.5px solid var(--border);
+  border-radius: var(--radius-md);
+  padding: 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  position: relative;
+  overflow: hidden;
+}
+.chronicle-card::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 2px;
+  background: var(--text-dim);
+  border-radius: 2px 2px 0 0;
+}
+.chronicle-card.c-active::before  { background: var(--rose); }
+.chronicle-card.c-done::before    { background: var(--success); }
+
+.chronicle-name { font-family: var(--font-display); font-size: 11px; color: var(--gold); letter-spacing: 0.05em; }
+.chronicle-badge {
+  font-family: var(--font-ui);
+  font-size: 9px;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  color: var(--text-dim);
+}
+.chronicle-badge.c-active  { color: var(--rose); }
+.chronicle-badge.c-done    { color: var(--success); }
+
+.chronicle-bar-row { display: flex; align-items: center; gap: 7px; }
+.chronicle-bar { flex: 1; height: 2px; background: var(--track); border-radius: 2px; overflow: hidden; }
+.chronicle-bar-fill { height: 100%; border-radius: 2px; background: linear-gradient(90deg, var(--gold-dim), var(--gold)); }
+.chronicle-bar-fill.rose { background: linear-gradient(90deg, var(--rose-dim), var(--rose)); }
+.chronicle-pct { font-family: var(--font-ui); font-size: 9px; color: var(--text-secondary); min-width: 26px; text-align: right; }
+
+/* ── PATH STRIP ── */
+.path-strip {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 6px 0 2px;
+}
+.path-node {
+  font-family: var(--font-ui);
+  font-size: 9px;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  color: var(--text-dim);
+  background: var(--bg-elevated);
+  padding: 5px 10px;
+  border-radius: var(--radius-sm);
+  border: 0.5px solid var(--border);
+}
+.path-node.active { background: rgba(200,169,106,0.10); color: var(--gold); border-color: var(--gold-border); }
+.path-sep { width: 3px; height: 3px; border-radius: 50%; background: var(--text-dim); }
+.path-sep.active { background: var(--gold-dim); }
+
+/* ── BOTTOM NAV ── */
+.bottom-row {
+  display: flex;
+  gap: 20px;
+  padding-top: 10px;
+  border-top: 0.5px solid var(--border);
+}
+.bottom-row a {
+  font-family: var(--font-ui);
+  font-size: 11px;
+  color: var(--text-secondary);
+  text-decoration: none;
+  letter-spacing: 0.5px;
+  transition: color 0.2s;
+}
+.bottom-row a:hover { color: var(--gold); }
+
+/* ── LOADING / ERROR ── */
+.loading-state {
+  text-align: center;
+  padding: 60px 20px;
+  color: var(--text-dim);
+  font-family: var(--font-body);
+  font-size: 16px;
+  letter-spacing: 0.05em;
+}
+.error-msg { color: var(--danger); font-family: var(--font-ui); font-size: 12px; padding: 8px 0; }
+
+/* ── TICKER ── */
+.ticker-item { display:inline-flex;align-items:center;padding:0 20px;font-size:11px;white-space:nowrap;gap:7px;border-right:1px solid rgba(200,169,106,0.10);font-family:'Cinzel',serif;letter-spacing:0.04em; }
+.ticker-item.celestial { color: #c8a96a; }
+.ticker-item.notice { color: #9a9488; }
+.ticker-item.notice-urgent { color: #c86890; }
+.ticker-dot { width:5px;height:5px;border-radius:50%;flex-shrink:0; }
+.ticker-dot.celestial { background:#c8a96a; }
+.ticker-dot.notice { background:#555044; }
+.ticker-dot.notice-urgent { background:#c86890; }
+
+/* ── RESPONSIVE ── */
+@media (max-width: 760px) {
+  .dual-panels    { grid-template-columns: 1fr; }
+  .chronicles-grid { grid-template-columns: repeat(2, 1fr); }
+  .bond-shared    { grid-template-columns: 1fr; gap: 12px; }
+}
 </style>
 </head>
 <body>
-<div class="cloud-layer"></div>
-<div class="rune-layer"></div>
-<div class="lightning-flash"></div>
 
-<div class="bond-page">
-  <div class="page-header">
-    <div class="page-header-left">
-      <h1>BOND BOOK</h1>
+<div class="page-wrap">
+
+  <!-- NAV -->
+  <nav>
+    <a href="/dashboard.html">Dashboard</a>
+    <a href="/cultivation-book.html">Library</a>
+    <a href="/store.html">Store</a>
+    <a href="/partnership.html">Partnership</a>
+    <div class="notif-bell-wrap">
+      <button class="notif-bell" id="notif-bell" title="Notifications">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
+        <span class="notif-badge" id="notif-badge"></span>
+      </button>
+      <div class="notif-dropdown" id="notif-dropdown"><div class="notif-empty">No notifications</div></div>
     </div>
-    <nav class="page-header-nav">
-      <a href="dashboard.html">Dashboard</a>
-      <a href="cultivation-book.html">Library</a>
-      <a href="store.html">Store</a>
-      <a href="#" id="logout-link">Logout</a>
-    </nav>
+    <a href="/.netlify/functions/logout">Logout</a>
+  </nav>
 
-    <!-- Celestial Feed -->
-    <div id="news-ticker-bar" style="width:100%;background:#0d0d18;border-top:0.5px solid rgba(200,169,106,0.15);border-bottom:0.5px solid rgba(200,169,106,0.15);height:34px;display:flex;align-items:center;overflow:hidden;">
-      <div id="ticker-label" style="flex-shrink:0;padding:0 14px;font-size:9px;letter-spacing:0.14em;text-transform:uppercase;color:#c8a96a;font-weight:600;border-right:0.5px solid rgba(200,169,106,0.25);height:100%;display:flex;align-items:center;background:#0d0d18;white-space:nowrap;font-family:'Cinzel',serif;">⬡ Celestial Feed</div>
-      <div style="overflow:hidden;flex:1;position:relative;height:100%;">
-        <div id="ticker-track" style="display:flex;align-items:center;height:100%;position:absolute;white-space:nowrap;"></div>
-      </div>
+  <!-- CELESTIAL FEED -->
+  <div id="news-ticker-bar" style="background:#0d0d18;border:0.5px solid rgba(200,169,106,0.12);border-radius:var(--radius-md);height:32px;display:flex;align-items:center;overflow:hidden;">
+    <div style="flex-shrink:0;padding:0 12px;font-size:9px;letter-spacing:0.14em;text-transform:uppercase;color:#c8a96a;font-weight:600;border-right:0.5px solid rgba(200,169,106,0.18);height:100%;display:flex;align-items:center;background:#0d0d18;white-space:nowrap;font-family:'Cinzel',serif;">⬡ Celestial Feed</div>
+    <div style="overflow:hidden;flex:1;position:relative;height:100%;">
+      <div id="ticker-track" style="display:flex;align-items:center;height:100%;position:absolute;white-space:nowrap;"></div>
     </div>
   </div>
+
+  <!-- PAGE TITLE -->
+  <div class="page-title-row">
+    <span class="page-title">Bond Book</span>
+    <span class="page-subtitle" id="page-subtitle">Loading...</span>
+  </div>
+
+  <!-- CONTEXT CHIPS -->
   <div class="context-strip" id="context-strip"></div>
-  <div class="main-content" id="main-content">
-    <div class="loading-state">Loading bond data...</div>
-  </div>
-</div>
+
+  <!-- MAIN CONTENT -->
+  <div id="main-content"><div class="loading-state">Loading bond cultivation record…</div></div>
+
+</div><!-- /.page-wrap -->
 
 <script>
-  // ── ENDPOINTS ──
-  var ENDPOINTS = {
-    session: "/.netlify/functions/load-dashboard-state",
-    loadBondState: "/.netlify/functions/load-bond-state",
-    offerBond: "/.netlify/functions/offer-bond-book",
-    startBond: "/.netlify/functions/start-bond-cultivation",
-    syncBond: "/.netlify/functions/sync-bond-cultivation",
-    pauseBond: "/.netlify/functions/stop-bond-cultivation"
+// ── ENDPOINTS ──
+var ENDPOINTS = {
+  session:   '/.netlify/functions/load-dashboard-state',
+  loadBond:  '/.netlify/functions/load-bond-state',
+  offerBond: '/.netlify/functions/offer-bond-book',
+  startBond: '/.netlify/functions/start-bond-cultivation',
+  syncBond:  '/.netlify/functions/sync-bond-cultivation',
+  pauseBond: '/.netlify/functions/stop-bond-cultivation'
+};
+
+// ── STATE ──
+var state = {
+  member: null,
+  partner: null,
+  pageData: null,
+  requestedVolumeNumber: 0,
+  requestedPartnershipUuid: '',
+  requestedLegacyPartnershipId: '',
+  figureCache: { male: null, female: null }
+};
+
+// ── HELPERS ──
+function safeText(v, fb) { var s = String(v == null ? '' : v).trim(); return s || (fb || ''); }
+function safeLower(v) { return safeText(v).toLowerCase(); }
+function safeNumber(v, fb) { var n = Number(v); return isFinite(n) ? n : (fb || 0); }
+function safeBoolean(v) { return v === true || v === 'true' || v === 1; }
+function clamp(v, lo, hi) { return Math.max(lo, Math.min(hi, v)); }
+function toTitle(s) { return safeText(s).replace(/_/g,' ').replace(/\b\w/g, function(c){return c.toUpperCase();}); }
+function formatStateLabel(s) {
+  var map = {
+    idle: 'Idle', cultivating: 'Cultivating', active: 'Active', paused: 'Paused',
+    damaged: 'Damaged', sealed: 'Sealed', open: 'Open', complete: 'Complete',
+    ready_to_start: 'Ready', ready_for_offering: 'Ready to Offer',
+    waiting_for_partner_offering: 'Awaiting Partner', pair_completed: 'Completed',
+    awaiting_partner_completion: 'Awaiting Partner', locked: 'Locked', is_active: 'Active',
+    completed: 'Completed'
   };
+  return map[safeLower(s)] || toTitle(s) || 'Idle';
+}
 
-  // ── STATE ──
-  var state = {
-    member: null,
-    partner: null,
-    pageData: null,
-    requestedVolumeNumber: 0,
-    requestedPartnershipUuid: '',
-    requestedLegacyPartnershipId: '',
-    vesselAnimationId: null,
-    figureCache: { male: null, female: null }
+// ── AUTH FETCH ──
+function authFetch(url, opts) { opts = opts || {}; opts.credentials = 'include'; return fetch(url, opts); }
+function parseCookies() {
+  var c = {}; document.cookie.split(';').forEach(function(s) {
+    var p = s.trim().split('='); if (p.length >= 2) c[p[0]] = decodeURIComponent(p.slice(1).join('='));
+  }); return c;
+}
+function clearClientSessionArtifacts() {
+  ['session_token','sl_avatar_key','sl_username','display_name'].forEach(function(n) {
+    document.cookie = n + '=; expires=Thu, 01 Jan 1970 00:00:00 GMT; path=/';
+  });
+}
+
+// ── URL PARAMS ──
+function getUrlParams() {
+  var p = {};
+  window.location.search.replace(/[?&]+([^=&]+)=([^&]*)/gi, function(m, k, v) { p[k] = decodeURIComponent(v); });
+  return p;
+}
+
+// ── DATA ACCESSORS ──
+function getRecord() {
+  if (!state.pageData) return null;
+  return state.pageData.bond_record || state.pageData.record || null;
+}
+function getFocusedPartner() {
+  if (state.partner) return state.partner;
+  var rec = getRecord();
+  return rec ? (rec.partner || null) : null;
+}
+function getSelectedVolume() {
+  var rec = getRecord();
+  if (!rec) return null;
+  return rec.volume || rec.selected_volume || (Array.isArray(rec.volumes) && rec.volumes.length ? rec.volumes[0] : null) || null;
+}
+function getBooksForShelf() {
+  var vol = getSelectedVolume();
+  if (!vol) return [];
+  return vol.books || vol.book_list || [];
+}
+function getCurrentBook() {
+  var rec = getRecord();
+  if (!rec) return null;
+  return rec.current_book || rec.actionable_book || null;
+}
+
+// ── GENDER ──
+function getMemberGender() {
+  if (!state.member) return 'male';
+  var g = safeLower(state.member.gender || '');
+  return (g === 'female' || g === 'f') ? 'female' : 'male';
+}
+function getPartnerGender() {
+  var p = getFocusedPartner();
+  if (!p) return 'male';
+  var g = safeLower(p.gender || '');
+  return (g === 'female' || g === 'f') ? 'female' : 'male';
+}
+// colour key based on gender
+function colourKey(gender) { return gender === 'female' ? 'rose' : 'gold'; }
+
+// ── SESSION / DATA LOAD ──
+function loadViewerSession() {
+  return authFetch(ENDPOINTS.session).then(function(r){ return r.json(); }).then(function(d){
+    if (!d.success || !d.member) { window.location.href = '/login.html'; return; }
+    state.member = d.member;
+  }).catch(function(){ window.location.href = '/login.html'; });
+}
+
+function fetchBookState() {
+  if (!state.member) return Promise.resolve(null);
+  var params = [];
+  if (state.member.sl_avatar_key) params.push('sl_avatar_key=' + encodeURIComponent(state.member.sl_avatar_key));
+  if (state.member.sl_username) params.push('sl_username=' + encodeURIComponent(state.member.sl_username));
+  if (state.requestedVolumeNumber > 0) params.push('volume_number=' + state.requestedVolumeNumber);
+  if (safeText(state.requestedPartnershipUuid)) params.push('partnership_uuid=' + encodeURIComponent(state.requestedPartnershipUuid));
+  else if (safeText(state.requestedLegacyPartnershipId)) params.push('partnership_id=' + encodeURIComponent(state.requestedLegacyPartnershipId));
+  return authFetch(ENDPOINTS.loadBond + '?' + params.join('&')).then(function(r){
+    return r.json().then(function(d){ return (r.ok && d.success) ? d : null; });
+  }).catch(function(){ return null; });
+}
+
+function loadBookState() {
+  return fetchBookState().then(function(data){
+    if (!data) { renderPage(); return; }
+    state.pageData = data;
+    var mu = data.user || data.member || {};
+    for (var k in mu) { if (mu.hasOwnProperty(k)) state.member[k] = mu[k]; }
+    state.partner = data.partner || (data.partnership ? data.partnership.counterpart : null) || data.counterpart || null;
+    var rec = getRecord();
+    if (rec) {
+      if (safeNumber(rec.selected_volume_number, 0) > 0) state.requestedVolumeNumber = safeNumber(rec.selected_volume_number, 0);
+      if (safeText(rec.partnership_uuid)) state.requestedPartnershipUuid = safeText(rec.partnership_uuid);
+      if (safeText(rec.partnership_id)) state.requestedLegacyPartnershipId = safeText(rec.partnership_id);
+    }
+    renderPage();
+    startAutoRefresh();
+  });
+}
+
+// ── AUTO REFRESH ──
+var _refreshTimer = null;
+function startAutoRefresh() {
+  if (_refreshTimer) return;
+  _refreshTimer = setInterval(function(){
+    fetchBookState().then(function(data){
+      if (data) {
+        state.pageData = data;
+        state.partner = data.partner || (data.partnership ? data.partnership.counterpart : null) || data.counterpart || null;
+        renderPage();
+      }
+    });
+  }, 12000);
+  document.addEventListener('visibilitychange', function(){
+    if (!document.hidden) fetchBookState().then(function(data){ if (data) { state.pageData = data; renderPage(); } });
+  });
+}
+
+// ── ACTION STATE ──
+function getActionSet() {
+  var vol = getSelectedVolume();
+  if (!vol) return [];
+  var rec = getRecord();
+  var cb = getCurrentBook();
+  var bs = cb ? safeLower(cb.display_state) : '';
+  var cultState = state.pageData ? state.pageData.cultivation : null;
+  var personalActive = cultState && (cultState.is_active === true || cultState.status === 'cultivating');
+
+  if (personalActive) return [{ key:'blocked', label:'Personal Cultivation Active', note:'End personal cultivation before starting bond cultivation.' }];
+  if (bs === 'pair_completed' || bs === 'completed') return [{ key:'breakthrough', label:'Enter Breakthrough', note:'Both partners have completed this chronicle.' }];
+  if (bs === 'awaiting_partner_completion') return [{ key:'wait', label:'Awaiting Partner', note:'Your partner is still cultivating.' }];
+  if (bs === 'active' || bs === 'is_active') return [{ key:'pause', label:'Pause Cultivation', note:'Pause bond meditation session.' }];
+  if (bs === 'paused') return [{ key:'start', label:'Resume Cultivation', note:'Continue from where you paused.' }];
+  if (bs === 'ready_to_start') return [{ key:'start', label:'Begin Cultivation', note:'Begin cultivating together.' }];
+  if (bs === 'waiting_for_partner_offering') return [{ key:'wait', label:'Awaiting Partner Offering', note:'Waiting for partner to offer their Vestiges.' }];
+  if (bs === 'ready_for_offering' && rec && rec.available) return [{ key:'offer', label:'Offer Bond', note:'Offer your Vestiges for this chronicle.' }];
+  if (rec && rec.available) return [{ key:'start', label:'Begin Cultivation', note:'Begin cultivating together.' }];
+  return [{ key:'offer', label:'Offer Bond', note:'Offer this bond chronicle.' }];
+}
+
+function handleAction(key) {
+  var vol = getSelectedVolume();
+  if (!vol) return;
+
+  if (key === 'breakthrough') {
+    var rec = getRecord();
+    var pUuid = state.requestedPartnershipUuid || '';
+    var vNum = vol.volume_number || 1;
+    window.location.href = 'breakthrough.html?partnership_uuid=' + encodeURIComponent(pUuid) + '&volume=' + vNum;
+    return;
+  }
+  if (key === 'wait' || key === 'blocked') return;
+
+  var endpoint = key === 'offer' ? ENDPOINTS.offerBond :
+                 key === 'start' ? ENDPOINTS.startBond :
+                 key === 'pause' ? ENDPOINTS.pauseBond : null;
+  if (!endpoint) return;
+
+  var rec = getRecord();
+  var cb = getCurrentBook();
+  var bookNum = (cb && cb.book_number) ? cb.book_number : (rec && rec.selected_book_number ? rec.selected_book_number : null);
+  var payload = {
+    volume_number: vol.volume_number,
+    book_number: bookNum,
+    partnership_uuid: state.requestedPartnershipUuid || '',
+    sl_avatar_key: safeText(state.member ? state.member.sl_avatar_key : ''),
+    sl_username: safeText(state.member ? state.member.sl_username : '')
   };
+  if (state.requestedLegacyPartnershipId) payload.partnership_id = state.requestedLegacyPartnershipId;
 
-  // ── HELPERS ──
-  function safeText(v, fb) { var s = String(v == null ? '' : v).trim(); return s || (fb || ''); }
-  function safeLower(v) { return safeText(v).toLowerCase(); }
-  function safeNumber(v, fb) { var n = Number(v); return isFinite(n) ? n : (fb || 0); }
-  function safeBoolean(v) { return v === true || v === 'true' || v === 1; }
-  function clamp(v, lo, hi) { return Math.max(lo, Math.min(hi, v)); }
-  function toTitle(s) { return safeText(s).replace(/\b\w/g, function(c) { return c.toUpperCase(); }); }
-  function formatPercent(cur, max) { var m = safeNumber(max, 1); if (m <= 0) m = 1; return Math.round(clamp(safeNumber(cur) / m, 0, 1) * 100) + '%'; }
-  function formatStateLabel(s) {
-    var map = { idle: 'Idle', cultivating: 'Cultivating', active: 'Active', paused: 'Paused',
-      damaged: 'Damaged', sealed: 'Sealed', open: 'Open', complete: 'Complete',
-      ready_to_start: 'Ready', ready_for_offering: 'Ready to Offer',
-      waiting_for_partner_offering: 'Awaiting Partner', pair_completed: 'Completed',
-      awaiting_partner_completion: 'Awaiting Partner', locked: 'Locked', is_active: 'Active' };
-    return map[safeLower(s)] || toTitle(s) || 'Idle';
-  }
-  function isUuid(s) { return /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(safeText(s)); }
+  var btn = document.getElementById('self-action-btn');
+  if (btn) btn.disabled = true;
 
-  // ── COOKIES / AUTH ──
-  function parseCookies() {
-    var c = {}; document.cookie.split(';').forEach(function(s) {
-      var p = s.trim().split('='); if (p.length >= 2) c[p[0]] = decodeURIComponent(p.slice(1).join('='));
-    }); return c;
-  }
-  function setCookie(n, v, d) {
-    var e = ''; if (d) { var dt = new Date(); dt.setTime(dt.getTime() + d * 86400000); e = '; expires=' + dt.toUTCString(); }
-    document.cookie = n + '=' + encodeURIComponent(v) + e + '; path=/; SameSite=Lax';
-  }
-  function clearClientSessionArtifacts() {
-    ['session_token','sl_avatar_key','sl_username','display_name'].forEach(function(n) {
-      document.cookie = n + '=; expires=Thu, 01 Jan 1970 00:00:00 GMT; path=/';
-    });
-  }
-  function authFetch(url, opts) {
-    opts = opts || {};
-    opts.credentials = 'include';
-    return fetch(url, opts);
-  }
-
-  // ── URL PARAMS ──
-  function getUrlParams() {
-    var p = {};
-    window.location.search.replace(/[?&]+([^=&]+)=([^&]*)/gi, function(m, k, v) { p[k] = decodeURIComponent(v); });
-    return p;
-  }
-
-  // ── DATA ACCESSORS ──
-  function getRecord() {
-    if (!state.pageData) return null;
-    return state.pageData.bond_record || state.pageData.record || null;
-  }
-  function getFocusedPartner() {
-    if (state.partner) return state.partner;
-    var rec = getRecord();
-    return rec ? (rec.partner || null) : null;
-  }
-  function getSelectedVolume() {
-    var rec = getRecord();
-    if (!rec) return null;
-    return rec.volume || rec.selected_volume || (Array.isArray(rec.volumes) && rec.volumes.length ? rec.volumes[0] : null) || null;
-  }
-  function getBooksForShelf() {
-    var vol = getSelectedVolume();
-    if (!vol) return [];
-    return vol.books || vol.book_list || [];
-  }
-  function getCurrentBook() {
-    var rec = getRecord();
-    if (!rec) return null;
-    return rec.current_book || rec.actionable_book || null;
-  }
-
-  // ── GENDER DETECTION ──
-  function getMemberGender() {
-    if (!state.member) return 'male';
-    var g = safeLower(state.member.gender || state.member.sl_gender || '');
-    return (g === 'female' || g === 'f') ? 'female' : 'male';
-  }
-  function getPartnerGender() {
-    var p = getFocusedPartner();
-    if (!p) return 'male';
-    var g = safeLower(p.gender || p.sl_gender || '');
-    return (g === 'female' || g === 'f') ? 'female' : 'male';
-  }
-
-  // ── FETCH BOND STATE ──
-  function fetchBookState() {
-    if (!state.member) return Promise.resolve(null);
-    var params = [];
-    if (state.member.sl_avatar_key) {
-      params.push('sl_avatar_key=' + encodeURIComponent(state.member.sl_avatar_key));
-    }
-    if (state.member.sl_username) {
-      params.push('sl_username=' + encodeURIComponent(state.member.sl_username));
-    }
-    if (state.requestedVolumeNumber > 0) {
-      params.push('volume_number=' + state.requestedVolumeNumber);
-    }
-    if (safeText(state.requestedPartnershipUuid)) {
-      params.push('partnership_uuid=' + encodeURIComponent(state.requestedPartnershipUuid));
-    } else if (safeText(state.requestedLegacyPartnershipId)) {
-      params.push('partnership_id=' + encodeURIComponent(state.requestedLegacyPartnershipId));
-    }
-    var url = ENDPOINTS.loadBondState + '?' + params.join('&');
-    return authFetch(url).then(function(response) {
-      return response.json().then(function(data) {
-        if (!response.ok || !data.success) {
-          console.error('Bond state error:', data.message || 'Failed to load');
-          return null;
-        }
-        return data;
-      });
-    }).catch(function(err) {
-      console.error('Fetch bond state error:', err);
-      return null;
-    });
-  }
-
-  function loadBookState() {
-    if (!state.member) return Promise.resolve();
-    return fetchBookState().then(function(data) {
-      if (!data) { console.error('No bond data returned'); renderPage(); return true; }
-      state.pageData = data;
-      var memberUpdate = data.user || data.member || {};
-      var mk;
-      for (mk in memberUpdate) {
-        if (memberUpdate.hasOwnProperty(mk)) { state.member[mk] = memberUpdate[mk]; }
+  authFetch(endpoint, { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify(payload) })
+    .then(function(r){ return r.json().then(function(d){
+      if (r.ok && d.success) { setTimeout(loadBookState, 1100); }
+      else {
+        alert(d.message || 'Action failed. Please try again.');
+        if (btn) btn.disabled = false;
       }
-      state.partner = data.partner ||
-        (data.partnership ? data.partnership.counterpart : null) ||
-        data.counterpart || null;
-      var rec = getRecord();
-      if (rec) {
-        if (safeNumber(rec.selected_volume_number, 0) > 0) state.requestedVolumeNumber = safeNumber(rec.selected_volume_number, 0);
-        if (safeText(rec.partnership_uuid)) state.requestedPartnershipUuid = safeText(rec.partnership_uuid);
-        if (safeText(rec.partnership_id)) state.requestedLegacyPartnershipId = safeText(rec.partnership_id);
-      }
-      renderPage();
-      startAutoRefreshLoop();
-      maybeCheckBreakthroughParams();
-      return true;
+    }); })
+    .catch(function(){ alert('Network error. Please try again.'); if (btn) btn.disabled = false; });
+}
+
+// ── RENDER ──
+function renderPage() {
+  renderContextStrip();
+  renderMainContent();
+  updatePageSubtitle();
+}
+
+function updatePageSubtitle() {
+  var vol = getSelectedVolume();
+  var el = document.getElementById('page-subtitle');
+  if (!el) return;
+  if (vol) {
+    el.textContent = safeText(vol.volume_name || vol.item_name, 'Relic ' + (vol.volume_number || ''));
+  } else {
+    el.textContent = 'No volume selected';
+  }
+}
+
+function renderContextStrip() {
+  var el = document.getElementById('context-strip');
+  if (!el) return;
+  var rec = getRecord();
+  var partner = getFocusedPartner();
+  var vol = getSelectedVolume();
+  var cb = getCurrentBook();
+  var selfGender = getMemberGender();
+  var partnerGender = getPartnerGender();
+  var selfColour = colourKey(selfGender);
+  var partnerColour = colourKey(partnerGender);
+
+  var html = '';
+  if (state.member) {
+    html += '<div class="stat-chip"><span class="lbl">You</span><span class="val" style="color:var(--' + selfColour + ')">' +
+      safeText(state.member.display_name || state.member.character_name || state.member.sl_username, 'Unknown') + '</span></div>';
+  }
+  if (partner) {
+    html += '<div class="stat-chip"><span class="lbl">Partner</span><span class="val" style="color:var(--' + partnerColour + ')">' +
+      safeText(partner.display_name || partner.character_name || partner.sl_username, 'Unknown') + '</span></div>';
+  }
+  if (vol) {
+    html += '<div class="stat-chip"><span class="lbl">Relic</span><span class="val">' + safeNumber(vol.volume_number, 1) + '</span></div>';
+  }
+  if (cb) {
+    html += '<div class="stat-chip"><span class="lbl">Chronicle</span><span class="val">' + safeNumber(cb.book_number, 1) + '</span></div>';
+    html += '<div class="stat-chip"><span class="lbl">Status</span><span class="val">' + formatStateLabel(cb.display_state) + '</span></div>';
+  }
+  el.innerHTML = html;
+}
+
+function renderMainContent() {
+  var el = document.getElementById('main-content');
+  if (!el) return;
+
+  var rec = getRecord();
+  var vol = getSelectedVolume();
+  var books = getBooksForShelf();
+  var cb = getCurrentBook();
+  var partner = getFocusedPartner();
+  var bondCore = rec ? rec.bond_core : null;
+  var bondSession = state.pageData ? state.pageData.bond_session : null;
+  var actions = getActionSet();
+  var action = actions.length > 0 ? actions[0] : null;
+
+  var selfGender = getMemberGender();
+  var partnerGender = getPartnerGender();
+  var selfColour = colourKey(selfGender);
+  var partnerColour = colourKey(partnerGender);
+
+  var html = '';
+
+  // ── DUAL PANELS ──
+  html += '<div class="dual-panels">';
+  html += buildSelfPanel(cb, bondSession, action, selfGender, selfColour);
+  html += buildPartnerPanel(partner, cb, bondSession, partnerGender, partnerColour);
+  html += '</div>';
+
+  // ── SHARED SECTION ──
+  html += buildSharedSection(bondCore, bondSession, cb);
+
+  // ── CHRONICLES ──
+  html += '<div style="display:flex;flex-direction:column;gap:8px;">';
+  html += '<div class="section-header">Chronicles</div>';
+  html += buildChronicleCards(books, selfGender);
+  html += buildPathStrip(books);
+  html += '</div>';
+
+  // ── BOTTOM NAV ──
+  html += '<div class="bottom-row">';
+  html += '<a href="cultivation-book.html">← Library</a>';
+  html += '<a href="partnership.html">Partnership</a>';
+  html += '</div>';
+
+  el.innerHTML = html;
+  attachHandlers();
+
+  // Start canvases after DOM is ready
+  setTimeout(function() {
+    startCanvas('self-canvas', selfGender, true);
+    startCanvas('partner-canvas', partnerGender, false);
+  }, 80);
+}
+
+function buildSelfPanel(cb, bondSession, action, gender, colour) {
+  var bs = cb ? safeLower(cb.display_state) : 'idle';
+  var selfPct = (cb && cb.self) ? safeNumber(cb.self.progress_percent, 0) : 0;
+  var selfOffering = (cb && cb.self) ? safeBoolean(cb.self.offering_complete) : false;
+  var memberName = state.member ? safeText(state.member.character_name || state.member.display_name || state.member.sl_username, 'You') : 'You';
+  var isDisabled = !action || action.key === 'blocked' || action.key === 'wait';
+  var badgeClass = (bs === 'active' || bs === 'is_active') ? ' active' : (bs === 'pair_completed' || bs === 'completed') ? ' completed' : '';
+
+  return '<div class="bb-panel self-panel gender-' + gender + '" id="self-panel">' +
+    '<div class="panel-header">' +
+      '<div><div class="panel-kicker">Your Cultivation</div>' +
+      '<div class="panel-name ' + colour + '">' + memberName + '</div></div>' +
+      '<div class="panel-badge' + badgeClass + '">' + formatStateLabel(bs) + '</div>' +
+    '</div>' +
+    '<div class="panel-canvas-wrap"><canvas id="self-canvas"></canvas></div>' +
+    '<div class="panel-progress">' +
+      '<div class="progress-row"><span class="progress-lbl">Progress</span><span class="progress-val">' + Math.round(selfPct) + '%</span></div>' +
+      '<div class="progress-track"><div class="progress-fill" style="width:' + Math.round(selfPct) + '%"></div></div>' +
+      '<div class="progress-sub">' + (selfOffering ? 'Offering sealed ✦' : 'Offering pending') + '</div>' +
+    '</div>' +
+    '<div class="panel-action">' +
+      '<button class="action-btn" id="self-action-btn"' + (isDisabled ? ' disabled' : '') + '>' +
+        (action ? action.label : 'No Action') + '</button>' +
+      '<div class="action-note">' + (action ? action.note : '') + '</div>' +
+    '</div>' +
+  '</div>';
+}
+
+function buildPartnerPanel(partner, cb, bondSession, gender, colour) {
+  var bs = cb ? safeLower(cb.display_state) : 'idle';
+  var partnerPct = (cb && cb.partner) ? safeNumber(cb.partner.progress_percent, 0) : 0;
+  var partnerOffering = (cb && cb.partner) ? safeBoolean(cb.partner.offering_complete) : false;
+  var partnerName = partner ? safeText(partner.character_name || partner.display_name || partner.sl_username, 'Partner') : 'Partner';
+  var badgeClass = (bs === 'active' || bs === 'is_active') ? ' active' : (bs === 'pair_completed' || bs === 'completed') ? ' completed' : '';
+
+  return '<div class="bb-panel partner-panel gender-' + gender + '">' +
+    '<div class="panel-header">' +
+      '<div><div class="panel-kicker">Partner\'s Cultivation</div>' +
+      '<div class="panel-name ' + colour + '">' + partnerName + '</div></div>' +
+      '<div class="panel-badge' + badgeClass + '">' + formatStateLabel(bs) + '</div>' +
+    '</div>' +
+    '<div class="panel-canvas-wrap"><canvas id="partner-canvas"></canvas></div>' +
+    '<div class="panel-progress">' +
+      '<div class="progress-row"><span class="progress-lbl">Progress</span><span class="progress-val ' + colour + '">' + Math.round(partnerPct) + '%</span></div>' +
+      '<div class="progress-track"><div class="progress-fill ' + (colour === 'rose' ? 'rose' : '') + '" style="width:' + Math.round(partnerPct) + '%"></div></div>' +
+      '<div class="progress-sub">' + (partnerOffering ? 'Offering sealed ✦' : 'Offering pending') + '</div>' +
+    '</div>' +
+  '</div>';
+}
+
+function buildSharedSection(bondCore, bondSession, cb) {
+  var stageName = bondCore ? safeText(bondCore.stage_name, 'Unknown') : 'Unknown';
+  var bondPct = bondCore ? safeNumber(bondCore.bond_percent, 0) : 0;
+  var completedBooks = bondCore ? safeNumber(bondCore.completed_books_count, 0) : 0;
+
+  var qiCurrent = 0, qiMax = 1;
+  if (bondSession) {
+    qiCurrent = safeNumber(bondSession.self_qi_accumulated, 0) + safeNumber(bondSession.partner_qi_accumulated, 0);
+    qiMax = safeNumber(bondSession.required_minutes, 1);
+  }
+  if (cb && cb.pair) {
+    qiCurrent = safeNumber(cb.pair.combined_qi, qiCurrent);
+    qiMax = safeNumber(cb.pair.required_qi, qiMax);
+  }
+  var qiPct = qiMax > 0 ? Math.round(clamp(qiCurrent / qiMax, 0, 1) * 100) : 0;
+
+  return '<div class="bond-shared">' +
+    '<div class="bond-shared-info">' +
+      '<div class="bond-shared-kicker">Bond Stage</div>' +
+      '<div class="bond-shared-title">' + stageName + '</div>' +
+      '<div class="bond-shared-sub">' + bondPct + '% — ' + completedBooks + ' chronicles completed</div>' +
+    '</div>' +
+    '<div class="bond-qi-block">' +
+      '<div class="bond-qi-lbl">Shared Auric Offering</div>' +
+      '<div class="bond-qi-track"><div class="bond-qi-fill" style="width:' + qiPct + '%"></div></div>' +
+      '<div class="bond-qi-text"><span>' + qiPct + '%</span><span>' + qiCurrent + ' / ' + qiMax + '</span></div>' +
+    '</div>' +
+  '</div>';
+}
+
+function buildChronicleCards(books, selfGender) {
+  var selfColour = colourKey(selfGender);
+  var html = '<div class="chronicles-grid">';
+  for (var i = 0; i < 4; i++) {
+    var book = books[i] || null;
+    var bookName = book ? safeText(book.book_name || book.book_label, 'Chronicle ' + (i+1)) : 'Chronicle ' + (i+1);
+    var status = safeLower(book ? (book.display_state || book.status || '') : 'locked');
+    var selfPct = (book && book.self) ? safeNumber(book.self.progress_percent, 0) : 0;
+
+    var badgeLabel = 'Locked';
+    var cardClass = '';
+    if (status === 'pair_completed' || status === 'completed') { badgeLabel = 'Completed'; cardClass = 'c-done'; }
+    else if (status === 'active' || status === 'is_active' || status === 'paused') { badgeLabel = status === 'paused' ? 'Paused' : 'Active'; cardClass = 'c-active'; }
+    else if (status === 'ready_for_offering') { badgeLabel = 'Ready to Offer'; }
+    else if (status === 'waiting_for_partner_offering') { badgeLabel = 'Awaiting Partner'; }
+    else if (status === 'ready_to_start') { badgeLabel = 'Ready'; }
+    else if (status === 'awaiting_partner_completion') { badgeLabel = 'Awaiting Partner'; }
+
+    html += '<div class="chronicle-card ' + cardClass + '">' +
+      '<div style="display:flex;justify-content:space-between;align-items:start;gap:6px;">' +
+        '<div class="chronicle-name">' + safeText(bookName) + '</div>' +
+        '<div class="chronicle-badge ' + cardClass + '">' + badgeLabel + '</div>' +
+      '</div>' +
+      '<div class="chronicle-bar-row">' +
+        '<div class="chronicle-bar"><div class="chronicle-bar-fill ' + (selfColour === 'rose' ? 'rose' : '') + '" style="width:' + Math.round(selfPct) + '%"></div></div>' +
+        '<div class="chronicle-pct">' + Math.round(selfPct) + '%</div>' +
+      '</div>' +
+    '</div>';
+  }
+  html += '</div>';
+  return html;
+}
+
+function buildPathStrip(books) {
+  var html = '<div class="path-strip">';
+  for (var i = 0; i < 4; i++) {
+    var book = books[i] || {};
+    var bst = safeLower(book.display_state || book.status || '');
+    var isActive = bst === 'active' || bst === 'pair_completed' || bst === 'paused' || bst === 'ready_to_start' || bst === 'is_active';
+    html += '<div class="path-node' + (isActive ? ' active' : '') + '">Chr ' + (i+1) + '</div>';
+    if (i < 3) html += '<div class="path-sep' + (isActive ? ' active' : '') + '"></div>';
+  }
+  html += '</div>';
+  return html;
+}
+
+function attachHandlers() {
+  var btn = document.getElementById('self-action-btn');
+  if (btn) {
+    btn.addEventListener('click', function() {
+      var actions = getActionSet();
+      if (actions.length > 0) handleAction(actions[0].key);
     });
   }
-
-  function loadViewerSession() {
-    return authFetch(ENDPOINTS.session).then(function(r) { return r.json(); }).then(function(d) {
-      if (!d.success || !d.member) {
-        window.location.href = '/login.html';
-        return;
-      }
-      state.member = d.member;
-    }).catch(function(err) {
-      console.error('Session load error:', err);
-      window.location.href = '/login.html';
+  var bell = document.getElementById('notif-bell');
+  var dropdown = document.getElementById('notif-dropdown');
+  if (bell && dropdown) {
+    bell.addEventListener('click', function(e) {
+      e.stopPropagation();
+      dropdown.style.display = dropdown.style.display === 'block' ? 'none' : 'block';
     });
+    document.addEventListener('click', function() { if (dropdown) dropdown.style.display = 'none'; });
   }
+}
 
-  // ── AUTO REFRESH ──
-  var _refreshInterval = null;
-  function startAutoRefreshLoop() {
-    if (_refreshInterval) return;
-    _refreshInterval = setInterval(function() {
-      fetchBookState().then(function(data) {
-        if (data) {
-          state.pageData = data;
-          state.partner = data.partner || (data.partnership ? data.partnership.counterpart : null) || data.counterpart || null;
-        }
-      });
-    }, 10000);
-    document.addEventListener('visibilitychange', function() {
-      if (!document.hidden) {
-        fetchBookState().then(function(data) {
-          if (data) { state.pageData = data; renderPage(); }
-        });
-      }
-    });
-  }
+// ══════════════════════════════════════════════════════════
+// ── CANVAS ANIMATION
+// ══════════════════════════════════════════════════════════
 
-  function maybeCheckBreakthroughParams() {
-    // Placeholder for breakthrough integration
-  }
+var _canvasStates = {};
 
-  // ── ACTION STATE MACHINE ──
-  function getActionSet() {
-    var vol = getSelectedVolume();
-    if (!vol) return [];
+function startCanvas(canvasId, gender, isSelf) {
+  // Cancel any previous animation on this canvas
+  var prev = _canvasStates[canvasId];
+  if (prev && prev.rafId) cancelAnimationFrame(prev.rafId);
 
-    var rec = getRecord();
-    var currentBook = getCurrentBook();
-    var bookState = currentBook ? safeLower(currentBook.display_state) : '';
+  var cv = document.getElementById(canvasId);
+  if (!cv) return;
 
-    var actions = [];
+  // Size canvas to match its CSS wrapper (square)
+  var wrap = cv.parentElement;
+  var W = wrap ? wrap.offsetWidth : 300;
+  var H = W; // square
+  var dpr = window.devicePixelRatio || 1;
+  cv.width  = W * dpr;
+  cv.height = H * dpr;
+  var ctx = cv.getContext('2d');
+  ctx.scale(dpr, dpr);
 
-    // Check if personal cultivation is active
-    var cultState = state.pageData ? state.pageData.cultivation : null;
-    var personalActive = cultState && (cultState.is_active === true || cultState.status === 'cultivating');
+  var cx = W / 2, cy = H / 2;
+  var baseR = W * 0.38;
 
-    if (personalActive) {
-      actions.push({
-        key: 'blocked',
-        label: 'Personal Cultivation Active',
-        title: 'End your personal cultivation session before starting bond cultivation'
-      });
-      return actions;
-    }
+  var figColor = gender === 'female' ? [200, 104, 144] : [200, 169, 106];
+  var colorStr = 'rgba(' + figColor[0] + ',' + figColor[1] + ',' + figColor[2] + ',';
 
-    if (bookState === 'pair_completed' || bookState === 'completed') {
-      actions.push({
-        key: 'breakthrough',
-        label: 'Enter Breakthrough',
-        title: 'Both partners have completed'
-      });
-    } else if (bookState === 'awaiting_partner_completion') {
-      actions.push({
-        key: 'wait',
-        label: 'Awaiting Partner',
-        title: 'Waiting for partner to complete their cultivation'
-      });
-    } else if (bookState === 'active' || bookState === 'is_active') {
-      actions.push({
-        key: 'pause',
-        label: 'Pause Cultivation',
-        title: 'Pause bond meditation'
-      });
-    } else if (bookState === 'ready_to_start') {
-      actions.push({
-        key: 'start',
-        label: 'Begin Cultivation',
-        title: 'Begin cultivating together'
-      });
-    } else if (bookState === 'waiting_for_partner_offering') {
-      actions.push({
-        key: 'wait',
-        label: 'Awaiting Partner Offering',
-        title: 'Waiting for partner to offer their Vestiges'
-      });
-    } else if (bookState === 'ready_for_offering' && rec && rec.available) {
-      actions.push({
-        key: 'offer',
-        label: 'Offer Bond',
-        title: 'Offer Vestiges for this bond book'
-      });
-    } else if (bookState === 'paused') {
-      actions.push({
-        key: 'start',
-        label: 'Resume Cultivation',
-        title: 'Resume bond cultivation'
-      });
-    } else if (rec && rec.available) {
-      actions.push({
-        key: 'start',
-        label: 'Begin Cultivation',
-        title: 'Begin cultivating together'
-      });
-    } else {
-      actions.push({
-        key: 'offer',
-        label: 'Offer Bond',
-        title: 'Offer this bond volume'
-      });
-    }
+  var cst = {
+    t: Math.random() * 10,
+    figImg: null,
+    gender: gender,
+    isSelf: isSelf,
+    rafId: null,
+    stars: []
+  };
+  _canvasStates[canvasId] = cst;
 
-    return actions;
-  }
-
-  // ── HANDLE ACTION ──
-  function handleControlAction(actionKey) {
-    var vol = getSelectedVolume();
-    if (!vol) return;
-
-    if (actionKey === 'breakthrough') {
-      var rec = getRecord();
-      var pUuid = state.requestedPartnershipUuid || '';
-      var vNum = vol.volume_number || 1;
-      var bNum = (rec && rec.current_book) ? rec.current_book.book_number : (rec ? rec.selected_book_number : 0);
-      window.location.href = 'breakthrough.html?partnership_uuid=' + encodeURIComponent(pUuid) + '&volume=' + vNum + '&book=' + bNum;
-      return;
-    }
-
-    if (actionKey === 'wait' || actionKey === 'blocked') return;
-
-    var endpoint = actionKey === 'offer' ? ENDPOINTS.offerBond :
-      actionKey === 'start' ? ENDPOINTS.startBond :
-      actionKey === 'pause' ? ENDPOINTS.pauseBond :
-      actionKey === 'repair' ? ENDPOINTS.syncBond : null;
-
-    if (!endpoint) return;
-
-    var rec = getRecord();
-    var bookNum = 0;
-    if (rec && rec.current_book && rec.current_book.book_number) {
-      bookNum = rec.current_book.book_number;
-    } else if (rec && rec.actionable_book && rec.actionable_book.book_number) {
-      bookNum = rec.actionable_book.book_number;
-    } else if (rec && rec.selected_book_number) {
-      bookNum = rec.selected_book_number;
-    }
-
-    var payload = {
-      volume_number: vol.volume_number,
-      book_number: bookNum || null,
-      partnership_uuid: state.requestedPartnershipUuid || '',
-      sl_avatar_key: safeText(state.member ? state.member.sl_avatar_key : ''),
-      sl_username: safeText(state.member ? state.member.sl_username : '')
-    };
-
-    if (state.requestedLegacyPartnershipId) {
-      payload.partnership_id = state.requestedLegacyPartnershipId;
-    }
-
-    var btn = document.getElementById('self-action-btn');
-    if (btn) btn.disabled = true;
-
-    authFetch(endpoint, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(payload)
-    }).then(function(response) {
-      return response.json().then(function(data) {
-        if (response.ok && data.success) {
-          setTimeout(function() { loadBookState(); }, 1200);
-        } else {
-          console.error('Action failed:', data.message || 'Unknown error');
-          alert(data.message || 'Action failed. Please try again.');
-          if (btn) btn.disabled = false;
-        }
-      });
-    }).catch(function(err) {
-      console.error('Action error:', err);
-      alert('Network error. Please try again.');
-      if (btn) btn.disabled = false;
+  for (var i = 0; i < 55; i++) {
+    cst.stars.push({
+      x: Math.random(), y: Math.random(),
+      sz: 0.5 + Math.random() * 1.4,
+      sp: 0.0003 + Math.random() * 0.0007,
+      ph: Math.random() * 6.28,
+      br: 0.2 + Math.random() * 0.4
     });
   }
 
-  // ── RENDER ──
-  function renderPage() {
-    renderContextStrip();
-    renderMainContent();
-  }
+  loadVesselFigure(gender, function(src) { cst.figImg = src; });
 
-  function renderContextStrip() {
-    var el = document.getElementById('context-strip');
-    if (!el) return;
-    var rec = getRecord();
-    var partner = getFocusedPartner();
-    var bondCore = rec ? rec.bond_core : null;
-    var vol = getSelectedVolume();
+  function draw() {
+    cst.t += 0.016;
+    var t = cst.t;
+    ctx.clearRect(0, 0, W, H);
 
-    var html = '';
-    if (state.member) {
-      html += '<div class="stat-chip"><span class="label">You:</span><span class="value">' +
-        safeText(state.member.display_name || state.member.sl_username, 'Unknown') + '</span></div>';
-    }
-    if (partner) {
-      html += '<div class="stat-chip"><span class="label">Partner:</span><span class="value">' +
-        safeText(partner.display_name || partner.sl_username, 'Unknown') + '</span></div>';
-    }
-    if (bondCore) {
-      html += '<div class="stat-chip"><span class="label">Stage:</span><span class="value">' +
-        safeText(bondCore.stage_name, 'Unknown') + '</span></div>';
-    }
-    if (vol) {
-      html += '<div class="stat-chip"><span class="label">Volume:</span><span class="value">' +
-        safeNumber(vol.volume_number, 1) + '</span></div>';
-    }
-    var currentBook = getCurrentBook();
-    if (currentBook) {
-      html += '<div class="stat-chip"><span class="label">Status:</span><span class="value">' +
-        formatStateLabel(currentBook.display_state) + '</span></div>';
-    }
-    el.innerHTML = html;
-  }
+    // bg
+    ctx.fillStyle = '#060608';
+    ctx.fillRect(0, 0, W, H);
 
-  function renderMainContent() {
-    var el = document.getElementById('main-content');
-    if (!el) return;
+    // halo
+    var hg = ctx.createRadialGradient(cx, cy, 0, cx, cy, baseR + 50);
+    hg.addColorStop(0, colorStr + '0.05)');
+    hg.addColorStop(1, 'rgba(6,6,8,0)');
+    ctx.fillStyle = hg;
+    ctx.fillRect(0, 0, W, H);
 
-    var rec = getRecord();
-    var vol = getSelectedVolume();
-    var books = getBooksForShelf();
-    var currentBook = getCurrentBook();
-    var partner = getFocusedPartner();
-    var bondCore = rec ? rec.bond_core : null;
-    var bondSession = state.pageData ? state.pageData.bond_session : null;
-    var actions = getActionSet();
-    var action = actions.length > 0 ? actions[0] : null;
-
-    var html = '';
-
-    // ── Bond Panels Row ──
-    html += '<div class="bond-panels-row">';
-
-    // ── Self Panel (left) ──
-    html += renderSelfPanel(currentBook, bondSession, action);
-
-    // ── Partner Panel (right) ──
-    html += renderPartnerPanel(partner, currentBook, bondSession);
-
-    html += '</div>';
-
-    // ── Shared Bond Section ──
-    html += renderSharedSection(bondCore, bondSession, currentBook);
-
-    // ── Book Cards ──
-    html += '<div class="books-section">';
-    html += '<div class="books-section-header">Bond Books</div>';
-    html += renderBookCards(books);
-    html += renderPathStrip(books);
-    html += '</div>';
-
-    // ── Bottom Actions ──
-    html += '<div class="bottom-actions">';
-    html += '<a href="cultivation-book.html">Back to Library</a>';
-    html += '<a href="partnerships.html">Partnership Page</a>';
-    html += '</div>';
-
-    el.innerHTML = html;
-    attachActionHandlers();
-
-    setTimeout(function() {
-      startCanvasAnimation('self-canvas', getMemberGender(), true);
-      startCanvasAnimation('partner-canvas', getPartnerGender(), false);
-    }, 100);
-  }
-
-  function renderSelfPanel(currentBook, bondSession, action) {
-    var bookState = currentBook ? safeLower(currentBook.display_state) : 'idle';
-    var selfProgress = 0;
-    var selfOffering = false;
-    if (currentBook && currentBook.self) {
-      selfProgress = safeNumber(currentBook.self.progress_percent, 0);
-      selfOffering = safeBoolean(currentBook.self.offering_complete);
-    }
-    var memberName = state.member ? safeText(state.member.display_name || state.member.sl_username, 'You') : 'You';
-    var isDisabled = !action || action.key === 'blocked' || action.key === 'wait';
-
-    var html = '<div class="bond-panel self-panel">';
-
-    // Header
-    html += '<div class="panel-header">';
-    html += '<div><div class="panel-kicker">Your Cultivation</div>';
-    html += '<div class="panel-name">' + memberName + '</div></div>';
-    var badgeClass = (bookState === 'active' || bookState === 'is_active') ? ' active' :
-      (bookState === 'pair_completed' || bookState === 'completed') ? ' completed' : '';
-    html += '<div class="panel-status-badge' + badgeClass + '">' + formatStateLabel(bookState) + '</div>';
-    html += '</div>';
-
-    // Canvas
-    html += '<div class="panel-canvas-wrap"><canvas id="self-canvas" width="400" height="420"></canvas></div>';
-
-    // Progress
-    html += '<div class="panel-progress">';
-    html += '<div class="progress-row"><span class="progress-label">Progress</span><span class="progress-value">' + Math.round(selfProgress) + '%</span></div>';
-    html += '<div class="progress-track"><div class="progress-fill" style="width: ' + Math.round(selfProgress) + '%"></div></div>';
-    html += '<div class="progress-sub">' + (selfOffering ? 'Offering sealed' : 'Offering pending') + '</div>';
-    html += '</div>';
-
-    // Action
-    html += '<div class="panel-action-area">';
-    html += '<button class="action-button" id="self-action-btn"' + (isDisabled ? ' disabled' : '') + '>' +
-      (action ? action.label : 'No Action') + '</button>';
-    html += '<div class="action-subnote">' + (action ? action.title : '') + '</div>';
-    html += '</div>';
-
-    html += '</div>';
-    return html;
-  }
-
-  function renderPartnerPanel(partner, currentBook, bondSession) {
-    var partnerName = partner ? safeText(partner.display_name || partner.sl_username, 'Partner') : 'Partner';
-    var partnerProgress = 0;
-    var partnerOffering = false;
-    var bookState = currentBook ? safeLower(currentBook.display_state) : 'idle';
-    if (currentBook && currentBook.partner) {
-      partnerProgress = safeNumber(currentBook.partner.progress_percent, 0);
-      partnerOffering = safeBoolean(currentBook.partner.offering_complete);
-    }
-
-    var html = '<div class="bond-panel partner-panel">';
-
-    // Header
-    html += '<div class="panel-header">';
-    html += '<div><div class="panel-kicker">Partner\'s Cultivation</div>';
-    html += '<div class="panel-name">' + partnerName + '</div></div>';
-    var badgeClass = (bookState === 'active' || bookState === 'is_active') ? ' active' :
-      (bookState === 'pair_completed' || bookState === 'completed') ? ' completed' : '';
-    html += '<div class="panel-status-badge' + badgeClass + '">' + formatStateLabel(bookState) + '</div>';
-    html += '</div>';
-
-    // Canvas
-    html += '<div class="panel-canvas-wrap"><canvas id="partner-canvas" width="400" height="420"></canvas></div>';
-
-    // Progress
-    var pGender = getPartnerGender();
-    html += '<div class="panel-progress">';
-    html += '<div class="progress-row"><span class="progress-label">Progress</span><span class="progress-value">' + Math.round(partnerProgress) + '%</span></div>';
-    html += '<div class="progress-track"><div class="progress-fill' + (pGender === 'female' ? ' female' : '') + '" style="width: ' + Math.round(partnerProgress) + '%"></div></div>';
-    html += '<div class="progress-sub">' + (partnerOffering ? 'Offering sealed' : 'Offering pending') + '</div>';
-    html += '</div>';
-
-    html += '</div>';
-    return html;
-  }
-
-  function renderSharedSection(bondCore, bondSession, currentBook) {
-    var stageName = bondCore ? safeText(bondCore.stage_name, 'Unknown') : 'Unknown';
-    var bondPct = bondCore ? safeNumber(bondCore.bond_percent, 0) : 0;
-    var completedBooks = bondCore ? safeNumber(bondCore.completed_books_count, 0) : 0;
-
-    // Bond Auric from session
-    var qiCurrent = 0;
-    var qiMax = 1;
-    if (bondSession) {
-      qiCurrent = safeNumber(bondSession.self_qi_accumulated, 0) + safeNumber(bondSession.partner_qi_accumulated, 0);
-      qiMax = safeNumber(bondSession.required_minutes, 0) || 1;
-    }
-    if (currentBook && currentBook.pair) {
-      qiCurrent = safeNumber(currentBook.pair.combined_qi, qiCurrent);
-      qiMax = safeNumber(currentBook.pair.required_qi, qiMax);
-    }
-    var qiPct = qiMax > 0 ? Math.round(clamp(qiCurrent / qiMax, 0, 1) * 100) : 0;
-
-    var html = '<div class="bond-shared-section">';
-
-    // Bond info
-    html += '<div class="bond-shared-info">';
-    html += '<div class="bond-shared-label">Bond Stage</div>';
-    html += '<div class="bond-shared-title">' + stageName + '</div>';
-    html += '<div class="progress-sub">' + bondPct + '% — ' + completedBooks + ' books completed</div>';
-    html += '</div>';
-
-    // Bond Auric Reserve
-    html += '<div class="bond-qi-section">';
-    html += '<div class="bond-shared-label">Bond Auric Reserve</div>';
-    html += '<div class="bond-qi-track"><div class="bond-qi-fill" style="width: ' + qiPct + '%"></div></div>';
-    html += '<div class="bond-qi-text"><span>' + qiCurrent + ' qi</span><span>' + qiPct + '%</span></div>';
-    html += '</div>';
-
-    html += '</div>';
-    return html;
-  }
-
-  function renderBookCards(books) {
-    var html = '<div class="book-cards-grid">';
-    for (var i = 0; i < 4; i++) {
-      var book = books[i] || null;
-      var bookName = book ? (book.book_name || book.book_label || 'Book ' + (i + 1)) : 'Book ' + (i + 1);
-      var status = safeLower(book ? (book.display_state || book.status) : 'locked');
-      var progressPct = 0;
-      if (book && book.self && typeof book.self.progress_percent === 'number') {
-        progressPct = book.self.progress_percent;
-      }
-
-      var badgeLabel = 'Locked';
-      var accentClass = '';
-      if (status === 'pair_completed' || status === 'completed') { badgeLabel = 'Completed'; accentClass = 'completed'; }
-      else if (status === 'active' || status === 'is_active') { badgeLabel = 'Active'; accentClass = 'active'; }
-      else if (status === 'paused') { badgeLabel = 'Paused'; accentClass = 'active'; }
-      else if (status === 'ready_for_offering') { badgeLabel = 'Ready to Offer'; }
-      else if (status === 'waiting_for_partner_offering') { badgeLabel = 'Awaiting Partner'; }
-      else if (status === 'ready_to_start') { badgeLabel = 'Ready'; }
-      else if (status === 'awaiting_partner_completion') { badgeLabel = 'Awaiting Partner'; }
-
-      html += '<div class="book-card">' +
-        '<div class="book-card-accent ' + accentClass + '"></div>' +
-        '<div class="book-card-header">' +
-        '<div class="book-card-name">' + safeText(bookName) + '</div>' +
-        '<div class="book-card-badge">' + badgeLabel + '</div>' +
-        '</div>' +
-        '<div class="book-card-progress">' +
-        '<div class="book-card-progress-bar"><div class="book-card-progress-fill" style="width: ' + Math.round(progressPct) + '%"></div></div>' +
-        '<div class="book-card-progress-text">' + Math.round(progressPct) + '%</div>' +
-        '</div></div>';
-    }
-    html += '</div>';
-    return html;
-  }
-
-  function renderPathStrip(books) {
-    var html = '<div class="path-strip">';
-    for (var i = 0; i < 4; i++) {
-      var book = books[i] || {};
-      var bst = safeLower(book.display_state || book.status || '');
-      var isActive = bst === 'active' || bst === 'pair_completed' || bst === 'paused' || bst === 'ready_to_start';
-      html += '<div class="path-book' + (isActive ? ' active' : '') + '">Book ' + (i + 1) + '</div>';
-      if (i < 3) html += '<div class="path-dot' + (isActive ? ' active' : '') + '"></div>';
-    }
-    html += '</div>';
-    return html;
-  }
-
-  function attachActionHandlers() {
-    var btn = document.getElementById('self-action-btn');
-    if (btn) {
-      btn.addEventListener('click', function() {
-        var actions = getActionSet();
-        if (actions.length > 0) handleControlAction(actions[0].key);
-      });
-    }
-  }
-
-  // ══════════════════════════════════════════════════════════
-  // ── CANVAS ANIMATION (per-panel, with background + rune)
-  // ══════════════════════════════════════════════════════════
-
-  var _canvasState = {};
-
-  function startCanvasAnimation(canvasId, gender, isSelf) {
-    var cv = document.getElementById(canvasId);
-    if (!cv) return;
-
-    var W = cv.width;
-    var H = cv.height;
-    var cx = W / 2;
-    var cy = H / 2;
-    var baseR = Math.min(W, H) * 0.38;
-    var ctx = cv.getContext('2d');
-
-    // DPR scaling
-    var dpr = window.devicePixelRatio || 1;
-    cv.width = W * dpr;
-    cv.height = H * dpr;
-    cv.style.width = W + 'px';
-    cv.style.height = H + 'px';
-    ctx.scale(dpr, dpr);
-
-    var cState = {
-      t: Math.random() * 10,
-      figImg: null,
-      gender: gender,
-      isSelf: isSelf,
-      starfield: null
-    };
-    _canvasState[canvasId] = cState;
-
-    // Load figure
-    loadVesselFigure(gender, function(src) { cState.figImg = src; });
-
-    // Init starfield
-    cState.starfield = [];
-    for (var i = 0; i < 60; i++) {
-      cState.starfield.push({
-        x: Math.random(), y: Math.random(),
-        sz: 0.5 + Math.random() * 1.5,
-        sp: 0.0003 + Math.random() * 0.0008,
-        ph: Math.random() * 6.28,
-        bright: 0.2 + Math.random() * 0.4
-      });
-    }
-
-    var figColor = gender === 'female' ? [200, 104, 144] : [200, 169, 106];
-    var colorStr = 'rgba(' + figColor[0] + ',' + figColor[1] + ',' + figColor[2] + ',';
-
-    function draw() {
-      cState.t += 0.016;
-      var t = cState.t;
-
-      // Clear
-      ctx.clearRect(0, 0, W, H);
-
-      // 1. Void background
-      ctx.fillStyle = '#060608';
-      ctx.fillRect(0, 0, W, H);
-
-      // 2. Subtle center halo
-      ctx.save();
-      var haloGrad = ctx.createRadialGradient(cx, cy, 0, cx, cy, baseR + 60);
-      haloGrad.addColorStop(0, colorStr + '0.04)');
-      haloGrad.addColorStop(1, 'rgba(6,6,8,0)');
-      ctx.fillStyle = haloGrad;
-      ctx.fillRect(0, 0, W, H);
-      ctx.restore();
-
-      // 3. Mountains
-      drawMountains(ctx, W, H, 0.3);
-
-      // 4. Starfield
-      drawStarfield(ctx, W, H, t, cState.starfield, colorStr);
-
-      // 5. Qi Veins
-      drawQiVeins(ctx, cx, cy, baseR, t, colorStr + '0.4)', 0.2);
-
-      // 6. Gold Rune Seal (behind figure)
-      drawRuneSeal(ctx, cx, cy, baseR, t, colorStr);
-
-      // 7. Figure
-      if (cState.figImg) {
-        var figH = baseR * 1.6;
-        var figW = figH;
-        var floatY = Math.sin(t * 0.8) * 4;
-        var figX = cx - figW * 0.5;
-        var figY = cy - figH * 0.52 + floatY;
-
-        ctx.save();
-        ctx.globalAlpha = cState.isSelf ? 0.95 : 0.7;
-        ctx.drawImage(cState.figImg, figX, figY, figW, figH);
-        ctx.restore();
-      }
-
-      // 8. Aura ring
-      var currentBook = getCurrentBook();
-      var pct = 0;
-      if (currentBook) {
-        var sub = cState.isSelf ? currentBook.self : currentBook.partner;
-        if (sub) pct = safeNumber(sub.progress_percent, 0) / 100;
-      }
-      if (pct > 0) {
-        drawAuraRing(ctx, cx, cy, baseR, pct, colorStr, t);
-      }
-
-      _canvasState[canvasId].rafId = requestAnimationFrame(draw);
-    }
-
-    draw();
-  }
-
-  // ── AMBIENT: MOUNTAINS ──
-  function drawMountains(ctx, W, H, alpha) {
+    // mountains
     ctx.save();
-    ctx.globalAlpha = alpha;
+    ctx.globalAlpha = 0.28;
     ctx.fillStyle = '#1a1a28';
     ctx.beginPath();
     ctx.moveTo(0, H);
-    ctx.lineTo(0, H * 0.88);
-    ctx.lineTo(W * 0.08, H * 0.82);
-    ctx.lineTo(W * 0.15, H * 0.86);
-    ctx.lineTo(W * 0.25, H * 0.78);
-    ctx.lineTo(W * 0.35, H * 0.84);
-    ctx.lineTo(W * 0.45, H * 0.76);
-    ctx.lineTo(W * 0.55, H * 0.80);
-    ctx.lineTo(W * 0.65, H * 0.74);
-    ctx.lineTo(W * 0.75, H * 0.82);
-    ctx.lineTo(W * 0.85, H * 0.79);
-    ctx.lineTo(W * 0.92, H * 0.85);
-    ctx.lineTo(W, H * 0.88);
-    ctx.lineTo(W, H);
-    ctx.closePath();
-    ctx.fill();
+    ctx.lineTo(0, H*0.88); ctx.lineTo(W*0.08,H*0.82); ctx.lineTo(W*0.15,H*0.86);
+    ctx.lineTo(W*0.25,H*0.78); ctx.lineTo(W*0.35,H*0.84); ctx.lineTo(W*0.45,H*0.76);
+    ctx.lineTo(W*0.55,H*0.80); ctx.lineTo(W*0.65,H*0.74); ctx.lineTo(W*0.75,H*0.82);
+    ctx.lineTo(W*0.85,H*0.79); ctx.lineTo(W*0.92,H*0.85); ctx.lineTo(W,H*0.88);
+    ctx.lineTo(W, H); ctx.closePath(); ctx.fill(); ctx.restore();
 
-    // Mist
-    var mist = ctx.createLinearGradient(0, H * 0.85, 0, H);
-    mist.addColorStop(0, 'rgba(14,14,20,0)');
-    mist.addColorStop(1, 'rgba(26,26,40,' + (alpha * 0.5) + ')');
-    ctx.globalAlpha = 1;
-    ctx.fillStyle = mist;
-    ctx.fillRect(0, H * 0.85, W, H * 0.15);
-    ctx.restore();
-  }
-
-  // ── AMBIENT: STARFIELD ──
-  function drawStarfield(ctx, W, H, t, stars, colorStr) {
+    // stars
     ctx.save();
-    for (var i = 0; i < stars.length; i++) {
-      var s = stars[i];
+    for (var i = 0; i < cst.stars.length; i++) {
+      var s = cst.stars[i];
       s.y -= s.sp;
       if (s.y < -0.02) { s.y = 1.02; s.x = Math.random(); }
-      var flicker = 0.6 + Math.sin(t * 1.5 + s.ph) * 0.4;
-      ctx.globalAlpha = s.bright * flicker;
+      var flicker = 0.6 + Math.sin(t * 1.4 + s.ph) * 0.4;
+      ctx.globalAlpha = s.br * flicker;
       ctx.fillStyle = colorStr + '0.8)';
-      ctx.beginPath();
-      ctx.arc(s.x * W, s.y * H, s.sz, 0, Math.PI * 2);
-      ctx.fill();
+      ctx.beginPath(); ctx.arc(s.x * W, s.y * H, s.sz, 0, Math.PI*2); ctx.fill();
     }
     ctx.restore();
-  }
 
-  // ── AMBIENT: QI VEINS ──
-  function drawQiVeins(ctx, cx, cy, baseR, t, color, alpha) {
+    // qi veins
     ctx.save();
-    var veinCount = 6;
-    var pulse = 0.5 + Math.sin(t * 0.8) * 0.3;
-    ctx.globalAlpha = alpha * pulse;
-    ctx.strokeStyle = color;
-    ctx.lineWidth = 1.2;
-    for (var v = 0; v < veinCount; v++) {
-      var angle = (v / veinCount) * Math.PI * 2 + t * 0.02;
+    var vPulse = 0.5 + Math.sin(t * 0.8) * 0.3;
+    ctx.globalAlpha = 0.18 * vPulse;
+    ctx.strokeStyle = colorStr + '0.5)';
+    ctx.lineWidth = 1.1;
+    for (var v = 0; v < 6; v++) {
+      var va = (v/6)*Math.PI*2 + t*0.02;
       ctx.beginPath();
-      var px = cx, py = cy;
-      ctx.moveTo(px, py);
-      var segments = 5;
+      var px = cx, py = cy; ctx.moveTo(px, py);
       var segLen = baseR * 0.22;
-      for (var s = 0; s < segments; s++) {
-        var drift = Math.sin(t * 0.5 + v + s * 2) * 0.3;
-        px += Math.cos(angle + drift) * segLen;
-        py += Math.sin(angle + drift) * segLen;
+      for (var sg = 0; sg < 5; sg++) {
+        var drift = Math.sin(t*0.5+v+sg*2)*0.3;
+        px += Math.cos(va+drift)*segLen; py += Math.sin(va+drift)*segLen;
         ctx.lineTo(px, py);
       }
       ctx.stroke();
     }
     ctx.restore();
-  }
 
-  // ── GOLD RUNE SEAL (behind figure) ──
-  function drawRuneSeal(ctx, cx, cy, baseR, t, colorStr) {
+    // rune seal
     ctx.save();
-    ctx.globalAlpha = 0.10;
+    ctx.globalAlpha = 0.09;
     ctx.strokeStyle = colorStr + '0.6)';
-    ctx.lineWidth = 1.2;
-
-    // Outer ring
-    ctx.beginPath();
-    ctx.arc(cx, cy, baseR * 1.05, 0, Math.PI * 2);
-    ctx.stroke();
-
-    // Inner ring
-    ctx.beginPath();
-    ctx.arc(cx, cy, baseR * 0.65, 0, Math.PI * 2);
-    ctx.stroke();
-
-    // Rotating rune glyphs
-    var runes = ['\u2727','\u2726','\u2734','\u2735','\u2721','\u2742','\u2720','\u273A','\u2736','\u2737','\u2738','\u2739'];
-    ctx.font = '10px serif';
-    ctx.fillStyle = colorStr + '0.5)';
-    ctx.textAlign = 'center';
-    ctx.textBaseline = 'middle';
+    ctx.lineWidth = 1.1;
+    ctx.beginPath(); ctx.arc(cx, cy, baseR*1.04, 0, Math.PI*2); ctx.stroke();
+    ctx.beginPath(); ctx.arc(cx, cy, baseR*0.65, 0, Math.PI*2); ctx.stroke();
+    var runes = ['✧','✦','✴','✵','✡','✢','✣','✤','✦','✧','✴','✵'];
+    ctx.font = '10px serif'; ctx.fillStyle = colorStr + '0.5)'; ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
     var phase = t * 0.3;
-    for (var i = 0; i < 12; i++) {
-      var a = (i / 12) * Math.PI * 2 + phase;
-      var rx = cx + Math.cos(a) * baseR * 0.85;
-      var ry = cy + Math.sin(a) * baseR * 0.85;
-      ctx.globalAlpha = 0.08 + Math.sin(t + i) * 0.03;
-      ctx.fillText(runes[i], rx, ry);
+    for (var r = 0; r < 12; r++) {
+      var ra = (r/12)*Math.PI*2 + phase;
+      ctx.globalAlpha = 0.07 + Math.sin(t+r)*0.025;
+      ctx.fillText(runes[r], cx + Math.cos(ra)*baseR*0.85, cy + Math.sin(ra)*baseR*0.85);
+    }
+    ctx.restore();
+
+    // figure
+    if (cst.figImg) {
+      var figH = baseR * 1.6;
+      var figW = figH;
+      var floatY = Math.sin(t * 0.8) * 4;
+      ctx.save();
+      ctx.globalAlpha = isSelf ? 0.95 : 0.68;
+      ctx.drawImage(cst.figImg, cx - figW*0.5, cy - figH*0.52 + floatY, figW, figH);
+      ctx.restore();
     }
 
-    // Cross lines
-    ctx.globalAlpha = 0.06;
-    ctx.strokeStyle = colorStr + '0.4)';
-    for (var j = 0; j < 4; j++) {
-      var la = (j / 4) * Math.PI * 2 + t * -0.15;
-      ctx.beginPath();
-      ctx.moveTo(cx + Math.cos(la) * baseR * 0.65, cy + Math.sin(la) * baseR * 0.65);
-      ctx.lineTo(cx + Math.cos(la) * baseR * 1.05, cy + Math.sin(la) * baseR * 1.05);
-      ctx.stroke();
+    // aura ring
+    var cb2 = getCurrentBook();
+    var pct = 0;
+    if (cb2) {
+      var sub = isSelf ? cb2.self : cb2.partner;
+      if (sub) pct = safeNumber(sub.progress_percent, 0) / 100;
+    }
+    if (pct > 0) {
+      var start = -Math.PI/2, end = start + Math.PI*2*pct;
+      ctx.save();
+      ctx.beginPath(); ctx.arc(cx, cy, baseR, start, end);
+      ctx.strokeStyle = colorStr + '0.3)'; ctx.lineWidth = 16; ctx.globalAlpha = 0.14 + Math.sin(t*1.2)*0.04;
+      ctx.lineCap = 'round'; ctx.stroke(); ctx.restore();
+      ctx.save();
+      ctx.beginPath(); ctx.arc(cx, cy, baseR, start, end);
+      ctx.strokeStyle = colorStr + '0.9)'; ctx.lineWidth = 2.5; ctx.globalAlpha = 0.85;
+      ctx.lineCap = 'round'; ctx.stroke(); ctx.restore();
+      var tipX = cx + Math.cos(end)*baseR, tipY = cy + Math.sin(end)*baseR;
+      ctx.save(); ctx.beginPath(); ctx.arc(tipX, tipY, 3.5, 0, Math.PI*2);
+      ctx.fillStyle = '#fff'; ctx.globalAlpha = 0.88; ctx.fill(); ctx.restore();
     }
 
-    ctx.restore();
+    cst.rafId = requestAnimationFrame(draw);
   }
+  draw();
+}
 
-  // ── AURA RING ──
-  function drawAuraRing(ctx, cx, cy, baseR, pct, colorStr, t) {
-    if (pct <= 0) return;
-    var start = -Math.PI / 2;
-    var end = start + Math.PI * 2 * pct;
+// ── FIGURE LOADING ──
+var _figLoading = {};
+var _figCallbacks = { male: [], female: [] };
 
-    // Wide glow
-    ctx.save();
-    ctx.beginPath();
-    ctx.arc(cx, cy, baseR, start, end);
-    ctx.strokeStyle = colorStr + '0.3)';
-    ctx.lineWidth = 18;
-    ctx.globalAlpha = 0.15 + Math.sin(t * 1.2) * 0.05;
-    ctx.lineCap = 'round';
-    ctx.stroke();
-    ctx.restore();
+function loadVesselFigure(gender, callback) {
+  if (state.figureCache[gender]) { callback(state.figureCache[gender]); return; }
+  _figCallbacks[gender] = _figCallbacks[gender] || [];
+  _figCallbacks[gender].push(callback);
+  if (_figLoading[gender]) return;
+  _figLoading[gender] = true;
+  var url = (gender === 'female') ? '/images/female-figure.svg' : '/images/figure.svg';
+  var img = new Image();
+  img.crossOrigin = 'anonymous';
+  img.onload = function() {
+    try {
+      var off = document.createElement('canvas');
+      off.width = 1024; off.height = 1024;
+      var ctx2 = off.getContext('2d');
+      ctx2.drawImage(img, 0, 0);
+      var id = ctx2.getImageData(0, 0, 1024, 1024);
+      var d = id.data;
+      var rgb = (gender === 'female') ? [200,104,144] : [200,169,106];
+      for (var i = 0; i < d.length; i += 4) {
+        if (d[i+3] > 10 && d[i] < 80 && d[i+1] < 80 && d[i+2] < 80) {
+          d[i] = rgb[0]; d[i+1] = rgb[1]; d[i+2] = rgb[2];
+        } else { d[i+3] = 0; }
+      }
+      ctx2.putImageData(id, 0, 0);
+      state.figureCache[gender] = off;
+    } catch(e) { state.figureCache[gender] = null; }
+    _figLoading[gender] = false;
+    var cbs = (_figCallbacks[gender] || []).slice();
+    _figCallbacks[gender] = [];
+    cbs.forEach(function(cb){ cb(state.figureCache[gender]); });
+  };
+  img.onerror = function() {
+    state.figureCache[gender] = null; _figLoading[gender] = false;
+    var cbs = (_figCallbacks[gender] || []).slice(); _figCallbacks[gender] = [];
+    cbs.forEach(function(cb){ cb(null); });
+  };
+  img.src = url;
+}
 
-    // Core line
-    ctx.save();
-    ctx.beginPath();
-    ctx.arc(cx, cy, baseR, start, end);
-    ctx.strokeStyle = colorStr + '0.9)';
-    ctx.lineWidth = 3;
-    ctx.globalAlpha = 0.85;
-    ctx.lineCap = 'round';
-    ctx.stroke();
-    ctx.restore();
+// ── INIT ──
+function init() {
+  var params = getUrlParams();
+  if (params.volume) state.requestedVolumeNumber = safeNumber(params.volume);
+  if (params.partnership_uuid) state.requestedPartnershipUuid = safeText(params.partnership_uuid);
+  if (params.partnership_id) state.requestedLegacyPartnershipId = safeText(params.partnership_id);
 
-    // Tip glow
-    var tipX = cx + Math.cos(end) * baseR;
-    var tipY = cy + Math.sin(end) * baseR;
-    ctx.save();
-    ctx.beginPath();
-    ctx.arc(tipX, tipY, 4, 0, Math.PI * 2);
-    ctx.fillStyle = '#ffffff';
-    ctx.globalAlpha = 0.9;
-    ctx.fill();
-    ctx.restore();
-  }
+  loadViewerSession().then(function() {
+    if (!state.member) return;
+    return loadBookState();
+  });
 
-  // ── FIGURE LOADING ──
-  var _figLoading = {};
-  var _figCallbacks = { male: [], female: [] };
+  // resize handler — refire canvases if window resized
+  var _resizeTimer;
+  window.addEventListener('resize', function() {
+    clearTimeout(_resizeTimer);
+    _resizeTimer = setTimeout(function() {
+      var selfGender = getMemberGender();
+      var partnerGender = getPartnerGender();
+      if (document.getElementById('self-canvas')) startCanvas('self-canvas', selfGender, true);
+      if (document.getElementById('partner-canvas')) startCanvas('partner-canvas', partnerGender, false);
+    }, 250);
+  });
+}
 
-  function loadVesselFigure(gender, callback) {
-    if (state.figureCache[gender]) { callback(state.figureCache[gender]); return; }
-    _figCallbacks[gender] = _figCallbacks[gender] || [];
-    _figCallbacks[gender].push(callback);
-    if (_figLoading[gender]) return;
-    _figLoading[gender] = true;
-
-    var url = (gender === 'female') ? '/images/female-figure.svg' : '/images/figure.svg';
-    var img = new Image();
-    img.crossOrigin = 'anonymous';
-    img.onload = function() {
-      try {
-        var off = document.createElement('canvas');
-        off.width = 1024; off.height = 1024;
-        var ctx2 = off.getContext('2d');
-        ctx2.drawImage(img, 0, 0);
-        var id = ctx2.getImageData(0, 0, 1024, 1024);
-        var d = id.data;
-        var rgb = (gender === 'female') ? [200, 104, 144] : [200, 169, 106];
-        for (var i = 0; i < d.length; i += 4) {
-          if (d[i+3] > 10 && d[i] < 80 && d[i+1] < 80 && d[i+2] < 80) {
-            d[i] = rgb[0]; d[i+1] = rgb[1]; d[i+2] = rgb[2];
-          } else {
-            d[i+3] = 0;
-          }
-        }
-        ctx2.putImageData(id, 0, 0);
-        state.figureCache[gender] = off;
-      } catch(e) { state.figureCache[gender] = null; }
-      _figLoading[gender] = false;
-      var cbs = (_figCallbacks[gender] || []).slice();
-      _figCallbacks[gender] = [];
-      for (var j = 0; j < cbs.length; j++) { cbs[j](state.figureCache[gender]); }
-    };
-    img.onerror = function() {
-      state.figureCache[gender] = null;
-      _figLoading[gender] = false;
-      var cbs = (_figCallbacks[gender] || []).slice();
-      _figCallbacks[gender] = [];
-      for (var j = 0; j < cbs.length; j++) { cbs[j](null); }
-    };
-    img.src = url;
-  }
-
-  // ── LOGOUT ──
-  function setupLogout() {
-    var link = document.getElementById('logout-link');
-    if (link) {
-      link.addEventListener('click', function(e) {
-        e.preventDefault();
-        clearClientSessionArtifacts();
-        window.location.href = '/login.html';
-      });
-    }
-  }
-
-  // ── INIT ──
-  function init() {
-    var params = getUrlParams();
-    if (params.volume) state.requestedVolumeNumber = safeNumber(params.volume);
-    if (params.partnership_uuid) state.requestedPartnershipUuid = safeText(params.partnership_uuid);
-    if (params.partnership_id) state.requestedLegacyPartnershipId = safeText(params.partnership_id);
-
-    setupLogout();
-
-    loadViewerSession().then(function() {
-      if (!state.member) return;
-      return loadBookState();
-    });
-  }
-
-  document.addEventListener('DOMContentLoaded', init);
+document.addEventListener('DOMContentLoaded', init);
 </script>
 
-
-
-  <script>
-  (function() {
-    var track = document.getElementById('ticker-track');
-    if (!track) return;
-    var _running = false;
-    var pos = 0;
-
-    function startScroll() {
-      if (_running) return;
-      _running = true;
-      function loop() {
-        var half = track.scrollWidth / 2;
-        pos -= 0.45;
-        if (half > 0 && Math.abs(pos) >= half) pos = 0;
-        track.style.transform = 'translateX(' + pos + 'px)';
-        requestAnimationFrame(loop);
+<script>
+// ── TICKER ──
+(function() {
+  var track = document.getElementById('ticker-track');
+  if (!track) return;
+  var _running = false, pos = 0;
+  function startScroll() {
+    if (_running) return; _running = true;
+    function loop() {
+      var half = track.scrollWidth / 2;
+      pos -= 0.4;
+      if (half > 0 && Math.abs(pos) >= half) pos = 0;
+      track.style.transform = 'translateX(' + pos + 'px)';
+      requestAnimationFrame(loop);
+    }
+    loop();
+  }
+  function setItems(items) {
+    if (!items.length) items = [{ type:'celestial', text:'The celestial currents are still. Cultivate in peace.' }];
+    var doubled = items.concat(items);
+    track.innerHTML = doubled.map(function(i){
+      return '<span class="ticker-item ' + i.type + '"><span class="ticker-dot ' + i.type + '"></span>' + i.text + '</span>';
+    }).join('');
+    startScroll();
+  }
+  async function loadTicker() {
+    var items = [];
+    try {
+      var res = await fetch('/.netlify/functions/load-world-celestial-state',{method:'POST',headers:{'Content-Type':'application/json'},body:'{}',credentials:'include'});
+      var data = await res.json(); var w = data.world || data;
+      if (w.phase_name) items.push({ type:'celestial', text: w.phase_name + (w.force_name ? ' · ' + w.force_name : '') });
+      if (w.phenomenon_name && w.phenomenon_name !== 'None') items.push({ type:'celestial', text:'Phenomenon: ' + w.phenomenon_name });
+    } catch(e) {}
+    try {
+      var nr = await fetch('/.netlify/functions/notifications-list',{credentials:'include'});
+      var nd = await nr.json();
+      if (nd.success && nd.notifications) {
+        nd.notifications.filter(function(n){ return !n.is_read; }).slice(0,5).forEach(function(n){
+          items.push({ type: (n.type === 'breakthrough_success' || n.type === 'breakthrough_failure') ? 'notice-urgent' : 'notice', text: n.title + ' — ' + n.message });
+        });
+        var badge = document.getElementById('notif-badge');
+        if (badge && nd.unread_count > 0) { badge.textContent = nd.unread_count > 99 ? '99+' : nd.unread_count; badge.style.display = 'flex'; }
       }
-      loop();
-    }
+    } catch(e) {}
+    setItems(items);
+  }
+  loadTicker();
+  setInterval(loadTicker, 60000);
+})();
+</script>
 
-    function setItems(items) {
-      if (!items.length) items = [{ type: 'celestial', text: 'The celestial currents are still. Cultivate in peace.' }];
-      var doubled = items.concat(items);
-      track.innerHTML = doubled.map(function(i) {
-        return '<span class="ticker-item ' + i.type + '"><span class="ticker-dot ' + i.type + '"></span>' + i.text + '</span>';
-      }).join('');
-      startScroll();
-    }
-
-    async function loadTicker() {
-      var items = [];
-      try {
-        var res  = await fetch('/.netlify/functions/load-world-celestial-state', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: '{}', credentials: 'include' });
-        var data = await res.json();
-        var w = data.world || data;
-        if (w.phase_name)    items.push({ type: 'celestial', text: w.phase_name + (w.force_name ? ' · ' + w.force_name : '') });
-        if (w.phenomenon_name && w.phenomenon_name !== 'None') items.push({ type: 'celestial', text: 'Phenomenon: ' + w.phenomenon_name });
-        if (w.dashboard_effect_label) items.push({ type: 'celestial', text: w.dashboard_effect_label });
-      } catch(e) {}
-      try {
-        var nr = await fetch('/.netlify/functions/notifications-list', { credentials: 'include' });
-        var nd = await nr.json();
-        if (nd.success && nd.notifications) {
-          nd.notifications.filter(function(n){ return !n.is_read; }).slice(0,5).forEach(function(n) {
-            var urgent = n.type === 'breakthrough_success' || n.type === 'breakthrough_failure' || n.type === 'scroll_complete';
-            items.push({ type: urgent ? 'notice-urgent' : 'notice', text: n.title + ' — ' + n.message });
-          });
-          var badge = document.getElementById('notif-badge');
-          if (badge && nd.unread_count > 0) { badge.textContent = nd.unread_count > 99 ? '99+' : nd.unread_count; badge.style.display = 'flex'; }
-        }
-      } catch(e) {}
-      setItems(items);
-    }
-
-    loadTicker();
-    setInterval(loadTicker, 60000);
-  })();
-  </script>
 </body>
 </html>
