@@ -1047,26 +1047,56 @@
       var html = '<div class="book-cards-grid">';
 
       for (var i = 0; i < 4; i++) {
-        var book = books[i] || { slot_index: i, name: 'Book ' + (i + 1), xp: 0, xp_limit: 100, status: 'sealed' };
-        var status = safeText(book.status || 'sealed').toLowerCase();
-        var progress = safeNumber(book.xp);
-        var progressLimit = safeNumber(book.xp_limit) || 100;
-        var progressPct = formatPercent(progress, progressLimit);
+        var book = books[i] || null;
+        var bookName = book ? (book.book_name || book.book_label || book.name || ('Book ' + (i + 1))) : ('Book ' + (i + 1));
+        var status = safeText(book ? (book.display_state || book.status) : 'locked').toLowerCase();
 
-        var accentClass = status === 'completed' ? 'completed' : status === 'active' ? 'active' : '';
-        var badgeLabel = status === 'completed' ? 'Completed' : status === 'active' ? 'Active' : 'Sealed';
+        // Progress from self sub-object
+        var progressPct = 0;
+        if (book && book.self && typeof book.self.progress_percent === 'number') {
+          progressPct = book.self.progress_percent;
+        }
+
+        // Status label & accent
+        var badgeLabel = 'Sealed';
+        var accentClass = '';
+        if (status === 'pair_completed' || status === 'completed') {
+          badgeLabel = 'Completed';
+          accentClass = 'completed';
+        } else if (status === 'active' || status === 'is_active') {
+          badgeLabel = 'Active';
+          accentClass = 'active';
+        } else if (status === 'paused') {
+          badgeLabel = 'Paused';
+          accentClass = 'active';
+        } else if (status === 'ready_for_offering') {
+          badgeLabel = 'Ready to Offer';
+          accentClass = '';
+        } else if (status === 'waiting_for_partner_offering') {
+          badgeLabel = 'Awaiting Partner';
+          accentClass = '';
+        } else if (status === 'ready_to_start') {
+          badgeLabel = 'Ready';
+          accentClass = '';
+        } else if (status === 'awaiting_partner_completion') {
+          badgeLabel = 'Awaiting Partner';
+          accentClass = '';
+        } else if (status === 'locked') {
+          badgeLabel = 'Locked';
+          accentClass = '';
+        }
 
         html += '<div class="book-card">' +
           '<div class="book-card-accent ' + accentClass + '"></div>' +
           '<div class="book-card-header">' +
-          '<div class="book-card-name">' + safeText(book.name) + '</div>' +
+          '<div class="book-card-name">' + safeText(bookName) + '</div>' +
           '<div class="book-card-badge">' + badgeLabel + '</div>' +
           '</div>' +
           '<div class="book-card-progress">' +
           '<div class="book-card-progress-bar">' +
-          '<div class="book-card-progress-fill" style="width: ' + progressPct + '"></div>' +
+          '<div class="book-card-progress-fill" style="width: ' + Math.round(progressPct) + '%"></div>' +
           '</div>' +
-          '<div class="book-card-progress-text">' + progressPct + '</div>' +
+          '<div class="book-card-progress-text">' + Math.round(progressPct) + '%</div>' +
           '</div>' +
           '</div>';
       }
@@ -1080,7 +1110,7 @@
 
       for (var i = 0; i < 4; i++) {
         var book = books[i] || { slot_index: i };
-        var isActive = safeText(book.status || '').toLowerCase() === 'active';
+        var bst = safeText(book.display_state || book.status || '').toLowerCase(); var isActive = bst === 'active' || bst === 'pair_completed' || bst === 'paused';
 
         var bookNum = i + 1;
         html += '<div class="path-book' + (isActive ? ' active' : '') + '">Book ' + bookNum + '</div>';
@@ -1632,3 +1662,4 @@
   </script>
 </body>
 </html>
+                                                  
