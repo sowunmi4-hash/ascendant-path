@@ -489,8 +489,9 @@
       gap: 0.55rem;
     }
 
-    .bond-cultivator.self { border-color: rgba(200,169,106,0.25); }
-    .bond-cultivator.partner { border-color: rgba(200,104,144,0.18); }
+    /* Border colour driven by gender class applied in JS, not by position */
+    .bond-cultivator.gender-male  { border-color: rgba(200,169,106,0.28); }
+    .bond-cultivator.gender-female { border-color: rgba(200,104,144,0.28); }
 
     .bond-cultivator-header {
       display: flex;
@@ -510,8 +511,9 @@
       flex-shrink: 0;
     }
 
-    .bond-figure.gold { background: rgba(200,169,106,0.15); box-shadow: 0 0 12px rgba(200,169,106,0.2); }
-    .bond-figure.rose { background: rgba(200,104,144,0.15); box-shadow: 0 0 12px rgba(200,104,144,0.2); }
+    /* gold = male (#c8a96a), rose = female (#c86890) — per individual gender */
+    .bond-figure.gold { background: rgba(200,169,106,0.15); box-shadow: 0 0 12px rgba(200,169,106,0.2); color: #c8a96a; }
+    .bond-figure.rose { background: rgba(200,104,144,0.15); box-shadow: 0 0 12px rgba(200,104,144,0.2); color: #c86890; }
 
     .bond-cultivator-name {
       font-family: 'Cinzel', serif;
@@ -993,7 +995,7 @@
       <!-- Self -->
       <div class="bond-cultivator self" id="bond-self">
         <div class="bond-cultivator-header">
-          <div class="bond-figure gold" id="bond-self-figure">⬡</div>
+          <div class="bond-figure" id="bond-self-figure">⬡</div>
           <div>
             <div class="bond-cultivator-name" id="bond-self-name">—</div>
             <div class="bond-cultivator-realm" id="bond-self-realm">—</div>
@@ -1011,7 +1013,7 @@
       <!-- Partner -->
       <div class="bond-cultivator partner" id="bond-partner">
         <div class="bond-cultivator-header">
-          <div class="bond-figure rose" id="bond-partner-figure">⬡</div>
+          <div class="bond-figure" id="bond-partner-figure">⬡</div>
           <div>
             <div class="bond-cultivator-name" id="bond-partner-name">—</div>
             <div class="bond-cultivator-realm" id="bond-partner-realm">—</div>
@@ -1337,10 +1339,16 @@
       const selfName = safeText(member.character_name || member.display_name || member.sl_username, '—');
       const selfRealm = safeText(member.realm_display_name, '—');
       const selfGender = safeText(member.gender, 'male');
+      const selfColour = selfGender === 'female' ? 'rose' : 'gold';
+
       document.getElementById('bond-self-name').textContent = selfName;
       document.getElementById('bond-self-realm').textContent = selfRealm;
       document.getElementById('bond-self-figure').textContent = selfGender === 'female' ? '♀' : '♂';
-      document.getElementById('bond-self-figure').className = 'bond-figure ' + (selfGender === 'female' ? 'rose' : 'gold');
+      document.getElementById('bond-self-figure').className = 'bond-figure ' + selfColour;
+      // Apply gender border to card
+      const selfCard = document.getElementById('bond-self');
+      selfCard.classList.remove('gender-male', 'gender-female');
+      selfCard.classList.add(selfGender === 'female' ? 'gender-female' : 'gender-male');
 
       // Self stats
       const selfStats = member.stats || null;
@@ -1351,10 +1359,16 @@
         const partnerName = safeText(partner.character_name || partner.display_name || partner.sl_username, 'Bond Partner');
         const partnerRealm = safeText(partner.realm_display_name, '—');
         const partnerGender = safeText(partner.gender, 'female');
+        const partnerColour = partnerGender === 'female' ? 'rose' : 'gold';
+
         document.getElementById('bond-partner-name').textContent = partnerName;
         document.getElementById('bond-partner-realm').textContent = partnerRealm;
         document.getElementById('bond-partner-figure').textContent = partnerGender === 'female' ? '♀' : '♂';
-        document.getElementById('bond-partner-figure').className = 'bond-figure ' + (partnerGender === 'female' ? 'rose' : 'gold');
+        document.getElementById('bond-partner-figure').className = 'bond-figure ' + partnerColour;
+        // Apply gender border to card
+        const partnerCard = document.getElementById('bond-partner');
+        partnerCard.classList.remove('gender-male', 'gender-female');
+        partnerCard.classList.add(partnerGender === 'female' ? 'gender-female' : 'gender-male');
 
         // Partner status
         const partnerEntered = safeBoolean(partner.has_entered);
