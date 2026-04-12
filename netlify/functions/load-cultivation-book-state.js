@@ -676,7 +676,7 @@ function buildPrimaryAction(focusRecord, memberCpBalance, volumeNumber) {
       return {
         type: "api",
         label: "Pause Cultivation",
-        endpoint: "/.netlify/functions/pause-cultivation",
+        endpoint: "/.netlify/functions/stop-meditation",
         section_key,
         note: "Pause and bank current session progress.",
         cost_text: "Free",
@@ -690,7 +690,7 @@ function buildPrimaryAction(focusRecord, memberCpBalance, volumeNumber) {
       return {
         type: "api",
         label: "Resume Cultivation",
-        endpoint: "/.netlify/functions/resume-cultivation",
+        endpoint: "/.netlify/functions/start-section-comprehension",
         section_key,
         note: "Continue from where you paused.",
         cost_text: "Free",
