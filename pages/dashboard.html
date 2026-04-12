@@ -1715,12 +1715,13 @@
     }
 
     .path-board-label {
-      font-size: 0.74rem;
-      letter-spacing: 0.16em;
+      font-size: 0.68rem;
+      letter-spacing: 0.18em;
       text-transform: uppercase;
-      color: var(--text-dim);
+      color: var(--gold-dim);
       text-align: left;
       padding-left: 0.2rem;
+      font-family: 'Cinzel', serif;
     }
 
     .path-board-track {
@@ -1731,15 +1732,15 @@
       overflow-x: auto;
       padding-bottom: 0.2rem;
       scrollbar-width: thin;
-      scrollbar-color: rgba(142, 168, 255, 0.28) transparent;
+      scrollbar-color: rgba(200, 169, 106, 0.24) transparent;
     }
 
     .path-board-track::-webkit-scrollbar {
-      height: 8px;
+      height: 4px;
     }
 
     .path-board-track::-webkit-scrollbar-thumb {
-      background: rgba(142, 168, 255, 0.24);
+      background: rgba(200, 169, 106, 0.24);
       border-radius: 999px;
     }
 
@@ -1749,13 +1750,9 @@
       gap: 0.45rem;
       min-height: 170px;
       padding: 1.05rem 1.05rem 1.1rem;
-      border-radius: 22px;
-      border: 1px solid rgba(255,255,255,0.06);
-      background:
-        radial-gradient(circle at top right, rgba(142, 168, 255, 0.10), transparent 46%),
-        linear-gradient(180deg, rgba(255,255,255,0.03), rgba(255,255,255,0.01)),
-        rgba(8, 14, 28, 0.88);
-      box-shadow: 0 18px 34px rgba(0, 0, 0, 0.22);
+      border-radius: var(--radius-md);
+      border: 0.5px solid var(--border);
+      background: var(--bg-card);
       overflow: hidden;
       transition: transform 0.18s ease, border-color 0.18s ease, background 0.18s ease;
     }
@@ -1767,55 +1764,44 @@
       top: 18px;
       bottom: 18px;
       width: 2px;
-      background: linear-gradient(
-        180deg,
-        rgba(234, 215, 170, 0.44),
-        rgba(142, 168, 255, 0.24)
-      );
+      background: linear-gradient(180deg, var(--gold), transparent);
+      opacity: 0.35;
     }
 
     .path-card:hover {
       transform: translateY(-2px);
-      border-color: rgba(142, 168, 255, 0.14);
-      background:
-        radial-gradient(circle at top right, rgba(142, 168, 255, 0.14), transparent 46%),
-        linear-gradient(180deg, rgba(255,255,255,0.04), rgba(255,255,255,0.015)),
-        rgba(10, 18, 34, 0.92);
+      border-color: var(--gold-border);
+      background: var(--bg-card-hover, #0e0e16);
     }
 
     .path-card.active {
-      border-color: rgba(234, 215, 170, 0.18);
-      background:
-        radial-gradient(circle at top right, rgba(234, 215, 170, 0.10), transparent 44%),
-        linear-gradient(180deg, rgba(255,255,255,0.04), rgba(255,255,255,0.015)),
-        rgba(9, 17, 32, 0.94);
-      box-shadow:
-        0 18px 34px rgba(0, 0, 0, 0.24),
-        0 0 0 1px rgba(234, 215, 170, 0.06) inset;
+      border-color: rgba(200,169,106,0.25);
+      background: var(--bg-card);
+      box-shadow: 0 0 0 1px var(--gold-border) inset;
     }
 
     .path-card.active::before {
-      background: linear-gradient(
-        180deg,
-        rgba(234, 215, 170, 0.78),
-        rgba(142, 168, 255, 0.30)
-      );
+      background: linear-gradient(180deg, var(--gold), var(--gold-dim));
+      opacity: 0.8;
     }
 
     .path-card-word {
       display: block;
-      font-size: 1.02rem;
+      font-size: 1rem;
       line-height: 1.2;
-      font-weight: 700;
-      color: #ffffff;
+      font-weight: 500;
+      font-family: 'Cinzel', serif;
+      color: var(--gold);
       padding-left: 0.45rem;
+      letter-spacing: 0.04em;
     }
 
     .path-card p {
       margin: 0;
-      font-size: 0.9rem;
-      line-height: 1.5;
-      color: rgba(226, 232, 255, 0.82);
+      font-size: 0.95rem;
+      line-height: 1.55;
+      color: var(--text-soft);
+      font-family: 'Cormorant Garamond', serif;
       padding-left: 0.45rem;
       max-width: 24ch;
     }
@@ -2161,7 +2147,7 @@
             </a>
 
             <a class="path-card" href="/store.html">
-              <span class="path-card-word">Codex</span>
+              <span class="path-card-word">Store</span>
               <p>Acquire new volumes, sacred items, and progression materials.</p>
             </a>
 
