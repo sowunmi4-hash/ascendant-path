@@ -1132,6 +1132,12 @@
 
         ctx.clearRect(0, 0, 500, 420);
 
+        // Dark void background
+        ctx.save();
+        ctx.fillStyle = '#060608';
+        ctx.fillRect(0, 0, 500, 420);
+        ctx.restore();
+
         // Draw ambient
         drawAmbientMountains(ctx, 500, 420, t);
         drawAmbientStarfield(ctx, 500, 420, t);
@@ -1198,14 +1204,14 @@
       ctx.translate(cx - 55, cy);
       ctx.rotate(offsetA);
       ctx.translate(-(cx - 55), -cy);
-      if (figA) ctx.drawImage(figA, cx - 105, cy - 60);
+      if (figA) ctx.drawImage(figA, cx - 105, cy - 110, 100, 100);
       ctx.restore();
 
       ctx.save();
       ctx.translate(cx + 55, cy);
       ctx.rotate(offsetB);
       ctx.translate(-(cx + 55), -cy);
-      if (figB) ctx.drawImage(figB, cx + 5, cy - 60);
+      if (figB) ctx.drawImage(figB, cx + 5, cy - 110, 100, 100);
       ctx.restore();
 
       // Auras
@@ -1350,22 +1356,71 @@
       }
     }
 
+    var _figLoadingGender = {};
+    var _figCallbackQueue = { male: [], female: [] };
+
     function loadVesselFigure(gender, callback) {
-      // Placeholder: in real impl, load SVG and recolor
-      var canvas = document.createElement('canvas');
-      canvas.width = 100;
-      canvas.height = 120;
-      var ctx = canvas.getContext('2d');
+      // Already cached?
+      if (state.figureCache[gender]) {
+        callback(state.figureCache[gender]);
+        return;
+      }
 
-      var color = gender === 'female' ? '#c86890' : '#c8a96a';
-      ctx.fillStyle = color;
-      ctx.fillRect(20, 20, 60, 80);
-      ctx.fillStyle = color;
-      ctx.beginPath();
-      ctx.arc(50, 15, 8, 0, Math.PI * 2);
-      ctx.fill();
+      // Queue callback
+      _figCallbackQueue[gender] = _figCallbackQueue[gender] || [];
+      _figCallbackQueue[gender].push(callback);
 
-      callback(canvas);
+      // Already loading this gender?
+      if (_figLoadingGender[gender]) return;
+      _figLoadingGender[gender] = true;
+
+      var url = (gender === 'female') ? '/images/female-figure.svg' : '/images/figure.svg';
+      var img = new Image();
+      img.crossOrigin = 'anonymous';
+
+      img.onload = function() {
+        try {
+          var off = document.createElement('canvas');
+          off.width = 1024;
+          off.height = 1024;
+          var ctx2 = off.getContext('2d');
+          ctx2.drawImage(img, 0, 0);
+          var id = ctx2.getImageData(0, 0, 1024, 1024);
+          var d = id.data;
+          var rgb = (gender === 'female') ? [200, 104, 144] : [200, 169, 106];
+          for (var i = 0; i < d.length; i += 4) {
+            if (d[i+3] > 10 && d[i] < 80 && d[i+1] < 80 && d[i+2] < 80) {
+              d[i] = rgb[0]; d[i+1] = rgb[1]; d[i+2] = rgb[2];
+            } else {
+              d[i+3] = 0;
+            }
+          }
+          ctx2.putImageData(id, 0, 0);
+          state.figureCache[gender] = off;
+        } catch(e) {
+          console.error('Figure recolor error:', e);
+          state.figureCache[gender] = null;
+        }
+        _figLoadingGender[gender] = false;
+        var cbs = (_figCallbackQueue[gender] || []).slice();
+        _figCallbackQueue[gender] = [];
+        for (var j = 0; j < cbs.length; j++) {
+          cbs[j](state.figureCache[gender]);
+        }
+      };
+
+      img.onerror = function() {
+        console.error('Failed to load figure SVG:', url);
+        state.figureCache[gender] = null;
+        _figLoadingGender[gender] = false;
+        var cbs = (_figCallbackQueue[gender] || []).slice();
+        _figCallbackQueue[gender] = [];
+        for (var j = 0; j < cbs.length; j++) {
+          cbs[j](null);
+        }
+      };
+
+      img.src = url;
     }
 
     // Ambient drawing
