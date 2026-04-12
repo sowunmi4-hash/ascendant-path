@@ -1196,22 +1196,28 @@
         });
       }
 
-      // Draw figures
-      var offsetA = _figDamaged ? 0.2 : 0;
-      var offsetB = _figDamaged ? -0.2 : 0;
+      // Draw figures (sized to match cultivation-book proportions)
+      var figSize = 160;
+      var floatA = _figDamaged ? 0 : Math.sin(t * 0.8) * 3;
+      var floatB = _figDamaged ? 0 : Math.sin(t * 0.8 + 1.5) * 3;
+      var tiltA = _figDamaged ? -0.18 : 0;
+      var tiltB = _figDamaged ? 0.18 : 0;
+      var figAlpha = _figDamaged ? 0.6 : 0.92;
 
       ctx.save();
+      ctx.globalAlpha = figAlpha;
       ctx.translate(cx - 55, cy);
-      ctx.rotate(offsetA);
+      ctx.rotate(tiltA);
       ctx.translate(-(cx - 55), -cy);
-      if (figA) ctx.drawImage(figA, cx - 105, cy - 110, 100, 100);
+      if (figA) ctx.drawImage(figA, cx - 55 - figSize * 0.5, cy - figSize * 0.55 + floatA, figSize, figSize);
       ctx.restore();
 
       ctx.save();
+      ctx.globalAlpha = figAlpha;
       ctx.translate(cx + 55, cy);
-      ctx.rotate(offsetB);
+      ctx.rotate(tiltB);
       ctx.translate(-(cx + 55), -cy);
-      if (figB) ctx.drawImage(figB, cx + 5, cy - 110, 100, 100);
+      if (figB) ctx.drawImage(figB, cx + 55 - figSize * 0.5, cy - figSize * 0.55 + floatB, figSize, figSize);
       ctx.restore();
 
       // Auras
