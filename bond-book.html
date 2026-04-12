@@ -1552,8 +1552,20 @@
 
       if (!endpoint) return;
 
+      // Get the actionable book number from the record
+      var rec = getRecord();
+      var bookNum = 0;
+      if (rec && rec.current_book && rec.current_book.book_number) {
+        bookNum = rec.current_book.book_number;
+      } else if (rec && rec.actionable_book && rec.actionable_book.book_number) {
+        bookNum = rec.actionable_book.book_number;
+      } else if (rec && rec.selected_book_number) {
+        bookNum = rec.selected_book_number;
+      }
+
       var payload = {
         volume_number: vol.volume_number,
+        book_number: bookNum || null,
         partnership_uuid: state.requestedPartnershipUuid || '',
         sl_avatar_key: safeText(state.member ? state.member.sl_avatar_key : ''),
         sl_username: safeText(state.member ? state.member.sl_username : '')
