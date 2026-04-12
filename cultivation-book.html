@@ -2608,52 +2608,56 @@
 
     function drawEyeEnterAnim(ctx, cx, cy, irisR, pupilR, rc, t, enterE, gY) {
       if (enterE < 1.8) {
-        // Ease-in: figure descends from TOP of canvas, shrinks into eye center
+        // Figure is AT the eye — sinks DOWN through the iris into the pupil
         var wp = Math.min(1, enterE / 1.4);
         var ease = wp < 0.5 ? 2 * wp * wp : 1 - Math.pow(-2 * wp + 2, 2) / 2;
 
-        // Figure starts well ABOVE the eye (near top of canvas) and descends DOWN
-        var figStartX = cx;
-        var figStartY = cy - 140;
-        var fx = figStartX + (cx - figStartX) * ease;
-        var fy = figStartY + (cy - figStartY) * ease;
+        // Start just above the eye (at the upper eyelid) — descend into the pupil center
+        var fx = cx;
+        var figStartY = cy - irisR * 1.2;
+        var figEndY   = cy + irisR * 0.3;
+        var fy = figStartY + (figEndY - figStartY) * ease;
 
-        // Figure shrinks from full size down to tiny as it enters the pupil
-        var figSize = 70 * (1 - ease * 0.88);
-        var alpha = enterE > 1.2 ? Math.max(0, 1 - (enterE - 1.2) / 0.5) : 0.9;
+        // Shrink from full meditation figure size down to nothing as it sinks in
+        var figSize = 55 * (1 - ease * 0.92);
+        // Fade: fully visible at start, transparent as it enters the depth
+        var alpha = ease < 0.7 ? 0.9 : Math.max(0, 0.9 - (ease - 0.7) * 3.0);
 
         if (_gateFigureCache && figSize > 2) {
           ctx.save();
           ctx.globalAlpha = alpha;
-          // Draw golden glow behind figure
-          var glowR = figSize * 0.7;
-          var grd = ctx.createRadialGradient(fx, fy, 0, fx, fy, glowR);
-          grd.addColorStop(0, rc.glow + '33');
-          grd.addColorStop(1, 'transparent');
-          ctx.fillStyle = grd;
-          ctx.beginPath(); ctx.arc(fx, fy, glowR, 0, Math.PI * 2); ctx.fill();
-          // Draw actual meditation figure from cached SVG
-          ctx.drawImage(_gateFigureCache, fx - figSize * 0.5, fy - figSize * 0.6, figSize, figSize);
+
+          // Iris pull glow — the eye draws the figure in
+          var pullR = irisR * (1.5 - ease * 0.8);
+          var pullGrd = ctx.createRadialGradient(cx, cy, pupilR * 0.5, cx, cy, pullR);
+          pullGrd.addColorStop(0, rc.glow + '55');
+          pullGrd.addColorStop(0.6, rc.glow + '18');
+          pullGrd.addColorStop(1, 'transparent');
+          ctx.fillStyle = pullGrd;
+          ctx.beginPath(); ctx.arc(cx, cy, pullR, 0, Math.PI * 2); ctx.fill();
+
+          // Draw the real meditation figure sinking into the eye
+          ctx.drawImage(_gateFigureCache, fx - figSize * 0.5, fy - figSize * 0.55, figSize, figSize);
           ctx.restore();
         } else if (figSize > 2) {
-          // Fallback: draw a simple silhouette circle if SVG hasn't loaded
+          // Fallback silhouette if SVG not loaded
           ctx.save();
           ctx.globalAlpha = alpha;
           ctx.fillStyle = '#ddd0a0';
-          ctx.beginPath(); ctx.arc(fx, fy - figSize * 0.15, figSize * 0.25, 0, Math.PI * 2); ctx.fill();
+          ctx.beginPath(); ctx.arc(fx, fy, figSize * 0.2, 0, Math.PI * 2); ctx.fill();
           ctx.restore();
         }
 
-        // Portal glow as figure approaches
-        if (enterE > 0.7) {
-          var pA = Math.min(1, (enterE - 0.7) * 2);
-          var pGrd = ctx.createRadialGradient(cx, cy, 0, cx, cy, irisR * 2.5);
-          pGrd.addColorStop(0, rc.glow + '44'); pGrd.addColorStop(1, 'transparent');
-          ctx.fillStyle = pGrd; ctx.globalAlpha = pA * 0.4;
-          ctx.beginPath(); ctx.arc(cx, cy, irisR * 2.5, 0, Math.PI * 2); ctx.fill(); ctx.globalAlpha = 1;
+        // Deepening portal glow as figure is swallowed
+        if (enterE > 0.5) {
+          var pA = Math.min(1, (enterE - 0.5) * 1.5);
+          var pGrd = ctx.createRadialGradient(cx, cy, 0, cx, cy, irisR * 2);
+          pGrd.addColorStop(0, rc.glow + '66'); pGrd.addColorStop(0.5, rc.glow + '22'); pGrd.addColorStop(1, 'transparent');
+          ctx.fillStyle = pGrd; ctx.globalAlpha = pA * 0.5;
+          ctx.beginPath(); ctx.arc(cx, cy, irisR * 2, 0, Math.PI * 2); ctx.fill(); ctx.globalAlpha = 1;
         }
       }
-      // White flash after figure enters
+      // Flash as figure passes through the threshold
       if (enterE > 1.8 && enterE < 3) {
         var fA = Math.max(0, 1 - (enterE - 1.8) / 0.6);
         ctx.fillStyle = rc.glow; ctx.globalAlpha = fA * 0.18;
