@@ -1669,6 +1669,130 @@
       ctx.restore();
     }
 
+
+    /* ═══════════════════════════════════════
+       VESSEL AMBIENT BACKGROUND — 4 layers
+       ═══════════════════════════════════════ */
+
+    // Starfield particles — initialized once, drawn each frame
+    var _starfield = null;
+    function initStarfield(count) {
+      _starfield = [];
+      for (var i = 0; i < count; i++) {
+        _starfield.push({
+          x: Math.random(),
+          y: Math.random(),
+          sz: 0.3 + Math.random() * 1.2,
+          sp: 0.0003 + Math.random() * 0.001,
+          ph: Math.random() * 6.28,
+          bright: 0.15 + Math.random() * 0.35
+        });
+      }
+    }
+
+    function drawAmbientStarfield(ctx, W, H, t, color, qiPct) {
+      if (!_starfield) initStarfield(60);
+      ctx.save();
+      for (var i = 0; i < _starfield.length; i++) {
+        var s = _starfield[i];
+        // Drift upward slowly (ascending qi)
+        s.y -= s.sp;
+        if (s.y < -0.02) { s.y = 1.02; s.x = Math.random(); }
+        var flicker = 0.6 + Math.sin(t * 1.5 + s.ph) * 0.4;
+        var alpha = s.bright * flicker * (0.3 + qiPct * 0.5);
+        ctx.globalAlpha = alpha;
+        ctx.fillStyle = color;
+        ctx.beginPath();
+        ctx.arc(s.x * W, s.y * H, s.sz, 0, Math.PI * 2);
+        ctx.fill();
+      }
+      ctx.restore();
+    }
+
+    function drawAmbientMountains(ctx, W, H, alpha) {
+      // Faint mountain silhouette along the bottom edge
+      ctx.save();
+      ctx.globalAlpha = alpha;
+      ctx.fillStyle = '#0e0e14';
+      ctx.beginPath();
+      ctx.moveTo(0, H);
+      // Left range
+      ctx.lineTo(0, H * 0.88);
+      ctx.lineTo(W * 0.06, H * 0.82);
+      ctx.lineTo(W * 0.12, H * 0.85);
+      ctx.lineTo(W * 0.18, H * 0.78);
+      ctx.lineTo(W * 0.25, H * 0.82);
+      ctx.lineTo(W * 0.30, H * 0.74);  // peak 1
+      ctx.lineTo(W * 0.36, H * 0.80);
+      ctx.lineTo(W * 0.42, H * 0.83);
+      // Center valley
+      ctx.lineTo(W * 0.48, H * 0.86);
+      ctx.lineTo(W * 0.52, H * 0.84);
+      // Right range
+      ctx.lineTo(W * 0.58, H * 0.77);
+      ctx.lineTo(W * 0.63, H * 0.72);  // peak 2 (highest)
+      ctx.lineTo(W * 0.68, H * 0.76);
+      ctx.lineTo(W * 0.74, H * 0.80);
+      ctx.lineTo(W * 0.80, H * 0.75);  // peak 3
+      ctx.lineTo(W * 0.86, H * 0.82);
+      ctx.lineTo(W * 0.92, H * 0.85);
+      ctx.lineTo(W * 0.97, H * 0.83);
+      ctx.lineTo(W, H * 0.87);
+      ctx.lineTo(W, H);
+      ctx.closePath();
+      ctx.fill();
+      // Subtle mist at mountain base
+      var mist = ctx.createLinearGradient(0, H * 0.85, 0, H);
+      mist.addColorStop(0, 'rgba(14,14,20,0)');
+      mist.addColorStop(1, 'rgba(14,14,20,' + (alpha * 0.5) + ')');
+      ctx.globalAlpha = 1;
+      ctx.fillStyle = mist;
+      ctx.fillRect(0, H * 0.85, W, H * 0.15);
+      ctx.restore();
+    }
+
+    function drawAmbientQiVeins(ctx, cx, cy, baseR, t, color, alpha, qiPct) {
+      // Branching veins radiating from center, pulsing with qi
+      ctx.save();
+      var veinCount = 6;
+      var pulse = 0.5 + Math.sin(t * 0.8) * 0.3;
+      var intensity = alpha * (0.3 + qiPct * 0.5) * pulse;
+      ctx.globalAlpha = intensity;
+      ctx.strokeStyle = color;
+      ctx.lineWidth = 0.6;
+      for (var v = 0; v < veinCount; v++) {
+        var angle = (v / veinCount) * Math.PI * 2 + t * 0.02;
+        ctx.beginPath();
+        var px = cx;
+        var py = cy;
+        ctx.moveTo(px, py);
+        var segments = 5 + Math.floor(Math.random() * 3);
+        var segLen = baseR * 0.22;
+        for (var s = 0; s < segments; s++) {
+          var drift = Math.sin(t * 0.5 + v + s * 2) * 0.3;
+          px += Math.cos(angle + drift) * segLen;
+          py += Math.sin(angle + drift) * segLen;
+          ctx.lineTo(px, py);
+          // Branch at segment 2 and 4
+          if (s === 2 || s === 4) {
+            var bAngle = angle + drift + (s === 2 ? 0.6 : -0.6);
+            var bx = px + Math.cos(bAngle) * segLen * 0.6;
+            var by = py + Math.sin(bAngle) * segLen * 0.6;
+            ctx.moveTo(px, py);
+            ctx.lineTo(bx, by);
+            ctx.moveTo(px, py);
+          }
+        }
+        ctx.stroke();
+      }
+      ctx.restore();
+    }
+
+    function drawAmbientSeal(ctx, cx, cy, baseR, t, color, alpha) {
+      // Very faint rotating seal — same as drawSealOnVessel but dimmer for ambient
+      drawSealOnVessel(ctx, cx, cy, baseR, color, alpha, t * 0.3);
+    }
+
     function runGateVessel() {
       var cv = document.getElementById('vessel-canvas');
       if (!cv) return;
@@ -1705,6 +1829,14 @@
           ctx.beginPath(); ctx.arc(cx, cy, baseR + 40, 0, Math.PI * 2);
           ctx.fillStyle = 'rgba(' + vesselRGB + ',0.03)'; ctx.fill();
           ctx.restore();
+
+          // ── Ambient background layers ──
+          var ambientColor = 'rgba(' + vesselRGB + ',0.5)';
+          var ambientPt = vesselColor;
+          drawAmbientMountains(ctx, W, H, 0.12);
+          drawAmbientStarfield(ctx, W, H, t, ambientPt, qiPct);
+          drawAmbientQiVeins(ctx, cx, cy, baseR, t, ambientColor, 0.08, qiPct);
+          drawAmbientSeal(ctx, cx, cy, baseR, t, ambientPt, 0.04);
 
           var v2StatusNow = safeLower(getV2CultivationStatus());
           var figureGone     = (v2StatusNow === 'in_breakthrough');
@@ -2238,11 +2370,9 @@
         if (gateState === 'sealed') {
           chips = [{label:'Scroll',val:'Not Opened',lc:'#444',vc:'#555',bg:'#111',bc:'#222'}];
         } else if (gateState === 'cultivating') {
-          var remSecs = focus ? safeNumber(focus.remaining_display_seconds || focus.remaining_seconds, 0) : 0;
           chips = [
-            {label:'Progress', val:progressPct+'%',                            lc:rc.pri+'99',vc:rc.pri,bg:rc.dim+'44',bc:rc.dim+'66'},
-            {label:'Remaining',val:remSecs > 0 ? formatDuration(remSecs) : '--', lc:rc.pri+'99',vc:rc.pri,bg:rc.dim+'44',bc:rc.dim+'66'},
-            {label:'Portal',   val:'Stirring',                                 lc:rc.pri+'99',vc:rc.pri,bg:rc.dim+'44',bc:rc.dim+'66'}
+            {label:'Threshold', val:'Stirring',   lc:rc.pri+'99',vc:rc.pri,bg:rc.dim+'44',bc:rc.dim+'66'},
+            {label:'Seal',      val:'Dormant',    lc:rc.pri+'99',vc:rc.pri,bg:rc.dim+'44',bc:rc.dim+'66'}
           ];
         } else if (gateState === 'complete') {
           chips = [{label:'Portal',val:'Judging',lc:'#c8a96a66',vc:'#c8a96a88',bg:'#1a1400',bc:'#c8a96a33'}];
