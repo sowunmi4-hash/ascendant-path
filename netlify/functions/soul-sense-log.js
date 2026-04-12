@@ -25,7 +25,7 @@ exports.handler = async (event) => {
     .select("realm_index, auric_cost, auric_before, auric_after, cultivators_seen, created_at")
     .eq("sl_avatar_key", avatarKey)
     .order("created_at", { ascending: false })
-    .limit(20);
+    .limit(5);
 
   const total_uses  = (logs || []).length;
   const total_auric = (logs || []).reduce((sum, l) => sum + (l.auric_cost || 0), 0);
