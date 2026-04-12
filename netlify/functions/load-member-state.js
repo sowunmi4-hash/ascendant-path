@@ -64,7 +64,7 @@ const REALM_INDEX_MAP = {
 
 const REALM_META_BY_INDEX = {
   1: { realm_key: "mortal", realm_name: "mortal", realm_display_name: "Mortal Realm" },
-  2: { realm_key: "qi_gathering", realm_name: "qi gathering", realm_display_name: "Qi Gathering Realm" },
+  2: { realm_key: "qi_gathering", realm_name: "auric gathering", realm_display_name: "Auric Gathering Realm" },
   3: { realm_key: "foundation", realm_name: "foundation", realm_display_name: "Foundation Realm" },
   4: { realm_key: "core_formation", realm_name: "core formation", realm_display_name: "Core Formation Realm" },
   5: { realm_key: "nascent_soul", realm_name: "nascent soul", realm_display_name: "Nascent Soul Realm" },
@@ -533,8 +533,8 @@ function buildBondBookStateSummary(row) {
       pickFirst(row.minutes_accumulated, row.shared_minutes_accumulated, row.accumulated_minutes),
       0
     ),
-    qi_accumulated: safeNumber(
-      pickFirst(row.qi_accumulated, row.shared_qi_accumulated, row.accumulated_qi),
+    auric_accumulated: safeNumber(
+      pickFirst(row.auric_accumulated, row.shared_auric_accumulated, row.accumulated_qi),
       0
     ),
     started_at: row.started_at || null,
@@ -710,7 +710,7 @@ function buildAlignmentStateSummary({ dashboardState, previewState, applyState }
     force_name: safeText(pickFirst(dashboardState?.force_name, previewState?.force_name, applyState?.force_name)) || null,
     phenomenon_name: safeText(pickFirst(dashboardState?.phenomenon_name, previewState?.phenomenon_name, applyState?.phenomenon_name)) || null,
     effective_bias: safeText(pickFirst(dashboardState?.effective_bias, previewState?.effective_bias, applyState?.effective_bias)) || null,
-    qi_multiplier: roundNumber(pickFirst(dashboardState?.qi_multiplier, previewState?.qi_multiplier, applyState?.qi_multiplier, 1), 2),
+    auric_multiplier: roundNumber(pickFirst(dashboardState?.auric_multiplier, previewState?.auric_multiplier, applyState?.auric_multiplier, 1), 2),
     cp_multiplier: roundNumber(pickFirst(dashboardState?.cp_multiplier, previewState?.cp_multiplier, applyState?.cp_multiplier, 1), 2),
     aligned_bonus_available: safeBoolean(
       pickFirst(dashboardState?.aligned_bonus_available, previewState?.aligned_bonus_available, applyState?.aligned_bonus_available),
@@ -1362,15 +1362,15 @@ exports.handler = async (event) => {
       auric_current: auricCurrent,
       auric_maximum: auricMaximum,
       auric_drain_per_minute: auricDrainPerMinute,
-      minimum_qi_required: minimumQiRequired,
+      minimum_auric_required: minimumQiRequired,
 
       vestiges: cultivationPointsCurrent,
       vestiges_maximum: cultivationPointsMaximum,
       vestiges_remaining: cultivationPointsRemaining,
       vestiges_capped: Boolean(cultivationPointsCapped),
 
-      normal_qi_gain_per_minute: normalQiGainPerMinute,
-      resonance_qi_gain_per_minute: normalQiGainPerMinute > 0 ? normalQiGainPerMinute * 2 : 0,
+      normal_auric_gain_per_minute: normalQiGainPerMinute,
+      resonance_auric_gain_per_minute: normalQiGainPerMinute > 0 ? normalQiGainPerMinute * 2 : 0,
       normal_vestiges_gain_per_minute: normalCpGainPerMinute,
       resonance_vestiges_gain_per_minute: normalCpGainPerMinute > 0 ? normalCpGainPerMinute * 2 : 0,
 
@@ -1442,7 +1442,7 @@ exports.handler = async (event) => {
       alignment_force_name: safeText(alignmentState.force_name) || null,
       alignment_phenomenon_name: safeText(alignmentState.phenomenon_name) || null,
       alignment_effective_bias: safeText(alignmentState.effective_bias) || null,
-      alignment_qi_multiplier: safeNumber(alignmentState.qi_multiplier, 1),
+      alignment_auric_multiplier: safeNumber(alignmentState.auric_multiplier, 1),
       alignment_cp_multiplier: safeNumber(alignmentState.cp_multiplier, 1),
       alignment_aligned_bonus_available: Boolean(alignmentState.aligned_bonus_available),
       alignment_aligned_bonus_window_active: Boolean(alignmentState.aligned_bonus_window_active),

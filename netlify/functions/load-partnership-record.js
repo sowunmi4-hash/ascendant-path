@@ -167,7 +167,7 @@ function getQiMaximum(row) {
     pickFirst(
       row?.auric_maximum,
       row?.max_qi,
-      row?.qi_cap
+      row?.auric_cap
     ),
     0
   );
@@ -671,8 +671,8 @@ function deriveBondSessionFromRows(rows, currentMemberId, partnerMemberId) {
     pair_completed: pairState.pair_completed,
     self_minutes_accumulated: safeNumber(selfRow?.minutes_accumulated, 0),
     partner_minutes_accumulated: safeNumber(partnerRow?.minutes_accumulated, 0),
-    self_qi_accumulated: safeNumber(selfRow?.qi_accumulated, 0),
-    partner_qi_accumulated: safeNumber(partnerRow?.qi_accumulated, 0),
+    self_auric_accumulated: safeNumber(selfRow?.auric_accumulated, 0),
+    partner_auric_accumulated: safeNumber(partnerRow?.auric_accumulated, 0),
     updated_at: maxIso(
       selfRow?.updated_at,
       selfRow?.last_progress_at,
@@ -1216,8 +1216,8 @@ exports.handler = async function handler(event) {
             pair_completed: !!bondSessionRow.pair_completed,
             self_minutes_accumulated: safeNumber(bondSessionRow.self_minutes_accumulated, 0),
             partner_minutes_accumulated: safeNumber(bondSessionRow.partner_minutes_accumulated, 0),
-            self_qi_accumulated: safeNumber(bondSessionRow.self_qi_accumulated, 0),
-            partner_qi_accumulated: safeNumber(bondSessionRow.partner_qi_accumulated, 0),
+            self_auric_accumulated: safeNumber(bondSessionRow.self_auric_accumulated, 0),
+            partner_auric_accumulated: safeNumber(bondSessionRow.partner_auric_accumulated, 0),
             updated_at: safeText(bondSessionRow.updated_at, "") || null,
             created_at: safeText(bondSessionRow.created_at, "") || null
           }

@@ -417,9 +417,9 @@ function getBondStageName(percent) {
 
 function getBondProgressPercentFromMemberRow(row) {
   const requiredMinutes = Math.max(0, safeNumber(pickFirstValue(row, ["required_minutes", "required_shared_minutes"]), 0));
-  const requiredQi = Math.max(0, safeNumber(pickFirstValue(row, ["required_qi", "required_shared_qi"]), 0));
+  const requiredQi = Math.max(0, safeNumber(pickFirstValue(row, ["required_qi", "required_shared_auric"]), 0));
   const minutesAccumulated = Math.max(0, safeNumber(pickFirstValue(row, ["minutes_accumulated", "shared_minutes_accumulated"]), 0));
-  const qiAccumulated = Math.max(0, safeNumber(pickFirstValue(row, ["qi_accumulated", "shared_qi_accumulated"]), 0));
+  const qiAccumulated = Math.max(0, safeNumber(pickFirstValue(row, ["auric_accumulated", "shared_auric_accumulated"]), 0));
   const rowStatus = safeLower(pickFirstValue(row, ["status", "state"]) || "");
   if (rowStatus === "completed") return 100;
   const minuteRatio = requiredMinutes > 0 ? minutesAccumulated / requiredMinutes : 0;
@@ -575,8 +575,8 @@ function buildBondLibraryFromMemberStates(opts) {
         partner_offering_complete: safeBoolean(partnerRow && partnerRow.offering_complete),
         self_minutes_accumulated: safeNumber(selfRow && selfRow.minutes_accumulated, 0),
         partner_minutes_accumulated: safeNumber(partnerRow && partnerRow.minutes_accumulated, 0),
-        self_qi_accumulated: safeNumber(selfRow && selfRow.qi_accumulated, 0),
-        partner_qi_accumulated: safeNumber(partnerRow && partnerRow.qi_accumulated, 0),
+        self_auric_accumulated: safeNumber(selfRow && selfRow.auric_accumulated, 0),
+        partner_auric_accumulated: safeNumber(partnerRow && partnerRow.auric_accumulated, 0),
         started_at: pickFirstValue(selfRow, ["started_at", "offering_completed_at"]) || pickFirstValue(partnerRow, ["started_at", "offering_completed_at"]),
         completed_at: pickFirstValue(selfRow, ["completed_at"]) || pickFirstValue(partnerRow, ["completed_at"]),
         updated_at: pickFirstValue(selfRow, ["updated_at", "last_progress_at", "created_at"]) || pickFirstValue(partnerRow, ["updated_at", "last_progress_at", "created_at"])

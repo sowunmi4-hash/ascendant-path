@@ -156,7 +156,7 @@ function getStableRealmStageLabel(member) {
   const stageKey = safeText(member?.v2_active_stage_key);
   if (!stageKey) return null;
   // Derive a human-readable label from the stage key
-  // e.g. "1:qi_condensation:early" -> "Qi Condensation (Early)"
+  // e.g. "1:auric_condensation:early" -> "Auric Condensation (Early)"
   const parts = stageKey.split(":");
   if (parts.length < 2) return stageKey;
   const stageName = parts[1].replace(/_/g, " ").replace(/\b\w/g, (c) => c.toUpperCase());
@@ -276,7 +276,7 @@ function computeIndividualProgressPercent(row, fallbackRequiredMinutes = 0, fall
   );
 
   const minutesAccumulated = Math.max(0, safeNumber(row?.minutes_accumulated, 0));
-  const qiAccumulated = Math.max(0, safeNumber(row?.qi_accumulated, 0));
+  const qiAccumulated = Math.max(0, safeNumber(row?.auric_accumulated, 0));
 
   const minuteRatio = requiredMinutes > 0 ? minutesAccumulated / requiredMinutes : 0;
   const qiRatio = requiredQi > 0 ? qiAccumulated / requiredQi : null;
@@ -1368,7 +1368,7 @@ async function buildBondRecord({
           offering_completed_at: selfState?.offering_completed_at || null,
           minutes_accumulated: safeNumber(selfState?.minutes_accumulated, 0),
           required_minutes: requiredMinutes,
-          qi_accumulated: safeNumber(selfState?.qi_accumulated, 0),
+          auric_accumulated: safeNumber(selfState?.auric_accumulated, 0),
           required_qi: requiredQi,
           progress_percent: selfProgressPercent,
           started_at: selfState?.started_at || null,
@@ -1388,7 +1388,7 @@ async function buildBondRecord({
           offering_completed_at: partnerState?.offering_completed_at || null,
           minutes_accumulated: safeNumber(partnerState?.minutes_accumulated, 0),
           required_minutes: requiredMinutes,
-          qi_accumulated: safeNumber(partnerState?.qi_accumulated, 0),
+          auric_accumulated: safeNumber(partnerState?.auric_accumulated, 0),
           required_qi: requiredQi,
           progress_percent: partnerProgressPercent,
           started_at: partnerState?.started_at || null,
@@ -1568,8 +1568,8 @@ async function buildBondRecord({
         partner_progress_percent: selectedBook.partner.progress_percent,
         self_minutes_accumulated: safeNumber(selectedBook.self.minutes_accumulated, 0),
         partner_minutes_accumulated: safeNumber(selectedBook.partner.minutes_accumulated, 0),
-        self_qi_accumulated: safeNumber(selectedBook.self.qi_accumulated, 0),
-        partner_qi_accumulated: safeNumber(selectedBook.partner.qi_accumulated, 0),
+        self_auric_accumulated: safeNumber(selectedBook.self.auric_accumulated, 0),
+        partner_auric_accumulated: safeNumber(selectedBook.partner.auric_accumulated, 0),
         pair_completed: selectedBook.pair.pair_completed,
         pause_reason: pauseReason,
         self_started_at: selectedBook.self.started_at,

@@ -791,14 +791,14 @@
         <div class="hero-state-badge idle" id="hero-state-badge">Preparing</div>
       </div>
       <div class="hero-meta-row">
-        <div class="hero-meta-pill" id="hero-volume-pill">Volume --</div>
+        <div class="hero-meta-pill" id="hero-volume-pill">Tome --</div>
         <div class="hero-meta-pill" id="hero-realm-pill">Loading realm...</div>
         <div class="hero-meta-pill" id="hero-focus-pill">No active focus</div>
       </div>
     </section>
       <div class="stat-chip"><span class="stat-chip-label">Stage</span><span class="stat-chip-value" id="stat-stage">--</span></div>
       <div class="stat-chip"><span class="stat-chip-label">Status</span><span class="stat-chip-value" id="stat-status">--</span></div>
-      <div class="stat-chip"><span class="stat-chip-label">Qi</span><span class="stat-chip-value" id="stat-qi">--</span></div>
+      <div class="stat-chip"><span class="stat-chip-label">Auric</span><span class="stat-chip-value" id="stat-qi">--</span></div>
     </div>
 
     <p id="page-message" class="summary is-hidden hero-message"></p>
@@ -893,7 +893,7 @@
     const SECTION_KEYS = ["base", "early", "middle", "late"];
     const REALM_SEQUENCE = [
       "Mortal Realm",
-      "Qi Gathering Realm",
+      "Auric Gathering Realm",
       "Foundation Realm",
       "Core Formation Realm",
       "Nascent Soul Realm",
@@ -2344,7 +2344,7 @@
 
         var realmColors = {
           mortal:              { pri:'#4488cc', sec:'#2a5a99', dim:'#0e1e33', glow:'#66bbff', pt:'#88ddff', iris:'#2266aa', deep:'#061122', vein:'#335588', sclera:'#121828', rune:'#5599dd', particle:'#88ddff' },
-          'qi gathering':      { pri:'#33bb88', sec:'#228866', dim:'#0a2218', glow:'#55eeaa', pt:'#88ffcc', iris:'#1a8855', deep:'#061a0e', vein:'#226644', sclera:'#0e1e16', rune:'#44bb88', particle:'#88ffcc' },
+          'auric gathering':      { pri:'#33bb88', sec:'#228866', dim:'#0a2218', glow:'#55eeaa', pt:'#88ffcc', iris:'#1a8855', deep:'#061a0e', vein:'#226644', sclera:'#0e1e16', rune:'#44bb88', particle:'#88ffcc' },
           foundation:          { pri:'#7755cc', sec:'#5533aa', dim:'#180e33', glow:'#9977ee', pt:'#bbaaff', iris:'#5533aa', deep:'#0e0622', vein:'#443388', sclera:'#161028', rune:'#8866cc', particle:'#bbaaff' },
           'core formation':    { pri:'#cc7733', sec:'#aa5522', dim:'#2a1508', glow:'#eebb55', pt:'#ffcc88', iris:'#aa5511', deep:'#1a0e04', vein:'#885522', sclera:'#1e1610', rune:'#ddaa44', particle:'#ffcc88' },
           'nascent soul':      { pri:'#cc9933', sec:'#aa7722', dim:'#2a1a08', glow:'#eebb44', pt:'#ffdd88', iris:'#aa7711', deep:'#1a1008', vein:'#886622', sclera:'#1e1810', rune:'#ccaa33', particle:'#ffdd88' },
@@ -2550,7 +2550,7 @@
           btn.textContent = 'Repair the Scroll';
           btn.style.background = '#7a2020';
           btn.style.color = '#ffe0e0';
-          if (noteEl) noteEl.textContent = (data && data.message) || 'Repair failed. Check your cultivation points.';
+          if (noteEl) noteEl.textContent = (data && data.message) || 'Repair failed. Check your Vestiges.';
         }
       } catch(e) {
         btn.disabled = false;

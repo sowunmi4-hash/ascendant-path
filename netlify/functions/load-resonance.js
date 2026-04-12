@@ -703,9 +703,9 @@ function buildFallbackResponse({
     shared_presence_ready: false,
     shared_meditation_ready: false,
     meditation_mode: "normal",
-    qi_rate_per_minute: 1,
+    auric_rate_per_minute: 1,
     vestiges_rate_per_minute: (member && member.v2_cultivation_status === 'in_breakthrough') ? 0 : 1,
-    qi_interval_seconds: 60,
+    auric_interval_seconds: 60,
     vestiges_interval_seconds: 60,
     bond_runtime_active: false,
     bond_session_status: null,
@@ -981,10 +981,10 @@ const handler = async (event) => {
 
       meditation_mode: resonanceActive ? "resonance" : "normal",
 
-      qi_rate_per_minute: resonanceActive ? 2 : 1,
+      auric_rate_per_minute: resonanceActive ? 2 : 1,
       vestiges_rate_per_minute: (member && member.v2_cultivation_status === 'in_breakthrough') ? 0 : (resonanceActive ? 2 : 1),
 
-      qi_interval_seconds: resonanceActive ? 30 : 60,
+      auric_interval_seconds: resonanceActive ? 30 : 60,
       vestiges_interval_seconds: 60,
 
       bond_runtime_active: false,

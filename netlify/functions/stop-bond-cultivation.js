@@ -242,7 +242,7 @@ function computeIndividualProgressPercent(row, fallbackRequiredMinutes = 0, fall
   );
 
   const minutesAccumulated = Math.max(0, safeNumber(row?.minutes_accumulated, 0));
-  const qiAccumulated = Math.max(0, safeNumber(row?.qi_accumulated, 0));
+  const qiAccumulated = Math.max(0, safeNumber(row?.auric_accumulated, 0));
 
   const minuteRatio = requiredMinutes > 0 ? minutesAccumulated / requiredMinutes : 0;
   const qiRatio = requiredQi > 0 ? qiAccumulated / requiredQi : null;
@@ -1080,7 +1080,7 @@ async function pauseBondBookMember({
   const currentStatus = safeLower(currentRow.status);
   const hasProgress =
     safeNumber(currentRow.minutes_accumulated, 0) > 0 ||
-    safeNumber(currentRow.qi_accumulated, 0) > 0 ||
+    safeNumber(currentRow.auric_accumulated, 0) > 0 ||
     !!currentRow.started_at;
 
   if (currentStatus === "completed") {
@@ -1525,7 +1525,7 @@ const handler = async (event) => {
           offering_token_spent: safeNumber(selfRow?.offering_token_spent, 0),
           offering_completed_at: selfRow?.offering_completed_at || null,
           minutes_accumulated: safeNumber(selfRow?.minutes_accumulated, 0),
-          qi_accumulated: safeNumber(selfRow?.qi_accumulated, 0),
+          auric_accumulated: safeNumber(selfRow?.auric_accumulated, 0),
           progress_percent: selfProgressPercent,
           status: safeText(selfRow?.status) || null,
           started_at: selfRow?.started_at || null,
@@ -1539,7 +1539,7 @@ const handler = async (event) => {
           offering_token_spent: safeNumber(partnerRow?.offering_token_spent, 0),
           offering_completed_at: partnerRow?.offering_completed_at || null,
           minutes_accumulated: safeNumber(partnerRow?.minutes_accumulated, 0),
-          qi_accumulated: safeNumber(partnerRow?.qi_accumulated, 0),
+          auric_accumulated: safeNumber(partnerRow?.auric_accumulated, 0),
           progress_percent: partnerProgressPercent,
           status: safeText(partnerRow?.status) || null,
           started_at: partnerRow?.started_at || null,

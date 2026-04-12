@@ -191,7 +191,7 @@ function getQiMaximum(row) {
     pickFirst(
       row?.auric_maximum,
       row?.max_qi,
-      row?.qi_cap
+      row?.auric_cap
     ),
     0
   );

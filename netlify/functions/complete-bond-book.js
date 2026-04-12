@@ -1305,7 +1305,7 @@ exports.handler = async (event) => {
         partnership_id: legacyPartnershipId,
         bond_percent: round4(finalBondRow?.bond_percent),
         total_shared_minutes: safeNumber(finalBondRow?.total_shared_minutes, 0),
-        total_shared_qi_offered: round4(finalBondRow?.total_shared_qi_offered),
+        total_shared_auric_offered: round4(finalBondRow?.total_shared_auric_offered),
         completed_books_count: safeNumber(finalBondRow?.completed_books_count, 0),
         status: safeText(finalBondRow?.status, SESSION_STATUS_IDLE),
         pause_reason: safeText(finalBondRow?.pause_reason, "")

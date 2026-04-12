@@ -1072,8 +1072,8 @@
       const map = {
         mortal: "Mortal Realm",
         "mortal realm": "Mortal Realm",
-        "qi gathering": "Qi Gathering Realm",
-        "qi gathering realm": "Qi Gathering Realm",
+        "auric gathering": "Auric Gathering Realm",
+        "auric gathering realm": "Auric Gathering Realm",
         foundation: "Foundation Realm",
         "foundation realm": "Foundation Realm",
         "core formation": "Core Formation Realm",
@@ -1162,11 +1162,11 @@
 
 
       if (realmIndex < 2) {
-        return "You remain in the Mortal Realm. Your five roots are visible, but all element slots remain sealed until Qi Gathering Realm.";
+        return "You remain in the Mortal Realm. Your five roots are visible, but all element slots remain sealed until Auric Gathering Realm.";
       }
 
       if (realmIndex === 2) {
-        return "Qi Gathering Realm has awakened your primary base element. Secondary base and derived path remain sealed until Foundation Realm.";
+        return "Auric Gathering Realm has awakened your primary base element. Secondary base and derived path remain sealed until Foundation Realm.";
       }
 
       if (realmIndex >= 3 && realmIndex < 5) {
@@ -1212,8 +1212,8 @@
       if (!unlocked || status === "sealed") {
         return {
           title: "Sealed",
-          status: "Sealed Until Qi Gathering Realm",
-          copy: "Your primary base element remains sealed in Mortal Realm. It first awakens when you enter Qi Gathering Realm."
+          status: "Sealed Until Auric Gathering Realm",
+          copy: "Your primary base element remains sealed in Mortal Realm. It first awakens when you enter Auric Gathering Realm."
         };
       }
 
@@ -1408,8 +1408,8 @@
         statusLines.push(`Primary petition: ${safeNumber(pricing.primary, 50)} tokens.`);
       } else {
         headingText = "Sealed Petition Chamber";
-        copyText = "Your elements are still sealed. In Mortal Realm, only root reallocation petitions can be made before Qi Gathering Realm.";
-        statusLines.push("Primary awakens at Qi Gathering Realm.");
+        copyText = "Your elements are still sealed. In Mortal Realm, only root reallocation petitions can be made before Auric Gathering Realm.";
+        statusLines.push("Primary awakens at Auric Gathering Realm.");
         statusLines.push("Secondary and Path awaken at Foundation Realm.");
         statusLines.push("Third becomes available at Nascent Soul Realm.");
       }

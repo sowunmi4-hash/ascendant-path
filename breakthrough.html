@@ -825,7 +825,7 @@
       </div>
       <div class="chamber-stats-strip">
         <div class="chamber-stat-cell">
-          <div class="chamber-stat-lbl">Qi Reserve</div>
+          <div class="chamber-stat-lbl">Auric Reserve</div>
           <div class="chamber-stat-val" id="stat-qi-reserve">--</div>
         </div>
         <div class="chamber-stat-cell">
@@ -1137,9 +1137,9 @@
       }
 
       if (uiState === "in_progress") {
-        if (progressPct < 18) return { stageNumber: 4, stageLabel: "First Descent Stage", phase: "First Descent Stage", title: "The First Bolt Falls", copy: `The opening strike of ${family} tribulation has descended. It is not yet the final judgement, but it is enough to test whether body, qi, and foundation can withstand what follows.`, progressCopy: "The first descent has begun. Heaven is testing whether the breakthrough is worthy of continuing.", aftermathCopy: "" };
+        if (progressPct < 18) return { stageNumber: 4, stageLabel: "First Descent Stage", phase: "First Descent Stage", title: "The First Bolt Falls", copy: `The opening strike of ${family} tribulation has descended. It is not yet the final judgement, but it is enough to test whether body, auric, and foundation can withstand what follows.`, progressCopy: "The first descent has begun. Heaven is testing whether the breakthrough is worthy of continuing.", aftermathCopy: "" };
         if (progressPct < 45) return { stageNumber: 5, stageLabel: "Trial Wave Stage", phase: "Trial Wave Stage", title: "The Trial Waves Begin", copy: "Wave after wave of tribulation lightning now descends. The body is pressured, the meridians strain, and the foundation is forced to endure more than a single strike was ever meant to test.", progressCopy: "The main body of the tribulation is underway. Each wave is heavier than the last.", aftermathCopy: "" };
-        if (progressPct < 75) return { stageNumber: 5, stageLabel: "Trial Wave Stage", phase: "Trial Wave Stage", title: "Heaven Presses Deeper", copy: "The storm has moved beyond simple endurance. Qi is being spent, the inner pathways are under strain, and the cultivator's will is being tested as heavily as the flesh itself.", progressCopy: "The trial is deep in its violent middle. Endurance alone is no longer enough; foundation and will are both under judgement.", aftermathCopy: "" };
+        if (progressPct < 75) return { stageNumber: 5, stageLabel: "Trial Wave Stage", phase: "Trial Wave Stage", title: "Heaven Presses Deeper", copy: "The storm has moved beyond simple endurance. Auric is being spent, the inner pathways are under strain, and the cultivator's will is being tested as heavily as the flesh itself.", progressCopy: "The trial is deep in its violent middle. Endurance alone is no longer enough; foundation and will are both under judgement.", aftermathCopy: "" };
         if (progressPct < 92) return { stageNumber: 5, stageLabel: "Trial Wave Stage", phase: "Trial Wave Stage", title: "The Last Waves Crash Down", copy: "The later waves strike harder than the first. The chamber shakes under their pressure as Heaven strips away weakness and forces the threshold toward a final answer.", progressCopy: "The later waves are landing now. The breakthrough is being narrowed toward its final judgement.", aftermathCopy: "" };
         return { stageNumber: 6, stageLabel: "Heaven's Verdict Stage", phase: "Heaven's Verdict Stage", title: "The Final Judgement Falls", copy: "The strongest strike is descending. This is the deciding blow — the moment in which Heaven either acknowledges the ascent or denies the crossing.", progressCopy: "The final strike is now at hand. The verdict is being forged inside the storm.", aftermathCopy: "" };
       }

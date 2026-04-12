@@ -652,7 +652,7 @@ function buildBreakthroughPayload({
       ),
       comprehension_ready: safeBoolean(latestAttempt.comprehension_ready),
       foundation_stable: safeBoolean(latestAttempt.foundation_stable),
-      qi_ready: safeBoolean(latestAttempt.qi_ready),
+      auric_ready: safeBoolean(latestAttempt.auric_ready),
       tribulation_power: latestAttempt.tribulation_power ?? null,
       battle_roll: latestAttempt.battle_roll ?? null,
       battle_power: latestAttempt.battle_power ?? null,

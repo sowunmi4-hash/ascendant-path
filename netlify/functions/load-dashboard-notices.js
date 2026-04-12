@@ -370,8 +370,8 @@ function buildBondBookStateSummary(row) {
       pickFirst(row.minutes_accumulated, row.shared_minutes_accumulated, row.accumulated_minutes),
       0
     ),
-    qi_accumulated: safeNumber(
-      pickFirst(row.qi_accumulated, row.shared_qi_accumulated, row.accumulated_qi),
+    auric_accumulated: safeNumber(
+      pickFirst(row.auric_accumulated, row.shared_auric_accumulated, row.accumulated_qi),
       0
     ),
     started_at: row.started_at || null,
@@ -739,12 +739,12 @@ function buildAlignmentStateSummary({ dashboardState, previewState }) {
       pickFirst(dashboardState?.effective_bias, previewState?.effective_bias)
     ) || null,
 
-    qi_multiplier: roundNumber(
+    auric_multiplier: roundNumber(
       pickFirst(
-        dashboardState?.qi_multiplier,
-        dashboardState?.current_qi_multiplier,
-        previewState?.qi_multiplier,
-        previewState?.qi_reward_multiplier,
+        dashboardState?.auric_multiplier,
+        dashboardState?.current_auric_multiplier,
+        previewState?.auric_multiplier,
+        previewState?.auric_reward_multiplier,
         1
       ),
       2
@@ -1338,7 +1338,7 @@ function buildNoticeFeed({
       priority: 110,
       type: "aligned_bonus_window_active",
       title: "Aligned bonus window active",
-      body: `${alignmentState.path_name} is currently favored during ${titleize(alignmentState.hour_group, "the current hour")}. Qi ${formatMultiplier(alignmentState.qi_multiplier)} • CP ${formatMultiplier(alignmentState.cp_multiplier)}.`,
+      body: `${alignmentState.path_name} is currently favored during ${titleize(alignmentState.hour_group, "the current hour")}. Qi ${formatMultiplier(alignmentState.auric_multiplier)} • CP ${formatMultiplier(alignmentState.cp_multiplier)}.`,
       action_label: "Open Shrine",
       action_href: "/cultivation.html"
     });
@@ -1348,8 +1348,8 @@ function buildNoticeFeed({
     pushNotice(notices, {
       tone: "danger",
       priority: 100,
-      type: "low_qi_warning",
-      title: "Qi is running low",
+      type: "low_auric_warning",
+      title: "Auric is running low",
       body: `Your current vessel reserve is down to ${formatPercent(sharedQiPercent)}.`,
       action_label: "Return to Shrine",
       action_href: "/cultivation.html"
@@ -1509,7 +1509,7 @@ function buildNoticeFeed({
       priority: 52,
       type: "path_drift_conversion_cost_warning",
       title: "Path drift has a cost",
-      body: `Moving toward ${alignmentState.conversion_target_path_name} would cost ${formatNumber(conversionCost)} Qi per minute.`,
+      body: `Moving toward ${alignmentState.conversion_target_path_name} would cost ${formatNumber(conversionCost)} Auric per minute.`,
       action_label: "Open Essence",
       action_href: "/profile.html"
     });
@@ -1750,7 +1750,7 @@ exports.handler = async (event) => {
     );
 
     const sharedQiPercent = safeNumber(
-      resourceTotals?.shared_qi_percent,
+      resourceTotals?.shared_auric_percent,
       sharedAuricMaximum > 0
         ? Math.round(Math.max(0, Math.min(100, (sharedAuricCurrent / sharedAuricMaximum) * 100)))
         : 0

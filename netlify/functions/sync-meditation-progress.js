@@ -88,7 +88,7 @@ exports.handler = async (event) => {
       success: true,
       synced: false,
       reason: 'in_breakthrough',
-      message: 'Qi and CP gains are suspended during breakthrough. The cultivator faces the tribulation.'
+      message: 'Auric and CP gains are suspended during breakthrough. The cultivator faces the tribulation.'
     });
   }
 
@@ -146,7 +146,7 @@ exports.handler = async (event) => {
     accumulated_seconds:         syncResult?.accumulated_seconds || 0,
     required_seconds:            syncResult?.required_seconds   || 0,
     breakthrough_gate_open:      syncResult?.breakthrough_gate_open || false,
-    auric_current:                  syncResult?.qi_after ?? null,
+    auric_current:                  syncResult?.auric_after ?? null,
     ...(bondState || {
       bond_runtime_active: false,
       bond_session_status: "idle"

@@ -756,13 +756,13 @@
       actions.push({
         key: 'wait',
         label: 'Awaiting Partner Offering',
-        title: 'Waiting for partner to offer their cultivation points'
+        title: 'Waiting for partner to offer their Vestiges'
       });
     } else if (bookState === 'ready_for_offering' && rec && rec.available) {
       actions.push({
         key: 'offer',
         label: 'Offer Bond',
-        title: 'Offer cultivation points for this bond book'
+        title: 'Offer Vestiges for this bond book'
       });
     } else if (bookState === 'paused') {
       actions.push({
@@ -1031,7 +1031,7 @@
     var bondPct = bondCore ? safeNumber(bondCore.bond_percent, 0) : 0;
     var completedBooks = bondCore ? safeNumber(bondCore.completed_books_count, 0) : 0;
 
-    // Bond Qi from session
+    // Bond Auric from session
     var qiCurrent = 0;
     var qiMax = 1;
     if (bondSession) {
@@ -1053,9 +1053,9 @@
     html += '<div class="progress-sub">' + bondPct + '% — ' + completedBooks + ' books completed</div>';
     html += '</div>';
 
-    // Bond Qi Reserve
+    // Bond Auric Reserve
     html += '<div class="bond-qi-section">';
-    html += '<div class="bond-shared-label">Bond Qi Reserve</div>';
+    html += '<div class="bond-shared-label">Bond Auric Reserve</div>';
     html += '<div class="bond-qi-track"><div class="bond-qi-fill" style="width: ' + qiPct + '%"></div></div>';
     html += '<div class="bond-qi-text"><span>' + qiCurrent + ' qi</span><span>' + qiPct + '%</span></div>';
     html += '</div>';

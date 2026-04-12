@@ -814,7 +814,7 @@ exports.handler = async (event) => {
       safeLower(currentPath) !== safeLower(driftShiftTargetKey);
 
     const conversionWarningLine = conversionWarningActive
-      ? `Drifting from ${currentPathLabel} toward ${getPathLabel(driftShiftTargetKey)} would cost ${safeNumber(conversionRow.qi_sacrifice_per_minute, 0)} Qi per minute.`
+      ? `Drifting from ${currentPathLabel} toward ${getPathLabel(driftShiftTargetKey)} would cost ${safeNumber(conversionRow.auric_sacrifice_per_minute, 0)} Auric per minute.`
       : "";
 
     const firstRevealTotalRequired = safeNumber(settingsRow?.first_reveal_total_required, 180);
@@ -867,8 +867,8 @@ exports.handler = async (event) => {
         current_path_label: currentPathLabel,
         first_revealed_at: pathStateRow?.first_revealed_at || null,
         last_path_shift_at: pathStateRow?.last_path_shift_at || null,
-        lifetime_conversion_qi_spent: roundNumber(
-          safeNumber(pathStateRow?.lifetime_conversion_qi_spent, 0),
+        lifetime_conversion_auric_spent: roundNumber(
+          safeNumber(pathStateRow?.lifetime_conversion_auric_spent, 0),
           2
         ),
 
@@ -964,7 +964,7 @@ exports.handler = async (event) => {
           cultivation_started_at: memberRow?.v2_cultivation_started_at || null,
           sessions_today: safeNumber(memberRow?.v2_sessions_today, 0),
           aligned_bonus_window_active: alignedBonusWindowActive,
-          qi_multiplier: liveMultipliers.qi,
+          auric_multiplier: liveMultipliers.qi,
           cp_multiplier: liveMultipliers.cp,
           session_state_label: liveMultipliers.state_label,
           summary_line: safeLower(memberRow?.v2_cultivation_status) === "cultivating"
@@ -981,8 +981,8 @@ exports.handler = async (event) => {
           target_path_key: conversionWarningActive ? driftShiftTargetKey : null,
           target_path_label: conversionWarningActive ? getPathLabel(driftShiftTargetKey) : null,
           conversion_level: conversionWarningActive ? safeText(conversionRow?.conversion_level) : null,
-          qi_sacrifice_per_minute: conversionWarningActive
-            ? safeNumber(conversionRow?.qi_sacrifice_per_minute, 0)
+          auric_sacrifice_per_minute: conversionWarningActive
+            ? safeNumber(conversionRow?.auric_sacrifice_per_minute, 0)
             : 0,
           summary_line: conversionWarningLine || null
         },

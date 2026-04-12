@@ -726,7 +726,7 @@
               <strong id="your-name">Unknown</strong>
               <div id="your-identity-line">Realm: Unknown • Path: Unknown</div>
               <div id="your-member-id-line">Member ID: Unknown</div>
-              <div id="your-resources-line">CP: 0 • Qi: 0 / 0 • Tokens: 0 • Mortal Energy: 0</div>
+              <div id="your-resources-line">CP: 0 • Auric: 0 / 0 • Tokens: 0 • Mortal Energy: 0</div>
               <div id="your-presence-line">Meditation: Unknown</div>
             </div>
 
@@ -735,7 +735,7 @@
               <strong id="partner-name">Unknown</strong>
               <div id="partner-identity-line">Realm: Unknown • Path: Unknown</div>
               <div id="partner-member-id-line">Member ID: Unknown</div>
-              <div id="partner-resources-line">CP: 0 • Qi: 0 / 0 • Tokens: 0 • Mortal Energy: 0</div>
+              <div id="partner-resources-line">CP: 0 • Auric: 0 / 0 • Tokens: 0 • Mortal Energy: 0</div>
               <div id="partner-presence-line">Presence: Unknown</div>
             </div>
           </div>
@@ -780,7 +780,7 @@
             <div class="info-card">
               <small>Shared CP</small>
               <strong id="ledger-shared-cp">0</strong>
-              <div id="ledger-shared-cp-note">Combined cultivation points.</div>
+              <div id="ledger-shared-cp-note">Combined Vestiges.</div>
             </div>
 
             <div class="info-card">
@@ -790,9 +790,9 @@
             </div>
 
             <div class="info-card">
-              <small>Shared Qi Pool</small>
-              <strong id="ledger-shared-qi">0 / 0</strong>
-              <div id="ledger-shared-qi-note">Combined current and maximum Qi.</div>
+              <small>Shared Auric Pool</small>
+              <strong id="ledger-shared-auric">0 / 0</strong>
+              <div id="ledger-shared-auric-note">Combined current and maximum Auric.</div>
             </div>
 
             <div class="info-card">
@@ -1606,7 +1606,7 @@
     document.getElementById("your-identity-line").textContent = `Realm: ${yourRealm} • Path: ${yourPath}`;
     document.getElementById("your-member-id-line").textContent = `Member ID: ${yourMemberId}`;
     document.getElementById("your-resources-line").textContent =
-      `CP: ${formatNumber(yourCP)} • Qi: ${formatNumber(yourQiCurrent)} / ${formatNumber(yourQiMax)} • Tokens: ${formatNumber(yourTokens)} • Mortal Energy: ${formatNumber(yourEnergy)}`;
+      `CP: ${formatNumber(yourCP)} • Auric: ${formatNumber(yourQiCurrent)} / ${formatNumber(yourQiMax)} • Tokens: ${formatNumber(yourTokens)} • Mortal Energy: ${formatNumber(yourEnergy)}`;
     document.getElementById("your-presence-line").textContent =
       `Meditation: ${member?.v2_cultivation_status === 'cultivating' ? "Active" : "Inactive"} • HUD Sync: ${member?.last_hud_sync_at ? formatDate(member.last_hud_sync_at) : "Unknown"}`;
 
@@ -1614,7 +1614,7 @@
     document.getElementById("partner-identity-line").textContent = `Realm: ${partnerRealm} • Path: ${partnerPath}`;
     document.getElementById("partner-member-id-line").textContent = `Member ID: ${partnerMemberId}`;
     document.getElementById("partner-resources-line").textContent =
-      `CP: ${formatNumber(partnerCP)} • Qi: ${formatNumber(partnerAuricCurrent)} / ${formatNumber(partnerQiMax)} • Tokens: ${formatNumber(partnerTokens)} • Mortal Energy: ${formatNumber(partnerEnergy)}`;
+      `CP: ${formatNumber(partnerCP)} • Auric: ${formatNumber(partnerAuricCurrent)} / ${formatNumber(partnerQiMax)} • Tokens: ${formatNumber(partnerTokens)} • Mortal Energy: ${formatNumber(partnerEnergy)}`;
     document.getElementById("partner-presence-line").textContent =
       `Presence: ${formatPresence(payload?.partner_presence_status || "Unknown")} • ${formatPartnerPresenceReason(payload?.partner_presence_reason, payload?.partner_distance_meters)}`;
   }
@@ -1650,10 +1650,10 @@
     document.getElementById("ledger-shared-tokens-note").textContent =
       `You: ${formatNumber(personalTokens)} • Partner: ${formatNumber(partnerTokens)}`;
 
-    document.getElementById("ledger-shared-qi").textContent =
+    document.getElementById("ledger-shared-auric").textContent =
       `${formatNumber(sharedAuricCurrent)} / ${formatNumber(sharedAuricMaximum)}`;
-    document.getElementById("ledger-shared-qi-note").textContent =
-      "Combined current and maximum Qi for the selected pair.";
+    document.getElementById("ledger-shared-auric-note").textContent =
+      "Combined current and maximum Auric for the selected pair.";
 
     document.getElementById("ledger-pair-energy").textContent =
       `${formatNumber(personalEnergy)} • ${formatNumber(partnerEnergy)}`;
