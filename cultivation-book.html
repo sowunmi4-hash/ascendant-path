@@ -201,7 +201,7 @@
     /* ── VESSEL-GATE PANEL ── */
     .vessel-gate-panel {
       display: grid;
-      grid-template-columns: 1fr 1fr;
+      grid-template-columns: 1fr;
       gap: 0;
       border-radius: var(--radius-lg);
       overflow: hidden;
@@ -223,7 +223,7 @@
       align-items: center;
       justify-content: center;
       padding: 1.5rem 1rem 1rem;
-      border-right: 0.5px solid var(--border);
+      /* border-right removed — vessel is now full-width */
       min-height: 380px;
     }
     .vessel-side-head { position: absolute; top: 12px; left: 14px; }
@@ -244,7 +244,7 @@
       margin: 0;
       letter-spacing: 0.5px;
     }
-    .vessel-canvas-wrap { position: relative; width: 340px; height: 340px; }
+    .vessel-canvas-wrap { position: relative; width: 400px; height: 420px; }
     .vessel-qi-bar-wrap { position: absolute; bottom: 12px; left: 14px; right: 14px; }
     .vessel-qi-bar-label {
       font-family: var(--font-ui);
@@ -258,70 +258,38 @@
     .vessel-qi-bar-track { height: 3px; background: var(--track); border-radius: 2px; overflow: hidden; }
     .vessel-qi-bar-fill { height: 100%; border-radius: 2px; transition: width 0.8s ease; }
 
-    /* ── GATE SIDE (cosmic eye) ── */
-    .gate-side {
-      position: relative;
-      min-height: 380px;
-      display: flex;
-      flex-direction: column;
-      background: var(--bg-card);
+    /* ── VESSEL ACTION AREA (replaces gate-footer) ── */
+    .vessel-action-area {
+      width: 100%;
+      padding: 12px 16px 16px;
+      box-sizing: border-box;
     }
-    .gate-side .gate-wrap { flex: 1; border-radius: 0; border: none; border-color: transparent; }
-    .gate-side .gate-scene { flex: 1; height: auto; min-height: 280px; background: var(--bg-card); border-radius: 0; }
-
-    /* ── GATE HEADER/FOOTER ── */
-    .gate-header {
-      padding: 14px 16px 6px;
-    }
-    .gate-kicker {
-      font-family: var(--font-ui);
-      font-size: 9px;
-      font-weight: 500;
-      color: var(--gold-dim);
-      text-transform: uppercase;
-      letter-spacing: 2px;
-    }
-    .gate-title {
-      font-family: var(--font-display);
-      font-size: 14px;
-      font-weight: 400;
-      color: var(--text-primary);
-      letter-spacing: 0.5px;
-      margin: 4px 0 0;
-    }
-    .gate-desc {
-      font-family: var(--font-body);
-      font-size: 13px;
-      color: var(--text-secondary);
-      margin: 4px 0 0;
-      line-height: 1.5;
-    }
-    .gate-footer { padding: 10px 16px 14px; }
-    .gate-chips {
+    .vessel-action-chips {
       display: flex;
       gap: 8px;
       flex-wrap: wrap;
       margin-bottom: 10px;
+      justify-content: center;
     }
-    .gate-chip {
+    .vessel-action-chip {
       padding: 8px 12px;
       border-radius: 8px;
       display: flex;
       flex-direction: column;
       gap: 2px;
     }
-    .gate-chip span {
+    .vessel-action-chip span {
       font-family: var(--font-ui);
       font-size: 9px;
       text-transform: uppercase;
       letter-spacing: 1.5px;
     }
-    .gate-chip strong {
+    .vessel-action-chip strong {
       font-family: var(--font-display);
       font-size: 13px;
       font-weight: 400;
     }
-    #gate-action-btn, #gate-action-btn-off {
+    #vessel-action-btn, #vessel-action-btn-off {
       width: 100%;
       padding: 12px;
       border: none;
@@ -333,27 +301,18 @@
       cursor: pointer;
       transition: opacity 0.2s, transform 0.1s;
     }
-    #gate-action-btn:hover { opacity: 0.92; }
-    #gate-action-btn:active { transform: scale(0.98); }
-    #gate-action-btn:disabled { opacity: 0.5; cursor: not-allowed; }
-    #gate-action-btn-off {
-      cursor: default;
-    }
-    #gate-sub-note {
+    #vessel-action-btn:hover { opacity: 0.92; }
+    #vessel-action-btn:active { transform: scale(0.98); }
+    #vessel-action-btn:disabled { opacity: 0.5; cursor: not-allowed; }
+    #vessel-action-btn-off { cursor: default; }
+    #vessel-sub-note {
       font-family: var(--font-body);
       font-size: 12px;
       margin: 6px 0 0;
       line-height: 1.5;
+      text-align: center;
     }
-    #gate-flash {
-      position: absolute;
-      inset: 0;
-      background: white;
-      opacity: 0;
-      pointer-events: none;
-      transition: opacity 0.3s;
-      z-index: 5;
-    }
+
 
     /* ── STATS BAR ── */
     .record-stats-bar {
@@ -765,7 +724,6 @@
 
     /* ── RESPONSIVE ── */
     @media (max-width: 1180px) {
-      .vessel-gate-panel { grid-template-columns: 1fr; }
       .record-lower-grid { grid-template-columns: 1fr; }
       .breakthrough-grid { grid-template-columns: repeat(2, minmax(0,1fr)); }
     }
@@ -853,32 +811,21 @@
             <h2 class="vessel-side-title" id="vessel-side-title">Meditating</h2>
           </div>
           <div class="vessel-canvas-wrap">
-            <canvas id="vessel-canvas" width="400" height="400"></canvas>
+            <canvas id="vessel-canvas" width="400" height="420"></canvas>
           </div>
           <div class="vessel-qi-bar-wrap">
             <p class="vessel-qi-bar-label">Qi Reserve <span id="vessel-qi-label">0%</span></p>
             <div class="vessel-qi-bar-track"><div class="vessel-qi-bar-fill" id="vessel-qi-bar-fill"></div></div>
           </div>
-        </div>
-        <div class="gate-side" id="gate-side">
-          <div class="gate-wrap" id="gate-wrap">
-            <div class="gate-header">
-              <p class="gate-kicker" id="gate-kicker">Ascension Threshold</p>
-              <h2 class="gate-title" id="gate-title">Gate Sealed</h2>
-              <p class="gate-desc" id="gate-desc">This section has not yet been opened.</p>
-            </div>
-      <div class="gate-scene" id="gate-scene" style="position:relative;overflow:hidden;">
-        <canvas id="portal-canvas" style="width:100%;height:100%;display:block;"></canvas>
-        <div class="gate-flash" id="gate-flash" style="position:absolute;top:0;left:0;right:0;bottom:0;background:#fff;opacity:0;pointer-events:none;transition:opacity 0.3s;z-index:5;"></div>
-      </div>
-            <div class="gate-footer">
-              <div class="gate-chips" id="gate-chips"></div>
-              <button class="gate-action-btn" id="gate-action-btn" style="display:none;"></button>
-              <div class="gate-action-btn-off" id="gate-action-btn-off" style="display:none;"></div>
-              <p class="gate-sub-note" id="gate-sub-note"></p>
-            </div>
+          <!-- Vessel Action Area (replaces gate-footer) -->
+          <div class="vessel-action-area" id="vessel-action-area">
+            <div class="vessel-action-chips" id="vessel-action-chips"></div>
+            <button class="vessel-action-btn" id="vessel-action-btn" style="display:none;"></button>
+            <div class="vessel-action-btn-off" id="vessel-action-btn-off" style="display:none;"></div>
+            <p class="vessel-sub-note" id="vessel-sub-note"></p>
           </div>
         </div>
+
       </div>
 
       <div class="record-stats-bar" id="record-stats-bar">
@@ -1543,7 +1490,7 @@
             +'<h3>Tribulation Damage</h3>'
             +'<p>'+safeText(focus.ui_note, 'This section was struck by tribulation. Repair to resume.')+'</p>'
             +'<div class="context-list">'
-            +'<div class="context-row"><span>Section</span><strong>'+toTitle(focus.section_key)+'</strong></div>'
+            +'<div class="context-row"><span>Scroll</span><strong>'+toTitle(focus.section_key)+'</strong></div>'
             +'<div class="context-row"><span>Repair Cost</span><strong>'+safeNumber(focus.repair_cp_cost,0)+' CP</strong></div>'
             +'<div class="context-row"><span>Resume From</span><strong>'+(safeNumber(focus.repair_resume_from_seconds,0)>0?formatDuration(focus.repair_resume_from_seconds):'--')+'</strong></div>'
             +'</div></article>');
@@ -1766,10 +1713,10 @@
 
           var auraC1 = figureAscended ? 'rgba(255,230,120,0.9)' : figureDamaged ? 'rgba(200,80,80,0.7)' : c1;
           var auraC2 = figureAscended ? 'rgba(255,200,60,0.5)'  : figureDamaged ? 'rgba(160,40,40,0.4)'  : c2;
-          var auraPct = (figureGone || figureDamaged) ? qiPct * 0.3 : qiPct;
+          var auraPct = figureGone ? qiPct * 0.3 : (figureDamaged || _figDamaged) ? qiPct * 0.4 : qiPct;
           drawVesselQiAura(ctx, cx, cy, baseR, auraPct, auraC1, auraC2, t, start);
 
-          if (figImg && !figureGone && !figureDamaged) {
+          if (figImg && !figureGone) {
             try {
               var figH = baseR * (figureAscended ? 1.9 : figureDamaged ? 1.4 : 1.6);
               var figW = figH;
@@ -1781,20 +1728,19 @@
                 figY = cy - figH * 0.45 + 10;
               }
 
-              // Portal-entry shrink + glide animation toward the portal
+              // Seal cinematic: entering — figure shrinks into center as seal forms
               var portalAlphaOverride = -1;
-              if (_vesselEnteringPortal) {
-                _vesselPortalProgress = Math.min(1, _vesselPortalProgress + 0.012);
-                var ep = _vesselPortalProgress;
+              if (_sealActive && _sealType === 'entering') {
+                var elapsed = (performance.now() - _sealStartTime) / 1000;
+                var ep = Math.min(1, elapsed / 2.8);
                 var ease = ep < 0.5 ? 2 * ep * ep : 1 - Math.pow(-2 * ep + 2, 2) / 2;
-                var shrink = 1 - ease * 0.85;
+                var shrink = 1 - ease * 0.92;
                 figW *= shrink;
                 figH *= shrink;
-                figX = cx - figW * 0.5 + ease * (W * 0.55);
-                figY = cy - figH * 0.5 + ease * (-H * 0.05);
-                floatOffset = floatOffset * (1 - ease);
-                figY += floatOffset;
-                portalAlphaOverride = Math.max(0, 1 - ease * 1.3);
+                figX = cx - figW * 0.5;
+                figY = cy - figH * 0.5;
+                floatOffset = 0;
+                portalAlphaOverride = Math.max(0, 1 - ease * 1.4);
               }
 
               var rawC1 = figureAscended ? 'rgba(255,230,120,0.9)' : figureDamaged ? 'rgba(200,80,80,0.9)' : c1;
@@ -1812,10 +1758,10 @@
               }
               ctx2.putImageData(id2, 0, 0);
               ctx.save();
-              if (figureDamaged && !_vesselEnteringPortal) {
+              if ((figureDamaged || _figDamaged) && !(_sealActive && _sealType === 'entering')) {
                 ctx.translate(figX + figW * 0.5, figY + figH * 0.9);
                 ctx.rotate(-0.25);
-                ctx.globalAlpha = 0.7;
+                ctx.globalAlpha = 0.6 + Math.sin(t * 1.5) * 0.1;
                 ctx.drawImage(off2, -figW * 0.5, -figH * 0.9, figW, figH);
               } else {
                 ctx.globalAlpha = portalAlphaOverride >= 0 ? portalAlphaOverride : (figureAscended ? 1 : 0.92);
@@ -1823,6 +1769,133 @@
               }
               ctx.restore();
             } catch(fe) {}
+          }
+
+          // ── Seal cinematic overlay on vessel canvas ──
+          if (_sealActive) {
+            var sealElapsed = (performance.now() - _sealStartTime) / 1000;
+            var rc = _realmColors || { pri:'#c8a96a', glow:'#c8a96a', dim:'#1a1400' };
+
+            if (_sealType === 'entering') {
+              // Phase: seal forms (0-1.5s), figure sinks (1-2.8s), flash (2.5-3.2s)
+              if (sealElapsed < 3.2) {
+                var sealA = Math.min(1, sealElapsed / 1.2) * 0.7;
+                drawSealOnVessel(ctx, cx, cy, baseR, rc.glow, sealA, t);
+                if (sealElapsed > 2.5) {
+                  var flashA = Math.min(0.6, (sealElapsed - 2.5) / 0.4);
+                  ctx.fillStyle = rc.glow; ctx.globalAlpha = flashA * 0.3;
+                  ctx.fillRect(0, 0, W, H); ctx.globalAlpha = 1;
+                }
+              } else {
+                stopSealCinematic();
+              }
+            } else if (_sealType === 'success') {
+              // Phase: figure descends from top with golden glow (0-2.5s), seal fades (2-3s)
+              var dur = 3.0;
+              if (sealElapsed < dur) {
+                var sp = Math.min(1, sealElapsed / 2.2);
+                var sEase = sp < 0.5 ? 2*sp*sp : 1 - Math.pow(-2*sp+2,2)/2;
+                // Golden descending figure
+                var descY = -60 + (cy - 60 + 60) * sEase;
+                var descAlpha = Math.min(1, sealElapsed * 2);
+                var descSize = baseR * 0.8;
+                if (_vesselFigCache) {
+                  ctx.save(); ctx.globalAlpha = descAlpha * 0.9;
+                  // Golden glow
+                  var grd = ctx.createRadialGradient(cx, descY, 0, cx, descY, descSize * 0.6);
+                  grd.addColorStop(0, 'rgba(255,230,120,0.4)'); grd.addColorStop(1, 'transparent');
+                  ctx.fillStyle = grd; ctx.fillRect(0, 0, W, H);
+                  ctx.drawImage(_vesselFigCache, cx - descSize*0.5, descY - descSize*0.5, descSize, descSize);
+                  ctx.restore();
+                }
+                // Seal glows during descent
+                var sealA2 = (sealElapsed > 2) ? Math.max(0, 1 - (sealElapsed-2)/1.0) * 0.5 : Math.min(0.5, sealElapsed * 0.4);
+                drawSealOnVessel(ctx, cx, cy, baseR, '#ffe878', sealA2, t);
+              } else {
+                _figDamaged = false;
+                stopSealCinematic();
+                refreshPageData();
+              }
+            } else if (_sealType === 'fail') {
+              // Phase: figure drops from top RED (0-1.5s), tilts+cracks (1.5-2.5s), settles damaged (2.5-3.5s)
+              var dur = 3.5;
+              if (sealElapsed < dur) {
+                var fp = Math.min(1, sealElapsed / 1.3);
+                var fEase = fp < 0.5 ? 2*fp*fp : 1 - Math.pow(-2*fp+2,2)/2;
+                // Red descending figure
+                var dropY = -60 + (cy + 20 + 60) * fEase;
+                var dropAlpha = Math.min(1, sealElapsed * 2.5);
+                var dropSize = baseR * 0.7;
+                if (_vesselFigCache) {
+                  ctx.save();
+                  // Tint red
+                  var tiltAngle = sealElapsed > 1.3 ? Math.min(0.25, (sealElapsed - 1.3) * 0.3) : 0;
+                  ctx.translate(cx, dropY);
+                  ctx.rotate(-tiltAngle);
+                  ctx.globalAlpha = dropAlpha * 0.8;
+                  // Red glow
+                  var grd2 = ctx.createRadialGradient(0, 0, 0, 0, 0, dropSize * 0.5);
+                  grd2.addColorStop(0, 'rgba(200,60,60,0.35)'); grd2.addColorStop(1, 'transparent');
+                  ctx.fillStyle = grd2; ctx.beginPath(); ctx.arc(0, 0, dropSize*0.5, 0, Math.PI*2); ctx.fill();
+                  ctx.drawImage(_vesselFigCache, -dropSize*0.5, -dropSize*0.5, dropSize, dropSize);
+                  ctx.restore();
+                }
+                // Crack lines appear after 1.5s
+                if (sealElapsed > 1.5) {
+                  var crackA = Math.min(0.6, (sealElapsed - 1.5) * 0.6);
+                  ctx.save(); ctx.globalAlpha = crackA; ctx.strokeStyle = '#cc4444'; ctx.lineWidth = 1.5;
+                  for (var ci = 0; ci < 5; ci++) {
+                    var ca = (ci / 5) * Math.PI * 2 + 0.3;
+                    ctx.beginPath();
+                    ctx.moveTo(cx + Math.cos(ca) * baseR * 0.2, cy + Math.sin(ca) * baseR * 0.2);
+                    var segments = 3 + ci;
+                    var px = cx + Math.cos(ca) * baseR * 0.2;
+                    var py = cy + Math.sin(ca) * baseR * 0.2;
+                    for (var si = 0; si < segments; si++) {
+                      px += Math.cos(ca + (Math.random()-0.5)*1.2) * (15 + Math.random()*10);
+                      py += Math.sin(ca + (Math.random()-0.5)*1.2) * (15 + Math.random()*10);
+                      ctx.lineTo(px, py);
+                    }
+                    ctx.stroke();
+                  }
+                  ctx.restore();
+                }
+                // Damaged seal flicker
+                var sealA3 = sealElapsed > 2 ? (0.3 + Math.sin(sealElapsed * 8) * 0.15) : Math.min(0.4, sealElapsed * 0.3);
+                drawSealOnVessel(ctx, cx, cy, baseR, '#cc4444', sealA3, t);
+              } else {
+                _figDamaged = true;
+                stopSealCinematic();
+                refreshPageData();
+              }
+            } else if (_sealType === 'repair') {
+              // Phase: cracks heal (0-1s), figure straightens (1-2s), color red→gold (2-3s)
+              var dur = 3.0;
+              if (sealElapsed < dur) {
+                // Healing seal glow
+                var healA = sealElapsed < 1 ? Math.min(0.5, sealElapsed * 0.6) :
+                            sealElapsed < 2 ? 0.5 : Math.max(0, 0.5 - (sealElapsed - 2) * 0.5);
+                var healColor = sealElapsed < 2 ? '#88cc88' : '#c8a96a';
+                drawSealOnVessel(ctx, cx, cy, baseR, healColor, healA, t);
+                // Diminishing cracks
+                if (sealElapsed < 1.5) {
+                  var crackFade = Math.max(0, 1 - sealElapsed / 1.5) * 0.5;
+                  ctx.save(); ctx.globalAlpha = crackFade; ctx.strokeStyle = '#cc4444'; ctx.lineWidth = 1;
+                  for (var ri = 0; ri < 4; ri++) {
+                    var ra = (ri / 4) * Math.PI * 2 + 0.5;
+                    ctx.beginPath();
+                    ctx.moveTo(cx + Math.cos(ra)*20, cy + Math.sin(ra)*20);
+                    ctx.lineTo(cx + Math.cos(ra)*60, cy + Math.sin(ra)*55);
+                    ctx.stroke();
+                  }
+                  ctx.restore();
+                }
+              } else {
+                _figDamaged = false;
+                stopSealCinematic();
+                refreshPageData();
+              }
+            }
           }
 
           var qiPctDisplay = Math.round(qiPct * 100);
@@ -1854,9 +1927,6 @@
       draw();
     }
 
-    // Portal-entry animation state
-    var _vesselEnteringPortal = false;
-    var _vesselPortalProgress = 0;
 
     function stopGateVessel() {
       if (_vesselRafId) { cancelAnimationFrame(_vesselRafId); _vesselRafId = null; }
@@ -1865,15 +1935,104 @@
        CINEMATIC SYSTEM — 4 animated transitions
        ═══════════════════════════════════════ */
 
+
+    /* ═══════════════════════════════════════
+       SEAL-BASED CINEMATIC SYSTEM
+       All animations happen ON the vessel canvas.
+       ═══════════════════════════════════════ */
+
+    function drawSealOnVessel(ctx, cx, cy, baseR, color, alpha, phase) {
+      // Concentric seal circles with rotating runes
+      ctx.save();
+      ctx.globalAlpha = alpha;
+      ctx.strokeStyle = color;
+      ctx.lineWidth = 1.2;
+      // Outer seal ring
+      ctx.beginPath();
+      ctx.arc(cx, cy, baseR * 1.05, 0, Math.PI * 2);
+      ctx.stroke();
+      // Inner seal ring
+      ctx.beginPath();
+      ctx.arc(cx, cy, baseR * 0.65, 0, Math.PI * 2);
+      ctx.stroke();
+      // Rune marks rotating around the outer ring
+      var runeCount = 12;
+      ctx.font = '10px serif';
+      ctx.fillStyle = color;
+      ctx.textAlign = 'center';
+      ctx.textBaseline = 'middle';
+      var runes = ['✧','✦','✴','✵','✡','❂','✠','✺','✶','✷','✸','✹'];
+      for (var i = 0; i < runeCount; i++) {
+        var a = (i / runeCount) * Math.PI * 2 + phase * 0.3;
+        var rx = cx + Math.cos(a) * baseR * 0.85;
+        var ry = cy + Math.sin(a) * baseR * 0.85;
+        ctx.fillText(runes[i % runes.length], rx, ry);
+      }
+      // Cross lines
+      for (var j = 0; j < 4; j++) {
+        var la = (j / 4) * Math.PI * 2 + phase * -0.15;
+        ctx.beginPath();
+        ctx.moveTo(cx + Math.cos(la) * baseR * 0.65, cy + Math.sin(la) * baseR * 0.65);
+        ctx.lineTo(cx + Math.cos(la) * baseR * 1.05, cy + Math.sin(la) * baseR * 1.05);
+        ctx.stroke();
+      }
+      ctx.restore();
+    }
+
+    function startSealCinematic(type) {
+      _sealActive = true;
+      _sealType = type;
+      _sealStartTime = performance.now();
+      _sealPhase = 0;
+      // For 'fail' type, mark figure as damaged after cinematic
+      // For 'repair', unmark it
+      // For 'success', figure ascends
+      // The actual state changes happen in the draw loop phases
+      _cleanupCinematicParams();
+    }
+
+    function stopSealCinematic() {
+      _sealActive = false;
+      _sealType = null;
+      _sealPhase = 0;
+    }
+
+    function runEnteringCinematic(btn, noteEl) {
+      // Called when user clicks "Enter the Portal" — seal forms, figure sinks, redirect
+      _sealActive = true;
+      _sealType = 'entering';
+      _sealStartTime = performance.now();
+      if (btn) { btn.disabled = true; btn.textContent = 'Entering...'; }
+      if (noteEl) noteEl.textContent = 'The seal manifests...';
+
+      // After cinematic completes (~3.2s), call enter-breakthrough API and redirect
+      setTimeout(function() {
+        if (noteEl) noteEl.textContent = 'Passing through the threshold...';
+        var avatarKey = (state && state.member && state.member.sl_avatar_key) || (state && state.user && state.user.sl_avatar_key) || '';
+        if (avatarKey) {
+          fetch('/.netlify/functions/enter-breakthrough', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            credentials: 'include',
+            body: JSON.stringify({ sl_avatar_key: avatarKey })
+          }).catch(function() {});
+        }
+      }, 2200);
+
+      setTimeout(function() {
+        window.location.href = getBreakthroughRoute();
+      }, 3200);
+    }
+
     function runFigureDropCinematic() {
       var urlParams = new URLSearchParams(window.location.search);
       var btResult = urlParams.get('breakthrough');
       var repairResult = urlParams.get('repair');
-      if (btResult === 'success') { runCinematic_SuccessAscension(); }
-      else if (btResult === 'failed_damaged') { runCinematic_FailureTrap(); }
-      else if (btResult === 'failed_stable') { runCinematic_StableFailure(); }
-      else if (btResult === 'failed') { runCinematic_FailureTrap(); }
-      else if (repairResult === 'complete') { runCinematic_RepairGlide(); }
+      if (btResult === 'success') { startSealCinematic('success'); }
+      else if (btResult === 'failed_damaged') { startSealCinematic('fail'); }
+      else if (btResult === 'failed_stable') { startSealCinematic('fail'); }
+      else if (btResult === 'failed') { startSealCinematic('fail'); }
+      else if (repairResult === 'complete') { startSealCinematic('repair'); }
     }
 
     function _cleanupCinematicParams() {
@@ -1883,921 +2042,17 @@
       window.history.replaceState({}, '', url);
     }
 
-    /* ── CINEMATIC: Stable Failure (pushed back, no damage) ── */
-    function runCinematic_StableFailure() {
-      _cinematicActive = true; _cinematicType = 'stable_fail';
-      var vesselCanvas = document.getElementById('vessel-canvas');
-      var portalCanvas = document.getElementById('gate-canvas');
-      if (!vesselCanvas || !portalCanvas) { _cleanupCinematicParams(); _cinematicActive = false; return; }
-
-      var els = _createCinematicOverlay();
-      var overlay = els.overlay; var fig = els.fig;
-      var fCtx = fig.getContext('2d');
-
-      // Figure appears at portal eye area, drifts back upward and fades — rejected but unbroken
-      var portalRect = portalCanvas.getBoundingClientRect();
-      var vesselRect = vesselCanvas.getBoundingClientRect();
-      var startX = portalRect.left + portalRect.width * 0.5 - 60;
-      var startY = portalRect.top + portalRect.height * 0.42 - 80;
-      var endX = vesselRect.left + vesselRect.width * 0.3 - 60;
-      var endY = vesselRect.top + vesselRect.height * 0.3 - 80;
-
-      fig.style.left = startX + 'px';
-      fig.style.top  = startY + 'px';
-
-      var duration = 2000;
-      var startTime = performance.now();
-
-      function animate(now) {
-        var elapsed = now - startTime;
-        var p = Math.min(1, elapsed / duration);
-        var ease = p < 0.5 ? 2 * p * p : 1 - Math.pow(-2 * p + 2, 2) / 2;
-
-        // Figure drifts from portal back toward vessel, with a slight wobble (pushed back)
-        var wobble = Math.sin(p * Math.PI * 4) * (1 - ease) * 8;
-        var curX = startX + (endX - startX) * ease + wobble;
-        var curY = startY + (endY - startY) * ease;
-        fig.style.left = curX + 'px';
-        fig.style.top  = curY + 'px';
-
-        // Scale: starts small (at eye), grows to normal
-        var sc = 0.2 + ease * 0.8;
-        // Dim amber color — rejected but not damaged
-        var ga = 0.3 + ease * 0.5;
-        _drawCinematicFigure(fCtx, 120, 160, sc, '#b89040', 'rgba(184,144,64', ga);
-
-        // Flash the portal eye briefly at the start
-        if (p < 0.3) {
-          var pCtx = portalCanvas.getContext('2d');
-          pCtx.save();
-          var flashA = (1 - p / 0.3) * 0.15;
-          pCtx.fillStyle = 'rgba(255,200,100,' + flashA + ')';
-          pCtx.fillRect(0, 0, portalCanvas.width, portalCanvas.height);
-          pCtx.restore();
-        }
-
-        if (p < 1) {
-          requestAnimationFrame(animate);
-        } else {
-          // Fade out
-          fig.style.transition = 'opacity 0.4s';
-          fig.style.opacity = '0';
-          setTimeout(function() {
-            if (overlay.parentNode) overlay.parentNode.removeChild(overlay);
-            _cinematicActive = false;
-            _cleanupCinematicParams();
-          }, 500);
-        }
-      }
-      requestAnimationFrame(animate);
-    }
-
-    function _drawCinematicFigure(ctx, w, h, scale, color, glowColor, glowAlpha) {
-      ctx.clearRect(0, 0, w, h);
-      ctx.save();
-      ctx.translate(w / 2, h / 2);
-      ctx.scale(scale, scale);
-      if (glowAlpha > 0) {
-        var glow = ctx.createRadialGradient(0, 0, 8, 0, 0, 50);
-        glow.addColorStop(0, glowColor.replace(')', ',' + glowAlpha + ')').replace('rgb(', 'rgba('));
-        glow.addColorStop(1, 'transparent');
-        ctx.fillStyle = glow;
-        ctx.fillRect(-60, -60, 120, 120);
-      }
-      ctx.fillStyle = color; ctx.strokeStyle = color; ctx.lineWidth = 2;
-      ctx.beginPath(); ctx.arc(0, -25, 8, 0, Math.PI * 2); ctx.fill();
-      ctx.beginPath(); ctx.moveTo(0, -17); ctx.lineTo(0, 5); ctx.stroke();
-      ctx.beginPath(); ctx.moveTo(-15, -5); ctx.quadraticCurveTo(-5, -10, 0, -5); ctx.quadraticCurveTo(5, -10, 15, -5); ctx.stroke();
-      ctx.beginPath(); ctx.moveTo(-12, 18); ctx.quadraticCurveTo(-3, 8, 0, 5); ctx.quadraticCurveTo(3, 8, 12, 18); ctx.stroke();
-      ctx.restore();
-    }
-
-    function _createCinematicOverlay() {
-      var overlay = document.createElement('div');
-      overlay.id = 'cinematic-overlay';
-      overlay.style.cssText = 'position:fixed;top:0;left:0;width:100vw;height:100vh;pointer-events:none;z-index:9999;';
-      var fig = document.createElement('canvas');
-      fig.width = 120; fig.height = 160;
-      fig.style.cssText = 'position:absolute;pointer-events:none;';
-      overlay.appendChild(fig);
-      document.body.appendChild(overlay);
-      return { overlay: overlay, fig: fig };
-    }
-
-    /* ── CINEMATIC 1: Success Ascension ── */
-    function runCinematic_SuccessAscension() {
-      _cinematicActive = true; _cinematicType = 'success';
-      var vesselCanvas = document.getElementById('vessel-canvas');
-      var portalCanvas = document.getElementById('gate-canvas');
-      if (!vesselCanvas || !portalCanvas) { _cleanupCinematicParams(); _cinematicActive = false; return; }
-      var vR = vesselCanvas.getBoundingClientRect();
-      var pR = portalCanvas.getBoundingClientRect();
-      var els = _createCinematicOverlay();
-      vesselCanvas.style.opacity = '0';
-      var sX = pR.left + pR.width/2 - 60, sY = pR.top + pR.height/2 - 80;
-      var eX = vR.left + vR.width/2 - 60, eY = vR.top + vR.height/2 - 80;
-      var t0 = performance.now(), dur = 2500;
-      function tick(now) {
-        var t = Math.min(1, (now - t0) / dur);
-        var fCtx = els.fig.getContext('2d');
-        var x, y, sc, ga, op;
-        if (t < 0.48) {
-          var p = t / 0.48, e = 1 - Math.pow(1-p, 2);
-          x = sX; y = sY - e * pR.height * 0.4;
-          sc = 0.3 + e*0.15; ga = e*0.6; op = 0.4 + e*0.6;
-        } else if (t < 0.6) {
-          var p = (t-0.48)/0.12;
-          var rY = sY - pR.height*0.4;
-          x = sX + p*(eX-sX); y = rY + p*(eY-rY);
-          sc = 0.45 + p*0.2; ga = 0.6; op = 1;
-        } else {
-          var p = (t-0.6)/0.4, e = 1-Math.pow(1-p,3);
-          x = eX; y = eY; sc = 0.65+e*0.35; ga = 0.6*(1-e); op = 1;
-        }
-        els.fig.style.left = x+'px'; els.fig.style.top = y+'px'; els.fig.style.opacity = String(op);
-        _drawCinematicFigure(fCtx, 120, 160, sc, '#c8a96a', 'rgba(200,169,106', ga);
-        if (t < 1) { requestAnimationFrame(tick); }
-        else {
-          els.overlay.remove();
-          vesselCanvas.style.opacity = '1'; vesselCanvas.style.transition = 'opacity 0.3s';
-          _cinematicActive = false; _cinematicType = null; _cleanupCinematicParams();
-        }
-      }
-      requestAnimationFrame(tick);
-    }
-
-    /* ── CINEMATIC 2: Failure Trap ── */
-    function runCinematic_FailureTrap() {
-      _cinematicActive = true; _cinematicType = 'failure';
-      var vesselCanvas = document.getElementById('vessel-canvas');
-      var portalCanvas = document.getElementById('gate-canvas');
-      if (!vesselCanvas || !portalCanvas) { _cleanupCinematicParams(); _cinematicActive = false; return; }
-      var vR = vesselCanvas.getBoundingClientRect();
-      var pR = portalCanvas.getBoundingClientRect();
-      var els = _createCinematicOverlay();
-      vesselCanvas.style.opacity = '0';
-      var sX = vR.left + vR.width/2 - 60, sY = vR.top + vR.height/2 - 80;
-      var eX = pR.left + pR.width/2 - 60, eY = pR.top + pR.height/2 - 80;
-      var t0 = performance.now(), dur = 1800;
-      function tick(now) {
-        var t = Math.min(1, (now - t0) / dur);
-        var fCtx = els.fig.getContext('2d');
-        if (t < 0.33) {
-          var p = t/0.33, e = p*p;
-          var x = sX + e*(eX-sX), y = sY + e*(eY-sY);
-          var sc = 1.0 - e*0.65, ga = e*0.4, op = 1.0 - e*0.3;
-          els.fig.style.left = x+'px'; els.fig.style.top = y+'px'; els.fig.style.opacity = String(op);
-          _drawCinematicFigure(fCtx, 120, 160, sc, '#884444', 'rgba(204,68,68', ga);
-        } else if (t < 0.44) {
-          var p = (t-0.33)/0.11;
-          els.fig.style.opacity = String(0.7 - p*0.5);
-          var sc = 0.35 - p*0.25;
-          _drawCinematicFigure(fCtx, 120, 160, Math.max(0.05, sc), '#884444', 'rgba(204,68,68', 0.4);
-        } else {
-          els.fig.style.display = 'none';
-          _portalState = 'damaged';
-          if (_portalCracks.length < 6 || !_portalCracks[0].sg) {
-            _portalCracks = [];
-            for (var i = 0; i < 10; i++) {
-              var ca = -2.5+Math.random()*5, cl = 20+Math.random()*45, sg = [];
-              var cpx = 0, cpy = 0;
-              for (var k = 0; k < 5; k++) {
-                cpx += Math.cos(ca+Math.random()*0.5-0.25)*(cl/5);
-                cpy += Math.sin(ca+Math.random()*0.5-0.25)*(cl/5);
-                sg.push({ x: cpx, y: cpy });
-              }
-              _portalCracks.push({ sg: sg, al: 0.2+Math.random()*0.5 });
-            }
-          }
-          if (t >= 1) {
-            els.overlay.remove();
-            _cinematicActive = false; _cinematicType = null; _cleanupCinematicParams();
-            renderBreakthroughFooter();
-            return;
-          }
-        }
-        if (t < 1) requestAnimationFrame(tick);
-      }
-      requestAnimationFrame(tick);
-    }
-
-    /* ── CINEMATIC 3: Repair Glide ── */
-    function runCinematic_RepairGlide() {
-      _cinematicActive = true; _cinematicType = 'repair';
-      var vesselCanvas = document.getElementById('vessel-canvas');
-      var portalCanvas = document.getElementById('gate-canvas');
-      if (!vesselCanvas || !portalCanvas) { _cleanupCinematicParams(); _cinematicActive = false; return; }
-      var vR = vesselCanvas.getBoundingClientRect();
-      var pR = portalCanvas.getBoundingClientRect();
-      var els = _createCinematicOverlay();
-      els.fig.style.display = 'none';
-      vesselCanvas.style.opacity = '0';
-      var sX = pR.left + pR.width/2 - 60, sY = pR.top + pR.height/2 - 80;
-      var eX = vR.left + vR.width/2 - 60, eY = vR.top + vR.height/2 - 80;
-      var t0 = performance.now(), dur = 2000;
-      _portalState = 'damaged';
-      function tick(now) {
-        var t = Math.min(1, (now - t0) / dur);
-        var fCtx = els.fig.getContext('2d');
-        if (t < 0.2) {
-          // Cracks healing — eye stays damaged but transitioning
-        } else if (t < 0.4) {
-          var p = (t-0.2)/0.2;
-          _portalState = 'sealed';
-          els.fig.style.display = '';
-          els.fig.style.left = sX+'px'; els.fig.style.top = sY+'px';
-          els.fig.style.opacity = String(p*0.6);
-          _drawCinematicFigure(fCtx, 120, 160, 0.3, '#b4966a', 'rgba(180,150,100', p*0.3);
-        } else if (t < 0.9) {
-          var p = (t-0.4)/0.5, e = 1-Math.pow(1-p,2);
-          _portalState = 'sealed';
-          els.fig.style.display = '';
-          els.fig.style.left = (sX + e*(eX-sX))+'px';
-          els.fig.style.top = (sY + e*(eY-sY))+'px';
-          els.fig.style.opacity = String(0.6 + e*0.4);
-          _drawCinematicFigure(fCtx, 120, 160, 0.3+e*0.7, '#b4966a', 'rgba(180,150,100', 0.3*(1-e));
-        } else {
-          _portalState = 'cultivating';
-          els.overlay.remove();
-          vesselCanvas.style.opacity = '1'; vesselCanvas.style.transition = 'opacity 0.3s';
-          _cinematicActive = false; _cinematicType = null; _cleanupCinematicParams();
-          renderBreakthroughFooter();
-          return;
-        }
-        requestAnimationFrame(tick);
-      }
-      setTimeout(function() { requestAnimationFrame(tick); }, 300);
-    }
-
-    /* ── INLINE REPAIR CINEMATIC (no page reload) ── */
-    function runInlineRepairCinematic() {
-      _cinematicActive = true; _cinematicType = 'repair_inline';
-      var vesselCanvas = document.getElementById('vessel-canvas');
-      var portalCanvas = document.getElementById('gate-canvas');
-      if (!vesselCanvas || !portalCanvas) { _cinematicActive = false; refreshPageData(); return; }
-
-      var pR = portalCanvas.getBoundingClientRect();
-      var vR = vesselCanvas.getBoundingClientRect();
-
-      // Create overlay with the real figure canvas
-      var overlay = document.createElement('div');
-      overlay.style.cssText = 'position:fixed;top:0;left:0;width:100vw;height:100vh;pointer-events:none;z-index:9999;';
-      var figCanvas = document.createElement('canvas');
-      figCanvas.width = 200; figCanvas.height = 200;
-      figCanvas.style.cssText = 'position:absolute;pointer-events:none;opacity:0;';
-      overlay.appendChild(figCanvas);
-      document.body.appendChild(overlay);
-
-      // Hide the vessel figure (it will reappear when cinematic ends)
-      vesselCanvas.style.opacity = '0';
-
-      // Eye center position on screen
-      var eyeCX = pR.left + pR.width * 0.5;
-      var eyeCY = pR.top + pR.height * 0.42;
-      // Vessel center position on screen
-      var vesselCX = vR.left + vR.width * 0.5;
-      var vesselCY = vR.top + vR.height * 0.5;
-
-      var gender = safeLower(state.member && (state.member.gender || state.member.sl_gender)) || 'male';
-      var figImg = _gateFigureCache;
-
-      var t0 = performance.now();
-      // Phase durations: heal cracks (0.8s) → eye opens (0.6s) → figure emerges+glides (1.8s) → settle (0.4s)
-      var PHASE_HEAL = 800;
-      var PHASE_OPEN = 600;
-      var PHASE_GLIDE = 1800;
-      var PHASE_SETTLE = 400;
-      var TOTAL = PHASE_HEAL + PHASE_OPEN + PHASE_GLIDE + PHASE_SETTLE;
-
-      function tick(now) {
-        var elapsed = now - t0;
-        var fCtx = figCanvas.getContext('2d');
-
-        if (elapsed < PHASE_HEAL) {
-          // Phase 1: Cracks heal — transition portal from damaged to sealed
-          var p = elapsed / PHASE_HEAL;
-          _portalState = 'damaged'; // stays damaged visually, cracks fade via alpha
-          // We modulate the crack intensity by temporarily adjusting portal time
-        } else if (elapsed < PHASE_HEAL + PHASE_OPEN) {
-          // Phase 2: Eye opens — portal transitions from sealed to cultivating
-          var p = (elapsed - PHASE_HEAL) / PHASE_OPEN;
-          if (p < 0.5) {
-            _portalState = 'sealed';
-          } else {
-            _portalState = 'cultivating';
-          }
-        } else if (elapsed < PHASE_HEAL + PHASE_OPEN + PHASE_GLIDE) {
-          // Phase 3: Figure emerges from eye and glides to vessel, enlarging
-          _portalState = 'cultivating';
-          var p = (elapsed - PHASE_HEAL - PHASE_OPEN) / PHASE_GLIDE;
-          var ease = p < 0.5 ? 2 * p * p : 1 - Math.pow(-2 * p + 2, 2) / 2;
-
-          figCanvas.style.opacity = String(Math.min(1, p * 3));
-
-          // Start small at the eye center, grow as it moves toward the vessel
-          var figSize = 40 + ease * 120;
-          var curX = eyeCX + (vesselCX - eyeCX) * ease - figSize * 0.5;
-          var curY = eyeCY + (vesselCY - eyeCY) * ease - figSize * 0.5;
-
-          figCanvas.style.left = curX + 'px';
-          figCanvas.style.top = curY + 'px';
-          figCanvas.width = Math.ceil(figSize);
-          figCanvas.height = Math.ceil(figSize);
-
-          fCtx.clearRect(0, 0, figCanvas.width, figCanvas.height);
-          if (figImg) {
-            fCtx.save();
-            fCtx.globalAlpha = Math.min(1, p * 2.5);
-            // Draw glow behind figure
-            var glowR = figSize * 0.4;
-            var grd = fCtx.createRadialGradient(figSize*0.5, figSize*0.5, 0, figSize*0.5, figSize*0.5, glowR);
-            grd.addColorStop(0, 'rgba(200,169,106,0.3)');
-            grd.addColorStop(1, 'transparent');
-            fCtx.fillStyle = grd;
-            fCtx.fillRect(0, 0, figSize, figSize);
-            // Draw the real meditation figure
-            fCtx.drawImage(figImg, 0, 0, figSize, figSize);
-            fCtx.restore();
-          }
-
-          // Emit portal glow at eye during emergence (first 30%)
-          if (p < 0.3) {
-            var pCtx = portalCanvas.getContext('2d');
-            var rc = _portalRealmColors || { glow: '#c8a96a' };
-            pCtx.save();
-            var flashA = (1 - p / 0.3) * 0.2;
-            var grd2 = pCtx.createRadialGradient(
-              portalCanvas.width/2, portalCanvas.height*0.42, 0,
-              portalCanvas.width/2, portalCanvas.height*0.42, 60
-            );
-            grd2.addColorStop(0, rc.glow + '55');
-            grd2.addColorStop(1, 'transparent');
-            pCtx.fillStyle = grd2; pCtx.globalAlpha = flashA;
-            pCtx.fillRect(0, 0, portalCanvas.width, portalCanvas.height);
-            pCtx.restore();
-          }
-        } else if (elapsed < TOTAL) {
-          // Phase 4: Settle — fade out overlay, reveal vessel
-          _portalState = 'cultivating';
-          var p = (elapsed - PHASE_HEAL - PHASE_OPEN - PHASE_GLIDE) / PHASE_SETTLE;
-          figCanvas.style.opacity = String(1 - p);
-          vesselCanvas.style.transition = 'opacity 0.3s';
-          vesselCanvas.style.opacity = '1';
-        } else {
-          // Done — cleanup and refresh state
-          _portalState = 'cultivating';
-          if (overlay.parentNode) overlay.parentNode.removeChild(overlay);
-          vesselCanvas.style.opacity = '1';
-          vesselCanvas.style.transition = '';
-          _cinematicActive = false; _cinematicType = null;
-          // Refresh all data from server to update state
-          refreshPageData();
-          return;
-        }
-        requestAnimationFrame(tick);
-      }
-      // Start after a brief pause for the "Scroll Restored" text to show
-      setTimeout(function() { requestAnimationFrame(tick); }, 600);
-    }
 
     /* ── CINEMATIC 4: Unlock Transition ── */
-    function runCinematic_UnlockTransition() {
-      _cinematicActive = true; _cinematicType = 'unlock';
-      var portalCanvas = document.getElementById('gate-canvas');
-      if (!portalCanvas) { _cinematicActive = false; return; }
-      var pR = portalCanvas.getBoundingClientRect();
-      var overlay = document.createElement('div');
-      overlay.style.cssText = 'position:fixed;top:0;left:0;width:100vw;height:100vh;pointer-events:none;z-index:9999;';
-      var shimmer = document.createElement('div');
-      shimmer.style.cssText = 'position:absolute;border-radius:50%;pointer-events:none;background:radial-gradient(circle,rgba(200,169,106,0.4) 0%,transparent 70%);width:200px;height:100px;opacity:0;';
-      shimmer.style.left = (pR.left + pR.width/2 - 100)+'px';
-      shimmer.style.top = (pR.top + pR.height/2 - 50)+'px';
-      overlay.appendChild(shimmer);
-      document.body.appendChild(overlay);
-      var t0 = performance.now(), dur = 1000;
-      function tick(now) {
-        var t = Math.min(1, (now-t0)/dur);
-        if (t < 0.3) { _portalState = 'locked'; shimmer.style.opacity = '0'; }
-        else if (t < 0.7) { var p=(t-0.3)/0.4; _portalState = 'sealed'; shimmer.style.opacity = String(Math.sin(p*Math.PI)*0.8); }
-        else { var p=(t-0.7)/0.3; _portalState = 'cultivating'; shimmer.style.opacity = String((1-p)*0.3); }
-        if (t < 1) requestAnimationFrame(tick);
-        else { overlay.remove(); _cinematicActive = false; _cinematicType = null; renderBreakthroughFooter(); }
-      }
-      requestAnimationFrame(tick);
-    }
+    /* ── Seal-based cinematic state ── */
+    var _sealActive = false;
+    var _sealType = null;     // 'entering' | 'success' | 'fail' | 'repair'
+    var _sealStartTime = 0;
+    var _sealPhase = 0;
+    var _figDamaged = false;  // true when vessel figure should render tilted+red
+    var _realmColors = null;  // set by renderBreakthroughFooter
 
 
-    var _portalState = 'sealed';
-    var _portalRealmColors = { pri:'#4488cc', sec:'#2a5a99', dim:'#0e1e33', glow:'#66bbff', pt:'#88ddff', iris:'#2266aa', deep:'#061122', vein:'#335588', sclera:'#121828', rune:'#5599dd' };
-    var _portalRaf = null;
-    var _portalTime = 0;
-    var _portalEntering = false;
-    var _portalEnterStartTime = 0;
-    var _portalMotes = [];
-    var _portalCracks = [];
-    var _cinematicActive = false;
-    var _cinematicType = null;
-    var _portalVeins = [];
-    var _portalOuterPts = [];
-    var _portalDustPts = [];
-    var _portalInited = false;
-
-    function initPortalParticles() {
-      if (_portalInited) return;
-      _portalInited = true;
-      _portalMotes = [];
-      for (var i = 0; i < 90; i++) {
-        _portalMotes.push({ a: Math.random()*6.28, r: 5+Math.random()*40, sp: 0.1+Math.random()*0.35, sz: 0.4+Math.random()*1.5, ph: Math.random()*6.28 });
-      }
-      _portalOuterPts = [];
-      for (var i = 0; i < 50; i++) {
-        _portalOuterPts.push({ x: Math.random()*400, y: Math.random()*400, sp: 0.08+Math.random()*0.25, sz: 0.2+Math.random()*0.8, ph: Math.random()*6.28, dx: Math.random()*0.4-0.2 });
-      }
-      _portalDustPts = [];
-      for (var i = 0; i < 20; i++) {
-        _portalDustPts.push({ x: Math.random()*400, y: Math.random()*50, sz: 0.3+Math.random()*0.6, sp: 0.15+Math.random()*0.3, ph: Math.random()*6.28 });
-      }
-      _portalVeins = [];
-      for (var i = 0; i < 18; i++) {
-        var va = Math.random()*6.28, vsegs = [], vpx = 0, vpy = 0;
-        for (var j = 0; j < 6; j++) {
-          var vl = 12+Math.random()*25;
-          vpx += Math.cos(va+Math.random()*0.8-0.4)*vl;
-          vpy += Math.sin(va+Math.random()*0.8-0.4)*vl;
-          vsegs.push({ x: vpx, y: vpy });
-        }
-        _portalVeins.push({ segs: vsegs, startR: 35+Math.random()*50, startA: Math.random()*6.28, w: 0.3+Math.random()*0.8, al: 0.08+Math.random()*0.12 });
-      }
-      _portalCracks = [];
-      for (var j = 0; j < 10; j++) {
-        var ca = -2.5+Math.random()*5, cl = 20+Math.random()*45, sg = [];
-        var cpx = 0, cpy = 0;
-        for (var k = 0; k < 5; k++) {
-          cpx += Math.cos(ca+Math.random()*0.5-0.25)*(cl/5);
-          cpy += Math.sin(ca+Math.random()*0.5-0.25)*(cl/5);
-          sg.push({ x: cpx, y: cpy });
-        }
-        _portalCracks.push({ sg: sg, al: 0.2+Math.random()*0.5 });
-      }
-    }
-
-    function startPortalCanvas() {
-      initPortalParticles();
-      // Preload the meditation figure for the enter animation
-      var _gender = safeLower(state.member && (state.member.gender || state.member.sl_gender)) || 'male';
-      loadGateFigure(_gender, function(c) {});
-      if (_portalRaf) return;
-      var canvas = document.getElementById('portal-canvas');
-      if (!canvas) return;
-      var ctx = canvas.getContext('2d');
-
-      function resize() {
-        var rect = canvas.parentElement.getBoundingClientRect();
-        var dpr = window.devicePixelRatio || 1;
-        canvas.width = rect.width * dpr;
-        canvas.height = rect.height * dpr;
-        ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
-      }
-      resize();
-      window.addEventListener('resize', resize);
-
-      function frame() {
-        _portalRaf = requestAnimationFrame(frame);
-        _portalTime += 0.016;
-        var t = _portalTime;
-        var rc = _portalRealmColors;
-        var st = _portalState;
-        var rect = canvas.parentElement.getBoundingClientRect();
-        var W = rect.width, H = rect.height;
-        var cx = W / 2, cy = H * 0.42, gY = H - 50;
-        var entering = _portalEntering;
-        var enterE = entering ? t - _portalEnterStartTime : 0;
-        var closed = st === 'sealed' || st === 'cultivating' || st === 'complete' || st === 'locked';
-        var damaged = st === 'damaged';
-        var inten = closed ? 0.08 : damaged ? 0.15 : entering ? Math.min(1.3, 0.5+enterE*0.4) : 0.45;
-
-        var eyeOpen = 1;
-        if (closed || damaged) eyeOpen = 0;
-        if (entering && enterE > 2) eyeOpen = Math.max(0, 1 - (enterE - 2) * 2);
-
-        var eyeW = Math.min(W * 0.18, 120);
-        var eyeH = 55 * eyeOpen;
-        var irisR = 22 * eyeOpen;
-        var pupilR = 8 * eyeOpen;
-
-        ctx.clearRect(0, 0, W, H);
-
-        var sk = ctx.createLinearGradient(0, 0, 0, H);
-        sk.addColorStop(0, '#050508'); sk.addColorStop(0.4, '#080810'); sk.addColorStop(1, '#0a0a12');
-        ctx.fillStyle = sk; ctx.fillRect(0, 0, W, H);
-
-        ctx.fillStyle = '#0c0c18'; ctx.fillRect(0, gY, W, H - gY);
-        for (var g = 0; g < 3; g++) { ctx.strokeStyle = '#161622'; ctx.lineWidth = 0.5; ctx.globalAlpha = 0.25; ctx.beginPath(); ctx.moveTo(0, gY+g*14); ctx.lineTo(W, gY+g*14); ctx.stroke(); }
-        ctx.globalAlpha = 1;
-
-        for (var i = 0; i < _portalOuterPts.length; i++) {
-          var op = _portalOuterPts[i]; op.y -= op.sp*0.4; op.x += op.dx*0.2;
-          if (op.y < -5) { op.y = H+5; op.x = Math.random()*W; }
-          ctx.beginPath(); ctx.fillStyle = rc.pt; ctx.globalAlpha = (0.04+0.04*Math.sin(t*1.2+op.ph))*inten;
-          ctx.arc(op.x, op.y, op.sz, 0, 6.28); ctx.fill();
-        }
-        ctx.globalAlpha = 1;
-
-        var amb = ctx.createRadialGradient(cx, cy, 5, cx, cy, 180);
-        amb.addColorStop(0, rc.pri+(closed?'08':'15')); amb.addColorStop(0.4, rc.dim+'0a'); amb.addColorStop(1, 'transparent');
-        ctx.fillStyle = amb; ctx.fillRect(0, 0, W, H);
-
-        if (eyeOpen > 0.01) {
-          drawEyeOpen(ctx, cx, cy, eyeW, eyeH, irisR, pupilR, eyeOpen, rc, t, inten, entering, enterE, gY);
-        }
-
-        if (closed) {
-          drawEyeClosed(ctx, cx, cy, eyeW, rc, t, st);
-        }
-
-        if (damaged) {
-          drawEyeDamaged(ctx, cx, cy, eyeW, rc, t);
-        }
-        if (st === 'locked') {
-          drawEyeLocked(ctx, cx, cy, eyeW, rc, t);
-        }
-
-        var eGlow = ctx.createRadialGradient(cx, gY-10, 0, cx, gY-10, 70);
-        eGlow.addColorStop(0, rc.pri+(closed?'06':'10')); eGlow.addColorStop(1, 'transparent');
-        ctx.fillStyle = eGlow; ctx.fillRect(cx-70, gY-30, 140, 60);
-
-        for (var i = 0; i < _portalDustPts.length; i++) {
-          var dp = _portalDustPts[i]; dp.y -= dp.sp*0.15;
-          if (dp.y < gY-5) { dp.y = gY+Math.random()*40; dp.x = cx-80+Math.random()*160; }
-          ctx.beginPath(); ctx.fillStyle = rc.pt; ctx.globalAlpha = 0.06+0.03*Math.sin(t*1.5+dp.ph);
-          ctx.arc(dp.x, dp.y, dp.sz, 0, 6.28); ctx.fill();
-        }
-        ctx.globalAlpha = 1;
-
-        if (entering) {
-          drawEyeEnterAnim(ctx, cx, cy, irisR, pupilR, rc, t, enterE, gY);
-        }
-      }
-      _portalRaf = requestAnimationFrame(frame);
-    }
-
-    function drawEyeOpen(ctx, cx, cy, eyeW, eyeH, irisR, pupilR, eyeOpen, rc, t, inten, entering, enterE, gY) {
-      ctx.save();
-      ctx.beginPath();
-      ctx.moveTo(cx-eyeW, cy);
-      ctx.quadraticCurveTo(cx-eyeW*0.5, cy-eyeH*1.6, cx, cy-eyeH);
-      ctx.quadraticCurveTo(cx+eyeW*0.5, cy-eyeH*1.6, cx+eyeW, cy);
-      ctx.quadraticCurveTo(cx+eyeW*0.5, cy+eyeH*1.6, cx, cy+eyeH);
-      ctx.quadraticCurveTo(cx-eyeW*0.5, cy+eyeH*1.6, cx-eyeW, cy);
-      ctx.closePath(); ctx.clip();
-
-      var scGrd = ctx.createRadialGradient(cx, cy, irisR*1.5, cx, cy, eyeW);
-      scGrd.addColorStop(0, rc.sclera); scGrd.addColorStop(0.5, '#0a0a12'); scGrd.addColorStop(1, '#060608');
-      ctx.fillStyle = scGrd; ctx.fillRect(cx-eyeW-5, cy-eyeH*2, eyeW*2+10, eyeH*4+10);
-
-      for (var v = 0; v < _portalVeins.length; v++) {
-        var vn = _portalVeins[v];
-        var vsx = cx+Math.cos(vn.startA)*vn.startR;
-        var vsy = cy+Math.sin(vn.startA)*vn.startR*0.6;
-        ctx.beginPath(); ctx.moveTo(vsx, vsy);
-        for (var j = 0; j < vn.segs.length; j++) { ctx.lineTo(vsx+vn.segs[j].x, vsy+vn.segs[j].y); }
-        ctx.strokeStyle = rc.vein; ctx.lineWidth = vn.w;
-        ctx.globalAlpha = vn.al*(0.5+0.3*Math.sin(t*0.8+v*0.5))*eyeOpen; ctx.stroke();
-      }
-      ctx.globalAlpha = 1;
-
-      for (var ring = 0; ring < 5; ring++) {
-        var rr = irisR - ring*3; if (rr < 2) continue;
-        ctx.beginPath(); ctx.arc(cx, cy, rr, 0, 6.28);
-        var iGrd = ctx.createRadialGradient(cx, cy, rr*0.3, cx, cy, rr);
-        var baseHue = ring%2===0 ? rc.iris : rc.sec;
-        iGrd.addColorStop(0, baseHue+'aa'); iGrd.addColorStop(0.5, baseHue+'66'); iGrd.addColorStop(1, rc.dim+'44');
-        ctx.fillStyle = iGrd; ctx.globalAlpha = (0.3+ring*0.1)*eyeOpen; ctx.fill();
-      }
-      ctx.globalAlpha = 1;
-
-      for (var f = 0; f < 24; f++) {
-        var fa = f*(6.28/24)+t*0.15;
-        var fInner = pupilR+2, fOuter = irisR-1;
-        ctx.beginPath();
-        ctx.moveTo(cx+Math.cos(fa)*fInner, cy+Math.sin(fa)*fInner);
-        ctx.lineTo(cx+Math.cos(fa+0.04)*fOuter, cy+Math.sin(fa+0.04)*fOuter);
-        ctx.strokeStyle = rc.glow; ctx.lineWidth = 0.5;
-        ctx.globalAlpha = (0.1+0.1*Math.sin(t*1.5+f*0.5))*eyeOpen; ctx.stroke();
-      }
-      ctx.globalAlpha = 1;
-
-      for (var cr = 0; cr < 3; cr++) {
-        ctx.beginPath(); ctx.arc(cx, cy, irisR-cr*2, 0, 6.28);
-        ctx.strokeStyle = cr===0 ? rc.glow : rc.pri;
-        ctx.lineWidth = cr===0 ? 1.2 : 0.6;
-        ctx.globalAlpha = (cr===0?0.4:0.2)*(0.7+0.3*Math.sin(t*1.2+cr))*eyeOpen; ctx.stroke();
-      }
-      ctx.globalAlpha = 1;
-
-      var pGrd = ctx.createRadialGradient(cx, cy, 0, cx, cy, pupilR);
-      pGrd.addColorStop(0, '#000000'); pGrd.addColorStop(0.6, '#020204');
-      pGrd.addColorStop(0.85, rc.deep); pGrd.addColorStop(1, rc.dim+'88');
-      ctx.beginPath(); ctx.arc(cx, cy, pupilR, 0, 6.28);
-      ctx.fillStyle = pGrd; ctx.globalAlpha = eyeOpen; ctx.fill(); ctx.globalAlpha = 1;
-
-      for (var i = 0; i < _portalMotes.length; i++) {
-        var m = _portalMotes[i]; m.a += m.sp*0.005*inten;
-        var mr = m.r*eyeOpen;
-        var mx = cx+Math.cos(m.a)*mr, my = cy+Math.sin(m.a)*mr*0.5;
-        var d2 = ((mx-cx)*(mx-cx))/(pupilR*pupilR)+((my-cy)*(my-cy))/(pupilR*pupilR*0.25);
-        if (d2 > 1) continue;
-        ctx.beginPath(); ctx.fillStyle = rc.pt;
-        ctx.globalAlpha = (0.08+0.18*Math.sin(t*1.5+m.ph))*inten*eyeOpen;
-        ctx.arc(mx, my, m.sz*0.8, 0, 6.28); ctx.fill();
-      }
-      ctx.globalAlpha = 1;
-
-      var coreGrd = ctx.createRadialGradient(cx, cy, 0, cx, cy, pupilR*0.5);
-      coreGrd.addColorStop(0, rc.glow+'33'); coreGrd.addColorStop(1, 'transparent');
-      ctx.fillStyle = coreGrd; ctx.globalAlpha = 0.5*inten*eyeOpen;
-      ctx.fillRect(cx-pupilR, cy-pupilR, pupilR*2, pupilR*2); ctx.globalAlpha = 1;
-
-      var hlx = cx-irisR*0.35, hly = cy-irisR*0.3;
-      ctx.beginPath(); ctx.arc(hlx, hly, 2.5, 0, 6.28);
-      ctx.fillStyle = '#ffffff'; ctx.globalAlpha = 0.15*eyeOpen; ctx.fill();
-      ctx.beginPath(); ctx.arc(hlx+3, hly+2, 1.2, 0, 6.28);
-      ctx.globalAlpha = 0.08*eyeOpen; ctx.fill(); ctx.globalAlpha = 1;
-
-      ctx.restore();
-
-      ctx.beginPath();
-      ctx.moveTo(cx-eyeW, cy);
-      ctx.quadraticCurveTo(cx-eyeW*0.5, cy-eyeH*1.6, cx, cy-eyeH);
-      ctx.quadraticCurveTo(cx+eyeW*0.5, cy-eyeH*1.6, cx+eyeW, cy);
-      ctx.quadraticCurveTo(cx+eyeW*0.5, cy+eyeH*1.6, cx, cy+eyeH);
-      ctx.quadraticCurveTo(cx-eyeW*0.5, cy+eyeH*1.6, cx-eyeW, cy);
-      ctx.closePath();
-      ctx.strokeStyle = rc.sec; ctx.lineWidth = 2.5; ctx.globalAlpha = 0.6; ctx.stroke(); ctx.globalAlpha = 1;
-
-      ctx.beginPath();
-      ctx.moveTo(cx-eyeW-4, cy);
-      ctx.quadraticCurveTo(cx-eyeW*0.5, cy-eyeH*1.7-3, cx, cy-eyeH-3);
-      ctx.quadraticCurveTo(cx+eyeW*0.5, cy-eyeH*1.7-3, cx+eyeW+4, cy);
-      ctx.strokeStyle = rc.dim; ctx.lineWidth = 5; ctx.globalAlpha = 0.3; ctx.stroke(); ctx.globalAlpha = 1;
-
-      ctx.beginPath();
-      ctx.moveTo(cx-eyeW-4, cy);
-      ctx.quadraticCurveTo(cx-eyeW*0.5, cy+eyeH*1.7+3, cx, cy+eyeH+3);
-      ctx.quadraticCurveTo(cx+eyeW*0.5, cy+eyeH*1.7+3, cx+eyeW+4, cy);
-      ctx.strokeStyle = rc.dim; ctx.lineWidth = 5; ctx.globalAlpha = 0.3; ctx.stroke(); ctx.globalAlpha = 1;
-
-      for (var side = 0; side < 2; side++) {
-        var dir = side===0 ? -1 : 1;
-        var lx = cx+dir*(eyeW+8);
-        ctx.beginPath(); ctx.moveTo(lx, cy);
-        ctx.quadraticCurveTo(lx+dir*15, cy-8, lx+dir*25, cy-3);
-        ctx.strokeStyle = rc.vein; ctx.lineWidth = 1; ctx.globalAlpha = 0.2; ctx.stroke();
-        ctx.beginPath(); ctx.moveTo(lx, cy);
-        ctx.quadraticCurveTo(lx+dir*12, cy+6, lx+dir*22, cy+2); ctx.stroke();
-        ctx.beginPath(); ctx.moveTo(lx, cy);
-        ctx.quadraticCurveTo(lx+dir*18, cy+2, lx+dir*28, cy+8);
-        ctx.globalAlpha = 0.12; ctx.stroke(); ctx.globalAlpha = 1;
-      }
-
-      var rPos = [
-        {x:cx-eyeW-18,y:cy-18},{x:cx-eyeW-18,y:cy+18},
-        {x:cx+eyeW+18,y:cy-18},{x:cx+eyeW+18,y:cy+18},
-        {x:cx-30,y:cy-eyeH-18},{x:cx,y:cy-eyeH-25},{x:cx+30,y:cy-eyeH-18},
-        {x:cx-25,y:cy+eyeH+18},{x:cx+25,y:cy+eyeH+18}
-      ];
-      var rCh = ['\u2630','\u2631','\u2632','\u2633','\u2634','\u2726','\u2635','\u2636','\u2637'];
-      ctx.font = '500 10px serif'; ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
-      for (var i = 0; i < rPos.length; i++) {
-        ctx.fillStyle = rc.glow;
-        ctx.globalAlpha = 0.12+0.15*Math.sin(t*1+i*0.6);
-        ctx.fillText(rCh[i], rPos[i].x, rPos[i].y);
-      }
-      ctx.globalAlpha = 1;
-    }
-
-    function drawEyeClosed(ctx, cx, cy, eyeW, rc, t, st) {
-      ctx.beginPath();
-      ctx.moveTo(cx-eyeW+5, cy);
-      ctx.quadraticCurveTo(cx, cy-3, cx+eyeW-5, cy);
-      ctx.strokeStyle = rc.sec; ctx.lineWidth = 2; ctx.globalAlpha = 0.4; ctx.stroke(); ctx.globalAlpha = 1;
-
-      ctx.beginPath();
-      ctx.moveTo(cx-eyeW-4, cy);
-      ctx.quadraticCurveTo(cx-eyeW*0.5, cy-6, cx, cy-4);
-      ctx.quadraticCurveTo(cx+eyeW*0.5, cy-6, cx+eyeW+4, cy);
-      ctx.strokeStyle = rc.dim; ctx.lineWidth = 5; ctx.globalAlpha = 0.3; ctx.stroke();
-      ctx.beginPath();
-      ctx.moveTo(cx-eyeW-4, cy);
-      ctx.quadraticCurveTo(cx-eyeW*0.5, cy+6, cx, cy+4);
-      ctx.quadraticCurveTo(cx+eyeW*0.5, cy+6, cx+eyeW+4, cy);
-      ctx.stroke(); ctx.globalAlpha = 1;
-
-      ctx.beginPath();
-      ctx.moveTo(cx-eyeW+5, cy);
-      ctx.quadraticCurveTo(cx, cy+2, cx+eyeW-5, cy);
-      ctx.strokeStyle = rc.sec; ctx.lineWidth = 1.5; ctx.globalAlpha = 0.3; ctx.stroke(); ctx.globalAlpha = 1;
-
-      for (var side = 0; side < 2; side++) {
-        var dir = side===0 ? -1 : 1;
-        var lx = cx+dir*(eyeW+3);
-        ctx.beginPath(); ctx.moveTo(lx, cy);
-        ctx.quadraticCurveTo(lx+dir*12, cy-5, lx+dir*20, cy-2);
-        ctx.strokeStyle = rc.vein; ctx.lineWidth = 0.8; ctx.globalAlpha = 0.12; ctx.stroke();
-        ctx.beginPath(); ctx.moveTo(lx, cy);
-        ctx.quadraticCurveTo(lx+dir*10, cy+4, lx+dir*18, cy+2);
-        ctx.stroke(); ctx.globalAlpha = 1;
-      }
-
-      var slitGlow = ctx.createRadialGradient(cx, cy, 0, cx, cy, 30);
-      slitGlow.addColorStop(0, rc.pri+'12'); slitGlow.addColorStop(1, 'transparent');
-      ctx.fillStyle = slitGlow; ctx.fillRect(cx-30, cy-30, 60, 60);
-
-      ctx.font = '500 8px sans-serif'; ctx.textAlign = 'center';
-      ctx.fillStyle = rc.dim; ctx.globalAlpha = 0.3+0.15*Math.sin(t*1.2);
-      ctx.fillText('SEALED', cx, cy+25); ctx.globalAlpha = 1;
-
-      var rPos = [{x:cx-eyeW-15,y:cy-12},{x:cx-eyeW-15,y:cy+12},{x:cx+eyeW+15,y:cy-12},{x:cx+eyeW+15,y:cy+12},{x:cx,y:cy-22}];
-      var rCh = ['\u2630','\u2631','\u2632','\u2633','\u2726'];
-      ctx.font = '500 10px serif'; ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
-      for (var i = 0; i < rPos.length; i++) {
-        ctx.fillStyle = rc.glow; ctx.globalAlpha = 0.04+0.05*Math.sin(t*0.8+i*0.9);
-        ctx.fillText(rCh[i], rPos[i].x, rPos[i].y);
-      }
-      ctx.globalAlpha = 1;
-    }
-
-    function drawEyeDamaged(ctx, cx, cy, eyeW, rc, t) {
-      ctx.beginPath();
-      ctx.moveTo(cx-eyeW+5, cy);
-      ctx.quadraticCurveTo(cx, cy-2, cx+eyeW-5, cy);
-      ctx.strokeStyle = '#882211'; ctx.lineWidth = 2;
-      ctx.globalAlpha = 0.5+0.2*Math.sin(t*2); ctx.stroke(); ctx.globalAlpha = 1;
-
-      ctx.beginPath();
-      ctx.moveTo(cx-eyeW-4, cy);
-      ctx.quadraticCurveTo(cx-eyeW*0.5, cy-5, cx, cy-3);
-      ctx.quadraticCurveTo(cx+eyeW*0.5, cy-5, cx+eyeW+4, cy);
-      ctx.strokeStyle = '#331108'; ctx.lineWidth = 5; ctx.globalAlpha = 0.3; ctx.stroke();
-      ctx.beginPath();
-      ctx.moveTo(cx-eyeW-4, cy);
-      ctx.quadraticCurveTo(cx-eyeW*0.5, cy+5, cx, cy+3);
-      ctx.quadraticCurveTo(cx+eyeW*0.5, cy+5, cx+eyeW+4, cy);
-      ctx.stroke(); ctx.globalAlpha = 1;
-
-      for (var i = 0; i < _portalCracks.length; i++) {
-        var c = _portalCracks[i];
-        ctx.beginPath(); ctx.strokeStyle = '#ee2211';
-        ctx.lineWidth = 0.8+Math.sin(t*3)*0.3;
-        ctx.globalAlpha = c.al*(0.3+0.2*Math.sin(t*2+i));
-        ctx.moveTo(cx, cy);
-        for (var j = 0; j < c.sg.length; j++) { ctx.lineTo(cx+c.sg[j].x*0.7, cy+c.sg[j].y*0.35); }
-        ctx.stroke();
-      }
-      ctx.globalAlpha = 1;
-
-      var dg = ctx.createRadialGradient(cx, cy, 5, cx, cy, 80);
-      dg.addColorStop(0, '#ff110012'); dg.addColorStop(1, 'transparent');
-      ctx.fillStyle = dg; ctx.globalAlpha = 0.3+0.15*Math.sin(t*1.8);
-      ctx.fillRect(cx-80, cy-50, 160, 100); ctx.globalAlpha = 1;
-
-      for (var side = 0; side < 2; side++) {
-        var dir = side===0 ? -1 : 1;
-        var lx = cx+dir*(eyeW+3);
-        ctx.beginPath(); ctx.moveTo(lx, cy);
-        ctx.quadraticCurveTo(lx+dir*12, cy-4, lx+dir*20, cy-1);
-        ctx.strokeStyle = '#442211'; ctx.lineWidth = 0.8; ctx.globalAlpha = 0.15; ctx.stroke();
-        ctx.beginPath(); ctx.moveTo(lx, cy);
-        ctx.quadraticCurveTo(lx+dir*10, cy+3, lx+dir*18, cy+1);
-        ctx.stroke(); ctx.globalAlpha = 1;
-      }
-    }
-
-
-    function drawEyeLocked(ctx, cx, cy, eyeW, rc, t) {
-      // Closed eye shape
-      ctx.beginPath();
-      ctx.moveTo(cx - eyeW, cy);
-      ctx.quadraticCurveTo(cx, cy - eyeW * 0.12, cx + eyeW, cy);
-      ctx.strokeStyle = rc.dim + '88';
-      ctx.lineWidth = 2;
-      ctx.stroke();
-      // Bottom lid
-      ctx.beginPath();
-      ctx.moveTo(cx - eyeW * 0.7, cy + 2);
-      ctx.quadraticCurveTo(cx, cy + eyeW * 0.06, cx + eyeW * 0.7, cy + 2);
-      ctx.strokeStyle = rc.dim + '44';
-      ctx.lineWidth = 1;
-      ctx.stroke();
-      // Dim slit glow
-      var slitGrad = ctx.createRadialGradient(cx, cy, 0, cx, cy, eyeW * 0.3);
-      slitGrad.addColorStop(0, rc.dim + '33');
-      slitGrad.addColorStop(1, 'transparent');
-      ctx.fillStyle = slitGrad;
-      ctx.fillRect(cx - eyeW * 0.4, cy - eyeW * 0.2, eyeW * 0.8, eyeW * 0.4);
-      // Lock icon
-      var lockW = 14, lockH = 12, lockX = cx - lockW / 2, lockY = cy - lockH / 2 + 2;
-      ctx.fillStyle = '#44403888';
-      ctx.fillRect(lockX, lockY, lockW, lockH);
-      ctx.strokeStyle = '#44403899';
-      ctx.lineWidth = 1;
-      ctx.strokeRect(lockX, lockY, lockW, lockH);
-      ctx.beginPath();
-      ctx.arc(cx, lockY, lockW * 0.35, Math.PI, 0);
-      ctx.strokeStyle = '#444038aa';
-      ctx.lineWidth = 2;
-      ctx.stroke();
-      ctx.beginPath();
-      ctx.arc(cx, lockY + lockH * 0.35, 2, 0, Math.PI * 2);
-      ctx.fillStyle = '#222018';
-      ctx.fill();
-      // Very dim runes
-      var runes = '\u7384\u5929\u9053\u6CD5\u5143\u795E\u6C14\u529B';
-      ctx.font = '9px serif';
-      ctx.fillStyle = rc.rune + '08';
-      for (var i = 0; i < runes.length; i++) {
-        var angle = (i / runes.length) * Math.PI * 2 + t * 0.02;
-        var runeR = eyeW * 0.65;
-        ctx.fillText(runes[i], cx + Math.cos(angle) * runeR - 4, cy + Math.sin(angle) * runeR * 0.35 + 3);
-      }
-    }
-
-    function drawTrappedFigure(ctx, cx, cy, rc, t) {
-      var pulse = 0.18 + Math.sin(t * 1.2) * 0.05;
-      ctx.save();
-      ctx.globalAlpha = pulse;
-      ctx.strokeStyle = '#332222';
-      ctx.lineWidth = 1.5;
-      ctx.lineCap = 'round';
-      ctx.beginPath(); ctx.arc(cx, cy - 12, 4, 0, Math.PI * 2); ctx.stroke();
-      ctx.beginPath(); ctx.moveTo(cx, cy - 8); ctx.lineTo(cx, cy + 4); ctx.stroke();
-      ctx.beginPath(); ctx.moveTo(cx - 7, cy - 2); ctx.lineTo(cx, cy - 5); ctx.lineTo(cx + 7, cy - 2); ctx.stroke();
-      ctx.beginPath(); ctx.moveTo(cx - 5, cy + 12); ctx.lineTo(cx, cy + 4); ctx.lineTo(cx + 5, cy + 12); ctx.stroke();
-      ctx.restore();
-    }
-
-    function drawEyeEnterAnim(ctx, cx, cy, irisR, pupilR, rc, t, enterE, gY) {
-      if (enterE < 1.8) {
-        // Figure is AT the eye — sinks DOWN through the iris into the pupil
-        var wp = Math.min(1, enterE / 1.4);
-        var ease = wp < 0.5 ? 2 * wp * wp : 1 - Math.pow(-2 * wp + 2, 2) / 2;
-
-        // Start just above the eye (at the upper eyelid) — descend into the pupil center
-        var fx = cx;
-        var figStartY = cy - irisR * 1.2;
-        var figEndY   = cy + irisR * 0.3;
-        var fy = figStartY + (figEndY - figStartY) * ease;
-
-        // Shrink from full meditation figure size down to nothing as it sinks in
-        var figSize = 55 * (1 - ease * 0.92);
-        // Fade: fully visible at start, transparent as it enters the depth
-        var alpha = ease < 0.7 ? 0.9 : Math.max(0, 0.9 - (ease - 0.7) * 3.0);
-
-        if (_gateFigureCache && figSize > 2) {
-          ctx.save();
-          ctx.globalAlpha = alpha;
-
-          // Iris pull glow — the eye draws the figure in
-          var pullR = irisR * (1.5 - ease * 0.8);
-          var pullGrd = ctx.createRadialGradient(cx, cy, pupilR * 0.5, cx, cy, pullR);
-          pullGrd.addColorStop(0, rc.glow + '55');
-          pullGrd.addColorStop(0.6, rc.glow + '18');
-          pullGrd.addColorStop(1, 'transparent');
-          ctx.fillStyle = pullGrd;
-          ctx.beginPath(); ctx.arc(cx, cy, pullR, 0, Math.PI * 2); ctx.fill();
-
-          // Draw the real meditation figure sinking into the eye
-          ctx.drawImage(_gateFigureCache, fx - figSize * 0.5, fy - figSize * 0.55, figSize, figSize);
-          ctx.restore();
-        } else if (figSize > 2) {
-          // Fallback silhouette if SVG not loaded
-          ctx.save();
-          ctx.globalAlpha = alpha;
-          ctx.fillStyle = '#ddd0a0';
-          ctx.beginPath(); ctx.arc(fx, fy, figSize * 0.2, 0, Math.PI * 2); ctx.fill();
-          ctx.restore();
-        }
-
-        // Deepening portal glow as figure is swallowed
-        if (enterE > 0.5) {
-          var pA = Math.min(1, (enterE - 0.5) * 1.5);
-          var pGrd = ctx.createRadialGradient(cx, cy, 0, cx, cy, irisR * 2);
-          pGrd.addColorStop(0, rc.glow + '66'); pGrd.addColorStop(0.5, rc.glow + '22'); pGrd.addColorStop(1, 'transparent');
-          ctx.fillStyle = pGrd; ctx.globalAlpha = pA * 0.5;
-          ctx.beginPath(); ctx.arc(cx, cy, irisR * 2, 0, Math.PI * 2); ctx.fill(); ctx.globalAlpha = 1;
-        }
-      }
-      // Flash as figure passes through the threshold
-      if (enterE > 1.8 && enterE < 3) {
-        var fA = Math.max(0, 1 - (enterE - 1.8) / 0.6);
-        ctx.fillStyle = rc.glow; ctx.globalAlpha = fA * 0.18;
-        ctx.fillRect(0, 0, ctx.canvas.width, ctx.canvas.height); ctx.globalAlpha = 1;
-      }
-    }
-
-    var _gateFigureCache = null;
-    var _gateFigureLoading = false;
-    var _gateFigureCallbacks = [];
 
     function loadGateFigure(gender, callback) {
       if (_gateFigureCache) { callback(_gateFigureCache); return; }
@@ -2946,19 +2201,14 @@
           progressPct = req > 0 ? Math.min(100, Math.round((acc / req) * 100)) : 0;
         }
 
-        var wrap = document.getElementById('gate-wrap');
-        var kicker = document.getElementById('gate-kicker');
-        var titleEl = document.getElementById('gate-title');
-        var descEl = document.getElementById('gate-desc');
-        var chipsEl = document.getElementById('gate-chips');
-        var actionBtn = document.getElementById('gate-action-btn');
-        var actionBtnOff = document.getElementById('gate-action-btn-off');
-        var subNote = document.getElementById('gate-sub-note');
+        var chipsEl = document.getElementById('vessel-action-chips');
+        var actionBtn = document.getElementById('vessel-action-btn');
+        var actionBtnOff = document.getElementById('vessel-action-btn-off');
+        var subNote = document.getElementById('vessel-sub-note');
         var panel = document.getElementById('vessel-gate-panel');
-        if (!wrap) return;
+        if (!panel) return;
 
-        wrap.className = 'gate-wrap state-' + gateState;
-        if (panel) panel.className = 'vessel-gate-panel state-' + gateState;
+        panel.className = 'vessel-gate-panel state-' + gateState;
 
         var realmColors = {
           mortal:              { pri:'#4488cc', sec:'#2a5a99', dim:'#0e1e33', glow:'#66bbff', pt:'#88ddff', iris:'#2266aa', deep:'#061122', vein:'#335588', sclera:'#121828', rune:'#5599dd', particle:'#88ddff' },
@@ -2975,16 +2225,13 @@
         var realmKey = safeLower(state.member && state.member.realm_key || 'mortal');
         var rc = realmColors[realmKey] || realmColors.mortal;
 
-        if (kicker) kicker.textContent = 'Ascension Threshold';
-        if (kicker) kicker.style.color = rc.pri;
-        var titles = { sealed:'The Eye is Closed', cultivating:'The Eye Stirs', complete:"Awaiting Heaven's Judgment", open:'The Eye Opens', active:'In Tribulation', damaged:'The Eye is Fractured', locked:'The Eye is Sealed' };
-        var descs = { sealed:'Continue cultivating to open the cosmic eye.', cultivating:'Qi flows through you. The eye stirs beneath its lids.', complete:'Comprehension is complete. The heavens judge your readiness.', open:'The cosmic eye gazes upon you. Step into its pupil to face tribulation.', active:'You are within the tribulation chamber.', damaged:'The eye is fractured. Repair required.', locked:'Acquire the next volume to continue your path.' };
-        if (titleEl) { titleEl.textContent = titles[gateState] || 'Portal'; titleEl.style.color = ''; }
-        if (descEl) descEl.textContent = descs[gateState] || '';
+        // Store realm colors for seal cinematics
+        _realmColors = rc;
 
-        _portalState = gateState;
-        _portalRealmColors = rc;
-        startPortalCanvas();
+        // Update vessel title based on state
+        var vTitle = document.getElementById('vessel-side-title');
+        var vesselTitles = { sealed:'Meditating', cultivating:'Cultivating', complete:'Awaiting Judgment', open:'Threshold Open', active:'In Tribulation', damaged:'Cast Back', locked:'Path Sealed' };
+        if (vTitle && !_sealActive) vTitle.textContent = vesselTitles[gateState] || 'Meditating';
 
         var fromLabel = volumeNumber > 0 ? realmFromVolume(volumeNumber) : '--';
         var chips = [];
@@ -3027,7 +2274,7 @@
         }
         if (chipsEl) {
           chipsEl.innerHTML = chips.map(function(ch) {
-            return '<div class="gate-chip" style="background:'+ch.bg+';border:0.5px solid '+ch.bc+';">'
+            return '<div class="vessel-action-chip" style="background:'+ch.bg+';border:0.5px solid '+ch.bc+';">'
               +'<span style="color:'+ch.lc+';">'+ch.label+'</span>'
               +'<strong style="color:'+ch.vc+';">'+ch.val+'</strong></div>';
           }).join('');
@@ -3048,7 +2295,7 @@
           var focusSession = getFocusRecord();
           var isMeditating = focusSession && focusSession.session_started_at != null;
           if (isMeditating) {
-            if (actionBtn) { actionBtn.style.display = 'block'; actionBtn.style.background = rc.pri; actionBtn.style.color = '#0a0a14'; actionBtn.textContent = 'Enter the Portal'; actionBtn.disabled = false; actionBtn.onclick = function() { runPortalCinematic(); }; }
+            if (actionBtn) { actionBtn.style.display = 'block'; actionBtn.style.background = rc.pri; actionBtn.style.color = '#0a0a14'; actionBtn.textContent = 'Enter the Threshold'; actionBtn.disabled = false; actionBtn.onclick = function() { runEnteringCinematic(actionBtn, subNote); }; }
             if (subNote) { subNote.textContent = 'Face the heavenly tribulation and ascend \u2014 or be cast back.'; subNote.style.color = rc.pri+'77'; }
           } else {
             if (actionBtnOff) { actionBtnOff.style.display = 'block'; actionBtnOff.style.background = rc.dim+'44'; actionBtnOff.style.border = '0.5px solid '+rc.dim+'66'; actionBtnOff.style.color = rc.pri+'88'; actionBtnOff.textContent = 'Begin Meditation to Channel Qi'; }
@@ -3077,54 +2324,7 @@
       }
     }
 
-    function runPortalCinematic() {
-      try {
-        var btn = document.getElementById('gate-action-btn');
-        var note = document.getElementById('gate-sub-note');
-        var flash = document.getElementById('gate-flash');
-        var vessel = document.getElementById('vessel-canvas');
-        if (btn) { btn.disabled = true; btn.textContent = 'Entering...'; }
-        if (note) note.textContent = 'The portal opens...';
-        _portalEntering = true;
-        _portalEnterStartTime = _portalTime;
 
-        // Start figure shrink + glide animation toward the portal
-        _vesselEnteringPortal = true;
-        _vesselPortalProgress = 0;
-
-        setTimeout(function() {
-          if (note) note.textContent = 'Entering the threshold...';
-        }, 800);
-
-        setTimeout(function() {
-          if (note) note.textContent = 'Passing through...';
-          if (flash) flash.style.opacity = '0.65';
-          // Stop the vessel draw loop after figure has glided away
-          stopGateVessel();
-          if (vessel) vessel.style.opacity = '0';
-          var avatarKey = (state && state.member && state.member.sl_avatar_key) || (state && state.user && state.user.sl_avatar_key) || '';
-          if (avatarKey) {
-            fetch('/.netlify/functions/enter-breakthrough', {
-              method: 'POST',
-              headers: { 'Content-Type': 'application/json' },
-              credentials: 'include',
-              body: JSON.stringify({ sl_avatar_key: avatarKey })
-            }).catch(function() {});
-          }
-        }, 2200);
-
-        setTimeout(function() {
-          if (flash) flash.style.opacity = '0';
-        }, 2800);
-
-        setTimeout(function() {
-          if (note) note.textContent = 'Entering the Breakthrough Chamber...';
-          window.location.href = getBreakthroughRoute();
-        }, 3200);
-      } catch(e) {
-        window.location.href = getBreakthroughRoute();
-      }
-    }
 
 
     /* ── Populate hero stats strip ── */
@@ -3213,8 +2413,8 @@
           btn.style.background = '#2a6630';
           btn.style.color = '#88ff88';
           if (noteEl) noteEl.textContent = 'The fractures have mended...';
-          // Run the inline repair cinematic — NO page reload
-          runInlineRepairCinematic();
+          // Run seal repair cinematic — NO page reload
+          startSealCinematic('repair');
         } else {
           btn.disabled = false;
           btn.textContent = 'Repair the Scroll';
