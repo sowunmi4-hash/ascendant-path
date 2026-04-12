@@ -136,6 +136,22 @@ exports.handler = async (event) => {
     return json(500, { error: "Failed to sync cultivation", detail: syncError.message });
   }
 
+  // Auto-award stats when a scroll completes
+  let scrollCompleteResult = null;
+  if (syncResult?.stage_complete && syncResult?.section_key && syncResult?.volume_number) {
+    try {
+      const baseUrl = process.env.URL || "https://ascendantpath.org";
+      const completeRes = await fetch(baseUrl + "/.netlify/functions/complete-scroll", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ sl_avatar_key: avatarKey, volume_number: syncResult.volume_number, section_key: syncResult.section_key })
+      });
+      scrollCompleteResult = await completeRes.json();
+    } catch (err) {
+      console.error("complete-scroll auto-trigger error:", err);
+    }
+  }
+
   // Bond state if partnership context provided
   let bondState = null;
   if (partnershipUuid) {
@@ -187,6 +203,7 @@ exports.handler = async (event) => {
       bond_runtime_active: false,
       bond_session_status: "idle"
     }),
-    focused_partnership_uuid: partnershipUuid || null
+    focused_partnership_uuid: partnershipUuid || null,
+    scroll_complete:             scrollCompleteResult || null
   });
 };

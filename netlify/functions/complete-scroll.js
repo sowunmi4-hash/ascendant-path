@@ -1,20 +1,7 @@
-// cultivation/complete-scroll.js
-// Awards cultivation stats when a scroll section (stage) is completed.
-// Called by the UI after sync returns stage_complete = true.
-//
-// Awards:
-//   - Base stat (all four: vitality, will, resonance, insight):
-//       ceil(realm_index / 2) per stat  →  realm 1-2 = 1, 3-4 = 2, 5-6 = 3, 7-8 = 4, 9-10 = 5
-//   - Section bonus: 'late' section adds +1 to all stats
-//   - Variance: one random primary stat gets +1 to +3 extra
-//
-// Writes:
-//   - UPSERT public.cultivator_stats (increment totals)
-//   - INSERT public.stat_gain_log
-//   - INSERT public.member_notifications
-//
-// Dual auth: ap_session cookie OR sl_avatar_key in body.
-// Body params: { volume_number, section_key }  (from sync response)
+// complete-scroll.js
+// Awards cultivation stats when a scroll section is fully cultivated.
+// Called automatically by sync-meditation-progress when stage_complete = true.
+// Idempotent — safe to call multiple times, will not double-award same scroll.
 
 const { createClient } = require("@supabase/supabase-js");
 
@@ -23,6 +10,20 @@ const SUPABASE_SECRET_KEY = process.env.SUPABASE_SECRET_KEY || "";
 const COOKIE_NAME         = (process.env.SESSION_COOKIE_NAME || "ap_session").trim();
 
 const supabase = createClient(SUPABASE_URL, SUPABASE_SECRET_KEY);
+
+// Per-realm stat awards from design doc
+const REALM_STATS = {
+  1:  { vitality: 5, will: 1, resonance: 1,  insight: 2,  primary: "vitality"  },
+  2:  { vitality: 4, will: 2, resonance: 2,  insight: 3,  primary: "insight"   },
+  3:  { vitality: 3, will: 3, resonance: 3,  insight: 3,  primary: "will"      },
+  4:  { vitality: 3, will: 4, resonance: 3,  insight: 4,  primary: "will"      },
+  5:  { vitality: 2, will: 5, resonance: 4,  insight: 4,  primary: "will"      },
+  6:  { vitality: 2, will: 5, resonance: 5,  insight: 5,  primary: "resonance" },
+  7:  { vitality: 1, will: 4, resonance: 6,  insight: 6,  primary: "resonance" },
+  8:  { vitality: 1, will: 4, resonance: 6,  insight: 6,  primary: "resonance" },
+  9:  { vitality: 1, will: 3, resonance: 8,  insight: 8,  primary: "resonance" },
+  10: { vitality: 1, will: 2, resonance: 10, insight: 10, primary: "resonance" }
+};
 
 function parseCookies(header) {
   const cookies = {};
@@ -74,25 +75,6 @@ async function resolveAvatarKey(event, body) {
   return null;
 }
 
-const STAT_NAMES = ["vitality", "will", "resonance", "insight"];
-
-function calculateStatAwards(realmIndex, sectionKey) {
-  const baseStat     = Math.ceil(realmIndex / 2);
-  const sectionBonus = sectionKey === "late" ? 1 : 0;
-
-  // One random stat gets variance (+1 to +3)
-  const primaryStatIdx = Math.floor(Math.random() * 4);
-  const primaryStat    = STAT_NAMES[primaryStatIdx];
-  const variance       = Math.floor(Math.random() * 3) + 1;   // 1, 2, or 3
-
-  const awards = {};
-  for (const stat of STAT_NAMES) {
-    awards[stat] = baseStat + sectionBonus + (stat === primaryStat ? variance : 0);
-  }
-
-  return { awards, primaryStat, variance };
-}
-
 exports.handler = async (event) => {
   if (event.httpMethod !== "POST") {
     return json(405, { error: "Method not allowed" });
@@ -105,72 +87,74 @@ exports.handler = async (event) => {
   if (!avatarKey) return json(401, { error: "Not authenticated" });
 
   const volumeNumber = parseInt(body.volume_number, 10) || null;
-  const sectionKey   = (body.section_key || "").trim() || null;
+  const sectionKey   = (body.section_key || "").trim().toLowerCase() || null;
 
   if (!volumeNumber || !sectionKey) {
     return json(400, { error: "volume_number and section_key are required" });
   }
 
-  // Load member
   const { data: member } = await supabase
     .from("cultivation_members")
-    .select("sl_avatar_key, sl_username, realm_index, v2_cultivation_status")
+    .select("sl_avatar_key, sl_username, realm_index")
     .eq("sl_avatar_key", avatarKey)
     .maybeSingle();
 
   if (!member) return json(404, { error: "Member not found" });
 
-  // Verify scroll is actually complete (status must be breakthrough_ready or cultivating with complete stage)
+  // Verify scroll is complete
   const { data: stageRow } = await supabase
     .schema("library")
     .from("v2_member_stage_state")
-    .select("id, stage_status, accumulated_seconds, required_seconds")
+    .select("id, stage_status")
     .eq("sl_avatar_key", avatarKey)
     .eq("volume_number", volumeNumber)
     .eq("section_key", sectionKey)
-    .in("stage_status", ["complete"])
+    .in("stage_status", ["complete", "comprehended"])
     .maybeSingle();
 
   if (!stageRow) {
-    return json(409, {
-      error: "Scroll section is not complete",
-      error_code: "stage_not_complete",
-      message: "Stats can only be awarded when the scroll section has been fully cultivated."
+    return json(409, { error: "Scroll section is not complete", error_code: "stage_not_complete" });
+  }
+
+  const realmIndex = Math.min(Math.max(member.realm_index || 1, 1), 10);
+  const scrollKey  = `v${volumeNumber}_${sectionKey}`;
+  const baseStats  = REALM_STATS[realmIndex];
+
+  // Idempotency — already awarded?
+  const { data: existingLog } = await supabase
+    .from("stat_gain_log")
+    .select("vitality_gained, will_gained, resonance_gained, insight_gained, variance_applied, variance_stat")
+    .eq("sl_avatar_key", avatarKey)
+    .eq("scroll_key", scrollKey)
+    .maybeSingle();
+
+  if (existingLog) {
+    return json(200, {
+      success: true,
+      action: "already_awarded",
+      scroll_key: scrollKey,
+      message: "Stats were already awarded for this scroll.",
+      stats_gained: {
+        vitality:  existingLog.vitality_gained,
+        will:      existingLog.will_gained,
+        resonance: existingLog.resonance_gained,
+        insight:   existingLog.insight_gained
+      }
     });
   }
 
-  const realmIndex = member.realm_index || 1;
-  const { awards, primaryStat, variance } = calculateStatAwards(realmIndex, sectionKey);
+  // Roll variance (+1 to +3) on primary stat
+  const variance    = Math.floor(Math.random() * 3) + 1;
+  const primaryStat = baseStats.primary;
 
-  const scrollKey = `v${volumeNumber}_${sectionKey}`;
+  const awards = {
+    vitality:  baseStats.vitality  + (primaryStat === "vitality"  ? variance : 0),
+    will:      baseStats.will      + (primaryStat === "will"       ? variance : 0),
+    resonance: baseStats.resonance + (primaryStat === "resonance"  ? variance : 0),
+    insight:   baseStats.insight   + (primaryStat === "insight"    ? variance : 0)
+  };
 
-  // 1. Upsert cultivator_stats — increment each stat
-  const { data: upsertResult, error: upsertErr } = await supabase
-    .from("cultivator_stats")
-    .upsert(
-      {
-        sl_avatar_key: avatarKey,
-        sl_username:   member.sl_username || "",
-        vitality:      awards.vitality,
-        will:          awards.will,
-        resonance:     awards.resonance,
-        insight:       awards.insight,
-        updated_at:    new Date().toISOString()
-      },
-      {
-        onConflict: "sl_avatar_key",
-        ignoreDuplicates: false
-      }
-    )
-    .select()
-    .maybeSingle();
-
-  // If upsert doesn't merge (Supabase upsert replaces, not increments), do it manually
-  if (upsertErr) {
-    console.error("cultivator_stats upsert error:", upsertErr);
-  }
-
-  // Use raw increment via rpc or manual read-then-write approach
+  // Read then increment stats
   const { data: existingStats } = await supabase
     .from("cultivator_stats")
     .select("vitality, will, resonance, insight")
@@ -179,99 +163,66 @@ exports.handler = async (event) => {
 
   let finalStats;
   if (existingStats) {
-    // Increment
-    const updated = {
-      vitality:  (existingStats.vitality  || 0) + awards.vitality,
-      will:      (existingStats.will      || 0) + awards.will,
-      resonance: (existingStats.resonance || 0) + awards.resonance,
-      insight:   (existingStats.insight   || 0) + awards.insight,
-      updated_at: new Date().toISOString()
-    };
-    const { data: incrementResult, error: incErr } = await supabase
+    const { data: updated, error: updateErr } = await supabase
       .from("cultivator_stats")
-      .update(updated)
+      .update({
+        vitality:   (existingStats.vitality  || 0) + awards.vitality,
+        will:       (existingStats.will      || 0) + awards.will,
+        resonance:  (existingStats.resonance || 0) + awards.resonance,
+        insight:    (existingStats.insight   || 0) + awards.insight,
+        updated_at: new Date().toISOString()
+      })
       .eq("sl_avatar_key", avatarKey)
       .select()
       .maybeSingle();
-    if (incErr) {
-      console.error("cultivator_stats increment error:", incErr);
-      return json(500, { error: "Failed to update stats", detail: incErr.message });
-    }
-    finalStats = incrementResult;
+    if (updateErr) return json(500, { error: "Failed to update stats", detail: updateErr.message });
+    finalStats = updated;
   } else {
-    // First time — insert
-    const { data: insertResult, error: insErr } = await supabase
+    const { data: inserted, error: insertErr } = await supabase
       .from("cultivator_stats")
-      .insert({
-        sl_avatar_key: avatarKey,
-        sl_username:   member.sl_username || "",
-        ...awards,
-        created_at: new Date().toISOString(),
-        updated_at: new Date().toISOString()
-      })
+      .insert({ sl_avatar_key: avatarKey, sl_username: member.sl_username || "", ...awards })
       .select()
       .maybeSingle();
-    if (insErr) {
-      console.error("cultivator_stats insert error:", insErr);
-      return json(500, { error: "Failed to create stats record", detail: insErr.message });
-    }
-    finalStats = insertResult;
+    if (insertErr) return json(500, { error: "Failed to create stats", detail: insertErr.message });
+    finalStats = inserted;
   }
 
-  // 2. Log the stat gain
-  await supabase
-    .from("stat_gain_log")
-    .insert({
-      sl_avatar_key:    avatarKey,
-      sl_username:      member.sl_username || "",
-      scroll_key:       scrollKey,
-      volume_number:    volumeNumber,
-      section_key:      sectionKey,
-      realm_index:      realmIndex,
-      vitality_gained:  awards.vitality,
-      will_gained:      awards.will,
-      resonance_gained: awards.resonance,
-      insight_gained:   awards.insight,
-      variance_applied: variance,
-      variance_stat:    primaryStat
-    });
-
-  // 3. Create notification
-  const sectionLabels = { base: "Base", early: "Early", middle: "Middle", late: "Late" };
-  const sectionLabel  = sectionLabels[sectionKey] || sectionKey;
-  await supabase
-    .from("member_notifications")
-    .insert({
-      sl_avatar_key: avatarKey,
-      sl_username:   member.sl_username || "",
-      type:          "stat_gain",
-      title:         "Scroll Comprehended",
-      message:       `You have comprehended the ${sectionLabel} stage of Scroll ${volumeNumber}. Your cultivation grows stronger.`,
-      is_read:       false,
-      metadata: {
-        volume_number: volumeNumber,
-        section_key:   sectionKey,
-        scroll_key:    scrollKey,
-        realm_index:   realmIndex,
-        stats_gained:  awards,
-        primary_stat:  primaryStat,
-        variance:      variance
-      }
-    });
-
-  return json(200, {
-    success: true,
-    action: "stats_awarded",
+  // Log — unique constraint prevents double-awarding
+  await supabase.from("stat_gain_log").insert({
+    sl_avatar_key:    avatarKey,
+    sl_username:      member.sl_username || "",
     scroll_key:       scrollKey,
     volume_number:    volumeNumber,
     section_key:      sectionKey,
     realm_index:      realmIndex,
-    stats_gained: {
-      vitality:  awards.vitality,
-      will:      awards.will,
-      resonance: awards.resonance,
-      insight:   awards.insight
-    },
+    vitality_gained:  awards.vitality,
+    will_gained:      awards.will,
+    resonance_gained: awards.resonance,
+    insight_gained:   awards.insight,
+    variance_applied: variance,
+    variance_stat:    primaryStat
+  });
+
+  // Notification
+  const sectionLabel = { base: "Base", early: "Early", middle: "Middle", late: "Late" }[sectionKey] || sectionKey;
+  await supabase.from("member_notifications").insert({
+    sl_avatar_key: avatarKey,
+    sl_username:   member.sl_username || "",
+    type:          "scroll_complete",
+    title:         "Scroll Comprehended",
+    message:       `The ${sectionLabel} Scroll of Tome ${volumeNumber} has been comprehended. Breakthrough awaits.`,
+    is_read:       false,
+    metadata: { volume_number: volumeNumber, section_key: sectionKey, scroll_key: scrollKey, realm_index: realmIndex, stats_gained: awards, primary_stat: primaryStat, variance }
+  });
+
+  return json(200, {
+    success: true,
+    action:           "stats_awarded",
+    scroll_key:       scrollKey,
+    volume_number:    volumeNumber,
+    section_key:      sectionKey,
+    realm_index:      realmIndex,
+    stats_gained:     awards,
     variance_stat:    primaryStat,
     variance_applied: variance,
     total_stats: {
@@ -280,6 +231,6 @@ exports.handler = async (event) => {
       resonance: finalStats?.resonance || 0,
       insight:   finalStats?.insight   || 0
     },
-    message: `Scroll ${sectionLabel} comprehended. Stats awarded and logged.`
+    message: `${sectionLabel} Scroll comprehended. Stats awarded.`
   });
 };
