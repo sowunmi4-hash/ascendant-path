@@ -1,6 +1,16 @@
 // start-meditation.js
 // Starts personal cultivation using v2 system.
 // Dual auth: ap_session cookie (website) OR sl_avatar_key in body (HUD/LSL).
+//
+// Manual mode behaviour:
+//   - Calls v2_begin_cultivation (or v2_resume_cultivation as fallback) to set
+//     meditation_active = true so auric fills and the HUD shows "Meditating: Yes".
+//   - Immediately calls v2_pause_cultivation to keep scroll progress idle.
+//   - Returns success so the HUD knows meditation has started.
+//
+// Auto mode behaviour (unchanged):
+//   - Calls v2_begin_cultivation / v2_resume_cultivation and lets cultivation run
+//     fully (scroll advances as auric is consumed).
 
 const { createClient } = require("@supabase/supabase-js");
 
@@ -52,7 +62,6 @@ async function resolveAvatarKey(event, body) {
   // Fall back to body sl_avatar_key (HUD/LSL callers)
   const avatarKey = (body.sl_avatar_key || "").trim();
   if (avatarKey) {
-    // Verify the avatar key exists in cultivation_members
     const { data: member } = await supabase
       .from("cultivation_members")
       .select("sl_avatar_key")
@@ -64,78 +73,42 @@ async function resolveAvatarKey(event, body) {
   return null;
 }
 
-exports.handler = async (event) => {
-  if (event.httpMethod !== "POST") {
-    return json(405, { error: "Method not allowed" });
-  }
-
-  let body = {};
-  try { body = JSON.parse(event.body || "{}"); } catch { /* ok */ }
-
-  const avatarKey = await resolveAvatarKey(event, body);
-  if (!avatarKey) {
-    return json(401, { error: "Not authenticated" });
-  }
-
-  // Load member to check personal cultivation preference
-  const { data: member } = await supabase
-    .from('cultivation_members')
-    .select('personal_cultivation_preference')
-    .eq('sl_avatar_key', avatarKey)
-    .maybeSingle();
-
-  const preference = (member?.personal_cultivation_preference || 'manual').toLowerCase();
-
-  // In manual mode: meditation fills auric but doesn't trigger cultivation start
-  // User must click "Begin Cultivation" button on cultivation-book.html
-  if (preference === 'manual') {
-    return json(200, {
-      success: true,
-      action: "meditation_started",
-      message: "Meditation started. In manual mode, auric fills freely. Click Begin Cultivation on the book to start burning auric on scroll progress.",
-      cultivation_preference: 'manual',
-      auric_filling: true,
-      cultivation_active: false
-    });
-  }
-
-  // In auto mode: meditation auto-triggers cultivation (existing behavior)
-  // Try begin first (open/paused stage), fall back to resume if paused
+// Starts cultivation (begin or resume fallback).
+// Returns { success, action, result, error } where error is non-null on failure.
+async function startCultivation(avatarKey) {
+  // Try begin first (handles open/new stage)
   const { data: beginResult, error: beginError } = await supabase
     .schema("library")
     .rpc("v2_begin_cultivation", { p_sl_avatar_key: avatarKey });
 
   if (beginError) {
-    console.error("v2_begin_cultivation error:", beginError);
-    return json(500, { error: "Failed to start cultivation", detail: beginError.message });
+    return { success: false, action: null, result: null, error: beginError.message };
   }
 
-  if (!beginResult?.success && beginResult?.error_code === "no_open_stage") {
+  if (beginResult?.success) {
+    return { success: true, action: "started", result: beginResult, error: null };
+  }
+
+  // If no open stage, try resuming a paused session
+  if (beginResult?.error_code === "no_open_stage") {
     const { data: resumeResult, error: resumeError } = await supabase
       .schema("library")
       .rpc("v2_resume_cultivation", { p_sl_avatar_key: avatarKey });
 
     if (resumeError) {
-      console.error("v2_resume_cultivation error:", resumeError);
-      return json(500, { error: "Failed to resume cultivation", detail: resumeError.message });
+      return { success: false, action: null, result: null, error: resumeError.message };
     }
 
-    if (!resumeResult?.success) {
-      return json(409, {
-        error: resumeResult?.message || "Cannot start cultivation",
-        error_code: resumeResult?.error_code || "unknown"
-      });
+    if (resumeResult?.success) {
+      return { success: true, action: "resumed", result: resumeResult, error: null };
     }
 
-    return json(200, { success: true, action: "resumed", cultivation_preference: 'auto', ...resumeResult });
+    return {
+      success: false,
+      action: null,
+      result: resumeResult,
+      error: resumeResult?.message || "Cannot resume cultivation"
+    };
   }
 
-  if (!beginResult?.success) {
-    return json(409, {
-      error: beginResult?.message || "Cannot start cultivation",
-      error_code: beginResult?.error_code || "unknown"
-    });
-  }
-
-  return json(200, { success: true, action: "started", cultivation_preference: 'auto', ...beginResult });
-};
+  // already
