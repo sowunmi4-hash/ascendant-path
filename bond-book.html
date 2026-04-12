@@ -790,6 +790,20 @@
 
       var actions = [];
 
+      // Check if personal cultivation is active — mutually exclusive with bond
+      var cultState = state.pageData ? state.pageData.cultivation : null;
+      var personalActive = cultState && (cultState.is_active === true || cultState.status === 'cultivating');
+
+      if (personalActive && !isMeditating) {
+        // Personal cultivation is running — can't start bond cultivation
+        actions.push({
+          key: 'blocked',
+          label: 'Personal Cultivation Active',
+          title: 'End your personal cultivation session before starting bond cultivation'
+        });
+        return actions;
+      }
+
       if (isDamaged) {
         actions.push({
           key: 'repair',
@@ -1066,11 +1080,11 @@
       }
 
       html += '</div>' +
-        '<button class="action-button" id="action-button" ' + (actionChip ? '' : 'disabled') + '>' +
+        '<button class="action-button" id="action-button" ' + (actionChip && actionChip.key !== 'blocked' && actionChip.key !== 'wait' ? '' : 'disabled') + '>' +
         (actionChip ? actionChip.label : 'No Action') +
         '</button>' +
         '<div class="action-subnote">' +
-        (pairState.is_meditating ? 'Meditating together...' : actionChip && actionChip.key === 'wait' ? actionChip.title : actionChip && actionChip.key === 'breakthrough' ? 'Both partners have completed' : 'Ready for cultivation') +
+        (pairState.is_meditating ? 'Meditating together...' : actionChip && actionChip.key === 'blocked' ? actionChip.title : actionChip && actionChip.key === 'wait' ? actionChip.title : actionChip && actionChip.key === 'breakthrough' ? 'Both partners have completed' : 'Ready for cultivation') +
         '</div>' +
         '</div>' +
         '</div>' +
@@ -1592,7 +1606,7 @@
       }
 
       // Wait states are informational only
-      if (actionKey === 'wait') return;
+      if (actionKey === 'wait' || actionKey === 'blocked') return;
 
       var endpoint = actionKey === 'offer' ? ENDPOINTS.offerBond :
         actionKey === 'start' ? ENDPOINTS.startBond :
