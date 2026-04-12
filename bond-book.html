@@ -710,24 +710,23 @@
 
     // Book state functions
     function getRecord() {
-      return state.pageData || null;
+      if (!state.pageData) return null;
+      return state.pageData.bond_record || state.pageData.record || null;
     }
 
     function getFocusedPartner() {
+      if (state.partner) return state.partner;
       var rec = getRecord();
       if (!rec) return null;
-      return rec.other_member || null;
+      return rec.partner || null;
     }
 
     function getSelectedVolume() {
       var rec = getRecord();
-      if (!rec || !rec.volumes) return null;
-      for (var i = 0; i < rec.volumes.length; i++) {
-        if (rec.volumes[i].volume_number === state.requestedVolumeNumber) {
-          return rec.volumes[i];
-        }
-      }
-      return null;
+      if (!rec) return null;
+      return rec.volume || rec.selected_volume ||
+        (Array.isArray(rec.volumes) && rec.volumes.length ? rec.volumes[0] : null) ||
+        null;
     }
 
     function getBooksForShelf() {
@@ -822,24 +821,33 @@
 
     // Fetch bond state
     function fetchBookState() {
-      var rec = getRecord();
-      if (!rec) return Promise.resolve(null);
+      if (!state.member) return Promise.resolve(null);
 
-      var url = ENDPOINTS.loadBondState +
-        '?sl_avatar_key=' + encodeURIComponent(safeText(rec.other_member.sl_avatar_key)) +
-        '&volume_number=' + state.requestedVolumeNumber +
-        '&partnership_uuid=' + encodeURIComponent(state.requestedPartnershipUuid);
-
-      if (state.requestedLegacyPartnershipId) {
-        url += '&partnership_id=' + encodeURIComponent(state.requestedLegacyPartnershipId);
+      var params = [];
+      if (state.member.sl_avatar_key) {
+        params.push('sl_avatar_key=' + encodeURIComponent(state.member.sl_avatar_key));
       }
+      if (state.member.sl_username) {
+        params.push('sl_username=' + encodeURIComponent(state.member.sl_username));
+      }
+      if (state.requestedVolumeNumber > 0) {
+        params.push('volume_number=' + state.requestedVolumeNumber);
+      }
+      if (safeText(state.requestedPartnershipUuid)) {
+        params.push('partnership_uuid=' + encodeURIComponent(state.requestedPartnershipUuid));
+      } else if (safeText(state.requestedLegacyPartnershipId)) {
+        params.push('partnership_id=' + encodeURIComponent(state.requestedLegacyPartnershipId));
+      }
+
+      var url = ENDPOINTS.loadBondState + '?' + params.join('&');
 
       return authFetch(url).then(function(response) {
         return response.json().then(function(data) {
-          if (response.ok && data.success && data.data) {
-            return data.data;
+          if (!response.ok || !data.success) {
+            console.error('Bond state error:', data.message || 'Failed to load');
+            return null;
           }
-          return null;
+          return data;
         });
       }).catch(function(err) {
         console.error('Fetch bond state error:', err);
@@ -850,10 +858,41 @@
     function loadBookState() {
       if (!state.member) return Promise.resolve();
 
-      return fetchBookState().then(function(bondData) {
-        if (bondData) {
-          state.pageData = bondData;
-          state.partner = bondData.other_member || null;
+      return fetchBookState().then(function(data) {
+        if (!data) {
+          console.error('No bond data returned');
+          renderPage();
+          return true;
+        }
+
+        state.pageData = data;
+
+        // Merge member data from response
+        var memberUpdate = data.user || data.member || {};
+        var mk;
+        for (mk in memberUpdate) {
+          if (memberUpdate.hasOwnProperty(mk)) {
+            state.member[mk] = memberUpdate[mk];
+          }
+        }
+
+        // Extract partner from response
+        state.partner = data.partner ||
+          (data.partnership ? data.partnership.counterpart : null) ||
+          data.counterpart || null;
+
+        // Update IDs from bond record if available
+        var rec = getRecord();
+        if (rec) {
+          if (safeNumber(rec.selected_volume_number, 0) > 0) {
+            state.requestedVolumeNumber = safeNumber(rec.selected_volume_number, 0);
+          }
+          if (safeText(rec.partnership_uuid)) {
+            state.requestedPartnershipUuid = safeText(rec.partnership_uuid);
+          }
+          if (safeText(rec.partnership_id)) {
+            state.requestedLegacyPartnershipId = safeText(rec.partnership_id);
+          }
         }
 
         renderPage();
@@ -1491,7 +1530,7 @@
       return fetchBookState().then(function(bondData) {
         if (bondData) {
           state.pageData = bondData;
-          state.partner = bondData.other_member || null;
+          state.partner = bondData.partner || (bondData.partnership ? bondData.partnership.counterpart : null) || bondData.counterpart || null;
           renderPage();
         }
       }).catch(function(err) {
