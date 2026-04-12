@@ -658,26 +658,14 @@
   }
 
   function loadViewerSession() {
-    var cookies = parseCookies();
-    var token = cookies.session_token;
-    if (!token) { window.location.href = '/login.html'; return Promise.resolve(); }
-
-    var url = ENDPOINTS.session;
-    var ck = cookies.sl_avatar_key || '';
-    var cu = cookies.sl_username || '';
-    if (ck) url += '?sl_avatar_key=' + encodeURIComponent(ck);
-    else if (cu) url += '?sl_username=' + encodeURIComponent(cu);
-
-    return authFetch(url).then(function(r) { return r.json(); }).then(function(d) {
+    return authFetch(ENDPOINTS.session).then(function(r) { return r.json(); }).then(function(d) {
       if (!d.success || !d.member) {
-        clearClientSessionArtifacts();
         window.location.href = '/login.html';
         return;
       }
       state.member = d.member;
-      if (d.member.sl_avatar_key) setCookie('sl_avatar_key', d.member.sl_avatar_key, 7);
-      if (d.member.sl_username) setCookie('sl_username', d.member.sl_username, 7);
-    }).catch(function() {
+    }).catch(function(err) {
+      console.error('Session load error:', err);
       window.location.href = '/login.html';
     });
   }
