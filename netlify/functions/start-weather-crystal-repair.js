@@ -5,7 +5,7 @@
 //
 // Auth: Two paths --
 //   1. Cookie session (browser)  -> avatar key resolved from session
-//   2. sl_avatar_key in body (LSL in-world) -> verified against members table
+//   2. sl_avatar_key in body (LSL in-world) -> verified against cultivation_members table
 
 const { createClient } = require("@supabase/supabase-js");
 
@@ -15,11 +15,14 @@ const COOKIE_NAME         = (process.env.SESSION_COOKIE_NAME || "ap_session").tr
 
 const supabase = createClient(SUPABASE_URL, SUPABASE_SECRET_KEY);
 
+// Use the weather schema for RPC calls
+const weatherDb = supabase.schema("weather");
+
 // -- Helpers --
 
 function parseCookies(header) {
   var cookies = {};
-  if (!header) return cookies;
+  if (\!header) return cookies;
   header.split(";").forEach(function(part) {
     var trimmed = part.trim();
     var eq = trimmed.indexOf("=");
@@ -55,7 +58,7 @@ exports.handler = async function(event) {
   if (event.httpMethod === "OPTIONS") {
     return json(200, { ok: true });
   }
-  if (event.httpMethod !== "POST") {
+  if (event.httpMethod \!== "POST") {
     return json(405, { success: false, message: "Method not allowed. Use POST." });
   }
 
@@ -68,7 +71,7 @@ exports.handler = async function(event) {
   }
 
   var parcelKey = safeText(body.parcel_key);
-  if (!parcelKey) {
+  if (\!parcelKey) {
     return json(400, { success: false, message: "parcel_key is required." });
   }
 
@@ -94,25 +97,25 @@ exports.handler = async function(event) {
   }
 
   // Path 2: sl_avatar_key or avatar_key in body (LSL in-world callers)
-  if (!avatarKey) {
+  if (\!avatarKey) {
     var bodyAvatarKey = safeText(body.sl_avatar_key || body.avatar_key);
 
-    if (!bodyAvatarKey) {
+    if (\!bodyAvatarKey) {
       return json(401, {
         success: false,
         message: "No valid session cookie or sl_avatar_key provided."
       });
     }
 
-    // Verify the avatar key exists in the members table
+    // Verify the avatar key exists in the cultivation_members table
     var memberCheck = await supabase
-      .from("members")
+      .from("cultivation_members")
       .select("sl_avatar_key")
       .eq("sl_avatar_key", bodyAvatarKey)
       .limit(1)
       .maybeSingle();
 
-    if (memberCheck.error || !memberCheck.data) {
+    if (memberCheck.error || \!memberCheck.data) {
       return json(403, {
         success: false,
         message: "Avatar key not recognised as a registered member."
@@ -124,7 +127,7 @@ exports.handler = async function(event) {
 
   // -- Call database function --
   try {
-    var result = await supabase.schema("weather").rpc("start_parcel_crystal_repair", {
+    var result = await weatherDb.rpc("start_parcel_crystal_repair", {
       p_parcel_key: parcelKey,
       p_sl_avatar_key: avatarKey
     });
@@ -141,7 +144,7 @@ exports.handler = async function(event) {
     var data = result.data;
 
     // DB function returns jsonb with success field
-    if (!data || data.success === false) {
+    if (\!data || data.success === false) {
       var errorCode = data && data.error ? data.error : "unknown_error";
       var httpStatus = 400;
 
