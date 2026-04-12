@@ -1813,12 +1813,6 @@
 
       loadVesselFigure(gender, function(src) { figImg = src; });
 
-      // Load vessel background image once
-      var vesselBgImg = new Image();
-      vesselBgImg.src = '/images/vessel-bg.jpg';
-      var vesselBgReady = false;
-      vesselBgImg.onload = function() { vesselBgReady = true; };
-
       function draw() {
         try {
           _vesselT += 0.016;
@@ -1831,21 +1825,6 @@
           var ctx = cv.getContext('2d');
           ctx.clearRect(0, 0, W, H);
 
-          // ── Draw vessel background image ──
-          if (vesselBgReady && vesselBgImg) {
-            ctx.save();
-            var imgW = vesselBgImg.naturalWidth;
-            var imgH = vesselBgImg.naturalHeight;
-            var scale = Math.max(W / imgW, H / imgH);
-            var dw = imgW * scale;
-            var dh = imgH * scale;
-            var dx = (W - dw) / 2;
-            var dy = (H - dh) / 2;
-            ctx.globalAlpha = 0.85;
-            ctx.drawImage(vesselBgImg, dx, dy, dw, dh);
-            ctx.restore();
-          }
-
           ctx.save();
           ctx.beginPath(); ctx.arc(cx, cy, baseR + 40, 0, Math.PI * 2);
           ctx.fillStyle = 'rgba(' + vesselRGB + ',0.03)'; ctx.fill();
@@ -1854,7 +1833,7 @@
           // ── Ambient background layers ──
           var ambientColor = 'rgba(' + vesselRGB + ',0.5)';
           var ambientPt = vesselColor;
-          drawAmbientMountains(ctx, W, H, 0.12);
+          drawAmbientMountains(ctx, W, H, 0.35);
           drawAmbientStarfield(ctx, W, H, t, ambientPt, qiPct);
           drawAmbientQiVeins(ctx, cx, cy, baseR, t, ambientColor, 0.25, qiPct);
           drawAmbientSeal(ctx, cx, cy, baseR, t, ambientPt, 0.10);
