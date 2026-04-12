@@ -1153,8 +1153,10 @@ function buildUnavailableBondRecord({
           sl_avatar_key: partnerContext.partner_sl_avatar_key || partnerMember?.sl_avatar_key || null,
           sl_username: partnerContext.partner_sl_username || partnerMember?.sl_username || null,
           display_name: partnerMember?.display_name || null,
+          character_name: partnerMember?.character_name || null,
           realm_name: partnerMember?.realm_name || null,
           realm_display_name: partnerMember?.realm_display_name || null,
+          gender: partnerMember?.gender || "male",
           path_type: partnerMember?.path_type || null,
           cultivation_active: safeLower(partnerMember?.v2_cultivation_status) === "cultivating",
           is_online: false
@@ -1623,8 +1625,10 @@ async function buildBondRecord({
       sl_avatar_key: partnerContext.partner_sl_avatar_key || null,
       sl_username: partnerContext.partner_sl_username || null,
       display_name: partnerMember?.display_name || null,
+      character_name: partnerMember?.character_name || null,
       realm_name: partnerMember?.realm_name || null,
       realm_display_name: partnerMember?.realm_display_name || null,
+      gender: partnerMember?.gender || "male",
       path_type: partnerMember?.path_type || null,
       cultivation_active: safeLower(partnerMember?.v2_cultivation_status) === "cultivating",
       is_online: false
@@ -1960,8 +1964,10 @@ async function handler(event) {
               sl_avatar_key: partnership.partner_sl_avatar_key || partnerMember?.sl_avatar_key || null,
               sl_username: partnership.partner_sl_username || safeText(partnerMember?.sl_username) || null,
               display_name: safeText(partnerMember?.display_name) || null,
+              character_name: safeText(partnerMember?.character_name) || null,
               realm_name: safeText(partnerMember?.realm_name) || null,
               realm_display_name: safeText(partnerMember?.realm_display_name) || null,
+              gender: partnerMember?.gender || "male",
               path_type: safeText(partnerMember?.path_type) || null,
               cultivation_active: safeLower(partnerMember?.v2_cultivation_status) === "cultivating",
               is_online: focusPartnerOnline
