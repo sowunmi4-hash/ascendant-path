@@ -1931,13 +1931,13 @@
                 var descY = -60 + (cy - 60 + 60) * sEase;
                 var descAlpha = Math.min(1, sealElapsed * 2);
                 var descSize = baseR * 0.8;
-                if (_vesselFigCache) {
+                if (figImg) {
                   ctx.save(); ctx.globalAlpha = descAlpha * 0.9;
                   // Golden glow
                   var grd = ctx.createRadialGradient(cx, descY, 0, cx, descY, descSize * 0.6);
                   grd.addColorStop(0, 'rgba(255,230,120,0.4)'); grd.addColorStop(1, 'transparent');
                   ctx.fillStyle = grd; ctx.fillRect(0, 0, W, H);
-                  ctx.drawImage(_vesselFigCache, cx - descSize*0.5, descY - descSize*0.5, descSize, descSize);
+                  ctx.drawImage(figImg, cx - descSize*0.5, descY - descSize*0.5, descSize, descSize);
                   ctx.restore();
                 }
                 // Seal glows during descent
@@ -1958,7 +1958,7 @@
                 var dropY = -60 + (cy + 20 + 60) * fEase;
                 var dropAlpha = Math.min(1, sealElapsed * 2.5);
                 var dropSize = baseR * 0.7;
-                if (_vesselFigCache) {
+                if (figImg) {
                   ctx.save();
                   // Tint red
                   var tiltAngle = sealElapsed > 1.3 ? Math.min(0.25, (sealElapsed - 1.3) * 0.3) : 0;
@@ -1969,7 +1969,7 @@
                   var grd2 = ctx.createRadialGradient(0, 0, 0, 0, 0, dropSize * 0.5);
                   grd2.addColorStop(0, 'rgba(200,60,60,0.35)'); grd2.addColorStop(1, 'transparent');
                   ctx.fillStyle = grd2; ctx.beginPath(); ctx.arc(0, 0, dropSize*0.5, 0, Math.PI*2); ctx.fill();
-                  ctx.drawImage(_vesselFigCache, -dropSize*0.5, -dropSize*0.5, dropSize, dropSize);
+                  ctx.drawImage(figImg, -dropSize*0.5, -dropSize*0.5, dropSize, dropSize);
                   ctx.restore();
                 }
                 // Crack lines appear after 1.5s
