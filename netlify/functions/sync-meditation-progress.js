@@ -168,4 +168,9 @@ exports.handler = async (event) => {
     breakthrough_gate_open:      syncResult?.breakthrough_gate_open || false,
     auric_current:                  syncResult?.auric_after ?? null,
     ...(bondState || {
-      bond_runtime_acti
+      bond_runtime_active: false,
+      bond_session_status: "idle"
+    }),
+    focused_partnership_uuid: partnershipUuid || null
+  });
+};

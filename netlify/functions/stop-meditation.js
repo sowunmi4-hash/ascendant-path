@@ -91,4 +91,40 @@ exports.handler = async (event) => {
 
     if (updateError) {
       console.error("Failed to stop meditation:", updateError);
-      return json(500, { error: "Failed to
+      return json(500, { error: "Failed to stop meditation", detail: updateError.message });
+    }
+
+    return json(200, {
+      success: true,
+      action: "meditation_stopped",
+      message: "Meditation ended. Auric and vestige gains stopped."
+    });
+  }
+
+  // Active scroll session (status = 'cultivating' or 'breakthrough_ready') —
+  // call v2_pause_cultivation to settle drift_debt and close the stage session.
+  const { data: result, error: rpcError } = await supabase
+    .schema("library")
+    .rpc("v2_pause_cultivation", { p_sl_avatar_key: avatarKey });
+
+  if (rpcError) {
+    console.error("v2_pause_cultivation error:", rpcError);
+    return json(500, { error: "Failed to stop cultivation", detail: rpcError.message });
+  }
+
+  if (!result?.success) {
+    if (result?.error_code === "not_cultivating") {
+      return json(200, {
+        success: true,
+        action: "already_stopped",
+        message: "No active cultivation session found."
+      });
+    }
+    return json(409, {
+      error: result?.message || "Cannot stop cultivation",
+      error_code: result?.error_code || "unknown"
+    });
+  }
+
+  return json(200, { success: true, action: "stopped", ...result });
+};

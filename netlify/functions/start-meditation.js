@@ -161,4 +161,28 @@ exports.handler = async (event) => {
       action: result.action || "meditation_started",
       message: "Meditation started. Auric is filling. Use the cultivation book to begin cultivating when ready.",
       cultivation_preference: "manual",
-      v2_cultivation_status: result.v2_cultivation_status || "med
+      v2_cultivation_status: result.v2_cultivation_status || "meditating",
+      auric_filling: true,
+      cultivation_active: false
+    });
+  }
+
+  // Auto mode: start cultivation and let sync drive scroll normally.
+  const started = await startCultivation(avatarKey);
+
+  if (!started.success) {
+    const errCode = started.result?.error_code || "unknown";
+    console.error("startCultivation (auto) error:", started.error);
+    return json(409, {
+      error: started.error,
+      error_code: errCode
+    });
+  }
+
+  return json(200, {
+    success: true,
+    action: started.action,
+    cultivation_preference: "auto",
+    ...started.result
+  });
+};
