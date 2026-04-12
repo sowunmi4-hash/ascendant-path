@@ -827,6 +827,23 @@
         padding-right: 1rem;
       }
     }
+
+    /* ── Cultivation Stats Section ── */
+    .cultivation-record { padding: 48px 0; }
+    .cultivation-record .record-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); gap: 12px; margin-top: 16px; }
+    .stat-card { background: #0a0a12; border: 0.5px solid #1a1a22; border-radius: 6px; padding: 16px; text-align: center; }
+    .stat-card .stat-val { font-family: 'Cinzel', serif; font-size: 28px; color: #c8a96a; font-weight: 700; line-height: 1; }
+    .stat-card .stat-lbl { font-size: 10px; letter-spacing: 0.12em; color: #555044; text-transform: uppercase; margin-top: 6px; font-family: 'Cinzel', serif; }
+    .gender-toggle-wrap { display: flex; gap: 10px; margin-top: 12px; }
+    .gender-btn { flex: 1; padding: 10px; border: 0.5px solid #1a1a22; background: #0a0a12; border-radius: 6px; font-family: 'Cinzel', serif; font-size: 11px; letter-spacing: 0.08em; cursor: pointer; color: #555044; transition: all 0.2s; }
+    .gender-btn.active-male   { border-color: #c8a96a; color: #c8a96a; background: rgba(200,169,106,0.08); }
+    .gender-btn.active-female { border-color: #c86890; color: #c86890; background: rgba(200,104,144,0.08); }
+    .resource-row { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin-top: 12px; }
+    .resource-card { background: #0a0a12; border: 0.5px solid #1a1a22; border-radius: 6px; padding: 14px 12px; }
+    .resource-card .res-val { font-family: 'Cinzel', serif; font-size: 18px; color: #ddd5c8; }
+    .resource-card .res-lbl { font-size: 10px; letter-spacing: 0.1em; color: #555044; text-transform: uppercase; margin-top: 4px; font-family: 'Cinzel', serif; }
+    .resource-card .res-bar { height: 3px; background: #1a1a22; border-radius: 2px; margin-top: 8px; }
+    .resource-card .res-bar-fill { height: 100%; background: #c8a96a; border-radius: 2px; transition: width 0.4s; }
   </style>
 </head>
 <body>
@@ -975,7 +992,47 @@
       </article>
     </section>
 
-    <section class="path-impression reveal reveal-delay-3">
+
+    <section class="cultivation-record reveal reveal-delay-3">
+      <div class="panel-header">
+        <span>Cultivation Archive</span>
+        <h2>Stats &amp; Resources</h2>
+        <p>Your cultivator's current strength and available resources.</p>
+      </div>
+
+      <div class="record-grid" style="grid-template-columns:repeat(4,1fr);gap:12px;margin-top:16px;">
+        <div class="stat-card"><div class="stat-val" id="stat-vitality">--</div><div class="stat-lbl">Vitality</div></div>
+        <div class="stat-card"><div class="stat-val" id="stat-will">--</div><div class="stat-lbl">Will</div></div>
+        <div class="stat-card"><div class="stat-val" id="stat-resonance">--</div><div class="stat-lbl">Resonance</div></div>
+        <div class="stat-card"><div class="stat-val" id="stat-insight">--</div><div class="stat-lbl">Insight</div></div>
+      </div>
+
+      <div style="margin-top:24px;">
+        <div class="label" style="font-size:10px;letter-spacing:0.1em;color:#555044;text-transform:uppercase;font-family:'Cinzel',serif;margin-bottom:10px;">Gender</div>
+        <div class="gender-toggle-wrap">
+          <button class="gender-btn" id="gender-btn-male"   data-gender="male">Male</button>
+          <button class="gender-btn" id="gender-btn-female" data-gender="female">Female</button>
+        </div>
+      </div>
+
+      <div class="resource-row" style="margin-top:24px;">
+        <div class="resource-card">
+          <div class="res-val" id="res-auric">--</div>
+          <div class="res-lbl">Auric</div>
+          <div class="res-bar"><div class="res-bar-fill" id="res-auric-bar" style="width:0%"></div></div>
+        </div>
+        <div class="resource-card">
+          <div class="res-val" id="res-vestiges">--</div>
+          <div class="res-lbl">Vestiges</div>
+        </div>
+        <div class="resource-card">
+          <div class="res-val" id="res-tokens">--</div>
+          <div class="res-lbl">Ascension Tokens</div>
+        </div>
+      </div>
+    </section>
+
+    <section class="path-impression reveal reveal-delay-4">
       <div class="impression-header">
         <span>Archive Impression</span>
         <h2>Path Impression</h2>
@@ -1357,7 +1414,65 @@
       if (!auth) return;
 
       await loadProfileState();
+      loadCultivationStats();
     });
+  </script>
+
+  <script>
+
+    // ── Stats & Resources ──
+    async function loadCultivationStats() {
+      try {
+        const res  = await fetch('/.netlify/functions/load-profile-stats', { credentials: 'include' });
+        const data = await res.json();
+        if (!data.success) return;
+        const s = data.stats || {};
+        const m = data.member || {};
+        document.getElementById('stat-vitality').textContent  = s.vitality  ?? '--';
+        document.getElementById('stat-will').textContent      = s.will      ?? '--';
+        document.getElementById('stat-resonance').textContent = s.resonance ?? '--';
+        document.getElementById('stat-insight').textContent   = s.insight   ?? '--';
+        populateResources({ ...m, tokens: data.tokens });
+        initGenderToggle(m.gender);
+      } catch(e) { /* silent */ }
+    }
+
+    function initGenderToggle(currentGender) {
+      const maleBtn   = document.getElementById('gender-btn-male');
+      const femaleBtn = document.getElementById('gender-btn-female');
+      if (!maleBtn || !femaleBtn) return;
+
+      function setActive(g) {
+        maleBtn.className   = 'gender-btn' + (g === 'male'   ? ' active-male'   : '');
+        femaleBtn.className = 'gender-btn' + (g === 'female' ? ' active-female' : '');
+      }
+      setActive(currentGender || 'male');
+
+      async function saveGender(g) {
+        setActive(g);
+        try {
+          await fetch('/.netlify/functions/save-gender', {
+            method: 'POST', credentials: 'include',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ gender: g })
+          });
+        } catch(e) { /* silent */ }
+      }
+
+      maleBtn.addEventListener('click',   () => saveGender('male'));
+      femaleBtn.addEventListener('click', () => saveGender('female'));
+    }
+
+    function populateResources(member) {
+      if (!member) return;
+      const auric    = member.auric_current || 0;
+      const auricMax = member.auric_maximum || 1;
+      const pct      = Math.min(100, Math.round((auric / auricMax) * 100));
+      document.getElementById('res-auric').textContent    = auric + ' / ' + auricMax;
+      document.getElementById('res-auric-bar').style.width = pct + '%';
+      document.getElementById('res-vestiges').textContent = member.vestiges || 0;
+      document.getElementById('res-tokens').textContent   = member.tokens   || member.ascension_tokens_balance || '--';
+    }
   </script>
 </body>
 </html>

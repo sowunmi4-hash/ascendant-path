@@ -103,7 +103,26 @@
       background: rgba(255,255,255,0.04);
     }
 
-    .dashboard-nav a.active {
+
+    /* ── Notification Bell ── */
+    .notif-bell-wrap { position: relative; display: inline-flex; align-items: center; }
+    .notif-bell { background: none; border: none; cursor: pointer; color: #ddd5c8; padding: 4px 8px; display: flex; align-items: center; position: relative; }
+    .notif-bell:hover { color: #c8a96a; }
+    .notif-badge { position: absolute; top: 0; right: 2px; background: #c8a96a; color: #060608; font-size: 10px; font-family: 'Cinzel', serif; font-weight: 700; border-radius: 999px; min-width: 16px; height: 16px; display: flex; align-items: center; justify-content: center; padding: 0 3px; }
+    .notif-dropdown { position: absolute; top: calc(100% + 8px); right: 0; width: 320px; background: #0a0a12; border: 0.5px solid #1a1a22; border-radius: 6px; z-index: 9999; max-height: 400px; overflow-y: auto; box-shadow: 0 8px 32px rgba(0,0,0,0.6); }
+    .notif-item { padding: 12px 16px; border-bottom: 0.5px solid #1a1a22; cursor: pointer; }
+    .notif-item:last-child { border-bottom: none; }
+    .notif-item:hover { background: #111118; }
+    .notif-item.unread { border-left: 2px solid #c8a96a; }
+    .notif-item-title { font-family: 'Cinzel', serif; font-size: 11px; color: #c8a96a; letter-spacing: 0.05em; margin-bottom: 4px; }
+    .notif-item-msg { font-size: 12px; color: #ddd5c8; line-height: 1.5; }
+    .notif-item-time { font-size: 10px; color: #555044; margin-top: 4px; }
+    .notif-empty { padding: 20px 16px; color: #555044; font-size: 12px; text-align: center; font-family: 'Cinzel', serif; }
+    .notif-header { padding: 10px 16px; border-bottom: 0.5px solid #1a1a22; display: flex; justify-content: space-between; align-items: center; }
+    .notif-header-title { font-family: 'Cinzel', serif; font-size: 11px; color: #c8a96a; letter-spacing: 0.08em; }
+    .notif-mark-all { font-size: 10px; color: #555044; cursor: pointer; background: none; border: none; } 
+    .notif-mark-all:hover { color: #c8a96a; }
+        .dashboard-nav a.active {
       color: #ffffff;
       border-color: rgba(142, 168, 255, 0.28);
       background: rgba(142, 168, 255, 0.10);
@@ -2016,6 +2035,13 @@
         <a href="/dashboard.html" class="active">Dashboard</a>
         <a href="/oracle.html">Ascendant Oracle</a>
         <a href="/.netlify/functions/logout" id="logout-button">Logout</a>
+      <div class="notif-bell-wrap" id="notif-bell-wrap">
+        <button class="notif-bell" id="notif-bell" aria-label="Notifications" title="Notifications">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
+          <span class="notif-badge" id="notif-badge" style="display:none">0</span>
+        </button>
+        <div class="notif-dropdown" id="notif-dropdown" style="display:none"></div>
+      </div>
       </nav>
     </header>
 
@@ -4794,5 +4820,74 @@ function runVessel(solidImg, glowImg, brightImg, pct, realmIndex, fSolidImg, fGl
     <div id="ticker-track" style="display:flex;align-items:center;height:100%;position:absolute;white-space:nowrap;"></div>
   </div>
 </div>
+
+  <script>
+    // ── Notification Bell ──
+    (function() {
+      const bell     = document.getElementById('notif-bell');
+      const badge    = document.getElementById('notif-badge');
+      const dropdown = document.getElementById('notif-dropdown');
+      if (!bell) return;
+
+      function timeAgo(iso) {
+        const diff = Math.floor((Date.now() - new Date(iso)) / 1000);
+        if (diff < 60)   return diff + 's ago';
+        if (diff < 3600) return Math.floor(diff/60) + 'm ago';
+        if (diff < 86400) return Math.floor(diff/3600) + 'h ago';
+        return Math.floor(diff/86400) + 'd ago';
+      }
+
+      async function loadNotifications() {
+        try {
+          const res  = await fetch('/.netlify/functions/notifications-list', { credentials: 'include' });
+          const data = await res.json();
+          if (!data.success) return;
+          const notes = data.notifications || [];
+          const unread = data.unread_count || 0;
+          if (unread > 0) { badge.textContent = unread > 99 ? '99+' : unread; badge.style.display = 'flex'; }
+          else { badge.style.display = 'none'; }
+          renderDropdown(notes);
+        } catch(e) { /* silent */ }
+      }
+
+      function renderDropdown(notes) {
+        if (!notes.length) {
+          dropdown.innerHTML = '<div class="notif-empty">No notifications</div>'; return;
+        }
+        const markAllBtn = '<button class="notif-mark-all" id="notif-mark-all">Mark all read</button>';
+        const header = '<div class="notif-header"><span class="notif-header-title">Notifications</span>' + markAllBtn + '</div>';
+        const items = notes.slice(0,20).map(n => {
+          const cls = n.is_read ? 'notif-item' : 'notif-item unread';
+          return '<div class="' + cls + '" data-id="' + n.id + '">'
+            + '<div class="notif-item-title">' + (n.title || '') + '</div>'
+            + '<div class="notif-item-msg">' + (n.message || '') + '</div>'
+            + '<div class="notif-item-time">' + timeAgo(n.created_at) + '</div>'
+            + '</div>';
+        }).join('');
+        dropdown.innerHTML = header + items;
+        document.getElementById('notif-mark-all')?.addEventListener('click', async (e) => {
+          e.stopPropagation();
+          await fetch('/.netlify/functions/notifications-mark-read', { method: 'POST', credentials: 'include', headers: {'Content-Type':'application/json'}, body: JSON.stringify({ mark_all: true }) });
+          loadNotifications();
+        });
+        dropdown.querySelectorAll('.notif-item[data-id]').forEach(el => {
+          el.addEventListener('click', async () => {
+            await fetch('/.netlify/functions/notifications-mark-read', { method: 'POST', credentials: 'include', headers: {'Content-Type':'application/json'}, body: JSON.stringify({ notification_id: el.dataset.id }) });
+            el.classList.remove('unread');
+            loadNotifications();
+          });
+        });
+      }
+
+      bell.addEventListener('click', (e) => {
+        e.stopPropagation();
+        const open = dropdown.style.display !== 'none';
+        dropdown.style.display = open ? 'none' : 'block';
+      });
+      document.addEventListener('click', () => { dropdown.style.display = 'none'; });
+      loadNotifications();
+      setInterval(loadNotifications, 60000);
+    })();
+  </script>
 </body>
 </html>

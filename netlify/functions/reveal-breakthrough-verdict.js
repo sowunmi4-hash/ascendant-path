@@ -197,6 +197,24 @@ exports.handler = async (event) => {
       });
     }
 
+    // Fire notification for breakthrough outcome
+    try {
+      const outcome   = payload?.outcome || payload?.verdict_key || 'unknown';
+      const isSuccess = outcome === 'success' || (payload?.lifecycle_status === 'success');
+      const verdictText = payload?.verdict_text || payload?.message || 'Heaven has rendered its judgment.';
+      await publicSupabase.from('member_notifications').insert({
+        sl_avatar_key: resolvedAvatarKey,
+        sl_username:   '',
+        type:          isSuccess ? 'breakthrough_success' : 'breakthrough_failure',
+        title:         isSuccess ? 'Breakthrough — Heaven Yields' : 'Breakthrough — Heaven Holds Firm',
+        message:       verdictText,
+        is_read:       false,
+        metadata:      { outcome, lifecycle_status: payload?.lifecycle_status, verdict_key: payload?.verdict_key }
+      });
+    } catch (notifErr) {
+      console.error('Notification insert error:', notifErr);
+    }
+
     return buildResponse(200, {
       success: true,
       message:
