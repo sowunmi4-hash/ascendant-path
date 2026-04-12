@@ -1,279 +1,142 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Soul Sense | The Ascendant Path</title>
-  <link rel="stylesheet" href="/css/style.css" />
+  <link rel="stylesheet" href="/css/style.css"/>
   <style>
-    @import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@400;500;600&family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400&display=swap');
-
+    @import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@400;500;600&family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;1,400&display=swap');
     :root {
-      --bg-void: #060608; --bg-card: #0a0a12; --bg-surface: #0e0e16;
-      --gold: #c8a96a; --gold-dim: #a08548; --gold-border: #c8a96a1a;
-      --rose-gold: #c86890; --border: #1a1a22;
-      --text-primary: #ddd5c8; --text-secondary: #555044; --text-dim: #333028;
-      --font-display: 'Cinzel', serif; --font-body: 'Cormorant Garamond', serif;
-      --radius-sm: 6px; --radius-md: 10px;
+      --bg:#060608;--bg-card:#0a0a12;--bg-surface:#0e0e16;
+      --gold:#c8a96a;--gold-dim:#a08548;--gold-faint:rgba(200,169,106,.08);--gold-border:rgba(200,169,106,.18);
+      --rose:#c86890;--rose-faint:rgba(200,104,144,.08);
+      --border:#1a1a22;--text:#ddd5c8;--muted:#555044;--dim:#333028;
+      --font-d:'Cinzel',serif;--font-b:'Cormorant Garamond',serif;
+      --r:6px;--rl:10px;
     }
+    *{box-sizing:border-box;margin:0;padding:0}
+    html,body{min-height:100vh;background:var(--bg);color:var(--text);font-family:var(--font-b)}
+    a{color:inherit;text-decoration:none}
 
-    * { box-sizing: border-box; }
-    body { margin: 0; background: var(--bg-void); color: var(--text-primary); font-family: var(--font-body); }
-    a { color: inherit; text-decoration: none; }
+    nav{width:fit-content;max-width:100%;margin:1.2rem auto 0;display:flex;align-items:center;
+      justify-content:center;gap:.5rem;flex-wrap:wrap;padding:.7rem .9rem;border-radius:999px;
+      background:linear-gradient(180deg,rgba(255,255,255,.03),rgba(255,255,255,.01)),rgba(6,10,18,.74);
+      border:.5px solid rgba(255,255,255,.06);backdrop-filter:blur(10px)}
+    nav a{padding:.55rem .85rem;border-radius:999px;border:.5px solid rgba(255,255,255,.04);
+      background:rgba(255,255,255,.02);color:var(--muted);font-family:var(--font-d);
+      font-size:.75rem;letter-spacing:.04em;transition:.18s ease}
+    nav a:hover{color:var(--text);border-color:var(--gold-border)}
+    nav a.active{color:var(--gold);border-color:var(--gold-border)}
+    .notif-bell-wrap{position:relative;display:inline-flex;align-items:center}
+    .notif-bell{background:none;border:none;cursor:pointer;color:var(--text);padding:4px 8px;display:flex;align-items:center;position:relative}
+    .notif-bell:hover{color:var(--gold)}
+    .notif-badge{position:absolute;top:0;right:2px;background:var(--gold);color:#060608;font-size:10px;
+      font-family:var(--font-d);font-weight:700;border-radius:999px;min-width:16px;height:16px;
+      display:flex;align-items:center;justify-content:center;padding:0 3px}
+    .notif-dropdown{position:absolute;top:calc(100% + 8px);right:0;width:300px;background:var(--bg-card);
+      border:.5px solid var(--border);border-radius:var(--rl);z-index:9999;max-height:380px;
+      overflow-y:auto;box-shadow:0 8px 32px rgba(0,0,0,.6)}
+    .notif-item{padding:10px 14px;border-bottom:.5px solid var(--border);cursor:pointer;font-size:12px}
+    .notif-item:hover{background:var(--bg-surface)}
+    .notif-item.unread{border-left:2px solid var(--gold)}
+    .notif-item-title{font-family:var(--font-d);font-size:10px;color:var(--gold);margin-bottom:3px;letter-spacing:.05em}
+    .notif-item-msg{color:var(--text);line-height:1.5}
+    .notif-item-time{font-size:10px;color:var(--muted);margin-top:3px}
+    .notif-empty{padding:20px;color:var(--muted);font-size:12px;text-align:center;font-family:var(--font-d)}
+    .notif-hd{padding:10px 14px;border-bottom:.5px solid var(--border);display:flex;justify-content:space-between;align-items:center}
+    .notif-hd-t{font-family:var(--font-d);font-size:10px;color:var(--gold);letter-spacing:.08em}
+    .notif-mark{font-size:10px;color:var(--muted);cursor:pointer;background:none;border:none}
+    .notif-mark:hover{color:var(--gold)}
+    .ticker-item{display:inline-flex;align-items:center;padding:0 20px;font-size:11px;white-space:nowrap;
+      gap:8px;border-right:1px solid rgba(200,169,106,.1);font-family:var(--font-d);letter-spacing:.04em}
+    .ticker-item.celestial{color:var(--gold)}
+    .ticker-item.notice-urgent{color:var(--rose)}
+    .ticker-dot{width:5px;height:5px;border-radius:50%;display:inline-block;flex-shrink:0}
+    .ticker-dot.celestial{background:var(--gold)}
+    .ticker-dot.notice-urgent{background:var(--rose)}
 
-    nav {
-      width: fit-content; max-width: 100%; margin: 0 auto;
-      display: flex; align-items: center; justify-content: center;
-      gap: 0.55rem; flex-wrap: wrap; padding: 0.75rem 0.9rem;
-      border-radius: 999px; margin-top: 1rem;
-      background: linear-gradient(180deg, rgba(255,255,255,0.03), rgba(255,255,255,0.01)), rgba(6,10,18,0.74);
-      border: 0.5px solid rgba(255,255,255,0.06);
-      backdrop-filter: blur(10px);
-    }
-    nav a {
-      padding: 0.62rem 0.92rem; border-radius: 999px;
-      border: 0.5px solid rgba(255,255,255,0.04);
-      background: rgba(255,255,255,0.02);
-      color: var(--text-secondary); font-family: var(--font-display);
-      font-size: 0.78rem; letter-spacing: 0.04em;
-      transition: 0.18s ease;
-    }
-    nav a:hover { color: var(--text-primary); border-color: var(--gold-border); }
-    nav a.active { color: var(--gold); border-color: rgba(200,169,106,0.2); }
+    .shell{width:min(1000px,calc(100% - 2rem));margin:2.5rem auto 5rem}
 
-    /* ── Celestial Feed Ticker ── */
-    #news-ticker-bar { font-family: 'Cinzel', serif; }
-    .ticker-item { display:inline-flex;align-items:center;padding:0 24px;font-size:11px;white-space:nowrap;gap:8px;border-right:1px solid rgba(200,169,106,0.12);font-family:'Cinzel',serif;letter-spacing:0.04em; }
-    .ticker-item.celestial { color:#c8a96a; }
-    .ticker-item.notice { color:rgba(221,213,200,0.8); }
-    .ticker-item.notice-urgent { color:#c86890; }
-    .ticker-dot { width:5px;height:5px;border-radius:50%;display:inline-block;flex-shrink:0; }
-    .ticker-dot.celestial { background:#c8a96a; }
-    .ticker-dot.notice { background:rgba(221,213,200,0.4); }
-    .ticker-dot.notice-urgent { background:#c86890; }
+    /* ── Hero ── */
+    .hero{display:grid;grid-template-columns:1fr auto;align-items:start;gap:1.5rem;
+      padding-bottom:2rem;border-bottom:.5px solid var(--border);margin-bottom:2.5rem}
+    .hero-eyebrow{font-family:var(--font-d);font-size:9px;letter-spacing:.2em;text-transform:uppercase;
+      color:var(--gold-dim);margin-bottom:.5rem}
+    .hero-title{font-family:var(--font-d);font-size:2rem;font-weight:500;color:var(--gold);
+      letter-spacing:.05em;margin-bottom:.5rem}
+    .hero-sub{font-size:1.05rem;color:var(--muted);font-style:italic;line-height:1.6;max-width:52ch}
+    .hero-stats{display:flex;flex-direction:column;gap:8px;text-align:right;flex-shrink:0}
+    .hero-stat-val{font-family:var(--font-d);font-size:1.5rem;color:var(--text)}
+    .hero-stat-lbl{font-family:var(--font-d);font-size:9px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted)}
 
-    /* ── Notification Bell ── */
-    .notif-bell-wrap { position: relative; display: inline-flex; align-items: center; }
-    .notif-bell { background: none; border: none; cursor: pointer; color: #ddd5c8; padding: 4px 8px; display: flex; align-items: center; position: relative; }
-    .notif-bell:hover { color: #c8a96a; }
-    .notif-badge { position: absolute; top: 0; right: 2px; background: #c8a96a; color: #060608; font-size: 10px; font-family: 'Cinzel', serif; font-weight: 700; border-radius: 999px; min-width: 16px; height: 16px; display: flex; align-items: center; justify-content: center; padding: 0 3px; }
-    .notif-dropdown { position: absolute; top: calc(100% + 8px); right: 0; width: 320px; background: #0a0a12; border: 0.5px solid #1a1a22; border-radius: 6px; z-index: 9999; max-height: 400px; overflow-y: auto; box-shadow: 0 8px 32px rgba(0,0,0,0.6); }
-    .notif-item { padding: 12px 16px; border-bottom: 0.5px solid #1a1a22; cursor: pointer; }
-    .notif-item:last-child { border-bottom: none; }
-    .notif-item:hover { background: #111118; }
-    .notif-item.unread { border-left: 2px solid #c8a96a; }
-    .notif-item-title { font-family: 'Cinzel', serif; font-size: 11px; color: #c8a96a; letter-spacing: 0.05em; margin-bottom: 4px; }
-    .notif-item-msg { font-size: 12px; color: #ddd5c8; line-height: 1.5; }
-    .notif-item-time { font-size: 10px; color: #555044; margin-top: 4px; }
-    .notif-empty { padding: 20px 16px; color: #555044; font-size: 12px; text-align: center; font-family: 'Cinzel', serif; }
-    .notif-header { padding: 10px 16px; border-bottom: 0.5px solid #1a1a22; display: flex; justify-content: space-between; align-items: center; }
-    .notif-header-title { font-family: 'Cinzel', serif; font-size: 11px; color: #c8a96a; letter-spacing: 0.08em; }
-    .notif-mark-all { font-size: 10px; color: #555044; cursor: pointer; background: none; border: none; }
-    .notif-mark-all:hover { color: #c8a96a; }
+    /* ── Tier card ── */
+    .tier-card{background:var(--bg-card);border:.5px solid var(--gold-border);border-radius:var(--rl);
+      padding:1.5rem 2rem;margin-bottom:2rem;display:grid;grid-template-columns:1fr 1fr 1fr;gap:1.5rem;
+      position:relative;overflow:hidden}
+    .tier-card::before{content:'';position:absolute;inset:0;
+      background:radial-gradient(ellipse at 0% 50%,var(--gold-faint),transparent 60%);pointer-events:none}
+    .tc-label{font-family:var(--font-d);font-size:9px;letter-spacing:.16em;text-transform:uppercase;
+      color:var(--gold-dim);margin-bottom:.4rem}
+    .tc-val{font-family:var(--font-d);font-size:1.6rem;font-weight:500;color:var(--gold);line-height:1}
+    .tc-sub{font-size:.88rem;color:var(--muted);margin-top:.25rem;font-style:italic}
+    .auric-bar-wrap{margin-top:.6rem;height:3px;background:var(--border);border-radius:2px}
+    .auric-bar-fill{height:100%;background:var(--gold);border-radius:2px;transition:width .4s}
 
-    .page-shell {
-      width: min(1100px, calc(100% - 2rem));
-      margin: 2rem auto 4rem;
-    }
+    /* ── Cost note ── */
+    .cost-note{display:flex;align-items:center;gap:10px;padding:.85rem 1.2rem;
+      background:var(--gold-faint);border:.5px solid rgba(200,169,106,.15);border-radius:var(--r);
+      margin-bottom:2rem}
+    .cost-note-icon{width:28px;height:28px;border-radius:50%;border:.5px solid var(--gold-border);
+      display:flex;align-items:center;justify-content:center;flex-shrink:0}
+    .cost-note-icon svg{width:14px;height:14px;stroke:var(--gold);fill:none;stroke-width:1.5}
+    .cost-note-text{font-size:.9rem;color:var(--muted);line-height:1.5}
+    .cost-note-text strong{color:var(--gold);font-weight:500}
+    .cost-note.blocked{background:rgba(204,68,68,.06);border-color:rgba(204,68,68,.2)}
+    .cost-note.blocked .cost-note-icon svg{stroke:#cc4444}
+    .cost-note.blocked .cost-note-text strong{color:#cc4444}
 
-    .page-header {
-      margin-bottom: 2rem;
-      border-bottom: 0.5px solid var(--border);
-      padding-bottom: 1.5rem;
-    }
-    .page-eyebrow {
-      font-family: var(--font-display);
-      font-size: 10px;
-      letter-spacing: 0.18em;
-      text-transform: uppercase;
-      color: var(--gold-dim);
-      margin-bottom: 0.5rem;
-    }
-    .page-title {
-      font-family: var(--font-display);
-      font-size: 1.8rem;
-      font-weight: 500;
-      color: var(--gold);
-      margin: 0 0 0.5rem;
-      letter-spacing: 0.04em;
-    }
-    .page-subtitle {
-      font-size: 1rem;
-      color: var(--text-secondary);
-      margin: 0;
-    }
+    /* ── Tier progression ── */
+    .section-hd{font-family:var(--font-d);font-size:9px;letter-spacing:.18em;text-transform:uppercase;
+      color:var(--gold-dim);margin-bottom:1rem}
+    .tier-list{display:flex;flex-direction:column;gap:6px;margin-bottom:2.5rem}
+    .tier-row{display:grid;grid-template-columns:28px 1fr auto;align-items:center;gap:12px;
+      padding:.75rem 1rem;border-radius:var(--r);border:.5px solid var(--border);
+      background:var(--bg-card);position:relative;overflow:hidden;transition:border-color .2s}
+    .tier-row.current{border-color:var(--gold-border)}
+    .tier-row.current::before{content:'';position:absolute;left:0;top:0;bottom:0;
+      width:2px;background:var(--gold)}
+    .tier-row.unlocked{opacity:.5}
+    .tier-row.locked{opacity:.3}
+    .tier-num{font-family:var(--font-d);font-size:11px;color:var(--muted);text-align:center}
+    .tier-row.current .tier-num{color:var(--gold)}
+    .tier-info{}
+    .tier-realm{font-family:var(--font-d);font-size:11px;color:var(--text);letter-spacing:.03em}
+    .tier-row.current .tier-realm{color:var(--gold)}
+    .tier-sees{font-size:.82rem;color:var(--muted);margin-top:2px;font-style:italic}
+    .tier-cost{font-family:var(--font-d);font-size:10px;color:var(--muted);letter-spacing:.06em;
+      white-space:nowrap}
+    .tier-row.current .tier-cost{color:var(--gold)}
+    .you-badge{font-family:var(--font-d);font-size:8px;letter-spacing:.1em;text-transform:uppercase;
+      color:#060608;background:var(--gold);padding:2px 7px;border-radius:999px}
 
-    .perception-bar {
-      background: var(--bg-card);
-      border: 0.5px solid var(--border);
-      border-radius: var(--radius-md);
-      padding: 14px 20px;
-      margin-bottom: 1.5rem;
-      display: flex;
-      align-items: center;
-      gap: 12px;
-    }
-    .perception-label {
-      font-family: var(--font-display);
-      font-size: 9px;
-      letter-spacing: 0.14em;
-      text-transform: uppercase;
-      color: var(--text-secondary);
-    }
-    .perception-tier {
-      font-family: var(--font-display);
-      font-size: 12px;
-      color: var(--gold);
-      letter-spacing: 0.06em;
-    }
-    .perception-desc {
-      font-size: 0.85rem;
-      color: var(--text-secondary);
-      margin-left: auto;
-      font-style: italic;
-    }
-
-    .cultivator-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-      gap: 12px;
-    }
-
-    .cultivator-card {
-      background: var(--bg-card);
-      border: 0.5px solid var(--border);
-      border-radius: var(--radius-md);
-      padding: 20px;
-      position: relative;
-      transition: border-color 0.2s;
-    }
-    .cultivator-card:hover { border-color: rgba(200,169,106,0.2); }
-    .cultivator-card.is-self { border-color: rgba(200,169,106,0.3); }
-    .cultivator-card.is-self::after {
-      content: 'You';
-      position: absolute; top: 12px; right: 12px;
-      font-family: var(--font-display); font-size: 9px;
-      letter-spacing: 0.1em; text-transform: uppercase;
-      color: var(--gold); opacity: 0.6;
-    }
-
-    .cultivator-gender-dot {
-      width: 8px; height: 8px; border-radius: 50%;
-      display: inline-block; margin-right: 8px; flex-shrink: 0;
-    }
-    .cultivator-gender-dot.male   { background: var(--gold); }
-    .cultivator-gender-dot.female { background: var(--rose-gold); }
-
-    .cultivator-name {
-      font-family: var(--font-display);
-      font-size: 1rem;
-      font-weight: 500;
-      color: var(--text-primary);
-      letter-spacing: 0.03em;
-      display: flex;
-      align-items: center;
-      margin-bottom: 12px;
-    }
-
-    .cultivator-detail-grid {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 8px;
-    }
-    .detail-item { }
-    .detail-item.full { grid-column: 1 / -1; }
-    .detail-label {
-      font-family: var(--font-display);
-      font-size: 8px;
-      letter-spacing: 0.14em;
-      text-transform: uppercase;
-      color: var(--text-secondary);
-      margin-bottom: 2px;
-    }
-    .detail-value {
-      font-size: 0.88rem;
-      color: var(--text-primary);
-    }
-
-    .status-pip {
-      display: inline-block; width: 6px; height: 6px;
-      border-radius: 50%; margin-right: 5px; vertical-align: middle;
-    }
-    .status-pip.meditating  { background: #5a9acc; }
-    .status-pip.cultivating { background: var(--gold); }
-    .status-pip.idle        { background: var(--text-secondary); }
-    .status-pip.breakthrough_ready { background: #dd9944; }
-
-    .stat-tier-badge {
-      display: inline-block;
-      padding: 2px 8px;
-      border-radius: 999px;
-      font-family: var(--font-display);
-      font-size: 9px;
-      letter-spacing: 0.1em;
-      text-transform: uppercase;
-    }
-    .stat-tier-badge.weak         { border: 0.5px solid #555044; color: #555044; }
-    .stat-tier-badge.moderate     { border: 0.5px solid #a08548; color: #a08548; }
-    .stat-tier-badge.strong       { border: 0.5px solid var(--gold); color: var(--gold); }
-    .stat-tier-badge.transcendent { border: 0.5px solid var(--rose-gold); color: var(--rose-gold); }
-
-    .empty-state {
-      text-align: center;
-      padding: 60px 20px;
-      color: var(--text-secondary);
-      font-family: var(--font-display);
-      font-size: 0.9rem;
-      letter-spacing: 0.06em;
-    }
-
-    .loading-state {
-      text-align: center;
-      padding: 60px 20px;
-      color: var(--text-secondary);
-      font-family: var(--font-display);
-      font-size: 0.85rem;
-      letter-spacing: 0.1em;
-      text-transform: uppercase;
-      animation: pulse 1.5s ease-in-out infinite;
-    }
-    @keyframes pulse { 0%,100%{opacity:0.4} 50%{opacity:1} }
-
-    .refresh-bar {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      margin-bottom: 1rem;
-    }
-    .active-count {
-      font-family: var(--font-display);
-      font-size: 10px;
-      letter-spacing: 0.12em;
-      text-transform: uppercase;
-      color: var(--text-secondary);
-    }
-    .active-count span { color: var(--gold); }
-    .refresh-btn {
-      background: none;
-      border: 0.5px solid var(--border);
-      border-radius: var(--radius-sm);
-      padding: 6px 14px;
-      font-family: var(--font-display);
-      font-size: 9px;
-      letter-spacing: 0.1em;
-      text-transform: uppercase;
-      color: var(--text-secondary);
-      cursor: pointer;
-      transition: 0.2s;
-    }
-    .refresh-btn:hover { border-color: var(--gold-border); color: var(--gold); }
+    /* ── Recent log ── */
+    .log-list{display:flex;flex-direction:column;gap:6px}
+    .log-row{display:grid;grid-template-columns:1fr auto;align-items:center;gap:12px;
+      padding:.7rem 1rem;border-radius:var(--r);border:.5px solid var(--border);background:var(--bg-card)}
+    .log-detail{font-size:.88rem;color:var(--text)}
+    .log-meta{font-size:.8rem;color:var(--muted);margin-top:2px;font-family:var(--font-d);
+      font-size:9px;letter-spacing:.06em}
+    .log-cost{font-family:var(--font-d);font-size:10px;color:var(--gold-dim)}
+    .log-empty{padding:1.5rem;text-align:center;color:var(--muted);font-style:italic;font-size:.9rem;
+      border:.5px solid var(--border);border-radius:var(--r);background:var(--bg-card)}
   </style>
 </head>
 <body>
   <div class="rune-layer"></div>
   <div class="cloud-layer"></div>
 
-  <div style="width:min(1100px,calc(100% - 2rem));margin:0 auto;">
+  <div style="width:min(1000px,calc(100% - 2rem));margin:0 auto">
     <nav>
       <a href="/dashboard.html">Dashboard</a>
       <a href="/oracle.html">Oracle</a>
@@ -290,268 +153,232 @@
       </div>
     </nav>
 
-    <!-- Celestial Feed -->
-    <div id="news-ticker-bar" style="width:100%;background:#0a0a12;border-top:0.5px solid rgba(200,169,106,0.15);border-bottom:0.5px solid rgba(200,169,106,0.15);height:34px;display:flex;align-items:center;overflow:hidden;margin-bottom:0;">
-      <div id="ticker-label" style="flex-shrink:0;padding:0 14px;font-size:9px;letter-spacing:0.14em;text-transform:uppercase;color:#c8a96a;font-weight:600;border-right:0.5px solid rgba(200,169,106,0.25);height:100%;display:flex;align-items:center;background:#0a0a12;white-space:nowrap;font-family:'Cinzel',serif;">⬡ Celestial Feed</div>
-      <div style="overflow:hidden;flex:1;position:relative;height:100%;">
-        <div id="ticker-track" style="display:flex;align-items:center;height:100%;position:absolute;white-space:nowrap;"></div>
+    <div id="news-ticker-bar" style="width:100%;background:#0a0a12;border-top:.5px solid rgba(200,169,106,.15);border-bottom:.5px solid rgba(200,169,106,.15);height:34px;display:flex;align-items:center;overflow:hidden;margin-bottom:0">
+      <div style="flex-shrink:0;padding:0 14px;font-size:9px;letter-spacing:.14em;text-transform:uppercase;color:#c8a96a;font-weight:600;border-right:.5px solid rgba(200,169,106,.25);height:100%;display:flex;align-items:center;background:#0a0a12;white-space:nowrap;font-family:'Cinzel',serif">⬡ Celestial Feed</div>
+      <div style="overflow:hidden;flex:1;position:relative;height:100%">
+        <div id="ticker-track" style="display:flex;align-items:center;height:100%;position:absolute;white-space:nowrap"></div>
       </div>
     </div>
   </div>
 
-  <div class="page-shell">
-    <div class="page-header">
-      <div class="page-eyebrow">Spiritual Perception</div>
-      <h1 class="page-title">Soul Sense</h1>
-      <p class="page-subtitle">Perceive the cultivators who walk the path alongside you. What you can see depends on how far you have walked.</p>
-    </div>
+  <div class="shell">
 
-    <div class="perception-bar" id="perception-bar">
+    <div class="hero">
       <div>
-        <div class="perception-label">Your Perception</div>
-        <div class="perception-tier" id="perception-tier-label">Loading...</div>
+        <div class="hero-eyebrow">Spiritual Perception</div>
+        <h1 class="hero-title">Soul Sense</h1>
+        <p class="hero-sub">Each activation sharpens your awareness of the cultivation world — but it draws on your auric. The deeper your realm, the further your sight reaches and the more it costs.</p>
       </div>
-      <div class="perception-desc" id="perception-desc"></div>
+      <div class="hero-stats">
+        <div>
+          <div class="hero-stat-val" id="stat-total-uses">—</div>
+          <div class="hero-stat-lbl">Total activations</div>
+        </div>
+        <div style="margin-top:8px">
+          <div class="hero-stat-val" id="stat-total-auric">—</div>
+          <div class="hero-stat-lbl">Auric expended</div>
+        </div>
+      </div>
     </div>
 
-    <div class="refresh-bar">
-      <div class="active-count">Active cultivators: <span id="active-count">—</span></div>
-      <button class="refresh-btn" id="refresh-btn">Refresh</button>
+    <!-- Current tier card -->
+    <div class="tier-card" id="tier-card">
+      <div>
+        <div class="tc-label">Perception Tier</div>
+        <div class="tc-val" id="tc-tier">—</div>
+        <div class="tc-sub" id="tc-label">Loading...</div>
+      </div>
+      <div>
+        <div class="tc-label">Cost per Activation</div>
+        <div class="tc-val" id="tc-cost">— <span style="font-size:.9rem;color:var(--muted)">auric</span></div>
+        <div class="tc-sub" id="tc-realm">—</div>
+      </div>
+      <div>
+        <div class="tc-label">Auric Balance</div>
+        <div class="tc-val" id="tc-auric">—</div>
+        <div class="auric-bar-wrap"><div class="auric-bar-fill" id="tc-auric-bar" style="width:0%"></div></div>
+        <div class="tc-sub" id="tc-auric-sub">—</div>
+      </div>
     </div>
 
-    <div id="cultivator-list">
-      <div class="loading-state">Extending soul sense...</div>
+    <!-- Cost note -->
+    <div class="cost-note" id="cost-note" style="display:none">
+      <div class="cost-note-icon">
+        <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+      </div>
+      <div class="cost-note-text" id="cost-note-text"></div>
     </div>
+
+    <!-- Tier progression -->
+    <div class="section-hd">Perception path</div>
+    <div class="tier-list" id="tier-list"></div>
+
+    <!-- Recent log -->
+    <div class="section-hd" style="margin-top:2rem">Recent activations</div>
+    <div class="log-list" id="log-list">
+      <div class="log-empty">Loading activation history...</div>
+    </div>
+
   </div>
 
   <script>
-  const PERCEPTION_LABELS = {
-    1:  "Name & Gender",
-    2:  "Realm",
-    3:  "Path",
-    4:  "Stage",
-    5:  "Bond Status",
-    6:  "Breakthrough History",
-    7:  "Stat Tier",
-    8:  "Drift Direction",
-    9:  "Awakening Lineage",
-    10: "Full Perception"
-  };
+  const TIERS = [
+    {realm:1, name:"Mortal",             cost:5,   sees:"Name and gender of active cultivators"},
+    {realm:2, name:"Auric Gathering",    cost:8,   sees:"+ their realm"},
+    {realm:3, name:"Foundation",         cost:12,  sees:"+ their alignment path"},
+    {realm:4, name:"Core Formation",     cost:18,  sees:"+ scroll stage and cultivation status"},
+    {realm:5, name:"Nascent Soul",       cost:25,  sees:"+ whether they are bonded"},
+    {realm:6, name:"Soul Transformation",cost:35,  sees:"+ total breakthrough count"},
+    {realm:7, name:"Void Refinement",    cost:48,  sees:"+ strength tier (weak / moderate / strong)"},
+    {realm:8, name:"Body Integration",   cost:65,  sees:"+ alignment drift direction"},
+    {realm:9, name:"Tribulation",        cost:85,  sees:"+ awakening lineage"},
+    {realm:10,name:"Immortal Ascension", cost:110, sees:"Full perception — nothing is hidden"},
+  ];
 
-  const PERCEPTION_DESCS = {
-    1:  "You sense only name and presence.",
-    2:  "Your realm sight reveals their cultivation stage.",
-    3:  "Your inner eye perceives the path they walk.",
-    4:  "You can see the scroll they currently cultivate.",
-    5:  "You sense whether they are bound to another.",
-    6:  "The weight of their past breakthroughs is visible to you.",
-    7:  "You perceive the strength of their cultivation.",
-    8:  "The direction of their alignment drift is clear.",
-    9:  "You see the lineage through which they were awakened.",
-    10: "Nothing is hidden from your gaze."
-  };
-
-  function statusLabel(status) {
-    const map = {
-      meditating: "Meditating",
-      cultivating: "Cultivating",
-      breakthrough_ready: "Breakthrough Ready",
-      in_breakthrough: "In Breakthrough",
-      awaiting_repair: "Awaiting Repair",
-      paused: "Paused",
-      idle: "Idle"
-    };
-    return map[status] || status || "Idle";
+  function timeAgo(iso) {
+    const d = Math.floor((Date.now() - new Date(iso))/1000);
+    if (d < 60)   return d + 's ago';
+    if (d < 3600) return Math.floor(d/60) + 'm ago';
+    if (d < 86400) return Math.floor(d/3600) + 'h ago';
+    return Math.floor(d/86400) + 'd ago';
   }
 
-  function renderCultivator(c) {
-    const genderDot = `<span class="cultivator-gender-dot ${c.gender || 'male'}"></span>`;
-    const selfClass = c.is_self ? ' is-self' : '';
-    let details = '';
-
-    if (c.realm_display_name) {
-      details += `<div class="detail-item"><div class="detail-label">Realm</div><div class="detail-value">${c.realm_display_name}</div></div>`;
-    }
-    if (c.alignment_path) {
-      details += `<div class="detail-item"><div class="detail-label">Path</div><div class="detail-value">${c.alignment_path}</div></div>`;
-    }
-    if (c.stage) {
-      const pip = `<span class="status-pip ${c.cultivation_status || 'idle'}"></span>`;
-      details += `<div class="detail-item"><div class="detail-label">Stage</div><div class="detail-value">${c.stage}</div></div>`;
-      details += `<div class="detail-item"><div class="detail-label">Status</div><div class="detail-value">${pip}${statusLabel(c.cultivation_status)}</div></div>`;
-    }
-    if (c.has_bond !== undefined) {
-      details += `<div class="detail-item"><div class="detail-label">Bond</div><div class="detail-value">${c.has_bond ? 'Bonded' : 'Unbound'}</div></div>`;
-    }
-    if (c.total_breakthroughs !== undefined) {
-      details += `<div class="detail-item"><div class="detail-label">Breakthroughs</div><div class="detail-value">${c.total_breakthroughs}</div></div>`;
-    }
-    if (c.stat_tier) {
-      details += `<div class="detail-item"><div class="detail-label">Strength</div><div class="detail-value"><span class="stat-tier-badge ${c.stat_tier}">${c.stat_tier}</span></div></div>`;
-    }
-    if (c.drift_direction) {
-      details += `<div class="detail-item"><div class="detail-label">Drift</div><div class="detail-value">${c.drift_direction}</div></div>`;
-    }
-    if (c.awakened_by) {
-      details += `<div class="detail-item full"><div class="detail-label">Awakened By</div><div class="detail-value">${c.awakened_by}</div></div>`;
-    }
-    if (c.auric_current !== undefined) {
-      details += `<div class="detail-item"><div class="detail-label">Auric</div><div class="detail-value">${c.auric_current} / ${c.auric_maximum}</div></div>`;
-      details += `<div class="detail-item"><div class="detail-label">Vestiges</div><div class="detail-value">${c.vestiges}</div></div>`;
-    }
-    if (c.region) {
-      details += `<div class="detail-item full"><div class="detail-label">Region</div><div class="detail-value">${c.region}</div></div>`;
-    }
-
-    return `
-      <div class="cultivator-card${selfClass}">
-        <div class="cultivator-name">${genderDot}${c.sl_username}</div>
-        ${details ? `<div class="cultivator-detail-grid">${details}</div>` : ''}
-      </div>`;
-  }
-
-  async function loadSoulSense() {
+  async function load() {
     try {
-      const res  = await fetch('/.netlify/functions/soul-sense', { credentials: 'include' });
+      // Load member state via dashboard endpoint
+      const res  = await fetch('/.netlify/functions/load-dashboard-state', { credentials:'include' });
       const data = await res.json();
+      if (!data.success) { window.location.href='/login.html'; return; }
 
-      if (!data.success) {
-        document.getElementById('cultivator-list').innerHTML =
-          '<div class="empty-state">Soul sense could not be established.</div>';
-        return;
+      const member = data.member || {};
+      const realm  = member.realm_index || 1;
+      const tier   = TIERS[realm - 1] || TIERS[0];
+      const auric  = member.auric_current || 0;
+      const auricMax = member.auric_maximum || 1;
+      const pct    = Math.min(100, Math.round((auric / auricMax) * 100));
+
+      // Tier card
+      document.getElementById('tc-tier').textContent    = `Tier ${realm}`;
+      document.getElementById('tc-label').textContent   = tier.sees.split('+')[0].trim() || tier.sees;
+      document.getElementById('tc-cost').innerHTML      = `${tier.cost} <span style="font-size:.9rem;color:var(--muted)">auric</span>`;
+      document.getElementById('tc-realm').textContent   = tier.name;
+      document.getElementById('tc-auric').textContent   = `${auric} / ${auricMax}`;
+      document.getElementById('tc-auric-bar').style.width = pct + '%';
+      document.getElementById('tc-auric-sub').textContent = pct + '% full';
+
+      // Cost note
+      const noteEl   = document.getElementById('cost-note');
+      const noteText = document.getElementById('cost-note-text');
+      if (auric <= 0) {
+        noteEl.classList.add('blocked'); noteEl.style.display = 'flex';
+        noteText.innerHTML = '<strong>Auric depleted.</strong> Meditate to restore before Soul Sense can be activated.';
+      } else if (auric < tier.cost) {
+        noteEl.classList.add('blocked'); noteEl.style.display = 'flex';
+        noteText.innerHTML = `<strong>Insufficient auric.</strong> You need ${tier.cost} to activate Soul Sense. You have ${auric}. Meditate to restore.`;
+      } else {
+        noteEl.style.display = 'flex';
+        noteText.innerHTML = `Activating Soul Sense will cost <strong>${tier.cost} auric</strong>. You will have <strong>${auric - tier.cost}</strong> remaining.`;
       }
 
-      // Perception bar
-      const tier = data.perception_tier || 1;
-      document.getElementById('perception-tier-label').textContent =
-        `Tier ${tier} — ${PERCEPTION_LABELS[tier] || 'Name & Gender'}`;
-      document.getElementById('perception-desc').textContent =
-        PERCEPTION_DESCS[tier] || '';
+      // Tier progression
+      const listEl = document.getElementById('tier-list');
+      listEl.innerHTML = TIERS.map(t => {
+        const isCurrent  = t.realm === realm;
+        const isUnlocked = t.realm < realm;
+        const cls        = isCurrent ? 'current' : isUnlocked ? 'unlocked' : 'locked';
+        return `<div class="tier-row ${cls}">
+          <div class="tier-num">${t.realm}</div>
+          <div class="tier-info">
+            <div class="tier-realm">${t.name}</div>
+            <div class="tier-sees">${t.sees}</div>
+          </div>
+          <div style="display:flex;align-items:center;gap:8px">
+            ${isCurrent ? '<span class="you-badge">You</span>' : ''}
+            <div class="tier-cost">${t.cost} auric</div>
+          </div>
+        </div>`;
+      }).join('');
 
-      // Count
-      document.getElementById('active-count').textContent = data.active_count || 0;
-
-      // Cultivators
-      const list = document.getElementById('cultivator-list');
-      if (!data.cultivators || !data.cultivators.length) {
-        list.innerHTML = '<div class="empty-state">No cultivators are active at this time.</div>';
-        return;
-      }
-
-      list.innerHTML = `<div class="cultivator-grid">${data.cultivators.map(renderCultivator).join('')}</div>`;
     } catch(e) {
-      document.getElementById('cultivator-list').innerHTML =
-        '<div class="empty-state">Failed to extend soul sense.</div>';
+      console.error('Soul sense load error', e);
+    }
+
+    // Load usage log from soul_sense_log via profile stats endpoint workaround — use direct fetch
+    try {
+      const res  = await fetch('/.netlify/functions/soul-sense-log', { credentials:'include' });
+      if (res.ok) {
+        const data = await res.json();
+        renderLog(data.logs || [], data.total_uses || 0, data.total_auric || 0);
+      }
+    } catch(e) {
+      renderLog([], 0, 0);
     }
   }
 
-  document.getElementById('refresh-btn').addEventListener('click', () => {
-    document.getElementById('cultivator-list').innerHTML = '<div class="loading-state">Extending soul sense...</div>';
-    loadSoulSense();
-  });
+  function renderLog(logs, totalUses, totalAuric) {
+    document.getElementById('stat-total-uses').textContent  = totalUses;
+    document.getElementById('stat-total-auric').textContent = totalAuric;
+    const el = document.getElementById('log-list');
+    if (!logs.length) {
+      el.innerHTML = '<div class="log-empty">No activations recorded yet. Use Soul Sense from your HUD to begin.</div>';
+      return;
+    }
+    el.innerHTML = logs.map(l => `
+      <div class="log-row">
+        <div>
+          <div class="log-detail">Sensed ${l.cultivators_seen} cultivator${l.cultivators_seen !== 1 ? 's' : ''}</div>
+          <div class="log-meta">${timeAgo(l.created_at)} · Tier ${l.realm_index}</div>
+        </div>
+        <div class="log-cost">−${l.auric_cost} auric</div>
+      </div>`).join('');
+  }
 
-  // Auth check
+  // Auth + load
   (async () => {
     try {
-      const res  = await fetch('/.netlify/functions/verify-session', { credentials: 'include' });
-      const data = await res.json();
-      if (!data.success && !data.valid) {
-        window.location.href = '/login.html'; return;
-      }
-      loadSoulSense();
-      setInterval(loadSoulSense, 30000);
-    } catch(e) {
-      window.location.href = '/login.html';
-    }
+      const r = await fetch('/.netlify/functions/verify-session', { credentials:'include' });
+      const d = await r.json();
+      if (!d.success && !d.valid) { window.location.href='/login.html'; return; }
+      load();
+    } catch(e) { window.location.href='/login.html'; }
   })();
   </script>
 
   <script>
-  // ── Celestial Feed ──
   (function() {
     var track = document.getElementById('ticker-track');
     if (!track) return;
-    var _running = false; var pos = 0;
-    function startScroll() {
-      if (_running) return; _running = true;
-      function loop() {
-        var half = track.scrollWidth / 2; pos -= 0.45;
-        if (half > 0 && Math.abs(pos) >= half) pos = 0;
-        track.style.transform = 'translateX(' + pos + 'px)';
+    var pos = 0, running = false;
+    function scroll() {
+      if (running) return; running = true;
+      (function loop() {
+        var h = track.scrollWidth/2; pos -= .45;
+        if (h>0 && Math.abs(pos)>=h) pos=0;
+        track.style.transform='translateX('+pos+'px)';
         requestAnimationFrame(loop);
-      }
-      loop();
+      })();
     }
     function setItems(items) {
-      if (!items.length) items = [{ type: 'celestial', text: 'The celestial currents are still.' }];
-      track.innerHTML = items.concat(items).map(function(i) {
-        return '<span class="ticker-item ' + i.type + '"><span class="ticker-dot ' + i.type + '"></span>' + i.text + '</span>';
-      }).join('');
-      startScroll();
+      if (!items.length) items=[{type:'celestial',text:'The celestial currents are still.'}];
+      track.innerHTML=items.concat(items).map(i=>`<span class="ticker-item ${i.type}"><span class="ticker-dot ${i.type}"></span>${i.text}</span>`).join('');
+      scroll();
     }
     async function loadTicker() {
-      var items = [];
-      try {
-        var r = await fetch('/.netlify/functions/load-world-celestial-state', { method:'POST', headers:{'Content-Type':'application/json'}, body:'{}', credentials:'include' });
-        var d = await r.json(); var w = d.world || d;
-        if (w.phase_name) items.push({ type:'celestial', text: w.phase_name + (w.force_name ? ' · ' + w.force_name : '') });
-        if (w.phenomenon_name && w.phenomenon_name !== 'None') items.push({ type:'celestial', text:'Phenomenon: ' + w.phenomenon_name });
-      } catch(e) {}
-      try {
-        var nr = await fetch('/.netlify/functions/notifications-list', { credentials:'include' });
-        var nd = await nr.json();
-        if (nd.success && nd.notifications) {
-          nd.notifications.filter(function(n){ return !n.is_read; }).slice(0,5).forEach(function(n) {
-            items.push({ type:'notice-urgent', text: n.title + ' — ' + n.message });
-          });
-          var badge = document.getElementById('notif-badge');
-          if (badge && nd.unread_count > 0) { badge.textContent = nd.unread_count; badge.style.display = 'flex'; }
-        }
-      } catch(e) {}
+      var items=[];
+      try { var r=await fetch('/.netlify/functions/load-world-celestial-state',{method:'POST',headers:{'Content-Type':'application/json'},body:'{}',credentials:'include'});var d=await r.json();var w=d.world||d;if(w.phase_name)items.push({type:'celestial',text:w.phase_name+(w.force_name?' · '+w.force_name:'')});if(w.phenomenon_name&&w.phenomenon_name!=='None')items.push({type:'celestial',text:'Phenomenon: '+w.phenomenon_name}); } catch(e){}
+      try { var nr=await fetch('/.netlify/functions/notifications-list',{credentials:'include'});var nd=await nr.json();if(nd.success&&nd.notifications){nd.notifications.filter(n=>!n.is_read).slice(0,5).forEach(n=>items.push({type:'notice-urgent',text:n.title+' — '+n.message}));var b=document.getElementById('notif-badge');if(b&&nd.unread_count>0){b.textContent=nd.unread_count;b.style.display='flex';}} } catch(e){}
       setItems(items);
     }
-    loadTicker(); setInterval(loadTicker, 60000);
+    loadTicker(); setInterval(loadTicker,60000);
   })();
-
-  // ── Notification Bell ──
   (function() {
-    const bell = document.getElementById('notif-bell');
-    const badge = document.getElementById('notif-badge');
-    const dropdown = document.getElementById('notif-dropdown');
-    if (!bell) return;
-    function timeAgo(iso) {
-      const diff = Math.floor((Date.now() - new Date(iso)) / 1000);
-      if (diff < 60) return diff + 's ago';
-      if (diff < 3600) return Math.floor(diff/60) + 'm ago';
-      return Math.floor(diff/3600) + 'h ago';
-    }
-    async function loadNotifications() {
-      try {
-        const res = await fetch('/.netlify/functions/notifications-list', { credentials:'include' });
-        const data = await res.json();
-        if (!data.success) return;
-        const unread = data.unread_count || 0;
-        if (unread > 0) { badge.textContent = unread > 99 ? '99+' : unread; badge.style.display = 'flex'; }
-        else { badge.style.display = 'none'; }
-        const notes = data.notifications || [];
-        if (!notes.length) { dropdown.innerHTML = '<div class="notif-empty">No notifications</div>'; return; }
-        const header = '<div class="notif-header"><span class="notif-header-title">Notifications</span><button class="notif-mark-all" id="notif-mark-all">Mark all read</button></div>';
-        dropdown.innerHTML = header + notes.slice(0,20).map(n =>
-          `<div class="${n.is_read ? 'notif-item' : 'notif-item unread'}" data-id="${n.id}">
-            <div class="notif-item-title">${n.title}</div>
-            <div class="notif-item-msg">${n.message}</div>
-            <div class="notif-item-time">${timeAgo(n.created_at)}</div>
-          </div>`).join('');
-        document.getElementById('notif-mark-all')?.addEventListener('click', async(e) => {
-          e.stopPropagation();
-          await fetch('/.netlify/functions/notifications-mark-read', { method:'POST', credentials:'include', headers:{'Content-Type':'application/json'}, body: JSON.stringify({ mark_all:true }) });
-          loadNotifications();
-        });
-      } catch(e) {}
-    }
-    bell.addEventListener('click', e => { e.stopPropagation(); dropdown.style.display = dropdown.style.display !== 'none' ? 'none' : 'block'; });
-    document.addEventListener('click', () => { dropdown.style.display = 'none'; });
-    loadNotifications(); setInterval(loadNotifications, 60000);
+    const bell=document.getElementById('notif-bell'),badge=document.getElementById('notif-badge'),dd=document.getElementById('notif-dropdown');
+    if(!bell)return;
+    function tAgo(iso){const d=Math.floor((Date.now()-new Date(iso))/1000);if(d<60)return d+'s ago';if(d<3600)return Math.floor(d/60)+'m ago';return Math.floor(d/3600)+'h ago';}
+    async function loadN(){try{const r=await fetch('/.netlify/functions/notifications-list',{credentials:'include'});const d=await r.json();if(!d.success)return;if(d.unread_count>0){badge.textContent=d.unread_count>99?'99+':d.unread_count;badge.style.display='flex';}else{badge.style.display='none';}const notes=d.notifications||[];if(!notes.length){dd.innerHTML='<div class="notif-empty">No notifications</div>';return;}dd.innerHTML='<div class="notif-hd"><span class="notif-hd-t">Notifications</span><button class="notif-mark" id="nma">Mark all read</button></div>'+notes.slice(0,20).map(n=>`<div class="${n.is_read?'notif-item':'notif-item unread'}" data-id="${n.id}"><div class="notif-item-title">${n.title}</div><div class="notif-item-msg">${n.message}</div><div class="notif-item-time">${tAgo(n.created_at)}</div></div>`).join('');document.getElementById('nma')?.addEventListener('click',async e=>{e.stopPropagation();await fetch('/.netlify/functions/notifications-mark-read',{method:'POST',credentials:'include',headers:{'Content-Type':'application/json'},body:JSON.stringify({mark_all:true})});loadN();});}catch(e){}}
+    bell.addEventListener('click',e=>{e.stopPropagation();dd.style.display=dd.style.display!=='none'?'none':'block';});
+    document.addEventListener('click',()=>{dd.style.display='none';});
+    loadN();setInterval(loadN,60000);
   })();
   </script>
 </body>
