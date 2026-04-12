@@ -22,7 +22,7 @@ const weatherDb = supabase.schema("weather");
 
 function parseCookies(header) {
   var cookies = {};
-  if (\!header) return cookies;
+  if (!header) return cookies;
   header.split(";").forEach(function(part) {
     var trimmed = part.trim();
     var eq = trimmed.indexOf("=");
@@ -58,7 +58,7 @@ exports.handler = async function(event) {
   if (event.httpMethod === "OPTIONS") {
     return json(200, { ok: true });
   }
-  if (event.httpMethod \!== "POST") {
+  if (event.httpMethod !== "POST") {
     return json(405, { success: false, message: "Method not allowed. Use POST." });
   }
 
@@ -71,7 +71,7 @@ exports.handler = async function(event) {
   }
 
   var parcelKey = safeText(body.parcel_key);
-  if (\!parcelKey) {
+  if (!parcelKey) {
     return json(400, { success: false, message: "parcel_key is required." });
   }
 
@@ -97,10 +97,10 @@ exports.handler = async function(event) {
   }
 
   // Path 2: sl_avatar_key or avatar_key in body (LSL in-world callers)
-  if (\!avatarKey) {
+  if (!avatarKey) {
     var bodyAvatarKey = safeText(body.sl_avatar_key || body.avatar_key);
 
-    if (\!bodyAvatarKey) {
+    if (!bodyAvatarKey) {
       return json(401, {
         success: false,
         message: "No valid session cookie or sl_avatar_key provided."
@@ -115,7 +115,7 @@ exports.handler = async function(event) {
       .limit(1)
       .maybeSingle();
 
-    if (memberCheck.error || \!memberCheck.data) {
+    if (memberCheck.error || !memberCheck.data) {
       return json(403, {
         success: false,
         message: "Avatar key not recognised as a registered member."
@@ -144,7 +144,7 @@ exports.handler = async function(event) {
     var data = result.data;
 
     // DB function returns jsonb with success field
-    if (\!data || data.success === false) {
+    if (!data || data.success === false) {
       var errorCode = data && data.error ? data.error : "unknown_error";
       var httpStatus = 400;
 
