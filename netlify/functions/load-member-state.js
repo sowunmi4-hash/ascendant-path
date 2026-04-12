@@ -1453,6 +1453,7 @@ exports.handler = async (event) => {
       alignment_last_applied_at: alignmentState.last_applied_at || null,
       alignment_state: alignmentState,
 
+      gender: safeText(finalMember.gender, "male"),
       current_region_name: safeText(finalMember.current_region_name),
       current_position_x: toNumberOrNull(finalMember.current_position_x),
       current_position_y: toNumberOrNull(finalMember.current_position_y),

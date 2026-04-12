@@ -1211,7 +1211,8 @@ async function handler(event) {
         v2_active_stage_key: safeText(member.v2_active_stage_key) || null,
         v2_breakthrough_gate_open: safeBoolean(member.v2_breakthrough_gate_open),
         v2_stage_needs_repair: safeBoolean(member.v2_stage_needs_repair),
-        v2_accumulated_seconds: safeNumber(member.v2_accumulated_seconds, 0)
+        v2_accumulated_seconds: safeNumber(member.v2_accumulated_seconds, 0),
+        gender: safeText(member.gender, "male")
       },
       cultivation_record: cultivationRecord,
       warnings
