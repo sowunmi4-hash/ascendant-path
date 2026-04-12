@@ -703,6 +703,14 @@
     <a href="/login.html" id="logout-button">Logout</a>
   </nav>
 
+    <!-- Celestial Feed -->
+    <div id="news-ticker-bar" style="width:100%;background:#0a0a12;border-top:0.5px solid rgba(200,169,106,0.15);border-bottom:0.5px solid rgba(200,169,106,0.15);height:34px;display:flex;align-items:center;overflow:hidden;">
+      <div id="ticker-label" style="flex-shrink:0;padding:0 14px;font-size:9px;letter-spacing:0.14em;text-transform:uppercase;color:#c8a96a;font-weight:600;border-right:0.5px solid rgba(200,169,106,0.25);height:100%;display:flex;align-items:center;background:#0a0a12;white-space:nowrap;font-family:'Cinzel',serif;">⬡ Celestial Feed</div>
+      <div style="overflow:hidden;flex:1;position:relative;height:100%;">
+        <div id="ticker-track" style="display:flex;align-items:center;height:100%;position:absolute;white-space:nowrap;"></div>
+      </div>
+    </div>
+
   <main class="elements-shell">
 
   <div class="qi-particles" id="qi-particles"></div>
@@ -1603,5 +1611,64 @@
         animateTokens();
       }, 100);
     };
+  </script>
+
+  <script>
+  (function() {
+    var track = document.getElementById('ticker-track');
+    if (!track) return;
+    var _running = false;
+    var pos = 0;
+
+    function startScroll() {
+      if (_running) return;
+      _running = true;
+      function loop() {
+        var half = track.scrollWidth / 2;
+        pos -= 0.45;
+        if (half > 0 && Math.abs(pos) >= half) pos = 0;
+        track.style.transform = 'translateX(' + pos + 'px)';
+        requestAnimationFrame(loop);
+      }
+      loop();
+    }
+
+    function setItems(items) {
+      if (!items.length) items = [{ type: 'celestial', text: 'The celestial currents are still. Cultivate in peace.' }];
+      var doubled = items.concat(items);
+      track.innerHTML = doubled.map(function(i) {
+        return '<span class="ticker-item ' + i.type + '"><span class="ticker-dot ' + i.type + '"></span>' + i.text + '</span>';
+      }).join('');
+      startScroll();
+    }
+
+    async function loadTicker() {
+      var items = [];
+      try {
+        var res  = await fetch('/.netlify/functions/load-world-celestial-state', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: '{}', credentials: 'include' });
+        var data = await res.json();
+        var w = data.world || data;
+        if (w.phase_name)    items.push({ type: 'celestial', text: w.phase_name + (w.force_name ? ' · ' + w.force_name : '') });
+        if (w.phenomenon_name && w.phenomenon_name !== 'None') items.push({ type: 'celestial', text: 'Phenomenon: ' + w.phenomenon_name });
+        if (w.dashboard_effect_label) items.push({ type: 'celestial', text: w.dashboard_effect_label });
+      } catch(e) {}
+      try {
+        var nr = await fetch('/.netlify/functions/notifications-list', { credentials: 'include' });
+        var nd = await nr.json();
+        if (nd.success && nd.notifications) {
+          nd.notifications.filter(function(n){ return !n.is_read; }).slice(0,5).forEach(function(n) {
+            var urgent = n.type === 'breakthrough_success' || n.type === 'breakthrough_failure' || n.type === 'scroll_complete';
+            items.push({ type: urgent ? 'notice-urgent' : 'notice', text: n.title + ' — ' + n.message });
+          });
+          var badge = document.getElementById('notif-badge');
+          if (badge && nd.unread_count > 0) { badge.textContent = nd.unread_count > 99 ? '99+' : nd.unread_count; badge.style.display = 'flex'; }
+        }
+      } catch(e) {}
+      setItems(items);
+    }
+
+    loadTicker();
+    setInterval(loadTicker, 60000);
+  })();
   </script>
 </body></html>
