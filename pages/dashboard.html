@@ -2050,6 +2050,9 @@
     .ticker-dot.notice-urgent { background:#c86890; }
 
     /* ── Cultivation Design Override ── */
+    .rune-layer  { z-index: 1  !important; pointer-events: none !important; }
+    .cloud-layer { z-index: 0  !important; pointer-events: none !important; }
+    .lightning-flash { z-index: 2 !important; pointer-events: none !important; }
     html, body { background: var(--bg-void) !important; }
     .dashboard-panel {
       background: var(--bg-card) !important;
@@ -2076,7 +2079,6 @@
     .ticker-dot.notice-urgent { background: var(--rose-gold) !important; }
     /* Bottom padding removed since ticker is now at top */
     body { padding-bottom: 0 !important; }
-    .cloud-layer, .rune-layer { display: none; }
   </style>
 </head>
 <body>
