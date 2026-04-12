@@ -70,7 +70,7 @@ const REALM_INDEX_MAP = {
 
 const REALM_META_BY_INDEX = {
   1: { realm_key: "mortal", realm_name: "mortal", realm_display_name: "Mortal Realm" },
-  2: { realm_key: "qi_gathering", realm_name: "auric gathering", realm_display_name: "Auric Gathering Realm" },
+  2: { realm_key: "qi_gathering", realm_name: "qi gathering", realm_display_name: "Qi Gathering Realm" },
   3: { realm_key: "foundation", realm_name: "foundation", realm_display_name: "Foundation Realm" },
   4: { realm_key: "core_formation", realm_name: "core formation", realm_display_name: "Core Formation Realm" },
   5: { realm_key: "nascent_soul", realm_name: "nascent soul", realm_display_name: "Nascent Soul Realm" },
@@ -711,8 +711,8 @@ function buildBondBookStateSummary(row) {
       pickFirst(row.minutes_accumulated, row.shared_minutes_accumulated, row.accumulated_minutes),
       0
     ),
-    auric_accumulated: safeNumber(
-      pickFirst(row.auric_accumulated, row.shared_auric_accumulated, row.accumulated_qi),
+    qi_accumulated: safeNumber(
+      pickFirst(row.qi_accumulated, row.shared_qi_accumulated, row.accumulated_qi),
       0
     ),
     started_at: row.started_at || null,
@@ -999,12 +999,12 @@ function buildAlignmentStateSummary({ dashboardState, previewState }) {
       pickFirst(dashboardState?.effective_bias, previewState?.effective_bias)
     ) || null,
 
-    auric_multiplier: roundNumber(
+    qi_multiplier: roundNumber(
       pickFirst(
-        dashboardState?.auric_multiplier,
-        dashboardState?.current_auric_multiplier,
-        previewState?.auric_multiplier,
-        previewState?.auric_reward_multiplier,
+        dashboardState?.qi_multiplier,
+        dashboardState?.current_qi_multiplier,
+        previewState?.qi_multiplier,
+        previewState?.qi_reward_multiplier,
         1
       ),
       2
@@ -1998,7 +1998,7 @@ exports.handler = async (event) => {
         alignment_force_name: alignmentState.force_name,
         alignment_phenomenon_name: alignmentState.phenomenon_name,
         alignment_effective_bias: alignmentState.effective_bias,
-        alignment_auric_multiplier: alignmentState.auric_multiplier,
+        alignment_qi_multiplier: alignmentState.qi_multiplier,
         alignment_cp_multiplier: alignmentState.cp_multiplier,
         alignment_aligned_bonus_available: alignmentState.aligned_bonus_available,
         alignment_aligned_bonus_window_active: alignmentState.aligned_bonus_window_active,
@@ -2021,7 +2021,7 @@ exports.handler = async (event) => {
         force_name: alignmentState.force_name,
         phenomenon_name: alignmentState.phenomenon_name,
         effective_bias: alignmentState.effective_bias,
-        auric_multiplier: alignmentState.auric_multiplier,
+        qi_multiplier: alignmentState.qi_multiplier,
         cp_multiplier: alignmentState.cp_multiplier,
         aligned_bonus_available: alignmentState.aligned_bonus_available,
         aligned_bonus_window_active: alignmentState.aligned_bonus_window_active,
@@ -2183,7 +2183,7 @@ exports.handler = async (event) => {
         partner_auric_maximum: partnerAuricMaximum,
         shared_auric_current: sharedAuricCurrent,
         shared_auric_maximum: sharedAuricMaximum,
-        shared_auric_percent: sharedQiPercent,
+        shared_qi_percent: sharedQiPercent,
 
         personal_vestiges: personalCultivationPoints,
         personal_vestiges_maximum: personalCultivationPointsMaximum,
@@ -2305,7 +2305,7 @@ exports.handler = async (event) => {
 
         shared_auric_current: sharedAuricCurrent,
         shared_auric_maximum: sharedAuricMaximum,
-        shared_auric_percent: sharedQiPercent,
+        shared_qi_percent: sharedQiPercent,
 
         shared_vestiges: sharedCultivationPoints,
         shared_vestiges_maximum: sharedCultivationPointsMaximum,
@@ -2366,7 +2366,7 @@ exports.handler = async (event) => {
         alignment_force_name: alignmentState.force_name,
         alignment_phenomenon_name: alignmentState.phenomenon_name,
         alignment_effective_bias: alignmentState.effective_bias,
-        alignment_auric_multiplier: alignmentState.auric_multiplier,
+        alignment_qi_multiplier: alignmentState.qi_multiplier,
         alignment_cp_multiplier: alignmentState.cp_multiplier,
         alignment_aligned_bonus_available: alignmentState.aligned_bonus_available,
         alignment_aligned_bonus_window_active: alignmentState.aligned_bonus_window_active,

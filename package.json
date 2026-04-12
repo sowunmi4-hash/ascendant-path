@@ -3,8 +3,5 @@
   "private": true,
   "dependencies": {
     "@supabase/supabase-js": "^2.102.1"
-  },
-  "scripts": {
-    "build": "echo done"
   }
 }
