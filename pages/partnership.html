@@ -416,7 +416,7 @@
             </div>
             <div class="hero-since">${escapeHtml(formatDate(item?.accepted_at||item?.created_at))}</div>
           </div>
-          <div class="hero-actions" onclick="event.stopPropagation()">${buildActions(item,"hero")}</div>
+          <div class="hero-actions">${buildActions(item,"hero")}</div>
         </div>
       </div>`;
     }
@@ -438,7 +438,7 @@
           <div class="bond-row-pct">${pct.toFixed(1)}%</div>
           <div class="bond-row-bar"><div class="bond-row-bar-fill" style="width:${Math.min(100,pct)}%"></div></div>
         </div>
-        <div class="bond-row-right" onclick="event.stopPropagation(); event.preventDefault();">
+        <div class="bond-row-right">
           <div class="bond-row-dot ${resonance}"></div>
           ${buildActions(item,"row")}
         </div>
