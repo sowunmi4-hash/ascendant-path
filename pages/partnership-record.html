@@ -1303,7 +1303,7 @@
     const presenceRecent = payload?.partner_hud_recent;
 
     // Member figure
-    setText('member-name',  safeText(member?.display_name || member?.character_name || member?.sl_username, 'You'));
+    setText('member-name',  safeText(member?.character_name || member?.display_name || member?.sl_username, 'You'));
     setText('member-realm', safeText(member?.realm_display_name, '—'));
     const mAuricNow = safeNumber(payload?.personal_auric_current, 0);
     const mAuricCapNow = safeNumber(payload?.personal_auric_maximum, 1);
@@ -1313,7 +1313,7 @@
     setText('member-status-label', 'Active');
 
     // Partner figure
-    setText('partner-name',  safeText(partner?.display_name || partner?.character_name || partner?.sl_username, 'Partner'));
+    setText('partner-name',  safeText(partner?.character_name || partner?.display_name || partner?.sl_username, 'Partner'));
     setText('partner-realm', safeText(partner?.realm_display_name, '—'));
     const pAuricNow = safeNumber(payload?.partner_auric_current, 0);
     const pAuricCapNow = safeNumber(payload?.partner_auric_maximum, 1);
@@ -1358,7 +1358,7 @@
     const pColor = partnerGender === 'female' ? '#c86890' : '#c8a96a';
 
     // Member card
-    setText('info-member-title', safeText(member?.display_name || member?.character_name || member?.sl_username, 'You'));
+    setText('info-member-title', safeText(member?.character_name || member?.display_name || member?.sl_username, 'You'));
     setText('info-member-realm', safeText(member?.realm_display_name, '—'));
     const mAuric = safeNumber(payload?.personal_auric_current, 0);
     const mAuricMax = safeNumber(payload?.personal_auric_maximum, 1);
@@ -1373,7 +1373,7 @@
     setText('info-member-session', selfSessionStatus.charAt(0).toUpperCase() + selfSessionStatus.slice(1));
 
     // Partner card
-    setText('info-partner-title', safeText(partner?.display_name || partner?.character_name || partner?.sl_username, 'Partner'));
+    setText('info-partner-title', safeText(partner?.character_name || partner?.display_name || partner?.sl_username, 'Partner'));
     setText('info-partner-realm', safeText(partner?.realm_display_name, '—'));
     const pAuric = safeNumber(payload?.partner_auric_current, 0);
     const pAuricMax = safeNumber(payload?.partner_auric_maximum, 1);

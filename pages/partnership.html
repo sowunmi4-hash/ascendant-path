@@ -296,8 +296,8 @@
       if(s==="pending") return item?.can_accept?"pending_incoming":"pending_outgoing";
       return "historical";
     }
-    function getPartnerName(item) { return safeText(item?.summary?.partner_name)||safeText(item?.partner?.display_name)||safeText(item?.partner?.character_name)||safeText(item?.partner?.sl_username)||safeText(item?.counterpart?.sl_username)||"Unknown"; }
-    function getMemberName(item)  { return safeText(item?.member?.display_name)||safeText(item?.member?.character_name)||safeText(item?.member?.sl_username)||"You"; }
+    function getPartnerName(item) { return safeText(item?.partner?.character_name)||safeText(item?.partner?.display_name)||safeText(item?.partner?.sl_username)||safeText(item?.counterpart?.sl_username)||"Unknown"; }
+    function getMemberName(item)  { return safeText(item?.member?.character_name)||safeText(item?.member?.display_name)||safeText(item?.member?.sl_username)||"You"; }
     function getMemberRealm(item) { return safeText(item?.member?.realm_display_name); }
     function getPartnerRealm(item){ return safeText(item?.partner?.realm_display_name)||safeText(item?.partner_realm); }
     function getBondPct(item)     { return Number(item?.bond?.bond_percent??item?.summary?.bond_percent??0); }

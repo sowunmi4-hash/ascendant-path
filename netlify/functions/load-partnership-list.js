@@ -677,8 +677,8 @@ function buildListItem({
 
     summary: {
       partner_name:
-        safeText(partnerPublic?.display_name, "") ||
         safeText(partnerPublic?.character_name, "") ||
+        safeText(partnerPublic?.display_name, "") ||
         safeText(partnerPublic?.sl_username, "") ||
         "Unknown Partner",
       realm_line: realmLine,
