@@ -903,9 +903,10 @@
   const _figCache = { male: null, female: null };
   const _figCallbacks = { male: [], female: [] };
   const _figLoading = { male: false, female: false };
-  const _figRAFs = {};   // canvasId → raf handle
-  const _figT = {};      // canvasId → time
+  const _figRAFs = {};    // canvasId → raf handle
+  const _figT = {};       // canvasId → time
   const _starfields = {}; // canvasId → star array
+  const _figState = {};   // canvasId → { gender, auricCurrent, auricMax }
 
   function loadFigure(gender, callback) {
     const g = gender === 'female' ? 'female' : 'male';
@@ -1010,7 +1011,7 @@
     ctx.save();
     ctx.beginPath(); ctx.arc(cx, cy, haloR, 0, Math.PI * 2);
     const haloGrad = ctx.createRadialGradient(cx, cy, baseR * 0.8, cx, cy, haloR);
-    haloGrad.addColorStop(0, c1.replace('1)', '0.08)').replace('rgb', 'rgba'));
+    haloGrad.addColorStop(0, c1.replace(',0.7)', ',0.08)'));
     haloGrad.addColorStop(1, 'rgba(0,0,0,0)');
     ctx.fillStyle = haloGrad; ctx.fill(); ctx.restore();
 
@@ -1067,6 +1068,14 @@
   }
 
   function startFigureAnimation(canvasId, gender, auricCurrent, auricMax) {
+    // Don't restart if already running with same gender (auric is read live from pct each frame)
+    const prev = _figState[canvasId];
+    if (prev && prev.gender === gender && _figRAFs[canvasId]) {
+      // Just update the stored auric values — the running frame will pick them up
+      prev.auricCurrent = auricCurrent; prev.auricMax = auricMax;
+      return;
+    }
+    _figState[canvasId] = { gender, auricCurrent, auricMax };
     if (_figRAFs[canvasId]) { cancelAnimationFrame(_figRAFs[canvasId]); }
     if (!_figT[canvasId]) _figT[canvasId] = 0;
 
@@ -1081,14 +1090,16 @@
     const colorRGB = g === 'female' ? '200,104,144' : '200,169,106';
     const c1 = `rgba(${colorRGB},0.7)`;
     const c2 = `rgba(${colorRGB},0.35)`;
-    const pct = auricMax > 0 ? Math.min(1, auricCurrent / auricMax) : 0;
-
-    let figImg = null;
+    // Use cached figure immediately if available, otherwise wait for load
+    let figImg = _figCache[g] || null;
     loadFigure(g, function(src) { figImg = src; });
 
     function frame() {
       _figT[canvasId] += 0.016;
       const t = _figT[canvasId];
+      // Read live auric from state so refresh updates don't need restart
+      const liveState = _figState[canvasId] || {};
+      const livePct = (liveState.auricMax || 0) > 0 ? Math.min(1, (liveState.auricCurrent||0) / liveState.auricMax) : 0;
       ctx.clearRect(0, 0, W, H);
 
       // Ambient background glow
@@ -1100,13 +1111,13 @@
       ctx.restore();
 
       // Starfield
-      drawStarfield(ctx, W, H, t, color, pct, canvasId);
+      drawStarfield(ctx, W, H, t, color, livePct, canvasId);
 
       // Auric veins
-      drawQiVeins(ctx, cx, cy, baseR, t, `rgba(${colorRGB},0.5)`, 0.28, pct);
+      drawQiVeins(ctx, cx, cy, baseR, t, `rgba(${colorRGB},0.5)`, 0.28, livePct);
 
       // Aura ring
-      drawAura(ctx, cx, cy, baseR, pct, c1, c2, t);
+      drawAura(ctx, cx, cy, baseR, livePct, c1, c2, t);
 
       // Figure
       if (figImg) {
