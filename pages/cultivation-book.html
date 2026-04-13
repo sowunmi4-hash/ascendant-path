@@ -1592,8 +1592,8 @@
     var _vesselRafId = null;
     var _vesselT = 0;
     var _vesselFigCache = { male: null, female: null };
-    var _vesselFigLoading = false;
-    var _vesselFigCallbacks = [];
+    var _vesselFigLoading   = { male: false, female: false };
+    var _vesselFigCallbacks = { male: [], female: [] };
     var _vesselCurrentColor = '#c8a96a';
     var _vesselGenderColor = { male: '#c8a96a', female: '#c86890' };
     var _vesselCurrentQiPct = 0;
@@ -1607,11 +1607,13 @@
     }
 
     function loadVesselFigure(gender, callback) {
-      if (_vesselFigCache[gender] !== null) { callback(_vesselFigCache[gender]); return; }
-      _vesselFigCallbacks.push(callback);
-      if (_vesselFigLoading) return;
-      _vesselFigLoading = true;
-      var url = (gender === 'female') ? '/images/female-figure.svg' : '/images/figure.svg';
+      var g = (gender === 'female') ? 'female' : 'male';
+      var rgb = (g === 'female') ? [200, 104, 144] : [200, 169, 106];
+      if (_vesselFigCache[g] !== null) { callback(_vesselFigCache[g]); return; }
+      _vesselFigCallbacks[g].push(callback);
+      if (_vesselFigLoading[g]) return;
+      _vesselFigLoading[g] = true;
+      var url = (g === 'female') ? '/images/female-figure.svg' : '/images/figure.svg';
       var img = new Image();
       img.crossOrigin = 'anonymous';
       img.onload = function() {
@@ -1622,22 +1624,21 @@
           ctx2.drawImage(img, 0, 0);
           var id = ctx2.getImageData(0, 0, 1024, 1024);
           var d = id.data;
-          var _figRGB = (gender === 'female') ? [200, 104, 144] : [200, 169, 106];
           for (var i = 0; i < d.length; i += 4) {
             if (d[i+3] > 10 && d[i] < 80 && d[i+1] < 80 && d[i+2] < 80) {
-              d[i] = _figRGB[0]; d[i+1] = _figRGB[1]; d[i+2] = _figRGB[2];
+              d[i] = rgb[0]; d[i+1] = rgb[1]; d[i+2] = rgb[2];
             } else { d[i+3] = 0; }
           }
           ctx2.putImageData(id, 0, 0);
-          _vesselFigCache[gender] = off;
-        } catch(e) { _vesselFigCache[gender] = null; }
-        _vesselFigLoading = false;
-        var cbs = _vesselFigCallbacks.slice(); _vesselFigCallbacks = [];
-        for (var j = 0; j < cbs.length; j++) { cbs[j](_vesselFigCache[gender]); }
+          _vesselFigCache[g] = off;
+        } catch(e) { _vesselFigCache[g] = null; }
+        _vesselFigLoading[g] = false;
+        var cbs = _vesselFigCallbacks[g].slice(); _vesselFigCallbacks[g] = [];
+        for (var j = 0; j < cbs.length; j++) { cbs[j](_vesselFigCache[g]); }
       };
       img.onerror = function() {
-        _vesselFigCache[gender] = null; _vesselFigLoading = false;
-        var cbs = _vesselFigCallbacks.slice(); _vesselFigCallbacks = [];
+        _vesselFigCache[g] = null; _vesselFigLoading[g] = false;
+        var cbs = _vesselFigCallbacks[g].slice(); _vesselFigCallbacks[g] = [];
         for (var j = 0; j < cbs.length; j++) { cbs[j](null); }
       };
       img.src = url;
