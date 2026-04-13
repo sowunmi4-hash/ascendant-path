@@ -27,151 +27,162 @@
     .dashboard-nav a:hover { color:#ddd5c8; border-color:rgba(200,169,106,0.22); background:rgba(255,255,255,0.04); }
     .dashboard-nav a.active { color:#fff; border-color:rgba(200,169,106,0.28); background:rgba(200,169,106,0.10); }
 
-    .hall-page { margin:1.5rem auto 4rem; display:grid; gap:2rem; }
-
-    /* ── Hall header ── */
-    .hall-header { text-align:center; padding:2rem 1rem 0.5rem; }
-    .hall-eyebrow { font-size:.72rem; letter-spacing:.18em; text-transform:uppercase; color:#c8a96a; margin-bottom:.5rem; }
-    .hall-title { margin:0 0 .5rem; font-size:clamp(2rem,4vw,3.2rem); line-height:1; color:#fff; }
-    .hall-subtitle { margin:0 auto; font-size:.95rem; line-height:1.6; color:rgba(221,213,200,0.55); max-width:48ch; }
+    .hall-page { margin:1.5rem auto 4rem; display:grid; gap:1.25rem; }
 
     .page-message { padding:.85rem 1rem; border-radius:14px; border:1px solid rgba(200,169,106,0.2); background:rgba(200,169,106,0.08); color:#ddd5c8; font-size:.88rem; line-height:1.6; text-align:center; }
 
-    /* ── Hero card (first/strongest bond) ── */
-    .hero-bond {
-      position:relative; overflow:hidden; border-radius:28px;
-      border:1px solid rgba(200,169,106,0.22);
-      background:linear-gradient(160deg,rgba(18,14,10,0.97),rgba(8,7,4,0.99));
-      box-shadow:0 0 60px rgba(200,169,106,0.08), 0 28px 60px rgba(0,0,0,0.4);
-      padding:2rem 2rem 1.75rem;
-      display:grid; gap:1.25rem;
+    /* ══════════════════════════════════════
+       HERO SPOTLIGHT CARD
+    ══════════════════════════════════════ */
+    .hero-spotlight {
+      position: relative; overflow: hidden; border-radius: 28px;
+      border: 1px solid rgba(200,169,106,0.2);
+      background: linear-gradient(160deg, rgba(18,14,8,0.98), rgba(9,7,4,0.99));
+      box-shadow: 0 0 80px rgba(200,169,106,0.07), 0 32px 64px rgba(0,0,0,0.45);
+      min-height: 300px;
     }
-    /* ambient gold glow top */
-    .hero-bond::before {
-      content:''; position:absolute; top:-60px; left:50%; transform:translateX(-50%);
-      width:300px; height:160px; border-radius:50%;
-      background:radial-gradient(ellipse,rgba(200,169,106,0.12),transparent 70%);
-      pointer-events:none;
+    /* ambient top glow */
+    .hero-spotlight::before {
+      content:''; position:absolute; top:-80px; left:50%; transform:translateX(-50%);
+      width:400px; height:200px; border-radius:50%;
+      background: radial-gradient(ellipse, rgba(200,169,106,0.1), transparent 70%);
+      pointer-events: none;
     }
-    .hero-crown {
-      display:flex; align-items:center; gap:.6rem; justify-content:center;
+
+    /* Empty state */
+    .hero-empty {
+      display: flex; align-items: center; justify-content: center;
+      flex-direction: column; gap: .5rem;
+      min-height: 300px; text-align: center; padding: 2rem;
     }
+    .hero-empty-title { font-size:1.1rem; color:rgba(221,213,200,0.4); font-family:'Cinzel',serif; }
+    .hero-empty-copy  { font-size:.82rem; color:rgba(221,213,200,0.25); margin:0; }
+
+    /* Loaded state */
+    .hero-content { padding: 2rem 2rem 1.75rem; display: grid; gap: 1.4rem; position: relative; z-index: 1; }
+
+    .hero-crown { display:flex; align-items:center; gap:.7rem; }
     .hero-crown-line { flex:1; height:1px; background:linear-gradient(90deg,transparent,rgba(200,169,106,0.3)); }
-    .hero-crown-line.right { background:linear-gradient(90deg,rgba(200,169,106,0.3),transparent); }
-    .hero-crown-label { font-size:.68rem; letter-spacing:.2em; text-transform:uppercase; color:#c8a96a; white-space:nowrap; }
+    .hero-crown-line.r { background:linear-gradient(90deg,rgba(200,169,106,0.3),transparent); }
+    .hero-crown-label { font-size:.66rem; letter-spacing:.2em; text-transform:uppercase; color:rgba(200,169,106,0.7); white-space:nowrap; }
 
-    .hero-figures { display:flex; align-items:flex-end; justify-content:center; gap:0; }
-    .hero-figure { display:flex; flex-direction:column; align-items:center; gap:.4rem; flex:1; }
+    .hero-figures { display:flex; align-items:flex-end; justify-content:center; }
+    .hero-figure { display:flex; flex-direction:column; align-items:center; gap:.45rem; flex:1; }
     .hero-avatar {
-      width:72px; height:72px; border-radius:50%;
-      border:2px solid rgba(200,169,106,0.4);
-      background:radial-gradient(circle at top,rgba(200,169,106,0.18),rgba(8,7,4,1));
+      width:80px; height:80px; border-radius:50%;
+      border:2px solid rgba(200,169,106,0.35);
+      background: radial-gradient(circle at 40% 35%, rgba(200,169,106,0.2), rgba(9,7,4,1) 65%);
       display:flex; align-items:center; justify-content:center;
-      font-size:1.4rem; font-weight:700; color:#c8a96a; font-family:'Cinzel',serif;
-      position:relative;
-      box-shadow:0 0 24px rgba(200,169,106,0.15);
+      font-size:1.5rem; font-weight:700; color:#c8a96a; font-family:'Cinzel',serif;
+      position:relative; box-shadow:0 0 30px rgba(200,169,106,0.12);
+      transition: border-color .3s ease, box-shadow .3s ease;
     }
-    .hero-avatar.female { border-color:rgba(200,104,144,0.4); background:radial-gradient(circle at top,rgba(200,104,144,0.18),rgba(8,7,4,1)); color:#c86890; box-shadow:0 0 24px rgba(200,104,144,0.15); }
-    .hero-avatar::after { content:''; position:absolute; bottom:2px; right:2px; width:13px; height:13px; border-radius:50%; background:transparent; border:2px solid transparent; }
-    .hero-avatar.is-online::after { background:#55bb66; border-color:#07070b; box-shadow:0 0 8px rgba(85,187,102,0.7); }
-    .hero-name { font-size:.9rem; color:#fff; text-align:center; font-weight:600; }
-    .hero-realm { font-size:.65rem; color:rgba(221,213,200,0.45); text-align:center; text-transform:uppercase; letter-spacing:.08em; }
+    .hero-avatar.female { border-color:rgba(200,104,144,0.35); background:radial-gradient(circle at 40% 35%, rgba(200,104,144,0.2), rgba(9,7,4,1) 65%); color:#c86890; box-shadow:0 0 30px rgba(200,104,144,0.12); }
+    .hero-avatar::after { content:''; position:absolute; bottom:3px; right:3px; width:14px; height:14px; border-radius:50%; background:transparent; border:2px solid transparent; transition:.3s; }
+    .hero-avatar.is-online::after { background:#55bb66; border-color:#07070b; box-shadow:0 0 8px rgba(85,187,102,0.8); }
+    .hero-name  { font-size:.92rem; color:#fff; text-align:center; font-weight:600; }
+    .hero-realm { font-size:.64rem; color:rgba(221,213,200,0.4); text-align:center; text-transform:uppercase; letter-spacing:.08em; }
 
-    .hero-connector { display:flex; flex-direction:column; align-items:center; gap:.25rem; padding-bottom:.6rem; flex-shrink:0; width:72px; }
-    .hero-connector-line { width:52px; height:1px; background:linear-gradient(90deg,transparent,rgba(200,169,106,0.5),transparent); }
-    .hero-connector-icon { font-size:1.1rem; color:rgba(200,169,106,0.6); }
+    .hero-connector { display:flex; flex-direction:column; align-items:center; gap:.28rem; padding-bottom:.6rem; flex-shrink:0; width:80px; }
+    .hero-conn-line  { width:52px; height:1px; background:linear-gradient(90deg,transparent,rgba(200,169,106,0.45),transparent); }
+    .hero-conn-icon  { font-size:1.15rem; color:rgba(200,169,106,0.55); }
 
-    .hero-info { display:grid; gap:.65rem; }
+    .hero-info { display:grid; gap:.7rem; }
     .hero-stage-row { display:flex; align-items:center; justify-content:space-between; }
-    .hero-stage { font-size:1.05rem; font-weight:700; color:#fff; font-family:'Cinzel',serif; letter-spacing:.04em; }
-    .hero-pct { font-size:.88rem; color:#c8a96a; font-weight:600; }
+    .hero-stage { font-size:1.1rem; font-weight:700; color:#fff; font-family:'Cinzel',serif; letter-spacing:.04em; }
+    .hero-pct   { font-size:.9rem; color:#c8a96a; font-weight:600; }
     .hero-bar-track { height:4px; border-radius:2px; background:rgba(255,255,255,0.06); overflow:hidden; }
-    .hero-bar-fill { height:100%; border-radius:2px; background:linear-gradient(90deg,#c8a96a,#ead7aa); transition:width .6s ease; }
-    .hero-meta-row { display:flex; align-items:center; gap:1.2rem; flex-wrap:wrap; }
-    .hero-resonance { display:flex; align-items:center; gap:.45rem; }
+    .hero-bar-fill  { height:100%; border-radius:2px; background:linear-gradient(90deg,#c8a96a,#ead7aa); transition:width .6s ease; }
+
+    .hero-meta { display:flex; align-items:center; gap:1.25rem; flex-wrap:wrap; }
+    .hero-res-row { display:flex; align-items:center; gap:.45rem; }
     .hero-res-dot { width:7px; height:7px; border-radius:50%; flex-shrink:0; }
     .hero-res-dot.resonant { background:#55bb66; box-shadow:0 0 7px rgba(85,187,102,0.8); }
     .hero-res-dot.nearby   { background:#c8a96a; box-shadow:0 0 7px rgba(200,169,106,0.6); }
     .hero-res-dot.offline  { background:rgba(255,255,255,0.15); }
-    .hero-res-label { font-size:.72rem; color:rgba(221,213,200,0.55); text-transform:uppercase; letter-spacing:.1em; }
-    .hero-since { font-size:.72rem; color:rgba(221,213,200,0.4); }
+    .hero-res-label { font-size:.72rem; color:rgba(221,213,200,0.5); text-transform:uppercase; letter-spacing:.1em; }
+    .hero-since { font-size:.72rem; color:rgba(221,213,200,0.35); }
 
-    .hero-actions { display:flex; gap:.6rem; flex-wrap:wrap; }
-    .hero-btn { flex:1; min-height:40px; border-radius:12px; cursor:pointer; font-size:.82rem; font-weight:600; letter-spacing:.04em; transition:.18s ease; }
-    .hero-btn.primary { border:1px solid rgba(200,169,106,0.3); background:rgba(200,169,106,0.14); color:#fff; }
-    .hero-btn.primary:hover { background:rgba(200,169,106,0.22); transform:translateY(-1px); }
-    .hero-btn.danger { border:1px solid rgba(204,68,68,0.25); background:rgba(204,68,68,0.08); color:#cc4444; }
-    .hero-btn.danger:hover { background:rgba(204,68,68,0.14); }
-    .hero-btn.accept { border:1px solid rgba(85,187,102,0.3); background:rgba(85,187,102,0.1); color:#55bb66; }
-    .hero-btn.accept:hover { background:rgba(85,187,102,0.18); }
+    .hero-actions { display:flex; gap:.65rem; flex-wrap:wrap; }
+    .hero-btn { flex:1; min-height:44px; border-radius:14px; cursor:pointer; font-size:.84rem; font-weight:600; letter-spacing:.04em; transition:.18s ease; }
+    .hero-btn.primary { border:1px solid rgba(200,169,106,0.28); background:rgba(200,169,106,0.13); color:#fff; }
+    .hero-btn.primary:hover { background:rgba(200,169,106,0.22); transform:translateY(-1px); box-shadow:0 6px 20px rgba(200,169,106,0.12); }
+    .hero-btn.danger  { border:1px solid rgba(204,68,68,0.22); background:rgba(204,68,68,0.07); color:#cc4444; }
+    .hero-btn.danger:hover  { background:rgba(204,68,68,0.13); }
+    .hero-btn.accept  { border:1px solid rgba(85,187,102,0.28); background:rgba(85,187,102,0.09); color:#55bb66; }
+    .hero-btn.accept:hover  { background:rgba(85,187,102,0.16); }
 
-    /* ── Tier section ── */
-    .tier-section { display:grid; gap:.85rem; }
-    .tier-header { display:flex; align-items:center; gap:.75rem; }
-    .tier-dot { width:8px; height:8px; border-radius:50%; flex-shrink:0; }
-    .tier-name { font-size:.72rem; letter-spacing:.16em; text-transform:uppercase; color:rgba(221,213,200,0.5); }
-    .tier-line { flex:1; height:1px; background:rgba(255,255,255,0.05); }
-    .tier-count { font-size:.68rem; color:rgba(221,213,200,0.3); }
+    /* Status badge on hero */
+    .hero-status-badge {
+      position:absolute; top:18px; right:18px; z-index:2;
+      padding:.3rem .7rem; border-radius:999px;
+      font-size:.65rem; text-transform:uppercase; letter-spacing:.1em; font-weight:600;
+    }
+    .hero-status-badge.active   { background:rgba(85,187,102,0.15); border:1px solid rgba(85,187,102,0.3); color:#55bb66; }
+    .hero-status-badge.pending  { background:rgba(142,168,255,0.12); border:1px solid rgba(142,168,255,0.25); color:#8ea8ff; }
+    .hero-status-badge.archived { background:rgba(255,255,255,0.05); border:1px solid rgba(255,255,255,0.1); color:rgba(221,213,200,0.4); }
 
-    /* Tier dot colours by stage */
-    .tier-dot.eternal  { background:#ead7aa; box-shadow:0 0 6px rgba(234,215,170,0.6); }
-    .tier-dot.spirit   { background:#c8a96a; box-shadow:0 0 5px rgba(200,169,106,0.5); }
+    /* ══════════════════════════════════════
+       TIER SECTIONS
+    ══════════════════════════════════════ */
+    .tiers-wrap { display:grid; gap:1rem; }
+
+    .tier-section { display:grid; gap:.6rem; }
+    .tier-header  { display:flex; align-items:center; gap:.7rem; }
+    .tier-dot     { width:8px; height:8px; border-radius:50%; flex-shrink:0; }
+    .tier-dot.eternal  { background:#ead7aa; box-shadow:0 0 7px rgba(234,215,170,0.7); }
+    .tier-dot.spirit   { background:#c8a96a; box-shadow:0 0 5px rgba(200,169,106,0.6); }
     .tier-dot.soul     { background:#a08550; }
     .tier-dot.core     { background:#7a6640; }
     .tier-dot.root     { background:#554830; }
     .tier-dot.seed     { background:rgba(221,213,200,0.2); }
     .tier-dot.pending  { background:#8ea8ff; }
-    .tier-dot.archived { background:rgba(255,255,255,0.12); }
+    .tier-dot.archived { background:rgba(255,255,255,0.1); }
+    .tier-name  { font-size:.7rem; letter-spacing:.16em; text-transform:uppercase; color:rgba(221,213,200,0.45); }
+    .tier-line  { flex:1; height:1px; background:rgba(255,255,255,0.05); }
+    .tier-count { font-size:.66rem; color:rgba(221,213,200,0.25); }
 
-    /* ── Compact bond row ── */
-    .bond-rows { display:grid; gap:.5rem; }
+    /* Bond row */
     .bond-row {
-      display:grid; grid-template-columns:32px 1fr auto auto;
+      display:grid; grid-template-columns:28px 1fr 90px auto;
       align-items:center; gap:.75rem;
       padding:.75rem 1rem; border-radius:16px;
       border:1px solid rgba(255,255,255,0.06);
-      background:rgba(13,13,24,0.7);
-      cursor:pointer; transition:.18s ease;
+      background:rgba(13,13,24,0.65);
+      cursor:pointer; transition:all .18s ease;
+      user-select: none;
     }
-    .bond-row:hover { border-color:rgba(200,169,106,0.18); background:rgba(13,13,24,0.9); transform:translateX(2px); }
-    .bond-row.is-selected { border-color:rgba(200,169,106,0.3); background:rgba(200,169,106,0.06); }
-    .bond-row.is-pending { border-color:rgba(142,168,255,0.18); }
-    .bond-row.is-historical { opacity:.55; }
+    .bond-row:hover { border-color:rgba(200,169,106,0.2); background:rgba(200,169,106,0.05); transform:translateX(3px); }
+    .bond-row.is-focused { border-color:rgba(200,169,106,0.35); background:rgba(200,169,106,0.09); box-shadow:0 0 0 1px rgba(200,169,106,0.08) inset; }
+    .bond-row.is-pending  { border-color:rgba(142,168,255,0.15); }
+    .bond-row.is-archived { opacity:.55; }
 
-    .bond-row-rank { font-size:.7rem; font-weight:700; color:rgba(221,213,200,0.35); text-align:center; font-family:'Cinzel',serif; }
-    .bond-row-main { display:grid; gap:.15rem; min-width:0; }
-    .bond-row-names { font-size:.86rem; color:#fff; font-weight:600; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
-    .bond-row-sub { font-size:.68rem; color:rgba(221,213,200,0.45); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
-    .bond-row-bar-wrap { width:80px; display:grid; gap:.2rem; }
-    .bond-row-pct { font-size:.68rem; color:#c8a96a; text-align:right; }
-    .bond-row-bar { height:2px; border-radius:1px; background:rgba(255,255,255,0.06); overflow:hidden; }
+    .bond-row-rank  { font-size:.68rem; font-weight:700; color:rgba(221,213,200,0.3); text-align:center; font-family:'Cinzel',serif; }
+    .bond-row-main  { display:grid; gap:.12rem; min-width:0; }
+    .bond-row-names { font-size:.85rem; color:#fff; font-weight:600; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+    .bond-row-sub   { font-size:.67rem; color:rgba(221,213,200,0.42); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+    .bond-row-bar-wrap { display:grid; gap:.18rem; }
+    .bond-row-pct   { font-size:.67rem; color:#c8a96a; text-align:right; }
+    .bond-row-bar   { height:2px; border-radius:1px; background:rgba(255,255,255,0.06); overflow:hidden; }
     .bond-row-bar-fill { height:100%; border-radius:1px; background:linear-gradient(90deg,#c8a96a,#ead7aa); }
-    .bond-row-right { display:flex; align-items:center; gap:.5rem; }
-    .bond-row-dot { width:6px; height:6px; border-radius:50%; flex-shrink:0; }
+    .bond-row-dot   { width:6px; height:6px; border-radius:50%; flex-shrink:0; justify-self:center; }
     .bond-row-dot.resonant { background:#55bb66; box-shadow:0 0 5px rgba(85,187,102,0.7); }
     .bond-row-dot.nearby   { background:#c8a96a; box-shadow:0 0 5px rgba(200,169,106,0.5); }
-    .bond-row-dot.offline  { background:rgba(255,255,255,0.15); }
-    .bond-row-open { padding:.32rem .65rem; border-radius:8px; border:1px solid rgba(200,169,106,0.2); background:rgba(200,169,106,0.08); color:#c8a96a; font-size:.7rem; cursor:pointer; transition:.18s ease; white-space:nowrap; }
-    .bond-row-open:hover { background:rgba(200,169,106,0.14); }
-    .bond-row-open.accept { border-color:rgba(85,187,102,0.25); background:rgba(85,187,102,0.08); color:#55bb66; }
+    .bond-row-dot.offline  { background:rgba(255,255,255,0.12); }
 
     /* ── Request panel ── */
-    .request-panel { background:rgba(13,13,24,0.8); border:1px solid rgba(255,255,255,0.07); border-radius:24px; padding:1.25rem 1.4rem; backdrop-filter:blur(8px); }
-    .request-panel-title { font-size:.72rem; text-transform:uppercase; letter-spacing:.14em; color:rgba(221,213,200,0.4); margin-bottom:.85rem; }
-    .request-fields { display:grid; grid-template-columns:1fr 1fr auto auto; gap:.55rem; align-items:stretch; }
-    .request-input { min-height:42px; border-radius:12px; border:1px solid rgba(255,255,255,0.08); background:rgba(255,255,255,0.04); color:#fff; padding:.6rem .85rem; outline:none; transition:.18s ease; font-size:.84rem; }
-    .request-input::placeholder { color:rgba(221,213,200,0.3); }
+    .request-panel { background:rgba(13,13,24,0.75); border:1px solid rgba(255,255,255,0.07); border-radius:22px; padding:1.1rem 1.3rem; backdrop-filter:blur(8px); }
+    .request-panel-title { font-size:.7rem; text-transform:uppercase; letter-spacing:.14em; color:rgba(221,213,200,0.38); margin-bottom:.8rem; }
+    .request-fields { display:grid; grid-template-columns:1fr 1fr auto auto; gap:.5rem; align-items:stretch; }
+    .request-input { min-height:40px; border-radius:11px; border:1px solid rgba(255,255,255,0.08); background:rgba(255,255,255,0.04); color:#fff; padding:.55rem .8rem; outline:none; transition:.18s ease; font-size:.83rem; }
+    .request-input::placeholder { color:rgba(221,213,200,0.28); }
     .request-input:focus { border-color:rgba(200,169,106,0.3); box-shadow:0 0 0 3px rgba(200,169,106,0.07); }
-    .request-btn { min-height:42px; padding:0 1rem; border-radius:12px; cursor:pointer; font-size:.82rem; font-weight:600; transition:.18s ease; }
-    .request-btn.primary { border:1px solid rgba(200,169,106,0.28); background:rgba(200,169,106,0.14); color:#fff; }
-    .request-btn.primary:hover { background:rgba(200,169,106,0.22); }
-    .request-btn.secondary { border:1px solid rgba(255,255,255,0.08); background:rgba(255,255,255,0.04); color:rgba(221,213,200,0.6); }
-    .request-btn.secondary:hover { background:rgba(255,255,255,0.08); color:#ddd5c8; }
+    .request-btn { min-height:40px; padding:0 1rem; border-radius:11px; cursor:pointer; font-size:.81rem; font-weight:600; transition:.18s ease; }
+    .request-btn.primary { border:1px solid rgba(200,169,106,0.26); background:rgba(200,169,106,0.13); color:#fff; }
+    .request-btn.primary:hover { background:rgba(200,169,106,0.2); }
+    .request-btn.secondary { border:1px solid rgba(255,255,255,0.07); background:rgba(255,255,255,0.03); color:rgba(221,213,200,0.55); }
+    .request-btn.secondary:hover { background:rgba(255,255,255,0.07); color:#ddd5c8; }
     .request-btn:disabled { opacity:.5; cursor:wait; }
-
-    .hall-empty { text-align:center; padding:3rem 1rem; border:1px dashed rgba(255,255,255,0.08); border-radius:24px; background:rgba(255,255,255,0.02); }
-    .hall-empty-title { font-size:1.1rem; color:#fff; margin:0 0 .4rem; }
-    .hall-empty-copy { font-size:.88rem; color:rgba(221,213,200,0.5); margin:0; }
 
     /* Ticker */
     #news-ticker-bar { font-family:'Cinzel',serif; }
@@ -184,6 +195,7 @@
       .request-fields { grid-template-columns:1fr; }
       .bond-row { grid-template-columns:24px 1fr auto; }
       .bond-row-bar-wrap { display:none; }
+      .hero-content { padding:1.5rem 1.25rem 1.5rem; }
     }
   </style>
 </head>
@@ -207,21 +219,20 @@
     </header>
 
     <main class="hall-page">
-      <div class="hall-header">
-        <div class="hall-eyebrow">Cultivation Bonds</div>
-        <h1 class="hall-title">Hall of Bonds</h1>
-        <p class="hall-subtitle">The bonds forged on this path, honoured by time and shared cultivation.</p>
-      </div>
-
       <div class="page-message is-hidden" id="page-message"></div>
 
-      <!-- Hero card: oldest/first active bond -->
-      <div id="hero-section"></div>
+      <!-- Hero spotlight -->
+      <div class="hero-spotlight" id="hero-spotlight">
+        <div class="hero-empty">
+          <div class="hero-empty-title">Hall of Bonds</div>
+          <p class="hero-empty-copy">Loading your bonds...</p>
+        </div>
+      </div>
 
-      <!-- Tier sections -->
-      <div id="tiers-section"></div>
+      <!-- Tier list -->
+      <div class="tiers-wrap" id="tiers-wrap"></div>
 
-      <!-- Request panel -->
+      <!-- Send request -->
       <div class="request-panel">
         <div class="request-panel-title">Send a Bond Request</div>
         <form id="partner-request-form">
@@ -239,7 +250,7 @@
   <script>
     const LOGIN_URL = "https://ascendantpath.org/login.html";
     const CSRF_KEY  = "ap_csrf_token";
-    const state = { payload: null, isSubmitting: false, refreshInterval: null };
+    const state = { payload: null, focusedItem: null, isSubmitting: false, refreshInterval: null };
 
     // ── Helpers ──
     function safeText(v,fb="") { return String(v??"").trim()||fb; }
@@ -276,7 +287,7 @@
       clearArtifacts(); location.href=LOGIN_URL;
     }
 
-    // ── Data helpers ──
+    // ── Data ──
     function getUuid(item)  { return safeText(item?.partnership_uuid); }
     function getId(item)    { return item?.partnership_id??null; }
     function getStatus(item) {
@@ -291,7 +302,6 @@
     function getPartnerRealm(item){ return safeText(item?.partner?.realm_display_name)||safeText(item?.partner_realm); }
     function getBondPct(item)     { return Number(item?.bond?.bond_percent??item?.summary?.bond_percent??0); }
     function getBondStage(item)   { return safeText(item?.bond?.current_stage_name)||safeText(item?.summary?.bond_stage_name)||"Bond Seed"; }
-    function getSelectedUuid(p)   { return safeText(p?.selected_partnership_uuid)||safeText(p?.current_focus_partnership_uuid); }
     function getMemberGender(item){ return safeText(item?.member?.gender,"male").toLowerCase(); }
     function getPartnerGender(item){ return safeText(item?.partner?.gender,"male").toLowerCase(); }
     function initials(name) { const w=safeText(name).split(" ").filter(Boolean); if(!w.length)return"?"; return(w[0][0]+(w[1]?w[1][0]:"")).toUpperCase(); }
@@ -311,7 +321,6 @@
       const d=new Date(iso); if(isNaN(d)) return "";
       return "Since "+d.toLocaleDateString("en-GB",{day:"numeric",month:"short",year:"numeric"});
     }
-
     function getAllItems(p) {
       return [...(p?.active_partnerships||p?.active||[]),...(p?.incoming_requests||p?.pending_incoming||[]),...(p?.outgoing_requests||p?.pending_outgoing||[]),...(p?.historical_partnerships||p?.historical||[])];
     }
@@ -325,16 +334,15 @@
 
     // ── Tier config ──
     const TIERS = [
-      { key:"eternal", label:"Eternal Bond", minPct:100, dotClass:"eternal" },
-      { key:"spirit",  label:"Bond Spirit",  minPct:80,  dotClass:"spirit"  },
-      { key:"soul",    label:"Bond Soul",    minPct:60,  dotClass:"soul"    },
-      { key:"core",    label:"Bond Core",    minPct:40,  dotClass:"core"    },
-      { key:"root",    label:"Bond Root",    minPct:20,  dotClass:"root"    },
-      { key:"seed",    label:"Bond Seed",    minPct:0,   dotClass:"seed"    },
-      { key:"pending", label:"Pending",      minPct:-1,  dotClass:"pending" },
-      { key:"archived",label:"Archived",     minPct:-2,  dotClass:"archived"},
+      { key:"eternal", label:"Eternal Bond", dotClass:"eternal" },
+      { key:"spirit",  label:"Bond Spirit",  dotClass:"spirit"  },
+      { key:"soul",    label:"Bond Soul",    dotClass:"soul"    },
+      { key:"core",    label:"Bond Core",    dotClass:"core"    },
+      { key:"root",    label:"Bond Root",    dotClass:"root"    },
+      { key:"seed",    label:"Bond Seed",    dotClass:"seed"    },
+      { key:"pending", label:"Pending",      dotClass:"pending" },
+      { key:"archived",label:"Archived",     dotClass:"archived"},
     ];
-
     function getTierKey(item) {
       const status=getStatus(item);
       if(status==="pending_incoming"||status==="pending_outgoing") return "pending";
@@ -348,87 +356,127 @@
       return "seed";
     }
 
-    // ── Build action buttons html ──
-    function buildActions(item, style="hero") {
+    // ── Render hero spotlight ──
+    function renderHero(item) {
+      const el = document.getElementById("hero-spotlight");
+      if(!item) {
+        el.innerHTML = `<div class="hero-empty"><div class="hero-empty-title">Hall of Bonds</div><p class="hero-empty-copy">Select a bond below to view it here.</p></div>`;
+        return;
+      }
       const uuid=getUuid(item); const legacyId=getId(item); const status=getStatus(item);
-      const btnClass = style==="hero" ? "hero-btn" : "bond-row-open";
-      const actions = [];
+      const pct=getBondPct(item); const resonance=getResonance(item);
+      const badgeClass=status==="active"?"active":status.includes("pending")?"pending":"archived";
+      const badgeLabel=status==="active"?"Active":status==="pending_incoming"?"Incoming":status==="pending_outgoing"?"Pending":"Archived";
 
-      if(style==="hero") {
-        actions.push(`<button type="button" class="${btnClass} primary" data-open-record="true" data-partnership-uuid="${escapeHtml(uuid)}" data-partnership-id="${escapeHtml(legacyId??"")}">Open Record</button>`);
-        if(status==="pending_incoming") {
-          actions.push(`<button type="button" class="${btnClass} accept" data-shrine-action="accept" data-partnership-uuid="${escapeHtml(uuid)}" data-partnership-id="${escapeHtml(legacyId??"")}">Accept</button>`);
-          actions.push(`<button type="button" class="${btnClass} danger" data-shrine-action="deny" data-partnership-uuid="${escapeHtml(uuid)}" data-partnership-id="${escapeHtml(legacyId??"")}">Deny</button>`);
-        } else if(status==="pending_outgoing") {
-          actions.push(`<button type="button" class="${btnClass} danger" data-shrine-action="remove" data-partnership-uuid="${escapeHtml(uuid)}" data-partnership-id="${escapeHtml(legacyId??"")}">Cancel</button>`);
-        } else if(status==="active") {
-          actions.push(`<button type="button" class="${btnClass} danger" data-shrine-action="remove" data-partnership-uuid="${escapeHtml(uuid)}" data-partnership-id="${escapeHtml(legacyId??"")}">Remove</button>`);
-        }
-      } else {
-        if(status==="pending_incoming") {
-          return `<button type="button" class="${btnClass} accept" data-shrine-action="accept" data-partnership-uuid="${escapeHtml(uuid)}" data-partnership-id="${escapeHtml(legacyId??"")}">Accept</button>`;
-        }
-        return `<button type="button" class="${btnClass}" data-open-record="true" data-partnership-uuid="${escapeHtml(uuid)}" data-partnership-id="${escapeHtml(legacyId??"")}">Open</button>`;
+      // Build action buttons
+      const btns = [];
+      btns.push(`<button type="button" class="hero-btn primary" id="hero-open-btn" data-uuid="${escapeHtml(uuid)}" data-id="${escapeHtml(legacyId??"")}">Open Record</button>`);
+      if(status==="pending_incoming") {
+        btns.push(`<button type="button" class="hero-btn accept" id="hero-accept-btn" data-uuid="${escapeHtml(uuid)}" data-id="${escapeHtml(legacyId??"")}">Accept</button>`);
+        btns.push(`<button type="button" class="hero-btn danger" id="hero-deny-btn" data-uuid="${escapeHtml(uuid)}" data-id="${escapeHtml(legacyId??"")}">Deny</button>`);
+      } else if(status==="pending_outgoing") {
+        btns.push(`<button type="button" class="hero-btn danger" id="hero-remove-btn" data-uuid="${escapeHtml(uuid)}" data-id="${escapeHtml(legacyId??"")}">Cancel Request</button>`);
+      } else if(status==="active") {
+        btns.push(`<button type="button" class="hero-btn danger" id="hero-remove-btn" data-uuid="${escapeHtml(uuid)}" data-id="${escapeHtml(legacyId??"")}">Remove</button>`);
       }
 
-      return actions.join("");
-    }
-
-    // ── Hero card ──
-    function buildHeroCard(item, selectedUuid) {
-      if(!item) return `<div class="hall-empty"><div class="hall-empty-title">No bonds yet</div><p class="hall-empty-copy">Your bonds will appear here once you forge a partnership.</p></div>`;
-      const uuid=getUuid(item); const pct=getBondPct(item); const resonance=getResonance(item);
-      const isSelected=selectedUuid&&uuid&&selectedUuid===uuid;
-
-      return `<div class="hero-bond ${isSelected?"is-selected":""}" data-select-record="true" data-partnership-uuid="${escapeHtml(uuid)}" data-partnership-id="${escapeHtml(getId(item)??"")}">
-        <div class="hero-crown">
-          <div class="hero-crown-line"></div>
-          <div class="hero-crown-label">⬡ Most Loyal Bond ⬡</div>
-          <div class="hero-crown-line right"></div>
-        </div>
-        <div class="hero-figures">
-          <div class="hero-figure">
-            <div class="hero-avatar ${getMemberGender(item)==="female"?"female":""}">${escapeHtml(initials(getMemberName(item)))}</div>
-            <div class="hero-name">${escapeHtml(getMemberName(item))}</div>
-            <div class="hero-realm">${escapeHtml(getMemberRealm(item))}</div>
+      el.innerHTML = `
+        <div class="hero-status-badge ${badgeClass}">${escapeHtml(badgeLabel)}</div>
+        <div class="hero-content">
+          <div class="hero-crown">
+            <div class="hero-crown-line"></div>
+            <div class="hero-crown-label">⬡ Hall of Bonds ⬡</div>
+            <div class="hero-crown-line r"></div>
           </div>
-          <div class="hero-connector">
-            <div class="hero-connector-line"></div>
-            <div class="hero-connector-icon">⬡</div>
-            <div class="hero-connector-line"></div>
-          </div>
-          <div class="hero-figure">
-            <div class="hero-avatar ${getPartnerGender(item)==="female"?"female":""} ${item?.partner_hud_recent?"is-online":""}">${escapeHtml(initials(getPartnerName(item)))}</div>
-            <div class="hero-name">${escapeHtml(getPartnerName(item))}</div>
-            <div class="hero-realm">${escapeHtml(getPartnerRealm(item))}</div>
-          </div>
-        </div>
-        <div class="hero-info">
-          <div class="hero-stage-row">
-            <div class="hero-stage">${escapeHtml(getBondStage(item))}</div>
-            <div class="hero-pct">${pct.toFixed(1)}%</div>
-          </div>
-          <div class="hero-bar-track"><div class="hero-bar-fill" style="width:${Math.min(100,pct)}%"></div></div>
-          <div class="hero-meta-row">
-            <div class="hero-resonance">
-              <div class="hero-res-dot ${resonance}"></div>
-              <div class="hero-res-label">${escapeHtml(getResonanceLabel(item))}</div>
+          <div class="hero-figures">
+            <div class="hero-figure">
+              <div class="hero-avatar ${getMemberGender(item)==="female"?"female":""}">${escapeHtml(initials(getMemberName(item)))}</div>
+              <div class="hero-name">${escapeHtml(getMemberName(item))}</div>
+              <div class="hero-realm">${escapeHtml(getMemberRealm(item))}</div>
             </div>
-            <div class="hero-since">${escapeHtml(formatDate(item?.accepted_at||item?.created_at))}</div>
+            <div class="hero-connector">
+              <div class="hero-conn-line"></div>
+              <div class="hero-conn-icon">⬡</div>
+              <div class="hero-conn-line"></div>
+            </div>
+            <div class="hero-figure">
+              <div class="hero-avatar ${getPartnerGender(item)==="female"?"female":""} ${item?.partner_hud_recent?"is-online":""}">${escapeHtml(initials(getPartnerName(item)))}</div>
+              <div class="hero-name">${escapeHtml(getPartnerName(item))}</div>
+              <div class="hero-realm">${escapeHtml(getPartnerRealm(item))}</div>
+            </div>
           </div>
-          <div class="hero-actions">${buildActions(item,"hero")}</div>
-        </div>
-      </div>`;
+          <div class="hero-info">
+            <div class="hero-stage-row">
+              <div class="hero-stage">${escapeHtml(getBondStage(item))}</div>
+              <div class="hero-pct">${pct.toFixed(1)}%</div>
+            </div>
+            <div class="hero-bar-track"><div class="hero-bar-fill" style="width:${Math.min(100,pct)}%"></div></div>
+            <div class="hero-meta">
+              <div class="hero-res-row">
+                <div class="hero-res-dot ${resonance}"></div>
+                <div class="hero-res-label">${escapeHtml(getResonanceLabel(item))}</div>
+              </div>
+              <div class="hero-since">${escapeHtml(formatDate(item?.accepted_at||item?.created_at))}</div>
+            </div>
+            <div class="hero-actions">${btns.join("")}</div>
+          </div>
+        </div>`;
+
+      // Bind hero buttons directly (no bubbling confusion)
+      const openBtn   = document.getElementById("hero-open-btn");
+      const acceptBtn = document.getElementById("hero-accept-btn");
+      const denyBtn   = document.getElementById("hero-deny-btn");
+      const removeBtn = document.getElementById("hero-remove-btn");
+
+      if(openBtn) openBtn.addEventListener("click", () => {
+        setSelected(uuid, legacyId).catch(()=>{});
+        if(uuid){ location.href=`/partnership-record.html?partnership_uuid=${encodeURIComponent(uuid)}`; return; }
+        if(legacyId){ location.href=`/partnership-record.html?partnership_id=${encodeURIComponent(legacyId)}`; return; }
+        location.href="/partnership-record.html";
+      });
+      if(acceptBtn) acceptBtn.addEventListener("click", async () => { await handleAction("accept", uuid, legacyId); });
+      if(denyBtn)   denyBtn.addEventListener("click",   async () => { await handleAction("deny",   uuid, legacyId); });
+      if(removeBtn) removeBtn.addEventListener("click", async () => { await handleAction("remove", uuid, legacyId); });
     }
 
-    // ── Compact bond row ──
-    function buildBondRow(item, rank, selectedUuid) {
-      const uuid=getUuid(item); const legacyId=getId(item); const status=getStatus(item);
-      const isSelected=selectedUuid&&uuid&&selectedUuid===uuid;
-      const pct=getBondPct(item); const resonance=getResonance(item);
-      const rowClass=status==="active"?"":status.includes("pending")?"is-pending":"is-historical";
+    // ── Render tier list ──
+    function renderTiers(items, focusedUuid) {
+      const wrap = document.getElementById("tiers-wrap");
+      if(!items.length) { wrap.innerHTML=""; return; }
 
-      return `<div class="bond-row ${rowClass} ${isSelected?"is-selected":""}" data-select-record="true" data-partnership-uuid="${escapeHtml(uuid)}" data-partnership-id="${escapeHtml(legacyId??"")}">
+      const tierMap = {};
+      items.forEach((item, idx) => {
+        const key=getTierKey(item);
+        if(!tierMap[key]) tierMap[key]=[];
+        tierMap[key].push({ item, rank: idx+1 });
+      });
+
+      let html="";
+      TIERS.forEach(tier => {
+        const group=tierMap[tier.key];
+        if(!group||!group.length) return;
+        html+=`<div class="tier-section">
+          <div class="tier-header">
+            <div class="tier-dot ${tier.dotClass}"></div>
+            <div class="tier-name">${escapeHtml(tier.label)}</div>
+            <div class="tier-line"></div>
+            <div class="tier-count">${group.length}</div>
+          </div>
+          <div class="bond-rows">
+            ${group.map(({item,rank})=>buildBondRow(item,rank,focusedUuid)).join("")}
+          </div>
+        </div>`;
+      });
+      wrap.innerHTML=html;
+    }
+
+    function buildBondRow(item, rank, focusedUuid) {
+      const uuid=getUuid(item); const status=getStatus(item);
+      const isFocused=focusedUuid&&uuid&&focusedUuid===uuid;
+      const pct=getBondPct(item); const resonance=getResonance(item);
+      const rowClass=status==="active"?"":status.includes("pending")?"is-pending":"is-archived";
+
+      return `<div class="bond-row ${rowClass} ${isFocused?"is-focused":""}" data-bond-uuid="${escapeHtml(uuid)}">
         <div class="bond-row-rank">#${rank}</div>
         <div class="bond-row-main">
           <div class="bond-row-names">${escapeHtml(getMemberName(item))} · ${escapeHtml(getPartnerName(item))}</div>
@@ -438,59 +486,40 @@
           <div class="bond-row-pct">${pct.toFixed(1)}%</div>
           <div class="bond-row-bar"><div class="bond-row-bar-fill" style="width:${Math.min(100,pct)}%"></div></div>
         </div>
-        <div class="bond-row-right">
-          <div class="bond-row-dot ${resonance}"></div>
-          ${buildActions(item,"row")}
-        </div>
+        <div class="bond-row-dot ${resonance}"></div>
       </div>`;
     }
 
-    // ── Render ──
+    function focusBond(uuid) {
+      if(!state.payload) return;
+      const all=getAllItems(state.payload);
+      const item=all.find(i=>getUuid(i)===uuid)||null;
+      state.focusedItem=item;
+      renderHero(item);
+      // Update focused state on rows
+      document.querySelectorAll(".bond-row").forEach(row=>{
+        row.classList.toggle("is-focused", row.dataset.bondUuid===uuid);
+      });
+      // Smooth scroll to top of hero
+      document.getElementById("hero-spotlight").scrollIntoView({behavior:"smooth", block:"nearest"});
+    }
+
     function renderAll(payload) {
-      state.payload = payload;
-      const all = getAllItems(payload);
-      const sorted = sortOldest(all);
-      const selUuid = getSelectedUuid(payload);
+      state.payload=payload;
+      const all=getAllItems(payload);
+      const sorted=sortOldest(all);
 
-      // Hero = first active bond (oldest)
-      const heroItem = sorted.find(i => getStatus(i)==="active") || sorted[0] || null;
-      const restItems = sorted.filter(i => i !== heroItem);
+      // Default focus: previously selected or first active or first overall
+      const selectedUuid=safeText(payload?.selected_partnership_uuid)||safeText(payload?.current_focus_partnership_uuid);
+      let focusItem=null;
+      if(selectedUuid) focusItem=sorted.find(i=>getUuid(i)===selectedUuid)||null;
+      if(!focusItem)   focusItem=sorted.find(i=>getStatus(i)==="active")||sorted[0]||null;
 
-      // Hero section
-      document.getElementById("hero-section").innerHTML = buildHeroCard(heroItem, selUuid);
+      state.focusedItem=focusItem;
+      const focusedUuid=focusItem?getUuid(focusItem):"";
 
-      if(!restItems.length) {
-        document.getElementById("tiers-section").innerHTML = "";
-        return;
-      }
-
-      // Group rest into tiers
-      const tierMap = {};
-      restItems.forEach((item, idx) => {
-        const key = getTierKey(item);
-        if(!tierMap[key]) tierMap[key] = [];
-        tierMap[key].push({ item, rank: idx + 2 }); // rank starts at 2 since hero is #1
-      });
-
-      // Render tier sections in order
-      let html = "";
-      TIERS.forEach(tier => {
-        const group = tierMap[tier.key];
-        if(!group || !group.length) return;
-        html += `<div class="tier-section">
-          <div class="tier-header">
-            <div class="tier-dot ${tier.dotClass}"></div>
-            <div class="tier-name">${escapeHtml(tier.label)}</div>
-            <div class="tier-line"></div>
-            <div class="tier-count">${group.length}</div>
-          </div>
-          <div class="bond-rows">
-            ${group.map(({item,rank}) => buildBondRow(item, rank, selUuid)).join("")}
-          </div>
-        </div>`;
-      });
-
-      document.getElementById("tiers-section").innerHTML = html;
+      renderHero(focusItem);
+      renderTiers(sorted, focusedUuid);
     }
 
     // ── API ──
@@ -504,12 +533,17 @@
       const r=await authFetch("/.netlify/functions/set-selected-partnership",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify(body)});
       return parseJson(r,"Failed to select partnership.");
     }
-    async function openRecord(uuid,id) {
-      // Fire setSelected in background — don't block navigation on it
-      setSelected(uuid,id).catch(()=>{});
-      if(uuid){location.href=`/partnership-record.html?partnership_uuid=${encodeURIComponent(uuid)}`;return;}
-      if(id){location.href=`/partnership-record.html?partnership_id=${encodeURIComponent(id)}`;return;}
-      location.href="/partnership-record.html";
+    async function handleAction(action, uuid, id) {
+      const endpoints={"accept":"accept-partner-request","deny":"deny-partner-request","remove":"remove-partnership"};
+      if(!endpoints[action]) return;
+      try {
+        setBusy(true);
+        const r=await authFetch(`/.netlify/functions/${endpoints[action]}`,{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({...(uuid?{partnership_uuid:uuid}:{}),...(id?{partnership_id:id}:{})})});
+        const d=await parseJson(r,"Action failed.");
+        showMsg(d.message||"Done.");
+        await loadList();
+      } catch(err){if(!/session has expired/i.test(err.message)) showMsg(err.message||"Action failed.");}
+      finally{setBusy(false);}
     }
     async function sendRequest(event) {
       event.preventDefault(); if(state.isSubmitting) return;
@@ -524,7 +558,7 @@
         document.getElementById("partner-username").value="";
         document.getElementById("partner-avatar-key").value="";
         await loadList();
-      } catch(e){if(!/session has expired/i.test(e.message)) showMsg(e.message||"Failed to send request.");}
+      } catch(e){if(!/session has expired/i.test(e.message)) showMsg(e.message||"Failed.");}
       finally{setButtonLoading(false);setBusy(false);}
     }
 
@@ -533,41 +567,36 @@
       document.getElementById("clear-request-form").addEventListener("click",()=>{document.getElementById("partner-username").value="";document.getElementById("partner-avatar-key").value="";});
       document.getElementById("logout-button").addEventListener("click",async(e)=>{e.preventDefault();await logoutUser();});
 
-      document.body.addEventListener("click",async(e)=>{
-        const openBtn=e.target.closest("[data-open-record='true']");
-        if(openBtn){
-          e.stopPropagation();
-          const uuid=safeText(openBtn.dataset.partnershipUuid); const id=openBtn.dataset.partnershipId?Number(openBtn.dataset.partnershipId):null;
-          openRecord(uuid,id);
-          return;
-        }
-        const actionBtn=e.target.closest("[data-shrine-action]");
-        if(actionBtn){
-          e.stopPropagation();
-          const action=safeText(actionBtn.dataset.shrineAction); const uuid=safeText(actionBtn.dataset.partnershipUuid); const id=actionBtn.dataset.partnershipId?Number(actionBtn.dataset.partnershipId):null;
-          const endpoints={"accept":"accept-partner-request","deny":"deny-partner-request","remove":"remove-partnership"};
-          if(!endpoints[action]) return;
-          try{
-            setBusy(true);
-            const r=await authFetch(`/.netlify/functions/${endpoints[action]}`,{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({...(uuid?{partnership_uuid:uuid}:{}),...(id?{partnership_id:id}:{})})});
-            const d=await parseJson(r,"Action failed.");
-            showMsg(d.message||"Done."); await loadList();
-          }catch(err){if(!/session has expired/i.test(err.message)) showMsg(err.message||"Action failed.");}
-          finally{setBusy(false);}
-          return;
-        }
-        const selectCard=e.target.closest("[data-select-record='true']");
-        if(selectCard){
-          const uuid=safeText(selectCard.dataset.partnershipUuid); const id=selectCard.dataset.partnershipId?Number(selectCard.dataset.partnershipId):null;
-          try{setBusy(true);await setSelected(uuid,id);await loadList();}catch(err){if(!/session has expired/i.test(err.message)) showMsg(err.message||"Failed to select.");}finally{setBusy(false);}
-        }
+      // Bond row clicks — delegate on tiers-wrap
+      document.getElementById("tiers-wrap").addEventListener("click",(e)=>{
+        const row=e.target.closest("[data-bond-uuid]");
+        if(!row) return;
+        const uuid=safeText(row.dataset.bondUuid);
+        if(uuid) focusBond(uuid);
       });
     }
 
     async function boot() {
       try {
         clearMsg(); bindEvents(); await verifySession(); await loadList();
-        state.refreshInterval=setInterval(async()=>{try{await loadList();}catch(e){console.error("Hall refresh:",e);}},7000);
+        state.refreshInterval=setInterval(async()=>{
+          try {
+            const r=await authFetch("/.netlify/functions/load-partnership-list",{method:"GET"});
+            const d=await parseJson(r,"");
+            // Refresh without resetting focus
+            state.payload=d;
+            const all=getAllItems(d);
+            const sorted=sortOldest(all);
+            const focusedUuid=state.focusedItem?getUuid(state.focusedItem):"";
+            // Refresh focused item data
+            if(focusedUuid) {
+              const refreshed=all.find(i=>getUuid(i)===focusedUuid)||null;
+              state.focusedItem=refreshed;
+              renderHero(refreshed);
+            }
+            renderTiers(sorted, focusedUuid);
+          } catch(e){ console.error("Hall refresh:",e); }
+        },7000);
       } catch(e){if(!/session has expired/i.test(safeText(e.message))) showMsg(e.message||"Failed to load Hall of Bonds.");}
     }
     document.addEventListener("DOMContentLoaded",boot);
