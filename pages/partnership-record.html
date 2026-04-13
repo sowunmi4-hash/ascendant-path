@@ -1226,11 +1226,12 @@
     const denyButton         = document.getElementById('deny-request-button');
     const managementNote     = document.getElementById('management-note');
 
-    openBondBookButton.href = uuid
+    const bondBookUrl = uuid
       ? `/bond-book.html?partnership_uuid=${encodeURIComponent(uuid)}`
       : legacyId
         ? `/bond-book.html?partnership_id=${encodeURIComponent(legacyId)}`
         : '/bond-book.html';
+    openBondBookButton.onclick = () => { location.href = bondBookUrl; };
 
     setFocusButton.dataset.partnershipUuid = uuid;
     setFocusButton.dataset.partnershipId   = legacyId || '';
