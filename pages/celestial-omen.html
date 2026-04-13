@@ -10,24 +10,46 @@
   <style>
     *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
     :root{
-      --bg:#07070b;--card:#0c0c17;--card2:rgba(12,12,22,0.6);
-      --border:rgba(200,169,106,0.10);--border2:rgba(200,169,106,0.18);
-      --gold:#c8a96a;--text:#e8e0d0;--text2:rgba(232,224,208,0.52);--text3:rgba(232,224,208,0.26);
+      --bg:#07070b;--card:rgba(10,10,18,0.92);
+      --border:rgba(200,169,106,0.10);--border2:rgba(200,169,106,0.22);
+      --gold:#c8a96a;--text:#e8e0d0;--text2:rgba(232,224,208,0.52);--text3:rgba(232,224,208,0.22);
       --fh:'Cinzel',serif;--fb:'Cormorant Garamond',serif;
-      --fc:#c8a96a;--fg:rgba(200,169,106,0.15);
+      --fc:#c8a96a;--fg:rgba(200,169,106,0.12);
+      --sky1:#0a0804;--sky2:#07070b;
     }
-    html,body{min-height:100%;background:var(--bg);color:var(--text);font-family:var(--fb)}
+    body.yin  {--fc:#7aaee8;--fg:rgba(122,174,232,0.15);--sky1:#04080e;--sky2:#07070b}
+    body.yang {--fc:#e8a030;--fg:rgba(232,160,48,0.15);--sky1:#0e0804;--sky2:#07070b}
+    body.taiji{--fc:#b8d0e0;--fg:rgba(184,208,224,0.12);--sky1:#080a0e;--sky2:#07070b}
+    body.storm{--fc:#9878d8;--fg:rgba(152,120,216,0.15);--sky1:#08060e;--sky2:#07070b}
+
+    html,body{min-height:100%;background:var(--bg);color:var(--text);font-family:var(--fb);overflow-x:hidden}
 
     /* ── ANIMATIONS ── */
-    @keyframes fadeUp{from{opacity:0;transform:translateY(18px)}to{opacity:1;transform:translateY(0)}}
-    @keyframes fadeIn{from{opacity:0}to{opacity:1}}
-    @keyframes shimmer{0%{background-position:-200% center}100%{background-position:200% center}}
-    @keyframes pulseRing{0%,100%{box-shadow:0 0 0 0 rgba(200,169,106,0)}50%{box-shadow:0 0 0 5px rgba(200,169,106,0.12)}}
-    @keyframes rowIn{from{opacity:0;transform:translateX(-8px)}to{opacity:1;transform:translateX(0)}}
     @keyframes spin{to{transform:rotate(360deg)}}
+    @keyframes drift{0%{transform:translateY(0) translateX(0) scale(1);opacity:0}
+      10%{opacity:1} 90%{opacity:.4} 100%{transform:translateY(-120vh) translateX(20px) scale(0.6);opacity:0}}
+    @keyframes shimmer{0%{background-position:-300% center}100%{background-position:300% center}}
+    @keyframes fadeUp{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}
+    @keyframes fadeIn{from{opacity:0}to{opacity:1}}
+    @keyframes pulseGold{0%,100%{opacity:.6}50%{opacity:1}}
+    @keyframes riverFill{from{width:0}to{width:100%}}
+    @keyframes rowReveal{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:translateY(0)}}
+    @keyframes glowPulse{0%,100%{box-shadow:0 0 0 0 var(--fg)}50%{box-shadow:0 0 20px 4px var(--fg)}}
+
+    /* ── PARTICLES ── */
+    .particles{position:fixed;inset:0;pointer-events:none;z-index:0;overflow:hidden}
+    .p{position:absolute;border-radius:50%;background:var(--fc);animation:drift linear infinite}
+    .p:nth-child(1){width:2px;height:2px;left:8%;bottom:-10px;animation-duration:18s;animation-delay:0s;opacity:.15}
+    .p:nth-child(2){width:1px;height:1px;left:22%;bottom:-10px;animation-duration:24s;animation-delay:3s;opacity:.1}
+    .p:nth-child(3){width:2px;height:2px;left:38%;bottom:-10px;animation-duration:20s;animation-delay:7s;opacity:.12}
+    .p:nth-child(4){width:1px;height:1px;left:55%;bottom:-10px;animation-duration:28s;animation-delay:1s;opacity:.08}
+    .p:nth-child(5){width:2px;height:2px;left:70%;bottom:-10px;animation-duration:22s;animation-delay:5s;opacity:.14}
+    .p:nth-child(6){width:1px;height:1px;left:84%;bottom:-10px;animation-duration:16s;animation-delay:9s;opacity:.09}
+    .p:nth-child(7){width:3px;height:3px;left:14%;bottom:-10px;animation-duration:30s;animation-delay:12s;opacity:.06}
+    .p:nth-child(8){width:1px;height:1px;left:62%;bottom:-10px;animation-duration:19s;animation-delay:4s;opacity:.11}
 
     /* ── NAV ── */
-    .site-shell{width:min(1280px,calc(100% - 2rem));margin:0 auto;position:relative;z-index:2}
+    .site-shell{width:min(1280px,calc(100% - 2rem));margin:0 auto;position:relative;z-index:10}
     .site-header{padding-top:1rem;position:relative;z-index:20}
     .dashboard-nav{
       width:fit-content;max-width:100%;margin:0 auto;
@@ -47,102 +69,235 @@
     .btn-rf{background:none;cursor:pointer;font-family:var(--fh);font-size:.84rem}
 
     /* ── STATES ── */
-    .state{position:fixed;inset:0;z-index:100;display:flex;flex-direction:column;
+    .state{position:fixed;inset:0;z-index:200;display:flex;flex-direction:column;
       align-items:center;justify-content:center;background:var(--bg);
       gap:14px;font-family:var(--fh);font-size:11px;letter-spacing:.12em;color:var(--text3)}
     .state.off{display:none}
     .spin{width:32px;height:32px;border-radius:50%;border:1.5px solid rgba(200,169,106,.1);border-top-color:var(--fc);animation:spin 1.1s linear infinite}
 
     /* ── PAGE ── */
-    .pg{display:none}
+    .pg{display:none;position:relative;z-index:1}
     .pg.on{display:block}
-    .wrap{max-width:1100px;width:100%;margin:0 auto;padding:36px 32px 80px}
-    @media(max-width:680px){.wrap{padding:24px 16px 60px}}
 
-    /* ── BANNER ── */
-    .banner{
+    /* ── SKY HEADER ── */
+    .sky-head{
       position:relative;overflow:hidden;
-      background:var(--card);border:1px solid var(--border);border-radius:6px;
-      padding:28px 32px 24px;margin-bottom:28px;
-      animation:fadeUp .5s ease both;
+      background:linear-gradient(160deg,var(--sky1) 0%,var(--sky2) 60%);
+      padding:64px 0 56px;margin-bottom:0;
     }
-    .banner::before{
+    .sky-head::after{
+      content:'';position:absolute;bottom:0;left:0;right:0;height:80px;
+      background:linear-gradient(to bottom,transparent,var(--bg));pointer-events:none;
+    }
+    /* watermark phase name */
+    .sky-wm{
+      position:absolute;inset:0;display:flex;align-items:center;justify-content:center;
+      font-family:var(--fh);font-size:clamp(60px,12vw,140px);font-weight:700;
+      color:var(--fc);opacity:.04;letter-spacing:.08em;text-transform:uppercase;
+      pointer-events:none;white-space:nowrap;overflow:hidden;
+      animation:fadeIn 1.2s ease both;
+    }
+    /* shimmer line at top */
+    .sky-head::before{
       content:'';position:absolute;top:0;left:0;right:0;height:1.5px;
-      background:linear-gradient(90deg,transparent,var(--fc),transparent);
-      background-size:200% auto;animation:shimmer 4s linear infinite;
+      background:linear-gradient(90deg,transparent 0%,var(--fc) 40%,var(--fc) 60%,transparent 100%);
+      background-size:300% auto;animation:shimmer 6s linear infinite;
     }
-    .banner-row{display:flex;align-items:flex-start;justify-content:space-between;gap:16px;margin-bottom:6px}
-    .banner-date{font-family:var(--fh);font-size:10px;letter-spacing:.2em;color:var(--text3);text-transform:uppercase;margin-bottom:10px}
-    .banner-advisory{font-family:var(--fh);font-size:20px;font-weight:600;color:var(--fc);letter-spacing:.04em;line-height:1.35}
-    .banner-sub{font-family:var(--fb);font-size:16px;font-style:italic;color:var(--text2);margin-top:8px}
-    .reading-pill{
-      flex-shrink:0;font-family:var(--fh);font-size:9px;letter-spacing:.14em;
-      text-transform:uppercase;padding:5px 14px;border-radius:999px;margin-top:2px;
-      border:1px solid rgba(85,187,102,0.35);background:rgba(85,187,102,0.08);color:#55bb66;
+    .sky-inner{
+      max-width:1100px;margin:0 auto;padding:0 36px;
+      position:relative;z-index:2;
+      animation:fadeUp .6s ease .1s both;
     }
-    .reading-pill.uncertain{border-color:rgba(200,169,106,0.35);background:rgba(200,169,106,0.08);color:var(--fc)}
+    .sky-eyebrow{
+      font-family:var(--fh);font-size:9px;letter-spacing:.28em;
+      color:var(--text3);text-transform:uppercase;margin-bottom:16px;
+    }
+    .sky-advisory{
+      font-family:var(--fh);font-size:clamp(20px,3.5vw,32px);font-weight:600;
+      color:var(--fc);letter-spacing:.04em;line-height:1.3;margin-bottom:14px;
+      text-shadow:0 0 40px var(--fg);
+    }
+    .sky-meta{
+      display:flex;align-items:center;gap:16px;flex-wrap:wrap;
+    }
+    .sky-meta-item{
+      font-family:var(--fb);font-size:16px;font-style:italic;color:var(--text2);
+    }
+    .sky-sep{width:3px;height:3px;border-radius:50%;background:var(--text3);flex-shrink:0}
+    .sky-pill{
+      font-family:var(--fh);font-size:9px;letter-spacing:.14em;text-transform:uppercase;
+      padding:4px 12px;border-radius:999px;
+      border:1px solid rgba(85,187,102,0.3);background:rgba(85,187,102,0.07);color:#55bb66;
+    }
+    .sky-pill.unc{border-color:var(--border2);background:var(--fg);color:var(--fc)}
+
+    /* ── CONTENT ── */
+    .content{max-width:1100px;margin:0 auto;padding:48px 36px 100px}
+    @media(max-width:680px){.content{padding:32px 16px 80px}.sky-inner{padding:0 20px}}
 
     /* ── SECTION HEADER ── */
-    .sec-head{display:flex;align-items:center;gap:14px;margin:0 0 16px}
-    .sec-line{flex:1;height:1px;background:var(--border)}
-    .sec-label{font-family:var(--fh);font-size:9px;letter-spacing:.22em;color:var(--text3);text-transform:uppercase;white-space:nowrap}
+    .sec{display:flex;align-items:center;gap:14px;margin:0 0 24px}
+    .sec-ln{flex:1;height:1px;background:var(--border)}
+    .sec-lbl{font-family:var(--fh);font-size:9px;letter-spacing:.24em;color:var(--text3);text-transform:uppercase;white-space:nowrap}
 
-    /* ── TODAY PHASES ── */
-    .phases{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:10px;margin-bottom:32px}
-    @media(max-width:680px){.phases{grid-template-columns:repeat(3,minmax(0,1fr))}}
-    @media(max-width:400px){.phases{grid-template-columns:repeat(2,minmax(0,1fr))}}
+    /* ── PHASE RIVER ── */
+    .river-wrap{position:relative;margin-bottom:56px;animation:fadeUp .5s ease .2s both;opacity:0;animation-fill-mode:both}
+    .river{display:flex;align-items:stretch;gap:0;position:relative}
 
-    .phase{
+    .river-item{
+      flex:1;display:flex;flex-direction:column;align-items:center;
+      position:relative;
+    }
+    /* connector between items */
+    .river-item:not(:last-child)::after{
+      content:'';position:absolute;right:-1px;top:28px;
+      width:2px;height:calc(100% - 56px);
+      background:linear-gradient(to bottom,var(--border),var(--border));
+      z-index:1;
+    }
+
+    .river-node{
+      width:56px;height:56px;border-radius:50%;
+      border:1px solid var(--border);background:var(--card);
+      display:flex;align-items:center;justify-content:center;
+      font-size:22px;margin-bottom:12px;
+      position:relative;z-index:2;
+      transition:transform .2s,border-color .2s;
+    }
+    .river-item:hover .river-node{transform:scale(1.08)}
+    .river-item.past .river-node{opacity:.3;filter:grayscale(.8)}
+    .river-item.active .river-node{
+      border-color:var(--fc);
+      box-shadow:0 0 0 4px var(--fg),0 0 20px var(--fg);
+      animation:glowPulse 2.5s ease-in-out infinite;
+    }
+    .river-item.future .river-node{opacity:.55}
+
+    /* progress line */
+    .river-progress{
+      position:absolute;top:27px;left:0;right:0;height:2px;
+      background:var(--border);z-index:0;
+    }
+    .river-progress-fill{
+      height:100%;background:linear-gradient(to right,var(--fc),transparent);
+      transition:width .8s ease;
+    }
+
+    .river-name{font-family:var(--fh);font-size:8px;letter-spacing:.1em;text-transform:uppercase;
+      color:var(--text3);text-align:center;margin-bottom:6px;padding:0 4px;line-height:1.4}
+    .river-item.active .river-name{color:rgba(200,169,106,0.7)}
+
+    .river-force{font-family:var(--fb);font-size:14px;font-weight:500;
+      color:var(--text2);text-align:center;padding:0 4px;line-height:1.3}
+    .river-item.active .river-force{color:var(--fc);font-size:15px}
+    .river-item.past .river-force{opacity:.35}
+
+    .river-now{
+      font-family:var(--fh);font-size:8px;letter-spacing:.12em;text-transform:uppercase;
+      color:var(--fc);margin-top:5px;animation:pulseGold 2s ease-in-out infinite;
+    }
+
+    @media(max-width:680px){
+      .river-node{width:42px;height:42px;font-size:17px}
+      .river-force{font-size:11px}
+      .river-name{font-size:7px}
+      .river-progress{top:20px}
+    }
+
+    /* ── FORECAST STRIPS ── */
+    .strips{display:flex;flex-direction:column;gap:8px}
+
+    .strip{
       background:var(--card);border:1px solid var(--border);border-radius:5px;
-      padding:14px 10px 12px;text-align:center;
-      transition:transform .15s,border-color .2s;cursor:default;
+      overflow:hidden;cursor:pointer;
+      transition:border-color .2s;
+      animation:rowReveal .4s ease both;
     }
-    .phase:hover{transform:translateY(-3px);border-color:var(--border2)}
-    .phase.active{
-      border-color:rgba(200,169,106,0.45);
-      background:rgba(200,169,106,0.05);
-      animation:pulseRing 2.8s ease-in-out infinite;
-    }
-    .phase-icon{font-size:20px;margin-bottom:6px;display:block}
-    .phase-name{font-family:var(--fh);font-size:9px;letter-spacing:.1em;text-transform:uppercase;
-      color:var(--text3);line-height:1.4;margin-bottom:8px}
-    .phase.active .phase-name{color:rgba(200,169,106,0.7)}
-    .phase-force{font-family:var(--fb);font-size:14px;font-weight:500;color:var(--text);line-height:1.3}
-    .phase.active .phase-force{color:var(--fc)}
-    .phase-now{font-family:var(--fh);font-size:8px;letter-spacing:.12em;text-transform:uppercase;
-      color:var(--fc);margin-top:5px;opacity:.8}
+    .strip:hover{border-color:var(--border2)}
+    .strip.today{border-color:rgba(200,169,106,0.25);background:rgba(200,169,106,0.03)}
+    .strip.faded{opacity:.55}
+    .strip.very-faded{opacity:.28;pointer-events:none}
 
-    /* ── FORECAST TABLE ── */
-    .tbl-wrap{overflow-x:auto;border:1px solid var(--border);border-radius:5px}
-    .tbl{width:100%;border-collapse:collapse;font-size:12px;min-width:680px}
-    .tbl thead tr{background:rgba(200,169,106,0.04)}
-    .tbl th{
-      font-family:var(--fh);font-size:9px;letter-spacing:.12em;text-transform:uppercase;
-      color:var(--text3);padding:12px 10px;text-align:left;
-      border-bottom:1px solid var(--border);white-space:nowrap;
+    /* shimmer on today strip */
+    .strip.today .strip-head::before{
+      content:'';position:absolute;top:0;left:0;right:0;height:1px;
+      background:linear-gradient(90deg,transparent,var(--fc),transparent);
+      background-size:200% auto;animation:shimmer 5s linear infinite;
     }
-    .tbl td{padding:10px;border-bottom:1px solid rgba(200,169,106,0.06);vertical-align:top}
-    .tbl tr:last-child td{border-bottom:none}
-    .tbl tbody tr{transition:background .15s}
-    .tbl tbody tr:hover td{background:rgba(200,169,106,0.03)}
-    .tbl tbody tr.today td{background:rgba(200,169,106,0.04)}
-    .tbl tbody tr.faded{opacity:.5}
-    .tbl tbody tr.very-faded{opacity:.25}
 
-    .day-label{font-family:var(--fh);font-size:11px;font-weight:600;color:var(--text);white-space:nowrap}
-    .day-date{font-family:var(--fh);font-size:9px;letter-spacing:.08em;color:var(--text3);margin-top:2px}
+    .strip-head{
+      position:relative;
+      display:flex;align-items:center;gap:0;padding:14px 20px;
+    }
+    .strip-day-col{min-width:100px;flex-shrink:0}
+    .strip-day{font-family:var(--fh);font-size:11px;font-weight:600;color:var(--text)}
+    .strip-date{font-family:var(--fh);font-size:9px;letter-spacing:.08em;color:var(--text3);margin-top:2px}
     .live-dot{
-      display:inline-block;width:6px;height:6px;border-radius:50%;background:var(--fc);
-      margin-left:5px;vertical-align:middle;animation:pulseRing 2s ease-in-out infinite;
+      display:inline-block;width:5px;height:5px;border-radius:50%;
+      background:var(--fc);margin-left:6px;vertical-align:middle;
+      animation:pulseGold 1.8s ease-in-out infinite;
     }
-    .force-main{font-family:var(--fb);font-size:13px;color:var(--text);line-height:1.3}
-    .force-shadow{font-family:var(--fb);font-size:11px;color:var(--text3);text-decoration:line-through;margin-top:2px;font-style:italic}
-    .adv-text{font-family:var(--fb);font-size:12px;font-style:italic;color:var(--text2);line-height:1.5;max-width:130px}
-    .obscured{font-family:var(--fb);font-size:12px;font-style:italic;color:var(--text3);padding:4px 0}
+    .strip-forces{
+      flex:1;display:flex;gap:6px;flex-wrap:wrap;align-items:center;padding:0 16px;
+    }
+    .force-chip{
+      font-family:var(--fb);font-size:13px;font-style:italic;color:var(--text2);
+      padding:2px 10px;border-radius:999px;
+      border:1px solid var(--border);background:rgba(255,255,255,0.02);
+      white-space:nowrap;
+    }
+    .force-chip.highlight{border-color:var(--border2);color:var(--fc)}
+    .strip-reading{
+      flex-shrink:0;font-family:var(--fh);font-size:9px;letter-spacing:.1em;
+      text-transform:uppercase;color:var(--text3);padding-right:4px;
+    }
+    .strip-arrow{
+      font-size:11px;color:var(--text3);margin-left:10px;
+      transition:transform .2s;flex-shrink:0;
+    }
+    .strip.open .strip-arrow{transform:rotate(180deg)}
+
+    /* expanded body */
+    .strip-body{
+      display:none;
+      border-top:1px solid var(--border);
+      padding:16px 20px 18px;
+    }
+    .strip.open .strip-body{display:block}
+
+    .strip-phases{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
+    @media(max-width:500px){.strip-phases{grid-template-columns:repeat(2,1fr)}}
+
+    .sp-item{
+      background:rgba(255,255,255,0.015);border:1px solid var(--border);
+      border-radius:4px;padding:10px 12px;
+    }
+    .sp-ph{font-family:var(--fh);font-size:8px;letter-spacing:.1em;text-transform:uppercase;
+      color:var(--text3);margin-bottom:5px;line-height:1.4}
+    .sp-force{font-family:var(--fb);font-size:15px;color:var(--text);line-height:1.3}
+    .sp-shadow{font-family:var(--fb);font-size:12px;color:var(--text3);
+      text-decoration:line-through;font-style:italic;margin-top:2px}
+    .sp-icon{font-size:14px;margin-right:4px}
+
+    /* blur effect on uncertain */
+    .strip.very-faded .strip-head{filter:blur(0.5px)}
+    .strip.faded .strip-forces{opacity:.7}
+
+    .obscured-msg{
+      font-family:var(--fb);font-size:15px;font-style:italic;
+      color:var(--text3);text-align:center;padding:8px 0;
+    }
   </style>
 </head>
 <body>
 
+<!-- Particles -->
+<div class="particles">
+  <div class="p"></div><div class="p"></div><div class="p"></div><div class="p"></div>
+  <div class="p"></div><div class="p"></div><div class="p"></div><div class="p"></div>
+</div>
+
+<!-- Nav -->
 <div class="site-shell">
   <header class="site-header">
     <nav class="dashboard-nav" aria-label="Global">
@@ -162,51 +317,45 @@
 <div class="state off" id="stErr"><span id="errTxt">Unable to read the omens.</span></div>
 
 <div class="pg" id="pgMain">
-  <div class="wrap">
 
-    <!-- Banner -->
-    <div class="banner" id="elBanner">
-      <div class="banner-date" id="tDate">— Celestial Date</div>
-      <div class="banner-row">
-        <div class="banner-advisory" id="tAdvisory">—</div>
-        <div class="reading-pill" id="tPill">—</div>
+  <!-- Sky header -->
+  <div class="sky-head" id="skyHead">
+    <div class="sky-wm" id="skyWm"></div>
+    <div class="sky-inner">
+      <div class="sky-eyebrow" id="skyDate">— Celestial Date</div>
+      <div class="sky-advisory" id="skyAdvisory">—</div>
+      <div class="sky-meta">
+        <span class="sky-meta-item" id="skyPhase">—</span>
+        <div class="sky-sep"></div>
+        <span class="sky-meta-item" id="skyBias">—</span>
+        <div class="sky-sep"></div>
+        <span class="sky-pill" id="skyPill">—</span>
       </div>
-      <div class="banner-sub" id="tSub">—</div>
+    </div>
+  </div>
+
+  <div class="content">
+
+    <!-- Phase river -->
+    <div class="sec" style="animation:fadeIn .4s ease .15s both;opacity:0;animation-fill-mode:both">
+      <div class="sec-ln"></div>
+      <div class="sec-lbl">Today's phases</div>
+      <div class="sec-ln"></div>
     </div>
 
-    <!-- Today phases -->
-    <div class="sec-head" style="animation:fadeIn .4s ease .3s both;opacity:0;animation-fill-mode:both">
-      <div class="sec-line"></div>
-      <div class="sec-label">Today's phases</div>
-      <div class="sec-line"></div>
+    <div class="river-wrap">
+      <div class="river-progress"><div class="river-progress-fill" id="riverFill" style="width:0%"></div></div>
+      <div class="river" id="elRiver"></div>
     </div>
 
-    <div class="phases" id="elPhases"></div>
-
-    <!-- Forecast -->
-    <div class="sec-head" style="animation:fadeIn .4s ease .85s both;opacity:0;animation-fill-mode:both">
-      <div class="sec-line"></div>
-      <div class="sec-label">7-day forecast</div>
-      <div class="sec-line"></div>
+    <!-- Forecast strips -->
+    <div class="sec" style="animation:fadeIn .4s ease .4s both;opacity:0;animation-fill-mode:both">
+      <div class="sec-ln"></div>
+      <div class="sec-lbl">7-day forecast</div>
+      <div class="sec-ln"></div>
     </div>
 
-    <div class="tbl-wrap" style="animation:fadeUp .5s ease .9s both;opacity:0;animation-fill-mode:both">
-      <table class="tbl">
-        <thead>
-          <tr>
-            <th>Day</th>
-            <th>&#127765; Moon Grave</th>
-            <th>&#127748; First Breath</th>
-            <th>&#9728;&#65039; Golden Meridian</th>
-            <th>&#127774; Zenith</th>
-            <th>&#127747; Ashen Descent</th>
-            <th>&#127761; Night Tide</th>
-            <th>Reading</th>
-          </tr>
-        </thead>
-        <tbody id="elRows"></tbody>
-      </table>
-    </div>
+    <div class="strips" id="elStrips"></div>
 
   </div>
 </div>
@@ -217,14 +366,13 @@
   var VERIFY="/.netlify/functions/verify-session";
   var LOGOUT="/.netlify/functions/logout";
   var FORECAST="/.netlify/functions/load-seven-day-celestial-forecast";
-  var CELESTIAL="/.netlify/functions/load-world-celestial-state";
+  var CEL="/.netlify/functions/load-world-celestial-state";
   var LOGIN="/login.html";
-
   var _ri=null,_fly=false;
 
-  var PHASE_ORDER=["moon_grave_silence","veil_of_first_breath","golden_meridian","zenith_of_heaven","ashen_descent","night_tide_omen"];
-  var PHASE_ICONS={"moon_grave_silence":"🌕","veil_of_first_breath":"🌅","golden_meridian":"☀️","zenith_of_heaven":"🌞","ashen_descent":"🌇","night_tide_omen":"🌙"};
-  var PHASE_LABELS={"moon_grave_silence":"Moon Grave Silence","veil_of_first_breath":"Veil of First Breath","golden_meridian":"Golden Meridian","zenith_of_heaven":"Zenith of Heaven","ashen_descent":"Ashen Descent","night_tide_omen":"Night Tide Omen"};
+  var PORDER=["moon_grave_silence","veil_of_first_breath","golden_meridian","zenith_of_heaven","ashen_descent","night_tide_omen"];
+  var PICONS={"moon_grave_silence":"🌕","veil_of_first_breath":"🌅","golden_meridian":"☀️","zenith_of_heaven":"🌞","ashen_descent":"🌇","night_tide_omen":"🌙"};
+  var PLABELS={"moon_grave_silence":"Moon Grave Silence","veil_of_first_breath":"Veil of First Breath","golden_meridian":"Golden Meridian","zenith_of_heaven":"Zenith of Heaven","ashen_descent":"Ashen Descent","night_tide_omen":"Night Tide Omen"};
 
   function st(v,fb){fb=fb||"—";return String(v==null?"":v).trim()||fb}
   function nk(v){return String(v==null?"":v).trim().toLowerCase().replace(/[^a-z0-9]+/g,"_").replace(/^_+|_+$/g,"")}
@@ -264,140 +412,198 @@
       .catch(function(e){cb(e,null)})
   }
 
-  /* ── Build today phase cards ── */
-  function buildPhases(todayDay, currentPhaseKey){
-    var wrap=g("elPhases");
-    if(!wrap)return;
+  function dbias(v){
+    var k=nk(v);
+    if(k==="yin")return"Yin influence";if(k==="yang")return"Yang influence";
+    if(k==="balance"||k==="balanced"||k==="taiji")return"Taiji balance";
+    return st(v,"Balanced");
+  }
+
+  function applyForce(w){
+    var fk=nk(w.force_key||w.force_name||"");
+    var bias=nk(w.effective_bias||w.phase_bias||"");
+    document.body.classList.remove("yin","yang","taiji","storm");
+    if(fk.indexOf("yin")>=0||bias==="yin")document.body.classList.add("yin");
+    else if(fk.indexOf("yang")>=0||bias==="yang")document.body.classList.add("yang");
+    else if(fk.indexOf("storm")>=0||fk.indexOf("thunder")>=0||fk.indexOf("lightning")>=0)document.body.classList.add("storm");
+    else if(fk.indexOf("taiji")>=0||bias==="taiji"||bias==="balance")document.body.classList.add("taiji");
+  }
+
+  /* ── Build phase river ── */
+  function buildRiver(todayDay, currentPhaseKey){
+    var wrap=g("elRiver");if(!wrap)return;
     wrap.innerHTML="";
     var phases=todayDay.phases||{};
-    PHASE_ORDER.forEach(function(pk,idx){
+    var activeIdx=PORDER.indexOf(currentPhaseKey);
+    if(activeIdx<0)activeIdx=0;
+
+    /* progress fill — how far through the day */
+    var fillPct=Math.max(0,Math.min(100, (activeIdx/(PORDER.length-1))*100));
+    setTimeout(function(){
+      var fill=g("riverFill");
+      if(fill)fill.style.width=fillPct+"%";
+    },500);
+
+    PORDER.forEach(function(pk,idx){
       var info=phases[pk]||{};
       var force=st(info.projected_force,"—");
-      var isActive=(nk(currentPhaseKey)===pk);
-      var div=document.createElement("div");
-      div.className="phase"+(isActive?" active":"");
-      div.style.animation="fadeUp .4s ease "+(0.35+idx*0.07)+"s both";
-      div.style.opacity="0";
-      div.style.animationFillMode="both";
-      div.innerHTML=
-        '<span class="phase-icon">'+st(PHASE_ICONS[pk],"·")+'</span>'+
-        '<div class="phase-name">'+st(PHASE_LABELS[pk])+'</div>'+
-        '<div class="phase-force">'+force+'</div>'+
-        (isActive?'<div class="phase-now">Now</div>':'');
-      wrap.appendChild(div);
+      var isPast=(idx<activeIdx);
+      var isActive=(idx===activeIdx);
+      var isFuture=(idx>activeIdx);
+
+      var item=document.createElement("div");
+      item.className="river-item"+(isPast?" past":isActive?" active":" future");
+      item.style.animation="fadeUp .4s ease "+(0.25+idx*0.08)+"s both";
+      item.style.opacity="0";
+      item.style.animationFillMode="both";
+
+      item.innerHTML=
+        '<div class="river-node">'+st(PICONS[pk],"·")+'</div>'+
+        '<div class="river-name">'+st(PLABELS[pk])+'</div>'+
+        '<div class="river-force">'+force+'</div>'+
+        (isActive?'<div class="river-now">Now</div>':'');
+      wrap.appendChild(item);
     });
   }
 
-  /* ── Build forecast rows ── */
-  function buildRows(days, currentPhaseKey){
-    var tbody=g("elRows");
-    if(!tbody)return;
-    tbody.innerHTML="";
-    var uncertain=(days.length>2);
+  /* ── Build forecast strips ── */
+  function buildStrips(days, currentPhaseKey){
+    var wrap=g("elStrips");if(!wrap)return;
+    wrap.innerHTML="";
 
     days.forEach(function(day,di){
-      var isFirm=(di<2);
       var isToday=(di===0);
-      var isVeryFar=(di>=4);
+      var isFirm=(di<2);
+      var isFaded=(di>=2&&di<4);
+      var isVeryFaded=(di>=4);
+      var phases=day.phases||{};
 
-      var tr=document.createElement("tr");
-      if(isToday)tr.className="today";
-      else if(isVeryFar)tr.className="very-faded";
-      else if(!isFirm)tr.className="faded";
-      tr.style.animation="rowIn .35s ease "+(0.95+di*0.1)+"s both";
-      tr.style.opacity="0";
-      tr.style.animationFillMode="both";
+      var strip=document.createElement("div");
+      var cls="strip";
+      if(isToday)cls+=" today";
+      if(isFaded)cls+=" faded";
+      if(isVeryFaded)cls+=" very-faded";
+      strip.className=cls;
+      strip.style.animation="rowReveal .4s ease "+(0.45+di*0.08)+"s both";
+      strip.style.opacity="0";
+      strip.style.animationFillMode="both";
 
-      /* Day cell */
+      /* collect top 3 forces for chips */
+      var chipForces=[];
+      PORDER.forEach(function(pk){
+        var info=phases[pk]||{};
+        var f=st(info.projected_force,"");
+        if(f&&f!=="—"&&chipForces.indexOf(f)<0&&chipForces.length<3)chipForces.push(f);
+      });
+
       var dayLabel=st(day.forecast_day_label,"Day "+(di+1));
       var dayDate=st(day.celestial_date_text,"—");
       var liveDot=isToday?'<span class="live-dot"></span>':'';
-      var td0='<td><div class="day-label">'+dayLabel+liveDot+'</div><div class="day-date">'+dayDate+'</div></td>';
+      var readingText=isFirm?"Firm":"Uncertain";
 
-      /* Phase cells */
-      var phaseCells="";
-      if(isVeryFar){
-        phaseCells='<td colspan="6" class="obscured">Distant heavens obscured — reading unreliable</td>';
+      var chipsHtml="";
+      if(isVeryFaded){
+        chipsHtml='<span class="force-chip" style="font-style:italic;opacity:.5">Obscured</span>';
       } else {
-        var phases=day.phases||{};
-        PHASE_ORDER.forEach(function(pk){
-          var info=phases[pk]||{};
-          var main=st(info.projected_force,"—");
-          var shadow=st(info.shadow_force,"");
-          var shadowHtml=shadow?'<div class="force-shadow">'+shadow+'</div>':'';
-          phaseCells+='<td><div class="force-main">'+main+'</div>'+shadowHtml+'</td>';
+        chipForces.forEach(function(f,fi){
+          chipsHtml+='<span class="force-chip'+(fi===0?' highlight':'')+'">'+f+'</span>';
         });
       }
 
-      /* Advisory cell */
-      var advText=isFirm?"Firm reading":st(day.day_reading_type,"Uncertain");
-      var advCell='<td class="adv-text">'+advText+'</td>';
+      var headHtml=
+        '<div class="strip-head">'+
+          '<div class="strip-day-col">'+
+            '<div class="strip-day">'+dayLabel+liveDot+'</div>'+
+            '<div class="strip-date">'+dayDate+'</div>'+
+          '</div>'+
+          '<div class="strip-forces">'+chipsHtml+'</div>'+
+          '<div class="strip-reading">'+readingText+'</div>'+
+          '<div class="strip-arrow">&#9660;</div>'+
+        '</div>';
 
-      tr.innerHTML=td0+phaseCells+advCell;
-      tbody.appendChild(tr);
+      /* expanded phase grid */
+      var bodyHtml='<div class="strip-body">';
+      if(isVeryFaded){
+        bodyHtml+='<div class="obscured-msg">The distant heavens are obscured — these phases may yet change before they arrive.</div>';
+      } else {
+        bodyHtml+='<div class="strip-phases">';
+        PORDER.forEach(function(pk){
+          var info=phases[pk]||{};
+          var main=st(info.projected_force,"—");
+          var shadow=st(info.shadow_force,"");
+          var shadowHtml=shadow&&shadow!=="—"?'<div class="sp-shadow">'+shadow+'</div>':'';
+          bodyHtml+=
+            '<div class="sp-item">'+
+              '<div class="sp-ph"><span class="sp-icon">'+st(PICONS[pk],"·")+'</span>'+st(PLABELS[pk])+'</div>'+
+              '<div class="sp-force">'+main+'</div>'+
+              shadowHtml+
+            '</div>';
+        });
+        bodyHtml+='</div>';
+      }
+      bodyHtml+='</div>';
+
+      strip.innerHTML=headHtml+bodyHtml;
+
+      /* toggle expand */
+      strip.addEventListener("click",function(){
+        strip.classList.toggle("open");
+      });
+
+      wrap.appendChild(strip);
+
+      /* auto-open today */
+      if(isToday){
+        setTimeout(function(){strip.classList.add("open")},800);
+      }
     });
   }
 
   /* ── Render ── */
   function render(world, forecast){
-    /* Banner from world */
-    var todayForecast=forecast.days[0]||{};
-    var advisory=st(todayForecast.day_advisory,"The heavens hold their shape.");
-    var dateText=st(todayForecast.celestial_date_text,"—");
-    var readingType=st(todayForecast.day_reading_type,"Firm reading");
-    var isFirm=(nk(readingType).indexOf("firm")>=0||nk(readingType).indexOf("clear")>=0);
+    applyForce(world);
+    var today=forecast.days[0]||{};
+    var advisory=st(today.day_advisory,"The heavens hold their shape.");
+    var dateText=st(today.celestial_date_text,"—");
+    var readingType=st(today.day_reading_type,"Firm reading");
+    var isFirm=(nk(readingType).indexOf("firm")>=0);
+    var phaseName=st(world.phase_name,"—");
 
-    tx("tDate",dateText+" · Today's Reading");
-    tx("tAdvisory",advisory);
-    tx("tSub","Phase · "+st(world.phase_name,"—")+" · Bias: "+dbias(world.effective_bias||world.phase_bias));
-
-    var pill=g("tPill");
-    if(pill){
-      pill.textContent=readingType;
-      pill.className="reading-pill"+(isFirm?"":" uncertain");
-    }
+    /* sky header */
+    tx("skyDate",dateText+" — Today's Reading");
+    tx("skyAdvisory",advisory);
+    tx("skyPhase",phaseName);
+    tx("skyBias",dbias(world.effective_bias||world.phase_bias));
+    tx("skyWm",phaseName);
+    var pill=g("skyPill");
+    if(pill){pill.textContent=readingType;pill.className="sky-pill"+(isFirm?"":" unc")}
 
     var currentPhaseKey=nk(world.phase_key||world.phase_name||"");
-    buildPhases(todayForecast, currentPhaseKey);
-    buildRows(forecast.days, currentPhaseKey);
+    buildRiver(today, currentPhaseKey);
+    buildStrips(forecast.days, currentPhaseKey);
   }
 
-  function dbias(v){
-    var k=nk(v);
-    if(k==="yin")return"Yin";if(k==="yang")return"Yang";
-    if(k==="balance"||k==="balanced"||k==="taiji")return"Taiji";
-    return st(v,"Balanced");
-  }
-
-  /* ── Load both endpoints in parallel ── */
   function loadAll(silent){
     if(!silent){show("stLoad");hide("stErr");off("pgMain")}
-    var worldData=null,forecastData=null,errors=0,done=0;
-
+    var worldData=null,forecastData=null,done=0,errs=0;
     function tryRender(){
       done++;
       if(done<2)return;
-      if(errors>=2){
-        if(!silent){hide("stLoad");tx("errTxt","Unable to load the omens.");show("stErr")}
-        return;
-      }
       if(!worldData||!forecastData){
-        if(!silent){hide("stLoad");tx("errTxt","Incomplete data from the heavens.");show("stErr")}
+        if(!silent){hide("stLoad");tx("errTxt","Unable to read the omens.");show("stErr")}
         return;
       }
       render(worldData,forecastData);
       if(!silent){hide("stLoad");on("pgMain")}
     }
-
-    doFetch(CELESTIAL,function(err,res){
-      if(err||!res||!res.ok||!res.data||!res.data.world){errors++}
-      else{worldData=res.data.world}
+    doFetch(CEL,function(err,res){
+      if(!err&&res&&res.ok&&res.data&&res.data.world)worldData=res.data.world;
+      else errs++;
       tryRender();
     });
-
     doFetch(FORECAST,function(err,res){
-      if(err||!res||!res.ok||!res.data||!res.data.forecast){errors++}
-      else{forecastData=res.data.forecast}
+      if(!err&&res&&res.ok&&res.data&&res.data.forecast)forecastData=res.data.forecast;
+      else errs++;
       tryRender();
     });
   }
@@ -412,10 +618,7 @@
   }
 
   function boot(){
-    requireAuth(function(){
-      loadAll(false);
-      startRefresh();
-    });
+    requireAuth(function(){loadAll(false);startRefresh()});
   }
 
   g("btnRf").addEventListener("click",function(){loadAll(false)});
