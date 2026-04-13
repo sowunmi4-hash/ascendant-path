@@ -11,146 +11,196 @@
     *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
 
     :root {
-      --bg: #07070b;
-      --card: #0c0c17;
-      --border: rgba(200,169,106,0.10);
-      --gold: #c8a96a;
-      --text: #e8e0d0;
-      --text2: rgba(232,224,208,0.52);
-      --text3: rgba(232,224,208,0.26);
-      --fh: 'Cinzel', serif;
-      --fb: 'Cormorant Garamond', serif;
-      /* force colour — updated by JS on body class */
-      --fc: #c8a96a;
-      --fg: rgba(200,169,106,0.15);
+      --bg:#07070b; --card:rgba(12,12,22,0.85); --border:rgba(200,169,106,0.10);
+      --text:#e8e0d0; --text2:rgba(232,224,208,0.52); --text3:rgba(232,224,208,0.26);
+      --fh:'Cinzel',serif; --fb:'Cormorant Garamond',serif;
+      --fc:#c8a96a; --fg:rgba(200,169,106,0.15); --fr:200; --fgr:169; --fbl:106;
     }
-    body.yin  { --fc: #7aaee8; --fg: rgba(122,174,232,0.18); }
-    body.yang { --fc: #e8a030; --fg: rgba(232,160,48,0.20); }
-    body.taiji{ --fc: #b8d0e0; --fg: rgba(184,208,224,0.16); }
-    body.storm{ --fc: #9878d8; --fg: rgba(152,120,216,0.20); }
+    body.yin  {--fc:#7aaee8;--fg:rgba(122,174,232,0.18);--fr:122;--fgr:174;--fbl:232}
+    body.yang {--fc:#e8a030;--fg:rgba(232,160,48,0.20);--fr:232;--fgr:160;--fbl:48}
+    body.taiji{--fc:#b8d0e0;--fg:rgba(184,208,224,0.16);--fr:184;--fgr:208;--fbl:224}
+    body.storm{--fc:#9878d8;--fg:rgba(152,120,216,0.20);--fr:152;--fgr:120;--fbl:216}
 
-    html,body { height:100%; background:var(--bg); color:var(--text); font-family:var(--fb); }
+    html,body{height:100%;background:var(--bg);color:var(--text);font-family:var(--fb);overflow-x:hidden}
 
-    /* NAV */
-    nav {
-      position:fixed; top:0; left:0; right:0; z-index:100;
-      display:flex; align-items:center; gap:24px; padding:14px 32px;
-      background:rgba(7,7,11,0.92); backdrop-filter:blur(16px);
-      border-bottom:1px solid var(--border);
-      font-family:var(--fh); font-size:11px; letter-spacing:.08em;
+    /* ── NAV ── */
+    nav{
+      position:fixed;top:0;left:0;right:0;z-index:200;
+      display:flex;align-items:center;gap:28px;padding:14px 36px;
+      background:rgba(7,7,11,0.7);backdrop-filter:blur(20px);
+      border-bottom:1px solid rgba(255,255,255,0.04);
+      font-family:var(--fh);font-size:11px;letter-spacing:.08em;
     }
-    nav a { color:var(--text2); text-decoration:none; transition:color .2s; }
-    nav a:hover, nav a.active { color:var(--fc); }
-    .nav-r { margin-left:auto; display:flex; gap:20px; align-items:center; }
-    .btn-rf {
-      background:none; border:1px solid var(--border); color:var(--text3);
-      font-family:var(--fh); font-size:10px; letter-spacing:.08em;
-      padding:5px 14px; border-radius:2px; cursor:pointer; transition:all .2s;
+    nav a{color:var(--text3);text-decoration:none;transition:color .25s}
+    nav a:hover,nav a.active{color:var(--fc)}
+    .nav-r{margin-left:auto;display:flex;gap:20px;align-items:center}
+    .btn-rf{
+      background:none;border:1px solid rgba(255,255,255,0.08);color:var(--text3);
+      font-family:var(--fh);font-size:10px;letter-spacing:.08em;
+      padding:5px 14px;border-radius:2px;cursor:pointer;transition:all .25s;
     }
-    .btn-rf:hover { border-color:var(--fc); color:var(--fc); }
+    .btn-rf:hover{border-color:var(--fc);color:var(--fc)}
 
-    /* STATES */
-    .state {
-      position:fixed; inset:0; z-index:50; display:flex; flex-direction:column;
-      align-items:center; justify-content:center; background:var(--bg);
-      gap:14px; font-family:var(--fh); font-size:11px; letter-spacing:.12em; color:var(--text3);
+    /* ── STATES ── */
+    .state{
+      position:fixed;inset:0;z-index:100;display:flex;flex-direction:column;
+      align-items:center;justify-content:center;background:var(--bg);
+      gap:14px;font-family:var(--fh);font-size:11px;letter-spacing:.12em;color:var(--text3);
     }
-    .state.off { display:none; }
-    .spin {
-      width:32px; height:32px; border-radius:50%;
-      border:1.5px solid rgba(200,169,106,.12); border-top-color:var(--fc);
+    .state.off{display:none}
+    .spin{
+      width:32px;height:32px;border-radius:50%;
+      border:1.5px solid rgba(200,169,106,0.1);border-top-color:var(--fc);
       animation:sp 1.1s linear infinite;
     }
-    @keyframes sp { to { transform:rotate(360deg); } }
+    @keyframes sp{to{transform:rotate(360deg)}}
 
-    /* PAGE */
-    .pg { padding-top:56px; min-height:100vh; display:flex; flex-direction:column; }
-    .pg.off { display:none; }
+    /* ── PAGE ── */
+    .pg{min-height:100vh;display:flex;flex-direction:column}
+    .pg.off{display:none}
 
-    /* SKY */
-    .sky { position:relative; width:100%; height:440px; overflow:hidden; }
-    #skyC { position:absolute; inset:0; width:100%; height:100%; }
-    .sky-fade {
-      position:absolute; inset:0; pointer-events:none;
-      background:linear-gradient(to bottom, rgba(7,7,11,0) 40%, rgba(7,7,11,1) 100%);
-    }
-    .sky-text {
-      position:absolute; inset:0; z-index:3; pointer-events:none;
-      display:flex; flex-direction:column; align-items:center; justify-content:center;
-      padding-bottom:30px;
-    }
-    .sky-eye {
-      font-family:var(--fh); font-size:9px; letter-spacing:.26em;
-      color:var(--text3); text-transform:uppercase; margin-bottom:12px;
-    }
-    .sky-ph {
-      font-family:var(--fh); font-size:32px; font-weight:600; letter-spacing:.07em;
-      color:var(--fc); text-align:center;
-      text-shadow:0 0 60px var(--fg), 0 0 20px var(--fg), 0 2px 8px rgba(0,0,0,.9);
-    }
-    .sky-fo {
-      font-family:var(--fb); font-size:17px; font-style:italic;
-      color:var(--text2); margin-top:10px; letter-spacing:.04em;
-    }
-    .sky-slt {
-      position:absolute; bottom:24px; left:32px; z-index:4;
-      font-family:var(--fh); font-size:10px; letter-spacing:.14em; color:var(--text3);
-    }
-    .sky-bias {
-      position:absolute; bottom:24px; right:32px; z-index:4;
-      font-family:var(--fh); font-size:10px; letter-spacing:.1em; color:var(--fc);
-      border:1px solid var(--fg); background:rgba(0,0,0,.5); border-radius:2px; padding:4px 12px;
+    /* ── HERO — full viewport sky ── */
+    .hero{position:relative;width:100%;height:100vh;min-height:600px;overflow:hidden}
+    #skyC{position:absolute;inset:0;width:100%;height:100%}
+
+    /* Multi-layer fade at bottom */
+    .hero-fade{
+      position:absolute;inset:0;pointer-events:none;
+      background:
+        linear-gradient(to bottom, rgba(7,7,11,0.3) 0%, rgba(7,7,11,0) 20%,
+          rgba(7,7,11,0) 55%, rgba(7,7,11,0.7) 78%, rgba(7,7,11,1) 100%);
     }
 
-    /* CONTENT */
-    .wrap { max-width:1060px; width:100%; margin:0 auto; padding:28px 32px 0; }
-    @media(max-width:680px) {
-      .wrap { padding:20px 16px 0; }
-      .sky { height:340px; } .sky-ph { font-size:22px; }
+    /* Centred phase display */
+    .hero-centre{
+      position:absolute;inset:0;z-index:3;
+      display:flex;flex-direction:column;align-items:center;justify-content:center;
+      pointer-events:none;padding-bottom:80px;
+    }
+    .hero-eye{
+      font-family:var(--fh);font-size:9px;letter-spacing:.30em;
+      color:rgba(255,255,255,0.2);text-transform:uppercase;margin-bottom:16px;
+    }
+    .hero-phase{
+      font-family:var(--fh);font-size:48px;font-weight:600;letter-spacing:.06em;
+      color:var(--fc);text-align:center;line-height:1.1;
+      text-shadow:0 0 80px var(--fg),0 0 40px var(--fg),0 4px 12px rgba(0,0,0,0.95);
+    }
+    .hero-force{
+      font-family:var(--fb);font-size:20px;font-style:italic;
+      color:rgba(255,255,255,0.35);margin-top:14px;letter-spacing:.06em;
     }
 
-    /* CARDS */
-    .cards { display:grid; grid-template-columns:1fr 1fr; gap:16px; margin-bottom:16px; }
-    @media(max-width:680px) { .cards { grid-template-columns:1fr; } }
+    /* Dividing ornament */
+    .hero-orn{
+      position:absolute;bottom:60px;left:50%;transform:translateX(-50%);
+      z-index:3;pointer-events:none;
+      display:flex;align-items:center;gap:12px;
+    }
+    .orn-line{width:60px;height:1px;background:linear-gradient(to right,rgba(255,255,255,0),var(--fc))}
+    .orn-line.r{background:linear-gradient(to left,rgba(255,255,255,0),var(--fc))}
+    .orn-dot{width:4px;height:4px;border-radius:50%;background:var(--fc);opacity:.6}
 
-    .card {
-      background:var(--card); border:1px solid var(--border); border-radius:4px;
-      padding:24px 26px;
+    /* Corner info */
+    .hero-slt{
+      position:absolute;bottom:28px;left:36px;z-index:4;
+      font-family:var(--fh);font-size:10px;letter-spacing:.16em;
+      color:rgba(255,255,255,0.18);
     }
-    .card-k {
-      font-family:var(--fh); font-size:9px; letter-spacing:.22em;
-      color:var(--text3); text-transform:uppercase; margin-bottom:10px;
+    .hero-bias{
+      position:absolute;bottom:28px;right:36px;z-index:4;
+      font-family:var(--fh);font-size:10px;letter-spacing:.12em;color:var(--fc);
+      border:1px solid var(--fg);background:rgba(0,0,0,0.6);border-radius:2px;
+      padding:5px 14px;backdrop-filter:blur(8px);
     }
-    .card-t {
-      font-family:var(--fh); font-size:14px; font-weight:600; letter-spacing:.05em;
-      color:var(--fc); margin-bottom:12px;
-    }
-    .card-b {
-      font-family:var(--fb); font-size:15.5px; line-height:1.68;
-      color:var(--text2); font-style:italic;
-    }
-    .div { height:1px; background:var(--border); margin:15px 0; }
-    .row { display:flex; justify-content:space-between; align-items:baseline; padding:4px 0; }
-    .rl { font-family:var(--fh); font-size:9px; letter-spacing:.12em; color:var(--text3); text-transform:uppercase; }
-    .rv { font-family:var(--fh); font-size:11px; letter-spacing:.06em; color:var(--fc); }
 
-    /* PHENOMENON */
-    .phen {
-      background:rgba(200,104,144,.05); border:1px solid rgba(200,104,144,.22);
-      border-radius:4px; padding:18px 24px;
-      display:flex; gap:16px; align-items:flex-start; margin-bottom:16px;
+    /* ── CONTENT SECTION ── */
+    .content{
+      position:relative;z-index:10;
+      background:var(--bg);
+      padding:56px 0 80px;
     }
-    .phen.off { display:none; }
-    .pdot {
-      width:8px; height:8px; border-radius:50%; background:#c86890; flex-shrink:0;
-      margin-top:5px; box-shadow:0 0 10px rgba(200,104,144,.5);
+    .wrap{max-width:1080px;width:100%;margin:0 auto;padding:0 36px}
+    @media(max-width:680px){
+      .wrap{padding:0 16px}
+      .hero-phase{font-size:30px}
+      .hero-force{font-size:16px}
+    }
+
+    /* Phenomenon banner */
+    .phen{
+      position:relative;overflow:hidden;
+      background:linear-gradient(135deg,rgba(200,104,144,0.06),rgba(200,104,144,0.02));
+      border:1px solid rgba(200,104,144,0.20);
+      border-radius:4px;padding:22px 28px;
+      display:flex;gap:18px;align-items:flex-start;margin-bottom:24px;
+    }
+    .phen.off{display:none}
+    .phen::before{
+      content:'';position:absolute;top:0;left:0;right:0;height:1px;
+      background:linear-gradient(to right,rgba(200,104,144,0),rgba(200,104,144,0.5),rgba(200,104,144,0));
+    }
+    .pdot{
+      width:8px;height:8px;border-radius:50%;background:#c86890;flex-shrink:0;
+      margin-top:7px;box-shadow:0 0 12px rgba(200,104,144,0.6);
       animation:pd 2s ease-in-out infinite;
     }
-    @keyframes pd { 0%,100%{opacity:1} 50%{opacity:.3} }
-    .pn { font-family:var(--fh); font-size:10px; letter-spacing:.14em; color:#c86890; text-transform:uppercase; margin-bottom:6px; }
-    .pb { font-family:var(--fb); font-size:15px; line-height:1.65; color:var(--text2); font-style:italic; }
+    @keyframes pd{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.3;transform:scale(.7)}}
+    .pn{font-family:var(--fh);font-size:10px;letter-spacing:.16em;color:#c86890;text-transform:uppercase;margin-bottom:7px}
+    .pb{font-family:var(--fb);font-size:16px;line-height:1.65;color:var(--text2);font-style:italic}
 
-    .foot { height:56px; }
+    /* Cards */
+    .cards{display:grid;grid-template-columns:1fr 1fr;gap:20px}
+    @media(max-width:680px){.cards{grid-template-columns:1fr}}
+
+    .card{
+      position:relative;overflow:hidden;
+      background:var(--card);
+      border:1px solid var(--border);
+      border-radius:4px;padding:30px 30px 26px;
+      backdrop-filter:blur(12px);
+    }
+    /* top accent line */
+    .card::before{
+      content:'';position:absolute;top:0;left:0;right:0;height:1px;
+      background:linear-gradient(to right,rgba(255,255,255,0),var(--fc),rgba(255,255,255,0));
+      opacity:.25;
+    }
+    .card-k{
+      font-family:var(--fh);font-size:9px;letter-spacing:.24em;
+      color:var(--text3);text-transform:uppercase;margin-bottom:12px;
+    }
+    .card-t{
+      font-family:var(--fh);font-size:16px;font-weight:600;letter-spacing:.05em;
+      color:var(--fc);margin-bottom:14px;line-height:1.3;
+    }
+    .card-b{
+      font-family:var(--fb);font-size:16px;line-height:1.7;
+      color:var(--text2);font-style:italic;
+    }
+    .div{
+      height:1px;margin:20px 0;
+      background:linear-gradient(to right,rgba(255,255,255,0),var(--border),rgba(255,255,255,0));
+    }
+    .row{display:flex;justify-content:space-between;align-items:baseline;padding:5px 0}
+    .rl{
+      font-family:var(--fh);font-size:9px;letter-spacing:.14em;
+      color:var(--text3);text-transform:uppercase;
+    }
+    .rv{
+      font-family:var(--fh);font-size:11px;letter-spacing:.07em;
+      color:var(--fc);text-align:right;
+    }
+
+    /* Section header */
+    .section-head{
+      display:flex;align-items:center;gap:16px;margin-bottom:28px;
+    }
+    .section-line{flex:1;height:1px;background:var(--border)}
+    .section-label{
+      font-family:var(--fh);font-size:9px;letter-spacing:.22em;
+      color:var(--text3);text-transform:uppercase;white-space:nowrap;
+    }
   </style>
 </head>
 <body>
@@ -171,294 +221,334 @@
 
 <div class="pg off" id="pgMain">
 
-  <div class="sky">
+  <!-- Full viewport sky -->
+  <div class="hero">
     <canvas id="skyC"></canvas>
-    <div class="sky-fade"></div>
-    <div class="sky-text">
-      <div class="sky-eye">The Heavens Above</div>
-      <div class="sky-ph" id="tPhase">—</div>
-      <div class="sky-fo" id="tForce">—</div>
+    <div class="hero-fade"></div>
+    <div class="hero-centre">
+      <div class="hero-eye">The Heavens Above</div>
+      <div class="hero-phase" id="tPhase">—</div>
+      <div class="hero-force" id="tForce">—</div>
     </div>
-    <div class="sky-slt" id="tSlt">— SLT</div>
-    <div class="sky-bias" id="tBias">—</div>
+    <div class="hero-orn">
+      <div class="orn-line"></div>
+      <div class="orn-dot"></div>
+      <div class="orn-dot" style="width:6px;height:6px;opacity:.9"></div>
+      <div class="orn-dot"></div>
+      <div class="orn-line r"></div>
+    </div>
+    <div class="hero-slt" id="tSlt">— SLT</div>
+    <div class="hero-bias" id="tBias">—</div>
   </div>
 
-  <div class="wrap">
+  <!-- Content -->
+  <div class="content">
+    <div class="wrap">
 
-    <div class="phen off" id="elPhen">
-      <div class="pdot"></div>
-      <div>
-        <div class="pn" id="tPN">Active Phenomenon</div>
-        <div class="pb" id="tPB">—</div>
+      <!-- Phenomenon -->
+      <div class="phen off" id="elPhen">
+        <div class="pdot"></div>
+        <div>
+          <div class="pn" id="tPN">Active Phenomenon</div>
+          <div class="pb" id="tPB">—</div>
+        </div>
       </div>
+
+      <!-- Section header -->
+      <div class="section-head">
+        <div class="section-line"></div>
+        <div class="section-label">Celestial Reading</div>
+        <div class="section-line"></div>
+      </div>
+
+      <!-- Cards -->
+      <div class="cards">
+        <div class="card">
+          <div class="card-k">Current Sky</div>
+          <div class="card-t" id="t1H">—</div>
+          <div class="card-b" id="t1B">The heavens hold their reading in silence.</div>
+          <div class="div"></div>
+          <div class="row"><span class="rl">Phase</span><span class="rv" id="r1a">—</span></div>
+          <div class="row"><span class="rl">Force</span><span class="rv" id="r1b">—</span></div>
+          <div class="row"><span class="rl">Phenomenon</span><span class="rv" id="r1c">Dormant</span></div>
+          <div class="row"><span class="rl">Era</span><span class="rv" id="r1d">—</span></div>
+        </div>
+        <div class="card">
+          <div class="card-k">World Effect</div>
+          <div class="card-t" id="t2H">Heavenly Decree</div>
+          <div class="card-b" id="t2B">The forces of heaven shape all cultivation.</div>
+          <div class="div"></div>
+          <div class="row"><span class="rl">Path Shift</span><span class="rv" id="r2a">—</span></div>
+          <div class="row"><span class="rl">Effective Bias</span><span class="rv" id="r2b">—</span></div>
+          <div class="row"><span class="rl">Year</span><span class="rv" id="r2c">—</span></div>
+        </div>
+      </div>
+
     </div>
-
-    <div class="cards">
-      <div class="card">
-        <div class="card-k">Current Sky</div>
-        <div class="card-t" id="t1H">—</div>
-        <div class="card-b" id="t1B">The heavens hold their reading in silence.</div>
-        <div class="div"></div>
-        <div class="row"><span class="rl">Phase</span><span class="rv" id="r1a">—</span></div>
-        <div class="row"><span class="rl">Force</span><span class="rv" id="r1b">—</span></div>
-        <div class="row"><span class="rl">Phenomenon</span><span class="rv" id="r1c">Dormant</span></div>
-        <div class="row"><span class="rl">Era</span><span class="rv" id="r1d">—</span></div>
-      </div>
-      <div class="card">
-        <div class="card-k">World Effect</div>
-        <div class="card-t" id="t2H">Heavenly Decree</div>
-        <div class="card-b" id="t2B">The forces of heaven shape all cultivation.</div>
-        <div class="div"></div>
-        <div class="row"><span class="rl">Path Shift</span><span class="rv" id="r2a">—</span></div>
-        <div class="row"><span class="rl">Effective Bias</span><span class="rv" id="r2b">—</span></div>
-        <div class="row"><span class="rl">Year</span><span class="rv" id="r2c">—</span></div>
-      </div>
-    </div>
-
   </div>
-  <div class="foot"></div>
 </div>
 
 <script>
 (function(){
   "use strict";
+  var VERIFY="/.netlify/functions/verify-session";
+  var LOGOUT="/.netlify/functions/logout";
+  var CEL="/.netlify/functions/load-world-celestial-state";
+  var LOGIN="/login.html";
+  var _raf=null,_ri=null,_fly=false;
 
-  var VERIFY   = "/.netlify/functions/verify-session";
-  var LOGOUT   = "/.netlify/functions/logout";
-  var CELESTIAL= "/.netlify/functions/load-world-celestial-state";
-  var LOGIN    = "/login.html";
-
-  var _raf = null, _ri = null, _fly = false;
-
-  /* ── helpers ── */
-  function st(v, fb) { fb = fb||"—"; var t = String(v == null ? "" : v).trim(); return t || fb; }
-  function nk(v) { return String(v == null ? "" : v).trim().toLowerCase().replace(/[^a-z0-9]+/g,"_").replace(/^_+|_+$/g,""); }
-  function g(id) { return document.getElementById(id); }
-  function tx(id,v) { var e=g(id); if(e) e.textContent=st(v); }
-  function show(id) { var e=g(id); if(e) e.classList.remove("off"); }
-  function hide(id) { var e=g(id); if(e) e.classList.add("off"); }
-
-  function clearArt() {
+  function st(v,fb){fb=fb||"—";return String(v==null?"":v).trim()||fb}
+  function nk(v){return String(v==null?"":v).trim().toLowerCase().replace(/[^a-z0-9]+/g,"_").replace(/^_+|_+$/g,"")}
+  function g(id){return document.getElementById(id)}
+  function tx(id,v){var e=g(id);if(e)e.textContent=st(v)}
+  function show(id){var e=g(id);if(e)e.classList.remove("off")}
+  function hide(id){var e=g(id);if(e)e.classList.add("off")}
+  function clearArt(){
     ["session","sessionToken","session_token","websiteSession","website_session",
      "member","memberState","member_state","user","user_state"].forEach(function(k){
-      try{localStorage.removeItem(k);}catch(e){}
-      try{sessionStorage.removeItem(k);}catch(e){}
+      try{localStorage.removeItem(k)}catch(e){}
+      try{sessionStorage.removeItem(k)}catch(e){}
     });
   }
-  function goLogin() { clearArt(); window.location.href = LOGIN; }
+  function goLogin(){clearArt();window.location.href=LOGIN}
 
-  /* ── auth ── */
-  function requireAuth(cb) {
-    fetch(VERIFY, { method:"GET", credentials:"include", headers:{Accept:"application/json"} })
+  function requireAuth(cb){
+    fetch(VERIFY,{method:"GET",credentials:"include",headers:{Accept:"application/json"}})
       .then(function(r){
-        if(r.status===401||r.status===403){ goLogin(); return; }
-        return r.json();
+        if(r.status===401||r.status===403){goLogin();return null}
+        return r.json()
       })
       .then(function(d){
-        if(!d || !d.authenticated){ goLogin(); return; }
-        cb();
+        if(!d)return;
+        if(!d.authenticated){goLogin();return}
+        cb()
       })
-      .catch(function(e){ console.error("Auth error",e); goLogin(); });
+      .catch(function(e){console.error("Auth error",e);goLogin()})
   }
 
-  function doFetch(url, cb) {
-    fetch(url, { method:"GET", credentials:"include", headers:{Accept:"application/json"}, cache:"no-store" })
+  function doFetch(url,cb){
+    fetch(url,{method:"GET",credentials:"include",headers:{Accept:"application/json"},cache:"no-store"})
       .then(function(r){
-        if(r.status===401||r.status===403){ goLogin(); return null; }
-        return r.json().then(function(d){ return {ok:r.ok, status:r.status, data:d}; });
+        if(r.status===401||r.status===403){goLogin();return null}
+        return r.json().then(function(d){return{ok:r.ok,status:r.status,data:d}})
       })
-      .then(function(res){
-        if(res) cb(null, res);
-      })
-      .catch(function(e){ cb(e, null); });
+      .then(function(res){if(res)cb(null,res)})
+      .catch(function(e){cb(e,null)})
   }
 
-  /* ── force theme ── */
-  function applyForce(w) {
-    var fk = nk(w.force_key||w.force_name||"");
-    var bias = nk(w.effective_bias||w.phase_bias||"");
+  /* Force theme */
+  function applyForce(w){
+    var fk=nk(w.force_key||w.force_name||"");
+    var bias=nk(w.effective_bias||w.phase_bias||"");
     document.body.classList.remove("yin","yang","taiji","storm");
-    if(fk.indexOf("yin")>=0||bias==="yin") document.body.classList.add("yin");
-    else if(fk.indexOf("yang")>=0||bias==="yang") document.body.classList.add("yang");
-    else if(fk.indexOf("storm")>=0||fk.indexOf("thunder")>=0||fk.indexOf("lightning")>=0) document.body.classList.add("storm");
-    else if(fk.indexOf("taiji")>=0||bias==="taiji"||bias==="balance") document.body.classList.add("taiji");
+    if(fk.indexOf("yin")>=0||bias==="yin")document.body.classList.add("yin");
+    else if(fk.indexOf("yang")>=0||bias==="yang")document.body.classList.add("yang");
+    else if(fk.indexOf("storm")>=0||fk.indexOf("thunder")>=0||fk.indexOf("lightning")>=0)document.body.classList.add("storm");
+    else if(fk.indexOf("taiji")>=0||bias==="taiji"||bias==="balance")document.body.classList.add("taiji");
   }
 
-  function getFcRGB() {
-    var fc = getComputedStyle(document.body).getPropertyValue("--fc").trim()||"#c8a96a";
-    var h = fc.replace("#","");
-    if(h.length===6) return [parseInt(h.slice(0,2),16),parseInt(h.slice(2,4),16),parseInt(h.slice(4,6),16)];
-    return [200,169,106];
+  function getRGB(){
+    var cs=getComputedStyle(document.body);
+    return [
+      parseInt(cs.getPropertyValue("--fr").trim())||200,
+      parseInt(cs.getPropertyValue("--fgr").trim())||169,
+      parseInt(cs.getPropertyValue("--fbl").trim())||106
+    ]
   }
 
-  /* ── sky canvas ── */
-  function runSky() {
-    var cv = g("skyC");
-    if(!cv) return;
-    if(_raf){ cancelAnimationFrame(_raf); _raf=null; }
-    var ctx = cv.getContext("2d");
-    var t = 0;
-
-    function resize() { cv.width=cv.offsetWidth||window.innerWidth; cv.height=cv.offsetHeight||440; }
+  /* Sky canvas */
+  function runSky(){
+    var cv=g("skyC");if(!cv)return;
+    if(_raf){cancelAnimationFrame(_raf);_raf=null}
+    var ctx=cv.getContext("2d");
+    var t=0;
+    function resize(){cv.width=cv.offsetWidth||window.innerWidth;cv.height=cv.offsetHeight||window.innerHeight}
     resize();
-    window.addEventListener("resize", resize);
+    window.addEventListener("resize",resize);
 
-    function frame() {
-      var W=cv.width, H=cv.height;
-      var rgb=getFcRGB(), r=rgb[0], gr=rgb[1], b=rgb[2];
-      t+=0.006;
+    /* pre-generate star field */
+    var STARS=[];
+    for(var s=0;s<180;s++){
+      STARS.push({
+        x:(s*1279+37)%1,
+        y:(s*811+113)%0.85,
+        r:s%14===0?1.1:s%5===0?0.7:0.4,
+        sp:0.3+Math.random()*0.6,
+        ph:Math.random()*Math.PI*2,
+        bright:s%14===0
+      })
+    }
+
+    function frame(){
+      var W=cv.width,H=cv.height;
+      var rgb=getRGB(),r=rgb[0],gr=rgb[1],b=rgb[2];
+      t+=0.005;
       ctx.clearRect(0,0,W,H);
 
-      /* sky gradient from top */
-      var g1=ctx.createRadialGradient(W/2,0,0,W/2,0,H*0.9);
-      g1.addColorStop(0,"rgba("+r+","+gr+","+b+",0.11)");
-      g1.addColorStop(0.4,"rgba("+r+","+gr+","+b+",0.04)");
-      g1.addColorStop(1,"rgba(7,7,11,0)");
-      ctx.fillStyle=g1; ctx.fillRect(0,0,W,H);
+      /* Deep sky base gradient */
+      var g0=ctx.createLinearGradient(0,0,0,H);
+      g0.addColorStop(0,"rgba("+Math.floor(r*.06)+","+Math.floor(gr*.06)+","+Math.floor(b*.12)+",1)");
+      g0.addColorStop(0.4,"rgba("+Math.floor(r*.03)+","+Math.floor(gr*.03)+","+Math.floor(b*.07)+",1)");
+      g0.addColorStop(1,"rgba(7,7,11,1)");
+      ctx.fillStyle=g0;ctx.fillRect(0,0,W,H);
 
-      /* drifting nebula wisps */
-      for(var i=0;i<4;i++){
-        var ox=W*(0.15+i*0.22)+Math.sin(t*0.12+i*1.5)*W*0.06;
-        var oy=H*(0.1+i*0.08)+Math.cos(t*0.08+i)*H*0.04;
-        var g2=ctx.createRadialGradient(ox,oy,0,ox,oy,W*(0.18+i*0.05));
-        g2.addColorStop(0,"rgba("+r+","+gr+","+b+","+(0.05-i*0.008)+")");
-        g2.addColorStop(1,"rgba(0,0,0,0)");
-        ctx.fillStyle=g2; ctx.fillRect(0,0,W,H);
+      /* Large deep nebula */
+      var gn1=ctx.createRadialGradient(W*.35,H*.3,0,W*.35,H*.3,W*.55);
+      gn1.addColorStop(0,"rgba("+r+","+gr+","+b+",0.07)");
+      gn1.addColorStop(0.5,"rgba("+r+","+gr+","+b+",0.02)");
+      gn1.addColorStop(1,"rgba(0,0,0,0)");
+      ctx.fillStyle=gn1;ctx.fillRect(0,0,W,H);
+
+      var gn2=ctx.createRadialGradient(W*.75,H*.45,0,W*.75,H*.45,W*.4);
+      gn2.addColorStop(0,"rgba("+r+","+gr+","+b+",0.05)");
+      gn2.addColorStop(1,"rgba(0,0,0,0)");
+      ctx.fillStyle=gn2;ctx.fillRect(0,0,W,H);
+
+      /* Drifting slow wisps */
+      for(var wi=0;wi<5;wi++){
+        var ox=W*(0.1+wi*0.19)+Math.sin(t*0.08+wi*1.7)*W*0.04;
+        var oy=H*(0.08+wi*0.07)+Math.cos(t*0.06+wi)*H*0.03;
+        var gw=ctx.createRadialGradient(ox,oy,0,ox,oy,W*(0.14+wi*0.04));
+        gw.addColorStop(0,"rgba("+r+","+gr+","+b+","+(0.045-wi*0.006)+")");
+        gw.addColorStop(1,"rgba(0,0,0,0)");
+        ctx.fillStyle=gw;ctx.fillRect(0,0,W,H);
       }
 
-      /* central phase halo */
-      var g3=ctx.createRadialGradient(W/2,H*0.45,0,W/2,H*0.45,W*0.2);
-      g3.addColorStop(0,"rgba("+r+","+gr+","+b+",0.09)");
-      g3.addColorStop(0.5,"rgba("+r+","+gr+","+b+",0.03)");
-      g3.addColorStop(1,"rgba(0,0,0,0)");
-      ctx.fillStyle=g3; ctx.fillRect(0,0,W,H);
-
-      /* stars */
-      for(var s=0;s<110;s++){
-        var sx=((s*1279+37)%W+W)%W;
-        var sy=((s*811+113)%(H*0.85));
-        var pulse=0.15+0.65*Math.abs(Math.sin(t*(0.3+s*0.009)+s));
-        var sz=s%12===0?0.9:s%5===0?0.6:0.35;
-        ctx.beginPath(); ctx.arc(sx,sy,sz,0,Math.PI*2);
-        ctx.fillStyle="rgba(255,255,255,"+(pulse*(s%12===0?0.55:0.28))+")"; ctx.fill();
+      /* Stars */
+      for(var si=0;si<STARS.length;si++){
+        var star=STARS[si];
+        var sx=star.x*W,sy=star.y*H;
+        var pulse=0.2+0.8*Math.abs(Math.sin(t*star.sp+star.ph));
+        ctx.beginPath();ctx.arc(sx,sy,star.r,0,Math.PI*2);
+        ctx.fillStyle="rgba(255,255,255,"+(pulse*(star.bright?0.7:0.3))+")";
+        ctx.fill();
+        /* bright stars get a small cross flare */
+        if(star.bright&&pulse>0.7){
+          var fl=pulse*2.5;
+          ctx.beginPath();
+          ctx.moveTo(sx-fl,sy);ctx.lineTo(sx+fl,sy);
+          ctx.moveTo(sx,sy-fl);ctx.lineTo(sx,sy+fl);
+          ctx.strokeStyle="rgba(255,255,255,"+(pulse*0.15)+")";
+          ctx.lineWidth=0.5;ctx.stroke();
+        }
       }
 
-      /* horizontal qi streams */
-      for(var qi=0;qi<3;qi++){
-        var qy=H*(0.28+qi*0.14)+Math.sin(t*0.22+qi)*H*0.04;
-        var al=0.025+0.012*Math.sin(t*0.28+qi);
-        ctx.beginPath();
-        ctx.moveTo(0,qy);
-        for(var qx=0;qx<=W;qx+=W/10){
-          ctx.lineTo(qx, qy+Math.sin(t*0.38+qx/W*Math.PI*2+qi)*9);
+      /* Subtle horiztontal qi streams */
+      for(var qi=0;qi<4;qi++){
+        var qy=H*(0.2+qi*0.13)+Math.sin(t*0.18+qi)*H*0.035;
+        var al=0.018+0.01*Math.sin(t*0.22+qi);
+        ctx.beginPath();ctx.moveTo(0,qy);
+        for(var qx=0;qx<=W;qx+=W/12){
+          ctx.lineTo(qx,qy+Math.sin(t*0.32+qx/W*Math.PI*2+qi)*8);
         }
         ctx.strokeStyle="rgba("+r+","+gr+","+b+","+al+")";
-        ctx.lineWidth=1.2; ctx.stroke();
+        ctx.lineWidth=1;ctx.stroke();
       }
+
+      /* Central glow behind phase text */
+      var gc=ctx.createRadialGradient(W/2,H*.42,0,W/2,H*.42,W*.28);
+      gc.addColorStop(0,"rgba("+r+","+gr+","+b+",0.1)");
+      gc.addColorStop(0.4,"rgba("+r+","+gr+","+b+",0.04)");
+      gc.addColorStop(1,"rgba(0,0,0,0)");
+      ctx.fillStyle=gc;ctx.fillRect(0,0,W,H);
+
+      /* Subtle vignette edges */
+      var gv=ctx.createRadialGradient(W/2,H/2,H*.35,W/2,H/2,W*.7);
+      gv.addColorStop(0,"rgba(0,0,0,0)");
+      gv.addColorStop(1,"rgba(0,0,0,0.45)");
+      ctx.fillStyle=gv;ctx.fillRect(0,0,W,H);
 
       _raf=requestAnimationFrame(frame);
     }
     frame();
   }
 
-  /* ── bias / path labels ── */
-  function dbias(v) {
+  /* labels */
+  function dbias(v){
     var k=nk(v);
-    if(k==="yin")return"Yin"; if(k==="yang")return"Yang";
+    if(k==="yin")return"Yin";if(k==="yang")return"Yang";
     if(k==="balance"||k==="balanced"||k==="taiji")return"Taiji";
-    return st(v,"Balanced");
+    return st(v,"Balanced")
   }
-  function dpath(v) {
+  function dpath(v){
     var k=nk(v);
-    if(k==="yin_dominant")return"Yin Dominant"; if(k==="yang_dominant")return"Yang Dominant";
-    if(k==="balanced"||k==="balance")return"Balanced"; if(k==="taiji")return"Taiji";
-    return st(v,"—");
+    if(k==="yin_dominant")return"Yin Dominant";if(k==="yang_dominant")return"Yang Dominant";
+    if(k==="balanced"||k==="balance")return"Balanced";if(k==="taiji")return"Taiji";
+    return st(v,"—")
   }
-  function effectBody(w) {
+  function effectBody(w){
     var p=[];
-    if(w.dashboard_effect_summary) p.push(w.dashboard_effect_summary);
-    else if(w.force_description) p.push(st(w.force_name)+" governs the world current.");
-    if(w.path_shift_key) p.push("Path movement: "+dpath(w.path_shift_key)+".");
-    return p.join(" ")||"The forces of heaven shape all cultivation.";
+    if(w.dashboard_effect_summary)p.push(w.dashboard_effect_summary);
+    else if(w.force_description)p.push(st(w.force_name)+" governs the world current.");
+    if(w.path_shift_key)p.push("Path movement: "+dpath(w.path_shift_key)+".");
+    return p.join(" ")||"The forces of heaven shape all cultivation."
   }
 
-  /* ── render ── */
-  function renderWorld(w) {
+  function renderWorld(w){
     applyForce(w);
-    tx("tPhase", w.phase_name);
-    tx("tForce", w.force_name);
-    tx("tSlt", st(w.slt_time_text,"—")+" SLT");
-    tx("tBias", dbias(w.effective_bias||w.phase_bias));
-    tx("t1H", w.phase_name);
-    tx("t1B", w.phase_omen_text||"The heavens hold their reading in silence.");
-    tx("r1a", w.phase_name);
-    tx("r1b", w.force_name);
-    tx("r1c", w.has_active_phenomenon ? w.phenomenon_name : "Dormant");
-    tx("r1d", w.era_name||w.year_title||"—");
-    tx("t2H", w.dashboard_effect_label||"Heavenly Decree");
-    tx("t2B", effectBody(w));
-    tx("r2a", dpath(w.path_shift_key));
-    tx("r2b", dbias(w.effective_bias||w.phase_bias));
-    tx("r2c", w.year_title||w.era_name||"—");
-    if(w.has_active_phenomenon && w.phenomenon_name) {
-      tx("tPN", w.phenomenon_name);
-      tx("tPB", w.phenomenon_omen_text||w.dashboard_effect_summary||(w.phenomenon_name+" is active across the heavens."));
+    tx("tPhase",w.phase_name);tx("tForce",w.force_name);
+    tx("tSlt",st(w.slt_time_text,"—")+" SLT");
+    tx("tBias",dbias(w.effective_bias||w.phase_bias));
+    tx("t1H",w.phase_name);
+    tx("t1B",w.phase_omen_text||"The heavens hold their reading in silence.");
+    tx("r1a",w.phase_name);tx("r1b",w.force_name);
+    tx("r1c",w.has_active_phenomenon?w.phenomenon_name:"Dormant");
+    tx("r1d",w.era_name||w.year_title||"—");
+    tx("t2H",w.dashboard_effect_label||"Heavenly Decree");
+    tx("t2B",effectBody(w));
+    tx("r2a",dpath(w.path_shift_key));
+    tx("r2b",dbias(w.effective_bias||w.phase_bias));
+    tx("r2c",w.year_title||w.era_name||"—");
+    if(w.has_active_phenomenon&&w.phenomenon_name){
+      tx("tPN",w.phenomenon_name);
+      tx("tPB",w.phenomenon_omen_text||w.dashboard_effect_summary||(w.phenomenon_name+" is active across the heavens."));
       show("elPhen");
-    } else {
-      hide("elPhen");
-    }
+    }else{hide("elPhen")}
     runSky();
   }
 
-  /* ── load ── */
-  function loadCelestial(silent) {
-    if(!silent){ show("stLoad"); hide("stErr"); hide("pgMain"); }
-    doFetch(CELESTIAL, function(err, res){
+  function loadCelestial(silent){
+    if(!silent){show("stLoad");hide("stErr");hide("pgMain")}
+    doFetch(CEL,function(err,res){
       if(err){
-        console.error("Celestial fetch error:", err);
-        if(!silent){ hide("stLoad"); tx("errTxt","Connection error: "+err.message); show("stErr"); }
-        return;
+        if(!silent){hide("stLoad");tx("errTxt","Connection error: "+err.message);show("stErr")}
+        return
       }
-      var d = res.data;
-      if(!res.ok || !d || !d.success || !d.world){
-        var msg = (d&&(d.details||d.error||d.message))||("HTTP "+res.status);
-        console.error("Celestial data error:", msg);
-        if(!silent){ hide("stLoad"); tx("errTxt","Unable to read the heavens: "+msg); show("stErr"); }
-        return;
+      var d=res.data;
+      if(!res.ok||!d||!d.success||!d.world){
+        var msg=(d&&(d.details||d.error||d.message))||("HTTP "+res.status);
+        if(!silent){hide("stLoad");tx("errTxt","Unable to read the heavens: "+msg);show("stErr")}
+        return
       }
       renderWorld(d.world);
-      if(!silent){ hide("stLoad"); show("pgMain"); }
-    });
+      if(!silent){hide("stLoad");show("pgMain")}
+    })
   }
 
-  function startRefresh() {
-    if(_ri) clearInterval(_ri);
-    _ri = setInterval(function(){
-      if(_fly) return;
-      _fly=true;
+  function startRefresh(){
+    if(_ri)clearInterval(_ri);
+    _ri=setInterval(function(){
+      if(_fly)return;_fly=true;
       loadCelestial(true);
-      setTimeout(function(){ _fly=false; }, 5000);
-    }, 60000);
+      setTimeout(function(){_fly=false},5000);
+    },60000)
   }
 
-  /* ── boot ── */
-  function boot() {
+  function boot(){
     requireAuth(function(){
       loadCelestial(false);
       startRefresh();
-    });
+    })
   }
 
-  /* ── events ── */
-  g("btnRf").addEventListener("click", function(){ loadCelestial(false); });
-  g("btnOut").addEventListener("click", function(e){
+  g("btnRf").addEventListener("click",function(){loadCelestial(false)});
+  g("btnOut").addEventListener("click",function(e){
     e.preventDefault();
     fetch(LOGOUT,{method:"POST",credentials:"include"}).catch(function(){});
-    setTimeout(function(){ clearArt(); window.location.href=LOGIN; }, 300);
+    setTimeout(function(){clearArt();window.location.href=LOGIN},300);
   });
-
-  document.addEventListener("DOMContentLoaded", boot);
-  window.addEventListener("beforeunload", function(){ if(_ri) clearInterval(_ri); });
+  document.addEventListener("DOMContentLoaded",boot);
+  window.addEventListener("beforeunload",function(){if(_ri)clearInterval(_ri)});
 })();
 </script>
 </body>
