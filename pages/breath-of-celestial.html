@@ -10,460 +10,392 @@
   <style>
     *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
     :root{
-      --bg:#07070b;--card:#0d0d18;--border:rgba(200,169,106,0.12);
+      --bg:#07070b;--card:#0d0d18;--border:rgba(200,169,106,0.10);
       --gold:#c8a96a;--text:#e8e0d0;--text2:rgba(232,224,208,0.55);--text3:rgba(232,224,208,0.28);
-      --font-head:'Cinzel',serif;--font-body:'Cormorant Garamond',serif;
-      --force-pri:#c8a96a;--force-glow:rgba(200,169,106,0.18);
+      --font-head:"Cinzel",serif;--font-body:"Cormorant Garamond",serif;
+      --F:#c8a96a;--FG:rgba(200,169,106,0.18);--FR:200;--FGR:169;--FB:106;
     }
-    html,body{height:100%;background:var(--bg);color:var(--text);font-family:var(--font-body);font-size:16px}
+    html,body{height:100%;background:var(--bg);color:var(--text);font-family:var(--font-body)}
+
+    /* Force themes */
+    body.yin  {--F:#7aaee8;--FG:rgba(122,174,232,.2);--FR:122;--FGR:174;--FB:232}
+    body.yang {--F:#e8a030;--FG:rgba(232,160,48,.22);--FR:232;--FGR:160;--FB:48}
+    body.taiji{--F:#b8ccd8;--FG:rgba(184,204,216,.16);--FR:184;--FGR:204;--FB:216}
+    body.storm{--F:#9878d8;--FG:rgba(152,120,216,.22);--FR:152;--FGR:120;--FB:216}
 
     /* Nav */
     nav{position:fixed;top:0;left:0;right:0;z-index:100;display:flex;align-items:center;gap:24px;
-        padding:14px 32px;background:rgba(7,7,11,0.88);backdrop-filter:blur(12px);
-        border-bottom:1px solid var(--border);font-family:var(--font-head);font-size:11px;letter-spacing:.08em}
+      padding:14px 32px;background:rgba(7,7,11,0.9);backdrop-filter:blur(14px);
+      border-bottom:1px solid var(--border);font-family:var(--font-head);font-size:11px;letter-spacing:.08em}
     nav a{color:var(--text2);text-decoration:none;transition:color .2s}
-    nav a:hover,nav a.active{color:var(--force-pri)}
-    .nav-right{margin-left:auto;display:flex;gap:20px;align-items:center}
-    .nav-refresh{background:none;border:1px solid var(--border);color:var(--text2);
+    nav a:hover,nav a.active{color:var(--F)}
+    .nav-r{margin-left:auto;display:flex;gap:20px;align-items:center}
+    .btn-refresh{background:none;border:1px solid var(--border);color:var(--text2);
       font-family:var(--font-head);font-size:10px;letter-spacing:.08em;
       padding:5px 14px;border-radius:2px;cursor:pointer;transition:all .2s}
-    .nav-refresh:hover{border-color:var(--force-pri);color:var(--force-pri)}
+    .btn-refresh:hover{border-color:var(--F);color:var(--F)}
 
     /* Overlays */
     .overlay{position:fixed;inset:0;z-index:50;display:flex;flex-direction:column;
-      align-items:center;justify-content:center;background:var(--bg);
-      font-family:var(--font-head);font-size:12px;letter-spacing:.1em;color:var(--text2);gap:16px}
-    .overlay.hidden{display:none}
-    .ring{width:36px;height:36px;border-radius:50%;border:1.5px solid var(--border);
-      border-top-color:var(--force-pri);animation:spin 1.2s linear infinite}
+      align-items:center;justify-content:center;background:var(--bg);gap:16px;
+      font-family:var(--font-head);font-size:11px;letter-spacing:.12em;color:var(--text3)}
+    .overlay.h{display:none}
+    .ring{width:34px;height:34px;border-radius:50%;
+      border:1.5px solid rgba(200,169,106,.15);border-top-color:var(--F);
+      animation:spin 1.2s linear infinite}
     @keyframes spin{to{transform:rotate(360deg)}}
 
     /* Page */
     .page{padding-top:56px;min-height:100vh;display:flex;flex-direction:column}
-    .page.hidden{display:none}
+    .page.h{display:none}
 
-    /* Sky stage */
-    .sky-stage{position:relative;width:100%;height:500px;overflow:hidden;
-      display:flex;align-items:center;justify-content:center}
-    #skyCanvas{position:absolute;inset:0;width:100%;height:100%}
-    .sky-fade{position:absolute;inset:0;background:linear-gradient(to bottom,transparent 55%,var(--bg) 100%);pointer-events:none}
+    /* ── Sky Canvas ── */
+    .sky{position:relative;width:100%;height:420px;overflow:hidden}
+    #skyC{position:absolute;inset:0;width:100%;height:100%}
+    .sky-fade{position:absolute;inset:0;
+      background:linear-gradient(to bottom,rgba(7,7,11,0) 30%,rgba(7,7,11,1) 100%);
+      pointer-events:none}
 
-    .sky-labels{position:absolute;top:32px;left:0;right:0;text-align:center;z-index:3;pointer-events:none}
-    .sky-eyebrow{font-family:var(--font-head);font-size:9px;letter-spacing:.22em;color:var(--text3);text-transform:uppercase;margin-bottom:8px}
-    .sky-phase{font-family:var(--font-head);font-size:28px;font-weight:600;color:var(--force-pri);
-      letter-spacing:.06em;text-shadow:0 0 40px var(--force-glow),0 2px 8px rgba(0,0,0,.8)}
-    .sky-force{font-family:var(--font-body);font-size:16px;font-style:italic;color:var(--text2);
-      letter-spacing:.04em;margin-top:5px}
-
-    .sky-fig-wrap{position:relative;z-index:2}
-    #figureCanvas{width:210px;height:210px;display:block}
-
-    .sky-slt{position:absolute;bottom:26px;left:32px;z-index:3;
-      font-family:var(--font-head);font-size:10px;letter-spacing:.14em;color:var(--text3)}
-    .sky-bias-pill{position:absolute;bottom:26px;right:32px;z-index:3;
-      font-family:var(--font-head);font-size:10px;letter-spacing:.1em;color:var(--force-pri);
-      background:rgba(0,0,0,.45);border:1px solid var(--force-glow);border-radius:2px;padding:4px 12px}
-
-    /* Cards */
-    .cards{display:grid;grid-template-columns:1fr 1fr;gap:16px;
-      padding:0 32px;margin:24px auto 0;max-width:1100px;width:100%}
-    @media(max-width:720px){
-      .cards{grid-template-columns:1fr;padding:0 16px}
-      .sky-stage{height:400px}.sky-phase{font-size:20px}
+    /* Centred phase overlay */
+    .sky-centre{
+      position:absolute;inset:0;display:flex;flex-direction:column;
+      align-items:center;justify-content:center;z-index:3;pointer-events:none;
+      padding-bottom:40px;
     }
-    .card{background:var(--card);border:1px solid var(--border);border-radius:4px;padding:24px 28px}
-    .card-kicker{font-family:var(--font-head);font-size:9px;letter-spacing:.2em;color:var(--text3);
-      text-transform:uppercase;margin-bottom:10px}
-    .card-title{font-family:var(--font-head);font-size:15px;font-weight:600;color:var(--force-pri);
-      letter-spacing:.06em;margin-bottom:14px}
-    .card-body{font-family:var(--font-body);font-size:15px;line-height:1.65;color:var(--text2);font-style:italic}
-    .divider{height:1px;background:var(--border);margin:16px 0}
-    .row{display:flex;justify-content:space-between;align-items:baseline;padding:5px 0}
-    .row-label{font-family:var(--font-head);font-size:10px;letter-spacing:.1em;color:var(--text3);text-transform:uppercase}
-    .row-val{font-family:var(--font-head);font-size:12px;letter-spacing:.06em;color:var(--force-pri)}
+    .sky-eyebrow{
+      font-family:var(--font-head);font-size:9px;letter-spacing:.25em;
+      color:var(--text3);text-transform:uppercase;margin-bottom:14px;
+    }
+    .sky-phase{
+      font-family:var(--font-head);font-size:34px;font-weight:600;
+      color:var(--F);letter-spacing:.07em;
+      text-shadow:0 0 60px var(--FG),0 0 20px var(--FG),0 2px 6px rgba(0,0,0,.9);
+      text-align:center;
+    }
+    .sky-force{
+      font-family:var(--font-body);font-size:18px;font-style:italic;
+      color:var(--text2);letter-spacing:.05em;margin-top:10px;
+    }
 
-    /* Phenomenon banner */
-    .phenom-wrap{max-width:1100px;width:100%;margin:16px auto 0;padding:0 32px}
-    .phenom-wrap.hidden{display:none}
-    .phenom-inner{background:rgba(200,104,144,.06);border:1px solid rgba(200,104,144,.25);
-      border-radius:4px;padding:18px 24px;display:flex;gap:18px;align-items:flex-start}
-    .phenom-dot{width:8px;height:8px;border-radius:50%;background:#c86890;flex-shrink:0;margin-top:5px;
-      box-shadow:0 0 10px rgba(200,104,144,.6);animation:pdot 2s ease-in-out infinite}
-    @keyframes pdot{0%,100%{opacity:1}50%{opacity:.35}}
-    .phenom-name{font-family:var(--font-head);font-size:11px;letter-spacing:.12em;color:#c86890;
-      text-transform:uppercase;margin-bottom:6px}
-    .phenom-desc{font-family:var(--font-body);font-size:14px;line-height:1.6;color:var(--text2);font-style:italic}
+    /* Corner labels */
+    .sky-slt{position:absolute;bottom:28px;left:32px;z-index:4;
+      font-family:var(--font-head);font-size:10px;letter-spacing:.14em;color:var(--text3)}
+    .sky-bias{position:absolute;bottom:28px;right:32px;z-index:4;
+      font-family:var(--font-head);font-size:10px;letter-spacing:.1em;
+      color:var(--F);border:1px solid var(--FG);background:rgba(0,0,0,.5);
+      border-radius:2px;padding:4px 12px}
+    .sky-ts{position:absolute;top:68px;right:28px;z-index:4;
+      font-family:var(--font-head);font-size:9px;letter-spacing:.1em;color:var(--text3)}
 
-    .page-foot{height:60px}
+    /* ── Main content ── */
+    .content{max-width:1060px;width:100%;margin:0 auto;padding:32px 32px 0}
 
-    /* Force themes */
-    body.yin{--force-pri:#8ab4e8;--force-glow:rgba(138,180,232,.2)}
-    body.yang{--force-pri:#e8a840;--force-glow:rgba(232,168,64,.22)}
-    body.taiji{--force-pri:#c8d8e8;--force-glow:rgba(200,216,232,.18)}
-    body.storm{--force-pri:#a888e8;--force-glow:rgba(168,136,232,.22)}
+    /* ── Cards row ── */
+    .cards{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:16px}
+    @media(max-width:700px){
+      .cards{grid-template-columns:1fr}
+      .sky{height:320px}.sky-phase{font-size:24px}
+      .content{padding:24px 16px 0}
+    }
+
+    .card{background:var(--card);border:1px solid var(--border);border-radius:4px;padding:26px 28px}
+    .card-top{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:12px}
+    .card-kicker{font-family:var(--font-head);font-size:9px;letter-spacing:.2em;
+      color:var(--text3);text-transform:uppercase}
+    .card-title{font-family:var(--font-head);font-size:15px;font-weight:600;
+      color:var(--F);letter-spacing:.05em;margin-bottom:12px}
+    .card-body{font-family:var(--font-body);font-size:15.5px;line-height:1.68;
+      color:var(--text2);font-style:italic}
+    .div{height:1px;background:var(--border);margin:16px 0}
+    .row{display:flex;justify-content:space-between;align-items:baseline;padding:4px 0}
+    .rl{font-family:var(--font-head);font-size:9px;letter-spacing:.12em;
+      color:var(--text3);text-transform:uppercase}
+    .rv{font-family:var(--font-head);font-size:11px;letter-spacing:.06em;color:var(--F)}
+
+    /* ── Phenomenon banner ── */
+    .phenom{background:rgba(200,104,144,.05);border:1px solid rgba(200,104,144,.22);
+      border-radius:4px;padding:20px 26px;display:flex;gap:18px;align-items:flex-start;
+      margin-bottom:16px}
+    .phenom.h{display:none}
+    .pdot{width:8px;height:8px;border-radius:50%;background:#c86890;flex-shrink:0;
+      margin-top:6px;box-shadow:0 0 10px rgba(200,104,144,.5);
+      animation:pdot 2.2s ease-in-out infinite}
+    @keyframes pdot{0%,100%{opacity:1}50%{opacity:.3}}
+    .p-name{font-family:var(--font-head);font-size:10px;letter-spacing:.14em;
+      color:#c86890;text-transform:uppercase;margin-bottom:7px}
+    .p-body{font-family:var(--font-body);font-size:15px;line-height:1.65;
+      color:var(--text2);font-style:italic}
+
+    .foot{height:56px}
   </style>
 </head>
 <body>
   <nav>
     <a href="/index.html">Home</a>
     <a href="/lore.html">Lore</a>
-    <div class="nav-right">
+    <div class="nav-r">
       <a href="/dashboard.html">Dashboard</a>
       <a href="/breath-of-celestial.html" class="active">Celestial</a>
-      <button class="nav-refresh" id="refreshBtn">&#8635; Refresh</button>
-      <a href="/login.html" id="logout-button">Logout</a>
+      <button class="btn-refresh" id="btnRefresh">&#8635; Refresh</button>
+      <a href="/login.html" id="btn-logout">Logout</a>
     </div>
   </nav>
 
-  <div class="overlay" id="loadingEl"><div class="ring"></div><span>Reading the heavens...</span></div>
-  <div class="overlay hidden" id="errorEl"><span id="errorMsg">Unable to read the heavens.</span></div>
+  <div class="overlay" id="elLoad"><div class="ring"></div><span>Reading the heavens&hellip;</span></div>
+  <div class="overlay h" id="elErr"><span id="errMsg">Unable to read the heavens.</span></div>
 
-  <div class="page hidden" id="pageEl">
-    <div class="sky-stage">
-      <canvas id="skyCanvas"></canvas>
+  <div class="page h" id="elPage">
+
+    <!-- Sky canvas -->
+    <div class="sky">
+      <canvas id="skyC"></canvas>
       <div class="sky-fade"></div>
-      <div class="sky-labels">
-        <div class="sky-eyebrow">Current Celestial Phase</div>
+      <div class="sky-centre">
+        <div class="sky-eyebrow">The Heavens Above</div>
         <div class="sky-phase" id="skyPhase">—</div>
         <div class="sky-force" id="skyForce">—</div>
       </div>
-      <div class="sky-fig-wrap"><canvas id="figureCanvas"></canvas></div>
       <div class="sky-slt" id="skySlt">— SLT</div>
-      <div class="sky-bias-pill" id="skyBias">—</div>
+      <div class="sky-bias" id="skyBias">—</div>
+      <div class="sky-ts" id="skyTs"></div>
     </div>
 
-    <div class="cards">
-      <div class="card">
-        <div class="card-kicker">The Current Sky</div>
-        <div class="card-title" id="c1Title">—</div>
-        <div class="card-body" id="c1Body">The heavens hold their reading in silence.</div>
-        <div class="divider"></div>
-        <div class="row"><span class="row-label">Phase</span><span class="row-val" id="c1Phase">—</span></div>
-        <div class="row"><span class="row-label">Force</span><span class="row-val" id="c1Force">—</span></div>
-        <div class="row"><span class="row-label">Phenomenon</span><span class="row-val" id="c1Phenom">Dormant</span></div>
-        <div class="row"><span class="row-label">Era</span><span class="row-val" id="c1Era">—</span></div>
-      </div>
-      <div class="card">
-        <div class="card-kicker">Cultivation Effect</div>
-        <div class="card-title" id="c2Title">Heavenly Decree</div>
-        <div class="card-body" id="c2Body">The forces of heaven shape your cultivation.</div>
-        <div class="divider"></div>
-        <div class="row"><span class="row-label">Path Shift</span><span class="row-val" id="c2Path">—</span></div>
-        <div class="row"><span class="row-label">Effective Bias</span><span class="row-val" id="c2Bias">—</span></div>
-        <div class="row"><span class="row-label">Year</span><span class="row-val" id="c2Year">—</span></div>
-      </div>
-    </div>
+    <div class="content">
 
-    <div class="phenom-wrap hidden" id="phenomWrap">
-      <div class="phenom-inner">
-        <div class="phenom-dot"></div>
+      <!-- Phenomenon banner -->
+      <div class="phenom h" id="elPhenom">
+        <div class="pdot"></div>
         <div>
-          <div class="phenom-name" id="phenomName">Active Phenomenon</div>
-          <div class="phenom-desc" id="phenomDesc">—</div>
+          <div class="p-name" id="pName">Active Phenomenon</div>
+          <div class="p-body" id="pBody">—</div>
         </div>
       </div>
-    </div>
 
-    <div class="page-foot"></div>
+      <!-- Cards -->
+      <div class="cards">
+        <div class="card">
+          <div class="card-kicker">Current Sky</div>
+          <div class="card-title" id="c1T">—</div>
+          <div class="card-body" id="c1B">The heavens hold their reading in silence.</div>
+          <div class="div"></div>
+          <div class="row"><span class="rl">Phase</span><span class="rv" id="r1a">—</span></div>
+          <div class="row"><span class="rl">Force</span><span class="rv" id="r1b">—</span></div>
+          <div class="row"><span class="rl">Phenomenon</span><span class="rv" id="r1c">Dormant</span></div>
+          <div class="row"><span class="rl">Era</span><span class="rv" id="r1d">—</span></div>
+        </div>
+        <div class="card">
+          <div class="card-kicker">World Effect</div>
+          <div class="card-title" id="c2T">Heavenly Decree</div>
+          <div class="card-body" id="c2B">The forces of heaven shape all cultivation.</div>
+          <div class="div"></div>
+          <div class="row"><span class="rl">Path Shift</span><span class="rv" id="r2a">—</span></div>
+          <div class="row"><span class="rl">Effective Bias</span><span class="rv" id="r2b">—</span></div>
+          <div class="row"><span class="rl">Year</span><span class="rv" id="r2c">—</span></div>
+        </div>
+      </div>
+
+    </div>
+    <div class="foot"></div>
   </div>
 
   <script>
-    const LOGIN_URL    = '/login.html';
-    const VERIFY_URL   = '/.netlify/functions/verify-session';
-    const LOGOUT_URL   = '/.netlify/functions/logout';
-    const CELESTIAL_URL= '/.netlify/functions/load-world-celestial-state';
+    const LOGIN='\/login.html',VERIFY='\/.netlify\/functions\/verify-session',
+          LOGOUT='\/.netlify\/functions\/logout',
+          CEL='\/.netlify\/functions\/load-world-celestial-state';
+    const S={raf:null,ri:null,fly:false};
 
-    const S = {
-      member:null, world:null, skyRaf:null, figRaf:null,
-      figCache:{male:null,female:null}, figLoad:{male:false,female:false}, figCbs:{male:[],female:[]},
-      refreshTimer:null, refreshFlying:false
-    };
+    const st=(v,fb='--')=>String(v??'').trim()||fb;
+    const nk=v=>String(v??'').trim().toLowerCase().replace(/[^a-z0-9]+/g,'_').replace(/^_+|_+$/g,'');
+    const el=id=>document.getElementById(id);
+    const tx=(id,v)=>{const e=el(id);if(e)e.textContent=st(v)};
+    const h=(id,on)=>el(id)?.classList[on?'remove':'add']('h');
 
-    function st(v,fb='--'){return String(v??'').trim()||fb}
-    function nk(v){return String(v??'').trim().toLowerCase().replace(/[^a-z0-9]+/g,'_').replace(/^_+|_+$/g,'')}
-
-    function clearSession(){
+    function clearS(){
       ['session','sessionToken','session_token','websiteSession','website_session','member',
        'memberState','member_state','user','user_state','sl_username','slUsername',
-       'avatar_key','avatarKey','selected_partnership_uuid','selectedPartnershipUuid'].forEach(k=>{
-        try{localStorage.removeItem(k)}catch(_){}
-        try{sessionStorage.removeItem(k)}catch(_){}
+       'avatar_key','avatarKey'].forEach(k=>{
+        try{localStorage.removeItem(k)}catch(_){}try{sessionStorage.removeItem(k)}catch(_){}
       });
     }
-    function goLogin(){clearSession();window.location.href=LOGIN_URL}
+    const goLogin=()=>{clearS();location.href=LOGIN};
 
-    async function af(url,opts={}){
-      const r=await fetch(url,{...opts,credentials:'include',cache:'no-store',
-        headers:{Accept:'application/json',...(opts.headers||{})}});
-      if(r.status===401||r.status===403){goLogin();throw new Error('Session expired.')}
+    async function af(url,o={}){
+      const r=await fetch(url,{...o,credentials:'include',cache:'no-store',
+        headers:{Accept:'application/json',...(o.headers||{})}});
+      if(r.status===401||r.status===403){goLogin();throw new Error('Session expired')}
       return r;
     }
-
-    async function verifySession(){
-      const r=await af(VERIFY_URL,{method:'GET'});
-      const raw=await r.text();let p=null;try{p=raw?JSON.parse(raw):null}catch(_){}
-      if(!r.ok||!p?.success){goLogin();throw new Error(p?.message||'Verify failed')}
-      S.member=p.member||p.session?.member||p.user||null;return p;
+    async function verify(){
+      const r=await af(VERIFY,{method:'GET'});
+      const raw=await r.text();let p;try{p=JSON.parse(raw)}catch(_){p=null}
+      if(!r.ok||!p?.success){goLogin();throw new Error('Verify failed')}
     }
-
     async function logout(){
-      try{await fetch(LOGOUT_URL,{method:'POST',credentials:'include'})}catch(_){}
-      clearSession();window.location.href=LOGIN_URL;
+      try{await fetch(LOGOUT,{method:'POST',credentials:'include'})}catch(_){}
+      clearS();location.href=LOGIN;
     }
 
-    function dbias(v){
-      const k=nk(v);
-      if(k==='yin')return'Yin';if(k==='yang')return'Yang';
-      if(k==='balance'||k==='balanced'||k==='taiji')return'Taiji';
-      return st(v,'Balanced');
-    }
-
-    function dpathShift(v){
-      const k=nk(v);
-      if(k==='yin_dominant')return'Yin Dominant';if(k==='yang_dominant')return'Yang Dominant';
-      if(k==='balanced'||k==='balance')return'Balanced';if(k==='taiji')return'Taiji';
-      return st(v,'—');
-    }
+    const dbias=v=>{const k=nk(v);return k==='yin'?'Yin':k==='yang'?'Yang':k.includes('taiji')||k==='balance'||k==='balanced'?'Taiji':st(v,'Balanced')};
+    const dpath=v=>{const k=nk(v);return k==='yin_dominant'?'Yin Dominant':k==='yang_dominant'?'Yang Dominant':k.includes('taiji')?'Taiji':k==='balanced'||k==='balance'?'Balanced':st(v,'—')};
 
     /* Force theme */
-    function applyForce(world){
-      const fk=nk(world.force_key||world.force_name||'');
-      const bias=nk(world.effective_bias||world.phase_bias||'');
+    function applyForce(w){
+      const fk=nk(w.force_key||w.force_name||''),bias=nk(w.effective_bias||w.phase_bias||'');
       document.body.classList.remove('yin','yang','taiji','storm');
-      if(fk.includes('yin')||bias==='yin') document.body.classList.add('yin');
-      else if(fk.includes('yang')||bias==='yang') document.body.classList.add('yang');
-      else if(fk.includes('storm')||fk.includes('thunder')||fk.includes('lightning')) document.body.classList.add('storm');
-      else if(fk.includes('taiji')||bias==='taiji'||bias==='balance') document.body.classList.add('taiji');
+      if(fk.includes('yin')||bias==='yin')document.body.classList.add('yin');
+      else if(fk.includes('yang')||bias==='yang')document.body.classList.add('yang');
+      else if(fk.includes('storm')||fk.includes('thunder')||fk.includes('lightning'))document.body.classList.add('storm');
+      else if(fk.includes('taiji')||bias==='taiji'||bias==='balance')document.body.classList.add('taiji');
     }
 
-    function getForceRGB(){
-      const pri=getComputedStyle(document.body).getPropertyValue('--force-pri').trim()||'#c8a96a';
-      const h=pri.replace('#','');
-      return h.length===6?[parseInt(h.slice(0,2),16),parseInt(h.slice(2,4),16),parseInt(h.slice(4,6),16)]:[200,169,106];
+    function getRGB(){
+      const cs=getComputedStyle(document.body);
+      return [
+        parseInt(cs.getPropertyValue('--FR').trim())||200,
+        parseInt(cs.getPropertyValue('--FGR').trim())||169,
+        parseInt(cs.getPropertyValue('--FB').trim())||106
+      ];
     }
 
-    /* Sky canvas */
+    /* Sky canvas — world atmosphere, no figure */
     function runSky(){
-      const cv=document.getElementById('skyCanvas');
-      if(!cv)return;
-      if(S.skyRaf){cancelAnimationFrame(S.skyRaf);S.skyRaf=null}
+      const cv=el('skyC');if(!cv)return;
+      if(S.raf){cancelAnimationFrame(S.raf);S.raf=null}
       const ctx=cv.getContext('2d');
       let t=0;
-      function resize(){cv.width=cv.offsetWidth;cv.height=cv.offsetHeight}
+      const resize=()=>{cv.width=cv.offsetWidth;cv.height=cv.offsetHeight};
       resize();
-      window.addEventListener('resize',resize);
+      const ro=new ResizeObserver(resize);ro.observe(cv.parentElement);
+
       function frame(){
         const W=cv.width,H=cv.height;
-        const [r,g,b]=getForceRGB();
-        t+=0.007;
+        const [r,g,b]=getRGB();
+        t+=0.006;
         ctx.clearRect(0,0,W,H);
-        // Sky gradient
-        const sky=ctx.createRadialGradient(W/2,H*.35,0,W/2,H*.35,W*.7);
-        sky.addColorStop(0,`rgba(${r},${g},${b},.08)`);
-        sky.addColorStop(.5,`rgba(${Math.floor(r*.25)},${Math.floor(g*.25)},${Math.floor(b*.25)},.04)`);
-        sky.addColorStop(1,'rgba(7,7,11,0)');
-        ctx.fillStyle=sky;ctx.fillRect(0,0,W,H);
-        // Nebula rings
-        for(let i=0;i<3;i++){
-          const a=t*.18+i*2.1;
-          const ox=W/2+Math.cos(a)*W*.07,oy=H/2+Math.sin(a*.65)*H*.045;
-          const gr=ctx.createRadialGradient(ox,oy,0,ox,oy,W*(.28+i*.1));
-          gr.addColorStop(0,`rgba(${r},${g},${b},${.04-i*.01})`);
+
+        /* Deep sky — layered radial glow from top-centre */
+        const topGlow=ctx.createRadialGradient(W*.5,0,0,W*.5,0,H*.95);
+        topGlow.addColorStop(0,`rgba(${r},${g},${b},.12)`);
+        topGlow.addColorStop(.4,`rgba(${r},${g},${b},.04)`);
+        topGlow.addColorStop(1,'rgba(7,7,11,0)');
+        ctx.fillStyle=topGlow;ctx.fillRect(0,0,W,H);
+
+        /* Slow moving nebula wisps */
+        for(let i=0;i<4;i++){
+          const ox=W*(.15+i*.22)+Math.sin(t*.12+i*1.5)*W*.06;
+          const oy=H*(.1+i*.08)+Math.cos(t*.08+i)*H*.04;
+          const gr=ctx.createRadialGradient(ox,oy,0,ox,oy,W*(.18+i*.05));
+          gr.addColorStop(0,`rgba(${r},${g},${b},${.05-i*.008})`);
           gr.addColorStop(1,'rgba(0,0,0,0)');
           ctx.fillStyle=gr;ctx.fillRect(0,0,W,H);
         }
-        // Stars
-        for(let i=0;i<90;i++){
-          const sx=((i*1237+42)%W+W)%W,sy=((i*793+84)%H+H)%H;
-          const pulse=.25+.75*Math.abs(Math.sin(t*(.35+i*.012)+i));
-          ctx.beginPath();ctx.arc(sx,sy,.4+(i%3)*.45,0,Math.PI*2);
-          ctx.fillStyle=`rgba(255,255,255,${pulse*.38})`;ctx.fill();
-        }
-        // Qi veins
-        ctx.save();ctx.globalAlpha=.055;
-        for(let i=0;i<6;i++){
-          const sx=W*(.08+i*.16),cp1x=W*(.15+i*.14)+Math.sin(t+i)*28;
-          const cp1y=H*.22+Math.cos(t*.5+i)*18,ex=sx+Math.sin(t*.28+i)*35;
-          ctx.beginPath();ctx.moveTo(sx,0);ctx.quadraticCurveTo(cp1x,cp1y,ex,H*.65);
-          ctx.strokeStyle=`rgba(${r},${g},${b},1)`;ctx.lineWidth=.7;ctx.stroke();
-        }
-        ctx.restore();
-        S.skyRaf=requestAnimationFrame(frame);
-      }
-      frame();
-    }
 
-    /* Figure canvas */
-    function loadFig(gender,cb){
-      const g=gender==='female'?'female':'male';
-      const rgb=g==='female'?[200,104,144]:[200,169,106];
-      if(S.figCache[g]){cb(S.figCache[g]);return}
-      S.figCbs[g].push(cb);
-      if(S.figLoad[g])return;
-      S.figLoad[g]=true;
-      const url=g==='female'?'/images/female-figure.svg':'/images/figure.svg';
-      const img=new Image();img.crossOrigin='anonymous';
-      img.onload=function(){
-        try{
-          const off=document.createElement('canvas');off.width=512;off.height=512;
-          const ctx2=off.getContext('2d');ctx2.drawImage(img,0,0,512,512);
-          const id=ctx2.getImageData(0,0,512,512);const d=id.data;
-          for(let i=0;i<d.length;i+=4){
-            if(d[i+3]>10&&d[i]<80&&d[i+1]<80&&d[i+2]<80){d[i]=rgb[0];d[i+1]=rgb[1];d[i+2]=rgb[2]}
-            else{d[i+3]=0}
+        /* Horizon band */
+        const hz=ctx.createLinearGradient(0,H*.55,0,H*.75);
+        hz.addColorStop(0,`rgba(${r},${g},${b},.04)`);
+        hz.addColorStop(1,'rgba(0,0,0,0)');
+        ctx.fillStyle=hz;ctx.fillRect(0,H*.55,W,H*.2);
+
+        /* Stars — two layers: distant small, closer occasional bright */
+        for(let i=0;i<120;i++){
+          const sx=((i*1279+37)%W+W)%W;
+          const sy=((i*811+113)%(H*.8)+H*.02);
+          const pulse=.15+.65*Math.abs(Math.sin(t*(.3+i*.009)+i));
+          const size=i%12===0?.9:i%5===0?.65:.35;
+          ctx.beginPath();ctx.arc(sx,sy,size,0,Math.PI*2);
+          ctx.fillStyle=`rgba(255,255,255,${pulse*(i%12===0?.55:.3)})`;ctx.fill();
+        }
+
+        /* Slow drifting horizontal qi streams */
+        ctx.save();
+        for(let i=0;i<3;i++){
+          const y=H*(.28+i*.15)+Math.sin(t*.25+i)*H*.04;
+          const alpha=.025+.015*Math.sin(t*.3+i);
+          ctx.beginPath();
+          ctx.moveTo(0,y);
+          for(let x=0;x<=W;x+=W/8){
+            ctx.lineTo(x,y+Math.sin(t*.4+x/W*Math.PI*2+i)*10);
           }
-          ctx2.putImageData(id,0,0);S.figCache[g]=off;
-        }catch(e){S.figCache[g]=null}
-        S.figLoad[g]=false;
-        const cbs=S.figCbs[g].slice();S.figCbs[g]=[];
-        cbs.forEach(fn=>fn(S.figCache[g]));
-      };
-      img.onerror=function(){
-        S.figCache[g]=null;S.figLoad[g]=false;
-        const cbs=S.figCbs[g].slice();S.figCbs[g]=[];
-        cbs.forEach(fn=>fn(null));
-      };
-      img.src=url;
-    }
-
-    function runFig(){
-      const cv=document.getElementById('figureCanvas');
-      if(!cv)return;
-      if(S.figRaf){cancelAnimationFrame(S.figRaf);S.figRaf=null}
-      const gender=S.member?.gender==='female'?'female':'male';
-      const gRGB=gender==='female'?[200,104,144]:[200,169,106];
-      const sz=cv.offsetWidth||210;
-      cv.width=sz;cv.height=sz;
-      const ctx=cv.getContext('2d');
-      const cx=sz/2,cy=sz/2,baseR=sz*.38;
-      let t=0,fig=null;
-      loadFig(gender,src=>{fig=src});
-      function frame(){
-        const [fr,fg,fb]=getForceRGB();
-        const [gR,gG,gB]=gRGB;
-        t+=0.016;
-        ctx.clearRect(0,0,sz,sz);
-        // Outer glow
-        const og=ctx.createRadialGradient(cx,cy,baseR*.5,cx,cy,baseR*1.7);
-        og.addColorStop(0,`rgba(${fr},${fg},${fb},.07)`);
-        og.addColorStop(1,'rgba(0,0,0,0)');
-        ctx.fillStyle=og;ctx.fillRect(0,0,sz,sz);
-        // Aura arcs
-        for(let i=4;i>=0;i--){
-          const p=.5+.5*Math.sin(t*.7+i*.4);
-          const a=(.11-i*.02)*p;
-          const ro=baseR+i*7+Math.sin(t*.5+i)*3;
-          ctx.beginPath();ctx.arc(cx,cy,ro,-Math.PI/2,Math.PI*2-Math.PI/2);
-          ctx.strokeStyle=`rgba(${fr},${fg},${fb},${a})`;
-          ctx.lineWidth=8-i;ctx.stroke();
-        }
-        // Rotating dots
-        ctx.save();ctx.translate(cx,cy);ctx.rotate(t*.28);
-        for(let i=0;i<6;i++){
-          const a=(i/6)*Math.PI*2;
-          const p=.4+.6*Math.abs(Math.sin(t*1.2+i));
-          ctx.beginPath();ctx.arc(Math.cos(a)*(baseR+4),Math.sin(a)*(baseR+4),2,0,Math.PI*2);
-          ctx.fillStyle=`rgba(${fr},${fg},${fb},${p*.5})`;ctx.fill();
+          ctx.strokeStyle=`rgba(${r},${g},${b},${alpha})`;
+          ctx.lineWidth=1.5;ctx.stroke();
         }
         ctx.restore();
-        // Figure
-        if(fig){
-          const fh=baseR*1.72,fw=fh,float=Math.sin(t*.7)*4;
-          ctx.save();
-          const fg2=ctx.createRadialGradient(cx,cy,0,cx,cy,baseR*.9);
-          fg2.addColorStop(0,`rgba(${gR},${gG},${gB},.18)`);
-          fg2.addColorStop(1,'rgba(0,0,0,0)');
-          ctx.fillStyle=fg2;ctx.fillRect(0,0,sz,sz);
-          ctx.drawImage(fig,cx-fw/2,cy-fh*.54+float,fw,fh);
-          ctx.restore();
-        }
-        S.figRaf=requestAnimationFrame(frame);
+
+        /* Central halo under phase name area */
+        const halo=ctx.createRadialGradient(W/2,H*.38,0,W/2,H*.38,W*.22);
+        halo.addColorStop(0,`rgba(${r},${g},${b},.1)`);
+        halo.addColorStop(.5,`rgba(${r},${g},${b},.03)`);
+        halo.addColorStop(1,'rgba(0,0,0,0)');
+        ctx.fillStyle=halo;ctx.fillRect(0,0,W,H);
+
+        S.raf=requestAnimationFrame(frame);
       }
       frame();
     }
 
-    /* Render */
-    function setText(id,v){const el=document.getElementById(id);if(el)el.textContent=st(v)}
-
-    function effectBody(world){
+    function effectBody(w){
       const p=[];
-      if(world.dashboard_effect_summary)p.push(world.dashboard_effect_summary);
-      else if(world.force_description)p.push(`${st(world.force_name)} governs the world current.`);
-      if(world.path_shift_key)p.push(`Path movement: ${dpathShift(world.path_shift_key)}.`);
-      return p.join(' ')||'The forces of heaven shape your cultivation.';
+      if(w.dashboard_effect_summary)p.push(w.dashboard_effect_summary);
+      else if(w.force_description)p.push(`${st(w.force_name)} governs the world current.`);
+      if(w.path_shift_key)p.push(`Path movement: ${dpath(w.path_shift_key)}.`);
+      return p.join(' ')||'The forces of heaven shape all cultivation.';
     }
 
-    function renderWorld(world){
-      applyForce(world);
-      setText('skyPhase',world.phase_name);
-      setText('skyForce',world.force_name);
-      setText('skySlt',`${st(world.slt_time_text)} SLT`);
-      setText('skyBias',dbias(world.effective_bias||world.phase_bias));
-      setText('c1Title',world.phase_name);
-      setText('c1Body',world.phase_omen_text||'The heavens hold their reading in silence.');
-      setText('c1Phase',world.phase_name);
-      setText('c1Force',world.force_name);
-      setText('c1Phenom',world.has_active_phenomenon?world.phenomenon_name:'Dormant');
-      setText('c1Era',world.era_name||world.year_title||'—');
-      setText('c2Title',world.dashboard_effect_label||'Heavenly Decree');
-      setText('c2Body',effectBody(world));
-      setText('c2Path',dpathShift(world.path_shift_key));
-      setText('c2Bias',dbias(world.effective_bias||world.phase_bias));
-      setText('c2Year',world.year_title||world.era_name||'—');
-      const pw=document.getElementById('phenomWrap');
-      if(world.has_active_phenomenon&&world.phenomenon_name){
-        setText('phenomName',world.phenomenon_name);
-        setText('phenomDesc',world.phenomenon_omen_text||world.dashboard_effect_summary||`${world.phenomenon_name} is shaping the heavens.`);
-        pw.classList.remove('hidden');
-      } else { pw.classList.add('hidden'); }
+    function renderWorld(w){
+      applyForce(w);
+      tx('skyPhase',w.phase_name);tx('skyForce',w.force_name);
+      tx('skySlt',`${st(w.slt_time_text)} SLT`);
+      tx('skyBias',dbias(w.effective_bias||w.phase_bias));
+      if(w.slt_datetime_text)tx('skyTs',w.slt_datetime_text+' SLT');
+      tx('c1T',w.phase_name);
+      tx('c1B',w.phase_omen_text||'The heavens hold their reading in silence.');
+      tx('r1a',w.phase_name);tx('r1b',w.force_name);
+      tx('r1c',w.has_active_phenomenon?w.phenomenon_name:'Dormant');
+      tx('r1d',w.era_name||w.year_title||'—');
+      tx('c2T',w.dashboard_effect_label||'Heavenly Decree');
+      tx('c2B',effectBody(w));
+      tx('r2a',dpath(w.path_shift_key));
+      tx('r2b',dbias(w.effective_bias||w.phase_bias));
+      tx('r2c',w.year_title||w.era_name||'—');
+      if(w.has_active_phenomenon&&w.phenomenon_name){
+        tx('pName',w.phenomenon_name);
+        tx('pBody',w.phenomenon_omen_text||w.dashboard_effect_summary||`${w.phenomenon_name} is active across the heavens.`);
+        h('elPhenom',true);
+      } else { h('elPhenom',false); }
       runSky();
-      runFig();
     }
 
-    /* Load */
-    async function loadCelestial(opts={}){
-      const silent=opts.silent||false;
-      const LE=document.getElementById('loadingEl');
-      const EE=document.getElementById('errorEl');
-      const PE=document.getElementById('pageEl');
-      if(!silent){LE.classList.remove('hidden');EE.classList.add('hidden');PE.classList.add('hidden')}
+    async function load(silent=false){
+      if(!silent){h('elLoad',true);h('elErr',false);h('elPage',false)}
       try{
-        const r=await af(CELESTIAL_URL,{method:'GET'});
-        const raw=await r.text();let p=null;try{p=raw?JSON.parse(raw):null}catch(_){}
+        const r=await af(CEL,{method:'GET'});
+        const raw=await r.text();let p;try{p=JSON.parse(raw)}catch(_){p=null}
         if(!r.ok||!p?.success||!p?.world)throw new Error(p?.details||p?.error||p?.message||`HTTP ${r.status}`);
-        S.world=p.world;
         renderWorld(p.world);
-        if(!silent){LE.classList.add('hidden');PE.classList.remove('hidden')}
+        if(!silent){h('elLoad',false);h('elPage',true)}
       }catch(err){
-        console.error('Celestial error:',err);
-        if(!silent){
-          LE.classList.add('hidden');
-          document.getElementById('errorMsg').textContent=`Unable to read the heavens: ${err.message}`;
-          EE.classList.remove('hidden');
-        }
+        console.error(err);
+        if(!silent){h('elLoad',false);tx('errMsg','Unable to read the heavens: '+err.message);h('elErr',true)}
       }
     }
 
     function startRefresh(){
-      if(S.refreshTimer)clearInterval(S.refreshTimer);
-      S.refreshTimer=setInterval(async()=>{
-        if(S.refreshFlying)return;S.refreshFlying=true;
-        try{await loadCelestial({silent:true})}finally{S.refreshFlying=false}
+      if(S.ri)clearInterval(S.ri);
+      S.ri=setInterval(async()=>{
+        if(S.fly)return;S.fly=true;
+        try{await load(true)}finally{S.fly=false}
       },60000);
     }
 
     async function boot(){
-      try{
-        await verifySession();
-        await loadCelestial({silent:false});
-        startRefresh();
-      }catch(err){console.error('Boot error:',err)}
+      try{await verify();await load(false);startRefresh()}
+      catch(e){console.error(e)}
     }
 
-    document.getElementById('refreshBtn').addEventListener('click',()=>loadCelestial({silent:false}));
-    document.getElementById('logout-button').addEventListener('click',e=>{e.preventDefault();logout()});
+    el('btnRefresh').addEventListener('click',()=>load(false));
+    el('btn-logout').addEventListener('click',e=>{e.preventDefault();logout()});
     document.addEventListener('DOMContentLoaded',boot);
-    window.addEventListener('beforeunload',()=>{if(S.refreshTimer)clearInterval(S.refreshTimer)});
+    window.addEventListener('beforeunload',()=>{if(S.ri)clearInterval(S.ri)});
   </script>
 </body>
 </html>
