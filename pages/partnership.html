@@ -3,1591 +3,414 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Partnership Hall | The Ascendant Path</title>
+  <title>Hall of Bonds | The Ascendant Path</title>
   <link rel="stylesheet" href="/css/style.css" />
   <style>
-    .partnership-page {
-      width: min(1280px, calc(100% - 2rem));
-      margin: 1.5rem auto 4rem;
-      display: grid;
-      gap: 1.15rem;
-      position: relative;
-      z-index: 3;
-    }
+    * { box-sizing: border-box; }
+    html, body { min-height: 100%; }
+    body { margin: 0; background: #07070b; color: #ddd5c8; }
+    a { color: inherit; text-decoration: none; }
+    button, input, select { font: inherit; }
+    .is-hidden { display: none !important; }
 
-    .glass-card {
-      position: relative;
-      overflow: hidden;
-      border-radius: 20px;
-      border: 1px solid rgba(255, 255, 255, 0.08);
-      background:
-        linear-gradient(180deg, rgba(14, 20, 34, 0.96), rgba(8, 12, 22, 0.98)),
-        radial-gradient(circle at top right, rgba(90, 130, 255, 0.10), transparent 28%);
-      box-shadow: 0 18px 48px rgba(0, 0, 0, 0.28);
-    }
+    .site-shell { width: min(1280px, calc(100% - 2rem)); margin: 0 auto; position: relative; z-index: 2; }
+    .site-header { padding-top: 1rem; position: relative; z-index: 10; }
 
-    .hero-card {
-      min-height: 255px;
-      padding: 1.5rem;
-      display: grid;
-      gap: 0.75rem;
-      align-content: end;
-      background:
-        linear-gradient(180deg, rgba(6, 9, 16, 0.22), rgba(6, 9, 16, 0.84)),
-        radial-gradient(circle at 18% 20%, rgba(234, 215, 170, 0.10), transparent 24%),
-        radial-gradient(circle at 80% 18%, rgba(111, 151, 255, 0.14), transparent 24%);
+    .dashboard-nav {
+      width: fit-content; max-width: 100%; margin: 0 auto;
+      display: flex; align-items: center; justify-content: center;
+      gap: 0.55rem; flex-wrap: wrap; padding: 0.75rem 0.9rem; border-radius: 999px;
+      background: linear-gradient(180deg, rgba(255,255,255,0.03), rgba(255,255,255,0.01)), rgba(6,10,18,0.74);
+      border: 1px solid rgba(255,255,255,0.06); box-shadow: 0 14px 34px rgba(0,0,0,0.22); backdrop-filter: blur(10px);
     }
+    .dashboard-nav a { padding: 0.62rem 0.92rem; border-radius: 999px; border: 1px solid rgba(255,255,255,0.04); background: rgba(255,255,255,0.02); color: rgba(221,213,200,0.76); font-size: 0.84rem; transition: 0.18s ease; }
+    .dashboard-nav a:hover { color: #ddd5c8; border-color: rgba(200,169,106,0.22); background: rgba(255,255,255,0.04); }
+    .dashboard-nav a.active { color: #fff; border-color: rgba(200,169,106,0.28); background: rgba(200,169,106,0.10); }
 
-    .hero-eyebrow,
-    .section-label,
-    .shrine-label,
-    .rail-label {
-      display: inline-block;
-      font-size: 0.74rem;
-      letter-spacing: 0.14em;
-      text-transform: uppercase;
-      color: var(--blue-soft, #9ab6ff);
-    }
+    .hall-page { margin: 1.5rem auto 4rem; display: grid; gap: 1.5rem; }
 
-    .hero-title {
-      margin: 0;
-      font-size: clamp(2.2rem, 4vw, 3.8rem);
-      line-height: 1;
-      color: #fff;
-    }
+    .hall-header { text-align: center; padding: 2rem 1rem 1rem; }
+    .hall-eyebrow { font-size: 0.72rem; letter-spacing: 0.18em; text-transform: uppercase; color: #c8a96a; margin-bottom: 0.5rem; }
+    .hall-title { margin: 0 0 0.5rem; font-size: clamp(2rem, 4vw, 3.2rem); line-height: 1; color: #fff; }
+    .hall-subtitle { margin: 0 auto; font-size: 0.95rem; line-height: 1.6; color: rgba(221,213,200,0.6); max-width: 48ch; }
 
-    .hero-subtitle,
-    .section-copy,
-    .shrine-copy,
-    .request-copy,
-    .empty-copy {
-      margin: 0;
-      line-height: 1.7;
-      color: rgba(241, 244, 255, 0.86);
-    }
+    .page-message { padding: 0.85rem 1rem; border-radius: 14px; border: 1px solid rgba(200,169,106,0.2); background: rgba(200,169,106,0.08); color: #ddd5c8; font-size: 0.88rem; line-height: 1.6; text-align: center; }
 
-    .hero-line {
-      color: rgba(210, 220, 255, 0.78);
-      font-size: 0.95rem;
-      letter-spacing: 0.03em;
-    }
+    .bonds-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 1rem; }
 
-    .page-message {
-      padding: 0.95rem 1rem;
-      border-radius: 14px;
-      border: 1px solid rgba(142, 168, 255, 0.18);
-      background: rgba(40, 57, 102, 0.22);
-      color: rgba(232, 238, 255, 0.92);
-      line-height: 1.6;
-    }
-
-    .page-message.is-hidden {
-      display: none;
-    }
-
-    .summary-strip {
-      padding: 1rem 1.1rem;
-      display: grid;
-      gap: 0.85rem;
-    }
-
-    .summary-grid {
-      display: grid;
-      gap: 0.8rem;
-      grid-template-columns: repeat(4, minmax(0, 1fr));
-    }
-
-    .summary-pill {
-      padding: 0.95rem;
-      border-radius: 16px;
-      border: 1px solid rgba(255,255,255,0.08);
-      background: rgba(255,255,255,0.04);
-      display: grid;
-      gap: 0.3rem;
-    }
-
-    .summary-pill small {
-      text-transform: uppercase;
-      letter-spacing: 0.08em;
-      color: rgba(188, 203, 248, 0.72);
-      font-size: 0.72rem;
-    }
-
-    .summary-pill strong {
-      color: #fff;
-      font-size: 1.18rem;
-      line-height: 1.2;
-    }
-
-    .summary-pill div {
-      color: rgba(226, 232, 255, 0.74);
-      font-size: 0.9rem;
-      line-height: 1.45;
-    }
-
-    .section-card {
-      padding: 1.15rem;
-      display: grid;
-      gap: 1rem;
-    }
-
-    .section-head {
-      display: grid;
-      gap: 0.25rem;
-    }
-
-    .section-title,
-    .shrine-title,
-    .rail-title,
-    .form-title {
-      margin: 0;
-      color: #fff;
-      font-size: 1.2rem;
-    }
-
-    .focus-shrine {
-      padding: 1.15rem;
-      display: grid;
-      gap: 1rem;
-      background:
-        linear-gradient(180deg, rgba(17, 24, 40, 0.98), rgba(8, 12, 22, 1)),
-        radial-gradient(circle at top right, rgba(118, 156, 255, 0.12), transparent 38%);
-    }
-
-    .shrine-shell,
-    .empty-shrine {
-      border-radius: 18px;
-      border: 1px solid rgba(255,255,255,0.08);
-      background: rgba(255,255,255,0.035);
-      padding: 1rem;
-      display: grid;
-      gap: 0.9rem;
-    }
-
-    .shrine-head {
-      display: flex;
-      align-items: flex-start;
-      justify-content: space-between;
-      gap: 0.75rem;
-    }
-
-    .shrine-name {
-      margin: 0.25rem 0 0;
-      font-size: clamp(1.45rem, 2.3vw, 2.1rem);
-      color: #fff;
-      line-height: 1.08;
-    }
-
-    .status-pill {
-      display: inline-flex;
-      align-items: center;
-      gap: 0.45rem;
-      width: fit-content;
-      padding: 0.48rem 0.78rem;
-      border-radius: 999px;
-      border: 1px solid rgba(255,255,255,0.12);
-      background: rgba(255,255,255,0.06);
-      color: #fff;
-      font-size: 0.75rem;
-      letter-spacing: 0.12em;
-      text-transform: uppercase;
-      font-weight: 700;
-    }
-
-    .shrine-focus-line {
-      color: rgba(226, 232, 255, 0.8);
-      font-size: 0.95rem;
-      line-height: 1.55;
-    }
-
-    .shrine-note {
-      padding: 0.95rem;
-      border-radius: 16px;
-      border: 1px solid rgba(255,255,255,0.08);
-      background: rgba(255,255,255,0.03);
-      color: rgba(226, 232, 255, 0.8);
-      line-height: 1.65;
-    }
-
-    .button-row {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 0.7rem;
-    }
-
-    .action-button {
-      appearance: none;
-      border: 1px solid rgba(142, 168, 255, 0.18);
-      background: rgba(76, 104, 184, 0.2);
-      color: #fff;
-      padding: 0.85rem 1rem;
-      border-radius: 12px;
-      cursor: pointer;
-      text-decoration: none;
-      font: inherit;
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      transition: 0.2s ease;
-    }
-
-    .action-button:hover {
-      transform: translateY(-1px);
-      background: rgba(96, 126, 214, 0.26);
-    }
-
-    .action-button.is-danger {
-      background: rgba(156, 52, 52, 0.22);
-      border-color: rgba(216, 118, 118, 0.22);
-    }
-
-    .action-button.is-ghost {
-      background: rgba(255,255,255,0.05);
-      border-color: rgba(255,255,255,0.10);
-    }
-
-    .action-button:disabled {
-      opacity: 0.55;
-      cursor: not-allowed;
-      transform: none;
-    }
-
-    .partnership-rail-wrap {
-      display: grid;
-      gap: 0.9rem;
-    }
-
-    .partnership-rail {
-      display: flex;
-      gap: 0.85rem;
-      overflow-x: auto;
-      padding-bottom: 0.3rem;
-      scrollbar-width: thin;
-    }
-
-    .partnership-rail::-webkit-scrollbar {
-      height: 10px;
-    }
-
-    .partnership-rail::-webkit-scrollbar-thumb {
-      background: rgba(154, 182, 255, 0.28);
-      border-radius: 999px;
-    }
-
-    .rail-card {
-      min-width: 220px;
-      max-width: 220px;
-      padding: 0.95rem;
-      border-radius: 16px;
-      border: 1px solid rgba(255,255,255,0.08);
-      background: rgba(255,255,255,0.035);
-      display: grid;
-      gap: 0.55rem;
-      cursor: pointer;
-      transition: 0.2s ease;
-      flex: 0 0 auto;
-    }
-
-    .rail-card:hover {
-      transform: translateY(-2px);
-      border-color: rgba(142, 168, 255, 0.16);
-      background: rgba(255,255,255,0.05);
-    }
-
-    .rail-card.is-selected {
-      border-color: rgba(234, 215, 170, 0.26);
-      box-shadow: 0 0 0 1px rgba(234, 215, 170, 0.08) inset;
-      background: rgba(255,255,255,0.06);
-    }
-
-    .rail-card-head {
-      display: flex;
-      justify-content: space-between;
-      align-items: flex-start;
-      gap: 0.75rem;
-    }
-
-    .rail-card-name {
-      margin: 0;
-      color: #fff;
-      font-size: 1rem;
-      line-height: 1.35;
-    }
-
-    .rail-card-sub {
-      color: rgba(216, 226, 255, 0.74);
-      font-size: 0.88rem;
-      line-height: 1.45;
-    }
-
-    .rail-status {
-      display: inline-flex;
-      width: fit-content;
-      padding: 0.42rem 0.7rem;
-      border-radius: 999px;
-      border: 1px solid rgba(255,255,255,0.1);
-      background: rgba(255,255,255,0.05);
-      color: rgba(235, 240, 255, 0.92);
-      font-size: 0.72rem;
-      letter-spacing: 0.12em;
-      text-transform: uppercase;
-      font-weight: 700;
-    }
-
-    .rail-status.is-active {
-      border-color: rgba(90, 200, 255, 0.28);
-    }
-
-    .rail-status.is-incoming {
-      border-color: rgba(234, 215, 170, 0.28);
-    }
-
-    .rail-status.is-outgoing {
-      border-color: rgba(180, 150, 255, 0.28);
-    }
-
-    .rail-status.is-historical {
-      border-color: rgba(255,255,255,0.14);
-      opacity: 0.88;
-    }
-
-    .rail-card-copy {
-      color: rgba(226, 232, 255, 0.78);
-      font-size: 0.9rem;
-      line-height: 1.55;
-    }
-
-    .empty-panel,
-    .request-form-card {
-      padding: 1rem;
-      border-radius: 16px;
-      border: 1px solid rgba(255,255,255,0.08);
-      background: rgba(255,255,255,0.035);
-      display: grid;
-      gap: 0.45rem;
-    }
-
-    .empty-panel small,
-    .request-form-card label {
-      text-transform: uppercase;
-      letter-spacing: 0.08em;
-      color: rgba(188, 203, 248, 0.72);
-      font-size: 0.72rem;
-    }
-
-    .empty-panel strong {
-      color: #fff;
-      font-size: 1.04rem;
-      line-height: 1.35;
-    }
-
-    .empty-panel div {
-      color: rgba(226, 232, 255, 0.78);
-      line-height: 1.55;
-      font-size: 0.93rem;
-    }
-
-    .request-layout {
-      display: grid;
-      grid-template-columns: minmax(0, 1fr) minmax(280px, 0.9fr);
-      gap: 1rem;
-    }
-
-    .partnership-form {
-      display: grid;
-      gap: 0.9rem;
-    }
-
-    .form-grid {
-      display: grid;
-      gap: 0.9rem;
-    }
-
-    .form-group {
-      display: grid;
-      gap: 0.45rem;
-    }
-
-    .form-group input {
-      width: 100%;
-      box-sizing: border-box;
-      padding: 0.9rem 1rem;
-      border-radius: 12px;
-      border: 1px solid rgba(255,255,255,0.12);
-      background: rgba(255,255,255,0.04);
-      color: #fff;
-      outline: none;
-    }
-
-    .form-group input::placeholder {
-      color: rgba(210, 220, 255, 0.45);
-    }
-
-    .request-side-note {
-      padding: 1rem;
-      border-radius: 16px;
-      background: rgba(255,255,255,0.03);
-      border: 1px solid rgba(255,255,255,0.06);
-      color: rgba(226, 232, 255, 0.8);
-      line-height: 1.65;
-    }
-
-    nav {
-      width: min(1280px, calc(100% - 2rem));
-      margin: 1rem auto 0;
-      display: flex;
-      flex-wrap: wrap;
-      gap: 0.75rem;
-    }
-
-    nav a {
-      color: rgba(230, 236, 255, 0.88);
-      text-decoration: none;
-      padding: 0.7rem 0.95rem;
-      border-radius: 12px;
-      background: rgba(255,255,255,0.04);
+    .bond-card {
+      position: relative; overflow: hidden; border-radius: 24px;
       border: 1px solid rgba(255,255,255,0.07);
+      background: linear-gradient(160deg, rgba(13,13,24,0.95), rgba(8,8,16,0.98));
+      box-shadow: 0 20px 50px rgba(0,0,0,0.3);
+      cursor: pointer; transition: transform 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease;
     }
+    .bond-card:hover { transform: translateY(-3px); border-color: rgba(200,169,106,0.22); box-shadow: 0 28px 60px rgba(0,0,0,0.36); }
+    .bond-card.is-selected { border-color: rgba(200,169,106,0.35); box-shadow: 0 0 0 2px rgba(200,169,106,0.15), 0 20px 50px rgba(0,0,0,0.3); }
+    .bond-card.is-pending { border-color: rgba(142,168,255,0.2); }
+    .bond-card.is-historical { opacity: 0.6; }
 
-    footer {
-      width: min(1280px, calc(100% - 2rem));
-      margin: 2rem auto;
-      color: rgba(206, 216, 248, 0.7);
-      text-align: center;
-      font-size: 0.92rem;
+    .bond-rank { position: absolute; top: 14px; left: 14px; width: 28px; height: 28px; border-radius: 50%; background: rgba(200,169,106,0.12); border: 1px solid rgba(200,169,106,0.25); display: flex; align-items: center; justify-content: center; font-size: 0.7rem; font-weight: 700; color: #c8a96a; }
+
+    .bond-status-badge { position: absolute; top: 14px; right: 14px; padding: 0.28rem 0.65rem; border-radius: 999px; font-size: 0.65rem; text-transform: uppercase; letter-spacing: 0.1em; font-weight: 600; }
+    .bond-status-badge.active { background: rgba(85,187,102,0.15); border: 1px solid rgba(85,187,102,0.3); color: #55bb66; }
+    .bond-status-badge.pending { background: rgba(142,168,255,0.12); border: 1px solid rgba(142,168,255,0.25); color: #8ea8ff; }
+    .bond-status-badge.historical { background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); color: rgba(221,213,200,0.5); }
+
+    .bond-figures { display: flex; align-items: flex-end; justify-content: center; gap: 0; padding: 2.2rem 1.5rem 0; min-height: 120px; }
+    .bond-figure { display: flex; flex-direction: column; align-items: center; gap: 0.3rem; flex: 1; }
+
+    .bond-figure-avatar {
+      width: 52px; height: 52px; border-radius: 50%;
+      border: 1.5px solid rgba(200,169,106,0.3);
+      background: radial-gradient(circle at top, rgba(200,169,106,0.12), rgba(8,8,16,1));
+      display: flex; align-items: center; justify-content: center;
+      font-size: 1.05rem; font-weight: 700; color: #c8a96a; font-family: 'Cinzel', serif;
+      position: relative;
     }
+    .bond-figure-avatar.female { border-color: rgba(200,104,144,0.3); background: radial-gradient(circle at top, rgba(200,104,144,0.12), rgba(8,8,16,1)); color: #c86890; }
+    .bond-figure-avatar::after { content: ''; position: absolute; bottom: 1px; right: 1px; width: 10px; height: 10px; border-radius: 50%; background: transparent; border: 1.5px solid transparent; }
+    .bond-figure-avatar.is-online::after { background: #55bb66; border-color: #07070b; box-shadow: 0 0 6px rgba(85,187,102,0.6); }
 
-    .is-hidden {
-      display: none !important;
-    }
+    .bond-figure-name { font-size: 0.78rem; color: #ddd5c8; text-align: center; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 110px; }
+    .bond-figure-realm { font-size: 0.62rem; color: rgba(221,213,200,0.45); text-align: center; text-transform: uppercase; letter-spacing: 0.08em; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 110px; }
 
-    @media (max-width: 980px) {
-      .summary-grid {
-        grid-template-columns: repeat(2, minmax(0, 1fr));
-      }
+    .bond-connector { display: flex; flex-direction: column; align-items: center; gap: 0.2rem; padding-bottom: 0.5rem; flex-shrink: 0; width: 60px; }
+    .bond-connector-line { width: 40px; height: 1px; background: linear-gradient(90deg, transparent, rgba(200,169,106,0.4), transparent); }
+    .bond-connector-icon { font-size: 0.9rem; color: rgba(200,169,106,0.5); }
 
-      .request-layout {
-        grid-template-columns: 1fr;
-      }
-    }
+    .bond-body { padding: 1rem 1.25rem 1.25rem; display: grid; gap: 0.75rem; }
 
-    @media (max-width: 760px) {
-      .partnership-page,
-      nav,
-      footer {
-        width: min(100% - 1rem, 1280px);
-      }
+    .bond-stage-row { display: flex; align-items: center; justify-content: space-between; gap: 0.5rem; }
+    .bond-stage-name { font-size: 0.88rem; font-weight: 600; color: #fff; font-family: 'Cinzel', serif; letter-spacing: 0.04em; }
+    .bond-percent { font-size: 0.78rem; color: #c8a96a; font-weight: 600; }
 
-      .hero-card,
-      .section-card,
-      .focus-shrine,
-      .summary-strip {
-        padding: 1rem;
-      }
+    .bond-bar-track { height: 3px; border-radius: 2px; background: rgba(255,255,255,0.06); overflow: hidden; }
+    .bond-bar-fill { height: 100%; border-radius: 2px; background: linear-gradient(90deg, #c8a96a, #ead7aa); transition: width 0.6s ease; }
 
-      .summary-grid {
-        grid-template-columns: 1fr;
-      }
+    .bond-resonance-row { display: flex; align-items: center; gap: 0.5rem; }
+    .bond-resonance-dot { width: 6px; height: 6px; border-radius: 50%; flex-shrink: 0; }
+    .bond-resonance-dot.resonant { background: #55bb66; box-shadow: 0 0 6px rgba(85,187,102,0.7); }
+    .bond-resonance-dot.nearby   { background: #c8a96a; box-shadow: 0 0 6px rgba(200,169,106,0.5); }
+    .bond-resonance-dot.offline  { background: rgba(255,255,255,0.15); }
+    .bond-resonance-label { font-size: 0.72rem; color: rgba(221,213,200,0.55); text-transform: uppercase; letter-spacing: 0.1em; }
 
-      .rail-card {
-        min-width: 200px;
-        max-width: 200px;
-      }
-    }
+    .bond-actions { display: flex; gap: 0.5rem; flex-wrap: wrap; }
+    .bond-btn { flex: 1; min-height: 36px; border-radius: 10px; cursor: pointer; font-size: 0.78rem; font-weight: 600; letter-spacing: 0.04em; transition: 0.18s ease; border: 1px solid rgba(200,169,106,0.25); background: rgba(200,169,106,0.1); color: #c8a96a; }
+    .bond-btn:hover { background: rgba(200,169,106,0.18); transform: translateY(-1px); }
+    .bond-btn.is-danger { border-color: rgba(204,68,68,0.25); background: rgba(204,68,68,0.08); color: #cc4444; }
+    .bond-btn.is-danger:hover { background: rgba(204,68,68,0.14); }
+    .bond-btn.is-accept { border-color: rgba(85,187,102,0.3); background: rgba(85,187,102,0.1); color: #55bb66; }
+    .bond-btn.is-accept:hover { background: rgba(85,187,102,0.18); }
 
-    /* ── Celestial Feed Ticker ── */
+    .request-panel { background: rgba(13,13,24,0.8); border: 1px solid rgba(255,255,255,0.07); border-radius: 24px; padding: 1.25rem 1.4rem; backdrop-filter: blur(8px); }
+    .request-panel-title { font-size: 0.72rem; text-transform: uppercase; letter-spacing: 0.14em; color: rgba(221,213,200,0.4); margin-bottom: 0.85rem; }
+    .request-form { display: grid; gap: 0.65rem; }
+    .request-fields { display: grid; grid-template-columns: 1fr 1fr auto auto; gap: 0.55rem; align-items: stretch; }
+    .request-input { min-height: 42px; border-radius: 12px; border: 1px solid rgba(255,255,255,0.08); background: rgba(255,255,255,0.04); color: #fff; padding: 0.6rem 0.85rem; outline: none; transition: 0.18s ease; font-size: 0.84rem; }
+    .request-input::placeholder { color: rgba(221,213,200,0.3); }
+    .request-input:focus { border-color: rgba(200,169,106,0.3); box-shadow: 0 0 0 3px rgba(200,169,106,0.07); }
+    .request-btn { min-height: 42px; padding: 0 1rem; border-radius: 12px; cursor: pointer; font-size: 0.82rem; font-weight: 600; transition: 0.18s ease; }
+    .request-btn.primary { border: 1px solid rgba(200,169,106,0.28); background: rgba(200,169,106,0.14); color: #fff; }
+    .request-btn.primary:hover { background: rgba(200,169,106,0.22); }
+    .request-btn.secondary { border: 1px solid rgba(255,255,255,0.08); background: rgba(255,255,255,0.04); color: rgba(221,213,200,0.6); }
+    .request-btn.secondary:hover { background: rgba(255,255,255,0.08); color: #ddd5c8; }
+    .request-btn:disabled { opacity: 0.5; cursor: wait; }
+
+    .hall-empty { text-align: center; padding: 3rem 1rem; border: 1px dashed rgba(255,255,255,0.08); border-radius: 24px; background: rgba(255,255,255,0.02); }
+    .hall-empty-title { font-size: 1.1rem; color: #fff; margin: 0 0 0.4rem; }
+    .hall-empty-copy { font-size: 0.88rem; color: rgba(221,213,200,0.5); margin: 0; }
+
     #news-ticker-bar { font-family: 'Cinzel', serif; }
     .ticker-item { display:inline-flex;align-items:center;padding:0 24px;font-size:11px;white-space:nowrap;gap:8px;border-right:1px solid rgba(200,169,106,0.12);font-family:'Cinzel',serif;letter-spacing:0.04em; }
-    .ticker-item.celestial { color:#c8a96a; }
-    .ticker-item.notice { color:rgba(221,213,200,0.8); }
-    .ticker-item.notice-urgent { color:#c86890; }
+    .ticker-item.celestial { color:#c8a96a; } .ticker-item.notice { color:rgba(221,213,200,0.8); } .ticker-item.notice-urgent { color:#c86890; }
     .ticker-dot { width:5px;height:5px;border-radius:50%;display:inline-block;flex-shrink:0; }
-    .ticker-dot.celestial { background:#c8a96a; }
-    .ticker-dot.notice { background:rgba(221,213,200,0.4); }
-    .ticker-dot.notice-urgent { background:#c86890; }
+    .ticker-dot.celestial { background:#c8a96a; } .ticker-dot.notice { background:rgba(221,213,200,0.4); } .ticker-dot.notice-urgent { background:#c86890; }
+
+    @media (max-width: 700px) {
+      .request-fields { grid-template-columns: 1fr; }
+      .bonds-grid { grid-template-columns: 1fr; }
+    }
   </style>
 </head>
 <body>
   <div class="cloud-layer"></div>
   <div class="rune-layer"></div>
-  <div class="lightning-flash"></div>
 
-  <nav>
-    <a href="/index.html">Home</a>
-    <a href="/dashboard.html">Dashboard</a>
-    <a href="/elements.html">Elements</a>
-    <a href="/partnership.html">Partnership</a>
-    <a href="/index.html" id="logout-button">Logout</a>
-  </nav>
-
-    <!-- Celestial Feed -->
-    <div id="news-ticker-bar" style="width:100%;background:#0d0d18;border-top:0.5px solid rgba(200,169,106,0.15);border-bottom:0.5px solid rgba(200,169,106,0.15);height:34px;display:flex;align-items:center;overflow:hidden;">
-      <div id="ticker-label" style="flex-shrink:0;padding:0 14px;font-size:9px;letter-spacing:0.14em;text-transform:uppercase;color:#c8a96a;font-weight:600;border-right:0.5px solid rgba(200,169,106,0.25);height:100%;display:flex;align-items:center;background:#0d0d18;white-space:nowrap;font-family:'Cinzel',serif;">⬡ Celestial Feed</div>
-      <div style="overflow:hidden;flex:1;position:relative;height:100%;">
-        <div id="ticker-track" style="display:flex;align-items:center;height:100%;position:absolute;white-space:nowrap;"></div>
+  <div class="site-shell">
+    <header class="site-header">
+      <nav class="dashboard-nav" aria-label="Global">
+        <a href="/index.html">Home</a>
+        <a href="/lore.html">Lore</a>
+        <a href="/dashboard.html">Dashboard</a>
+        <a href="/partnership.html" class="active">Hall of Bonds</a>
+        <a href="/.netlify/functions/logout" id="logout-button">Logout</a>
+      </nav>
+      <div id="news-ticker-bar" style="width:100%;background:#0d0d18;border-top:0.5px solid rgba(200,169,106,0.15);border-bottom:0.5px solid rgba(200,169,106,0.15);height:34px;display:flex;align-items:center;overflow:hidden;">
+        <div id="ticker-label" style="flex-shrink:0;padding:0 14px;font-size:9px;letter-spacing:0.14em;text-transform:uppercase;color:#c8a96a;font-weight:600;border-right:0.5px solid rgba(200,169,106,0.25);height:100%;display:flex;align-items:center;background:#0d0d18;white-space:nowrap;font-family:'Cinzel',serif;">⬡ Celestial Feed</div>
+        <div style="overflow:hidden;flex:1;position:relative;height:100%;"><div id="ticker-track" style="display:flex;align-items:center;height:100%;position:absolute;white-space:nowrap;"></div></div>
       </div>
-    </div>
+    </header>
 
-  <main class="partnership-page">
-    <section class="glass-card hero-card">
-      <span class="hero-eyebrow">Partnership Hall</span>
-      <h1 class="hero-title">The Hall of Bound Records</h1>
-      <div class="hero-line" id="hero-subtitle">@loading</div>
-      <p class="hero-subtitle" id="hero-summary">
-        Loading your partnership hall...
-      </p>
-      <div class="hero-line" id="hero-focus-line">Current Focus: None</div>
-    </section>
-
-    <div class="page-message is-hidden" id="page-message"></div>
-
-    <section class="glass-card summary-strip">
-      <div class="section-head">
-        <span class="section-label">Hall Summary</span>
-        <h2 class="section-title">Bound lines at a glance</h2>
-        <p class="section-copy">
-          The hall keeps the chosen record at the center while the rail below lets you move between bonds and requests.
-        </p>
+    <main class="hall-page">
+      <div class="hall-header">
+        <div class="hall-eyebrow">Cultivation Bonds</div>
+        <h1 class="hall-title">Hall of Bonds</h1>
+        <p class="hall-subtitle">The bonds forged on this path, honoured by time and shared cultivation.</p>
       </div>
 
-      <div class="summary-grid">
-        <div class="summary-pill">
-          <small>Active Partnerships</small>
-          <strong id="summary-active-count">0</strong>
-          <div id="summary-active-note">No active records.</div>
-        </div>
+      <div class="page-message is-hidden" id="page-message"></div>
 
-        <div class="summary-pill">
-          <small>Incoming Requests</small>
-          <strong id="summary-incoming-count">0</strong>
-          <div id="summary-incoming-note">No incoming petitions.</div>
-        </div>
-
-        <div class="summary-pill">
-          <small>Outgoing Requests</small>
-          <strong id="summary-outgoing-count">0</strong>
-          <div id="summary-outgoing-note">No outgoing petitions.</div>
-        </div>
-
-        <div class="summary-pill">
-          <small>Current Focus</small>
-          <strong id="summary-focus-name">None</strong>
-          <div id="summary-focus-note">Choose a record from the rail.</div>
+      <div class="bonds-grid" id="bonds-grid">
+        <div class="hall-empty">
+          <div class="hall-empty-title">Loading bonds...</div>
+          <p class="hall-empty-copy">One moment.</p>
         </div>
       </div>
-    </section>
 
-    <section class="glass-card focus-shrine">
-      <div class="section-head">
-        <span class="shrine-label">Center Shrine</span>
-        <h2 class="shrine-title">Chosen focus of the hall</h2>
-        <p class="shrine-copy">
-          The shrine only keeps the selected bond or request at hand. Full bond detail lives inside the record chamber.
-        </p>
+      <div class="request-panel">
+        <div class="request-panel-title">Send a Bond Request</div>
+        <form class="request-form" id="partner-request-form">
+          <div class="request-fields">
+            <input type="text" class="request-input" id="partner-username" placeholder="SL Username" autocomplete="off" />
+            <input type="text" class="request-input" id="partner-avatar-key" placeholder="Avatar UUID (optional)" autocomplete="off" />
+            <button type="submit" class="request-btn primary" id="send-request-button">Send Request</button>
+            <button type="button" class="request-btn secondary" id="clear-request-form">Clear</button>
+          </div>
+        </form>
       </div>
-
-      <div id="focus-shrine-content"></div>
-    </section>
-
-    <section class="glass-card section-card">
-      <div class="section-head">
-        <span class="rail-label">Partnership Rail</span>
-        <h2 class="rail-title">Select from the records below</h2>
-        <p class="section-copy">
-          Choose a card from the rail to move that record into the center shrine. Open the full chamber only when you need deeper detail.
-        </p>
-      </div>
-
-      <div class="partnership-rail-wrap">
-        <div class="partnership-rail" id="partnership-rail"></div>
-      </div>
-    </section>
-
-    <section class="glass-card section-card">
-      <div class="section-head">
-        <span class="section-label">Open New Petition</span>
-        <h2 class="form-title">Send a new partnership request</h2>
-        <p class="section-copy">
-          Use either a partner SL username or avatar UUID. The system will resolve the member and create the request if the pair is valid.
-        </p>
-      </div>
-
-      <div class="request-layout">
-        <div class="request-form-card">
-          <form class="partnership-form" id="partner-request-form">
-            <div class="form-grid">
-              <div class="form-group">
-                <label for="partner-username">Partner SL Username</label>
-                <input
-                  type="text"
-                  id="partner-username"
-                  placeholder="Enter partner username"
-                  autocomplete="off"
-                />
-              </div>
-
-              <div class="form-group">
-                <label for="partner-avatar-key">Partner Avatar UUID</label>
-                <input
-                  type="text"
-                  id="partner-avatar-key"
-                  placeholder="Enter partner avatar UUID"
-                  autocomplete="off"
-                />
-              </div>
-            </div>
-
-            <div class="button-row">
-              <button type="submit" class="action-button" id="send-request-button">
-                Send Partner Request
-              </button>
-              <button type="button" class="action-button is-ghost" id="clear-request-form">
-                Clear
-              </button>
-            </div>
-          </form>
-        </div>
-
-        <div class="request-side-note">
-          The rail can hold active bonds, incoming petitions, outgoing petitions, and archived records together. The center shrine stays intentionally light so the full record page still matters.
-        </div>
-      </div>
-    </section>
-  </main>
-
-  <footer>
-    The Ascendant Path • Partnership Hall
-  </footer>
+    </main>
+  </div>
 
   <script>
-    const LOGIN_PAGE_URL = "/login.html";
-    const VERIFY_SESSION_URL = "/.netlify/functions/verify-session";
-    const LOGOUT_URL = "/.netlify/functions/logout";
+    const LOGIN_URL = "https://ascendantpath.org/login.html";
+    const CSRF_KEY  = "ap_csrf_token";
+    const state = { payload: null, isSubmitting: false, refreshInterval: null };
 
-    const state = {
-      payload: null,
-      isSubmitting: false,
-      refreshInterval: null,
-      isBusy: false,
-      member: null
-    };
+    function safeText(v, fb="") { return String(v ?? "").trim() || fb; }
+    function escapeHtml(v) { return safeText(v).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;").replace(/'/g,"&#39;"); }
+    function getCsrf() { return sessionStorage.getItem(CSRF_KEY) || ""; }
+    function setCsrf(t) { if (safeText(t)) sessionStorage.setItem(CSRF_KEY, t); }
+    function clearArtifacts() { sessionStorage.removeItem(CSRF_KEY); localStorage.removeItem("session_token"); }
+    function redirectLogin() { location.href = LOGIN_URL + "?next=" + encodeURIComponent(location.pathname+location.search+location.hash); }
+    function showPageMessage(msg) { const el=document.getElementById("page-message"); el.textContent=msg; el.classList.remove("is-hidden"); }
+    function clearPageMessage() { document.getElementById("page-message").classList.add("is-hidden"); }
+    function setBusy(v) { state.isSubmitting = v; }
+    function setButtonLoading(v) { const b=document.getElementById("send-request-button"); b.disabled=v; b.textContent=v?"Sending...":"Send Request"; }
 
-    function safeText(value, fallback = "Unknown") {
-      if (value === null || value === undefined) return fallback;
-      const text = String(value).trim();
-      return text ? text : fallback;
+    async function authFetch(url, opts={}) {
+      const csrf = getCsrf();
+      const r = await fetch(url, { credentials:"include", headers:{"Accept":"application/json",...(csrf?{"X-AP-CSRF-Token":csrf}:{}),...(opts.headers||{})}, ...opts });
+      if (r.status === 401) { clearArtifacts(); redirectLogin(); throw new Error("session has expired"); }
+      return r;
     }
-
-    function safeNumber(value, fallback = 0) {
-      const number = Number(value);
-      return Number.isFinite(number) ? number : fallback;
+    async function parseJson(r, fb) {
+      const text = await r.text(); let d;
+      try { d = text ? JSON.parse(text) : null; } catch { throw new Error(fb||"Invalid response"); }
+      if (!r.ok) throw new Error(d?.message||d?.error||("Request failed ("+r.status+")"));
+      return d;
     }
-
-    function normalizeStatus(value) {
-      return safeText(value, "none").toLowerCase();
-    }
-
-    function escapeHtml(value) {
-      return String(value ?? "")
-        .replace(/&/g, "&amp;")
-        .replace(/</g, "&lt;")
-        .replace(/>/g, "&gt;")
-        .replace(/"/g, "&quot;")
-        .replace(/'/g, "&#39;");
-    }
-
-    function extractArray(payload, keys) {
-      for (const key of keys) {
-        const value = payload?.[key];
-        if (Array.isArray(value)) return value;
-      }
-      return [];
-    }
-
-    function clearClientSessionArtifacts() {
-      const keysToRemove = [
-        "session",
-        "sessionToken",
-        "session_token",
-        "websiteSession",
-        "website_session",
-        "member",
-        "memberState",
-        "member_state",
-        "user",
-        "user_state",
-        "sl_username",
-        "slUsername",
-        "avatar_key",
-        "avatarKey",
-        "selected_partnership_uuid",
-        "selectedPartnershipUuid"
-      ];
-
-      for (const key of keysToRemove) {
-        try { localStorage.removeItem(key); } catch (_) {}
-        try { sessionStorage.removeItem(key); } catch (_) {}
-      }
-    }
-
-    function redirectToLogin() {
-      clearClientSessionArtifacts();
-      window.location.href = LOGIN_PAGE_URL;
-    }
-
-    async function authFetch(url, options = {}) {
-      const response = await fetch(url, {
-        ...options,
-        credentials: "include",
-        cache: "no-store",
-        headers: {
-          Accept: "application/json",
-          ...(options.headers || {})
-        }
-      });
-
-      if (response.status === 401 || response.status === 403) {
-        redirectToLogin();
-        throw new Error("Your session has expired. Please sign in again.");
-      }
-
-      return response;
-    }
-
-    async function parseJsonResponse(response, fallbackMessage) {
-      const rawText = await response.text();
-      let data = null;
-
-      try {
-        data = rawText ? JSON.parse(rawText) : null;
-      } catch {
-        data = null;
-      }
-
-      if (!response.ok || !data?.success) {
-        const error = new Error(data?.message || fallbackMessage);
-        error.status = response.status;
-        throw error;
-      }
-
-      return data;
-    }
-
     async function verifySession() {
-      const response = await authFetch(VERIFY_SESSION_URL, {
-        method: "GET"
-      });
-
-      const rawText = await response.text();
-      let data = null;
-
-      try {
-        data = rawText ? JSON.parse(rawText) : null;
-      } catch {
-        data = null;
-      }
-
-      if (!response.ok || !data?.success) {
-        redirectToLogin();
-        throw new Error(data?.message || "Unable to verify session.");
-      }
-
-      const member = data.member || data.session?.member || data.user || {};
-      state.member = member;
-      return data;
+      const r = await fetch("/.netlify/functions/verify-session", { method:"GET", credentials:"include", headers:{Accept:"application/json"} });
+      if (r.status === 401) { clearArtifacts(); redirectLogin(); return; }
+      const d = await r.json();
+      if (!d?.authenticated) { clearArtifacts(); redirectLogin(); return; }
+      const tok = d.csrf_token||d.csrfToken||d.csrf||""; if (tok) setCsrf(tok);
     }
-
     async function logoutUser() {
-      try {
-        await fetch(LOGOUT_URL, {
-          method: "POST",
-          credentials: "include"
-        });
-      } catch (error) {
-        console.error("Logout request error:", error);
-      } finally {
-        clearClientSessionArtifacts();
-        window.location.href = LOGIN_PAGE_URL;
-      }
+      try { await authFetch("/.netlify/functions/logout", { method:"POST", headers:{"Content-Type":"application/json"}, body:"{}" }); } catch{}
+      clearArtifacts(); location.href = LOGIN_URL;
     }
 
-    function formatStatus(value) {
-      const text = normalizeStatus(value);
+    function getUuid(item)     { return safeText(item?.partnership_uuid); }
+    function getId(item)       { return item?.partnership_id ?? null; }
+    function getStatus(item) {
+      const s = safeText(item?.status,"").toLowerCase();
+      if (s==="active"||s==="accepted") return "active";
+      if (s==="pending") return item?.can_accept ? "pending_incoming" : "pending_outgoing";
+      return "historical";
+    }
+    function getPartnerName(item) { return safeText(item?.summary?.partner_name)||safeText(item?.partner?.display_name)||safeText(item?.partner?.character_name)||safeText(item?.partner?.sl_username)||safeText(item?.counterpart?.sl_username)||"Unknown"; }
+    function getMemberName(item)  { return safeText(item?.member?.display_name)||safeText(item?.member?.character_name)||safeText(item?.member?.sl_username)||"You"; }
+    function getMemberRealm(item) { return safeText(item?.member?.realm_display_name); }
+    function getPartnerRealm(item){ return safeText(item?.partner?.realm_display_name)||safeText(item?.partner_realm); }
+    function getBondPct(item)     { return Number(item?.bond?.bond_percent??item?.summary?.bond_percent??0); }
+    function getBondStage(item)   { return safeText(item?.bond?.current_stage_name)||safeText(item?.summary?.bond_stage_name)||"Bond Seed"; }
+    function getSelectedUuid(p)   { return safeText(p?.selected_partnership_uuid)||safeText(p?.current_focus_partnership_uuid); }
+    function getMemberGender(item){ return safeText(item?.member?.gender,"male").toLowerCase(); }
+    function getPartnerGender(item){ return safeText(item?.partner?.gender,"male").toLowerCase(); }
+    function initials(name) { const w=safeText(name).split(" ").filter(Boolean); if(!w.length)return"?"; return (w[0][0]+(w[1]?w[1][0]:"")).toUpperCase(); }
+    function getAllItems(p) { return [...(p?.active_partnerships||p?.active||[]),...(p?.incoming_requests||p?.pending_incoming||[]),...(p?.outgoing_requests||p?.pending_outgoing||[]),...(p?.historical_partnerships||p?.historical||[])]; }
+    function sortOldest(items) { return items.slice().sort((a,b)=>{ const aT=Date.parse(safeText(a?.accepted_at||a?.created_at,""))||Infinity; const bT=Date.parse(safeText(b?.accepted_at||b?.created_at,""))||Infinity; return aT-bT; }); }
 
-      if (text === "active") return "Active";
-      if (text === "accepted") return "Active";
-      if (text === "pending_incoming") return "Incoming";
-      if (text === "pending_outgoing") return "Outgoing";
-      if (text === "pending") return "Pending";
-      if (text === "historical") return "Archived";
-      if (text === "removed") return "Archived";
-      if (text === "denied") return "Archived";
-      if (text === "closed") return "Archived";
-
-      return text ? text.replaceAll("_", " ").replace(/\b\w/g, (m) => m.toUpperCase()) : "Unknown";
+    function getResonance(item) {
+      if (item?.partner_presence_active) return "resonant";
+      if (item?.partner_hud_recent)      return "nearby";
+      return "offline";
+    }
+    function getResonanceLabel(item) {
+      const s = getResonance(item);
+      if (s==="resonant") return "Resonance Active";
+      if (s==="nearby")   return "Partner Nearby";
+      return "Resonance Offline";
     }
 
-    function getActiveItems(payload) {
-      return extractArray(payload, ["active", "active_partnerships", "partnerships_active"])
-        .map((item) => ({ ...item, __ui_status: "active" }));
-    }
+    function buildCard(item, rank, selectedUuid) {
+      const uuid       = getUuid(item);
+      const legacyId   = getId(item);
+      const status     = getStatus(item);
+      const isSelected = selectedUuid && uuid && selectedUuid === uuid;
+      const pct        = getBondPct(item);
+      const resonance  = getResonance(item);
+      const cardClass  = status==="active" ? "" : status.includes("pending") ? "is-pending" : "is-historical";
+      const badgeClass = status==="active" ? "active" : status.includes("pending") ? "pending" : "historical";
+      const badgeLabel = status==="active" ? "Active" : status==="pending_incoming" ? "Incoming" : status==="pending_outgoing" ? "Pending" : "Archived";
 
-    function getIncomingItems(payload) {
-      return extractArray(payload, ["pending_incoming", "incoming", "incoming_requests"])
-        .map((item) => ({ ...item, __ui_status: "pending_incoming" }));
-    }
-
-    function getOutgoingItems(payload) {
-      return extractArray(payload, ["pending_outgoing", "outgoing", "outgoing_requests"])
-        .map((item) => ({ ...item, __ui_status: "pending_outgoing" }));
-    }
-
-    function getHistoricalItems(payload) {
-      return extractArray(payload, ["historical", "history", "archived", "past_records"])
-        .map((item) => ({ ...item, __ui_status: "historical" }));
-    }
-
-    function getAllItems(payload) {
-      return [
-        ...getActiveItems(payload),
-        ...getIncomingItems(payload),
-        ...getOutgoingItems(payload),
-        ...getHistoricalItems(payload)
+      const actions = [
+        `<button type="button" class="bond-btn" data-open-record="true" data-partnership-uuid="${escapeHtml(uuid)}" data-partnership-id="${escapeHtml(legacyId??"")}">Open Record</button>`
       ];
-    }
-
-    function getPartnershipUuid(item) {
-      return safeText(
-        item?.partnership_uuid ||
-        item?.id ||
-        item?.partnership?.id ||
-        item?.selected_partnership_uuid,
-        ""
-      );
-    }
-
-    function getPartnershipId(item) {
-      const value =
-        item?.partnership_id ??
-        item?.legacy_partnership_id ??
-        item?.partnership?.partnership_id ??
-        null;
-
-      return value === null || value === undefined || value === ""
-        ? null
-        : Number.isFinite(Number(value))
-          ? Number(value)
-          : null;
-    }
-
-    function getItemStatus(item) {
-      return normalizeStatus(
-        item?.__ui_status ||
-        item?.status ||
-        item?.partnership_status ||
-        item?.record_status ||
-        item?.state ||
-        "none"
-      );
-    }
-
-    function getPartnerUsername(item) {
-      return safeText(
-        item?.counterpart_username ||
-        item?.partner_username ||
-        item?.partner_sl_username ||
-        item?.other_member_username ||
-        item?.other_username ||
-        item?.counterpart?.sl_username ||
-        item?.counterpart_summary?.sl_username ||
-        item?.partner?.sl_username ||
-        item?.requester_username ||
-        item?.recipient_username,
-        "Unknown"
-      );
-    }
-
-    function getPartnerDisplayName(item) {
-      return safeText(
-        item?.counterpart_display_name ||
-        item?.partner_display_name ||
-        item?.other_member_display_name ||
-        item?.counterpart?.display_name ||
-        item?.counterpart?.character_name ||
-        item?.counterpart_summary?.display_name ||
-        item?.partner?.display_name ||
-        item?.partner?.character_name,
-        ""
-      );
-    }
-
-    function getPartnerName(item) {
-      return getPartnerDisplayName(item) || `@${getPartnerUsername(item)}`;
-    }
-
-    function getSelectedPartnershipUuid(payload) {
-      return safeText(
-        payload?.selected_partnership_uuid ||
-        payload?.selected_partnership?.partnership_uuid ||
-        payload?.selected_partnership?.id,
-        ""
-      );
-    }
-
-    function findMatchingItemByUuid(payload, uuid) {
-      if (!uuid) return null;
-      return getAllItems(payload).find((item) => getPartnershipUuid(item) === uuid) || null;
-    }
-
-    function resolveCurrentFocus(payload) {
-      const selectedObject = payload?.selected_partnership || payload?.current_focus || null;
-      if (selectedObject) {
-        const selectedStatus = normalizeStatus(
-          selectedObject.__ui_status ||
-          selectedObject.status ||
-          selectedObject.partnership_status ||
-          "none"
-        );
-
-        if (!selectedObject.__ui_status) {
-          if (selectedStatus === "pending") {
-            return {
-              ...selectedObject,
-              __ui_status: selectedObject.can_accept ? "pending_incoming" : "pending_outgoing"
-            };
-          }
-          if (["removed", "denied", "closed", "historical"].includes(selectedStatus)) {
-            return { ...selectedObject, __ui_status: "historical" };
-          }
-        }
-
-        return selectedObject;
+      if (status==="pending_incoming") {
+        actions.push(`<button type="button" class="bond-btn is-accept" data-shrine-action="accept" data-partnership-uuid="${escapeHtml(uuid)}" data-partnership-id="${escapeHtml(legacyId??"")}">Accept</button>`);
+        actions.push(`<button type="button" class="bond-btn is-danger" data-shrine-action="deny" data-partnership-uuid="${escapeHtml(uuid)}" data-partnership-id="${escapeHtml(legacyId??"")}">Deny</button>`);
+      } else if (status==="pending_outgoing") {
+        actions.push(`<button type="button" class="bond-btn is-danger" data-shrine-action="remove" data-partnership-uuid="${escapeHtml(uuid)}" data-partnership-id="${escapeHtml(legacyId??"")}">Cancel</button>`);
+      } else if (status==="active") {
+        actions.push(`<button type="button" class="bond-btn is-danger" data-shrine-action="remove" data-partnership-uuid="${escapeHtml(uuid)}" data-partnership-id="${escapeHtml(legacyId??"")}">Remove</button>`);
       }
 
-      const selectedUuid = getSelectedPartnershipUuid(payload);
-      if (selectedUuid) {
-        const match = findMatchingItemByUuid(payload, selectedUuid);
-        if (match) return match;
-      }
-
-      return (
-        getActiveItems(payload)[0] ||
-        getIncomingItems(payload)[0] ||
-        getOutgoingItems(payload)[0] ||
-        getHistoricalItems(payload)[0] ||
-        null
-      );
-    }
-
-    function shrineNoteForStatus(status, partnerName) {
-      if (status === "active") {
-        return `This partnership with ${partnerName} is currently active in the hall. Open the record chamber when you want the full bond detail.`;
-      }
-
-      if (status === "pending_incoming") {
-        return `${partnerName} has sent you a partnership request. Answer it here or open the full record chamber first.`;
-      }
-
-      if (status === "pending_outgoing") {
-        return `A partnership request has already been sent to ${partnerName}. It remains open until it is answered or removed.`;
-      }
-
-      return `This record with ${partnerName} is archived in the hall. Open the record chamber if you want to review the full record.`;
-    }
-
-    function railCopyForStatus(status) {
-      if (status === "active") return "Open bond";
-      if (status === "pending_incoming") return "Awaiting your answer";
-      if (status === "pending_outgoing") return "Awaiting their answer";
-      return "Archived record";
-    }
-
-    function statusClass(status) {
-      if (status === "active") return "is-active";
-      if (status === "pending_incoming") return "is-incoming";
-      if (status === "pending_outgoing") return "is-outgoing";
-      return "is-historical";
-    }
-
-    function showPageMessage(message) {
-      const el = document.getElementById("page-message");
-      el.textContent = safeText(message, "");
-      el.classList.remove("is-hidden");
-    }
-
-    function clearPageMessage() {
-      const el = document.getElementById("page-message");
-      el.textContent = "";
-      el.classList.add("is-hidden");
-    }
-
-    function setButtonLoading(isLoading) {
-      const sendButton = document.getElementById("send-request-button");
-      const clearButton = document.getElementById("clear-request-form");
-
-      state.isSubmitting = isLoading;
-      sendButton.disabled = isLoading;
-      clearButton.disabled = isLoading;
-      sendButton.textContent = isLoading ? "Sending..." : "Send Partner Request";
-    }
-
-    function setBusy(isBusy) {
-      state.isBusy = isBusy;
-      const shrineButtons = document.querySelectorAll("[data-shrine-action], [data-open-record='true']");
-      shrineButtons.forEach((button) => {
-        button.disabled = isBusy;
-      });
-    }
-
-    function buildHeroSummary(payload, focus) {
-      const member = payload?.member || payload?.user || state.member || {};
-      const username = safeText(member?.sl_username || member?.username, "member");
-
-      document.getElementById("hero-subtitle").textContent = `@${username}`;
-
-      if (!focus) {
-        document.getElementById("hero-summary").textContent =
-          "Choose a record from the rail below. The center shrine only keeps the selected bond at hand, while the full record chamber holds the deeper detail.";
-        document.getElementById("hero-focus-line").textContent = "Current Focus: None";
-        return;
-      }
-
-      const partnerName = getPartnerName(focus);
-      const status = formatStatus(getItemStatus(focus));
-
-      document.getElementById("hero-summary").textContent =
-        `The hall is centered on ${partnerName}. Use the bottom rail to move between records without crowding the shrine with full chamber detail.`;
-
-      document.getElementById("hero-focus-line").textContent =
-        `Current Focus: ${partnerName} • ${status}`;
-    }
-
-    function renderSummaryStrip(payload, focus) {
-      const active = getActiveItems(payload);
-      const incoming = getIncomingItems(payload);
-      const outgoing = getOutgoingItems(payload);
-
-      document.getElementById("summary-active-count").textContent = String(active.length);
-      document.getElementById("summary-incoming-count").textContent = String(incoming.length);
-      document.getElementById("summary-outgoing-count").textContent = String(outgoing.length);
-
-      document.getElementById("summary-active-note").textContent =
-        active.length ? "Open living bond records are present." : "No active records.";
-      document.getElementById("summary-incoming-note").textContent =
-        incoming.length ? "Requests are waiting for your answer." : "No incoming petitions.";
-      document.getElementById("summary-outgoing-note").textContent =
-        outgoing.length ? "You have requests awaiting response." : "No outgoing petitions.";
-
-      document.getElementById("summary-focus-name").textContent =
-        focus ? getPartnerName(focus) : "None";
-
-      document.getElementById("summary-focus-note").textContent =
-        focus
-          ? formatStatus(getItemStatus(focus))
-          : "Choose a record from the rail.";
-    }
-
-    function renderFocusShrine(payload, focus) {
-      const container = document.getElementById("focus-shrine-content");
-
-      if (!focus) {
-        container.innerHTML = `
-          <div class="empty-shrine">
-            <small>No Current Focus</small>
-            <strong>The shrine is still unclaimed</strong>
-            <div class="empty-copy">
-              Choose any record from the bottom rail and that bond will move into the center shrine.
-            </div>
+      return `<article class="bond-card ${cardClass} ${isSelected?"is-selected":""}" data-select-record="true" data-partnership-uuid="${escapeHtml(uuid)}" data-partnership-id="${escapeHtml(legacyId??"")}">
+        <div class="bond-rank">${rank}</div>
+        <div class="bond-status-badge ${badgeClass}">${escapeHtml(badgeLabel)}</div>
+        <div class="bond-figures">
+          <div class="bond-figure">
+            <div class="bond-figure-avatar ${getMemberGender(item)==="female"?"female":""}">${escapeHtml(initials(getMemberName(item)))}</div>
+            <div class="bond-figure-name">${escapeHtml(getMemberName(item))}</div>
+            <div class="bond-figure-realm">${escapeHtml(getMemberRealm(item))}</div>
           </div>
-        `;
-        return;
-      }
-
-      const uuid = getPartnershipUuid(focus);
-      const legacyId = getPartnershipId(focus);
-      const partnerName = getPartnerName(focus);
-      const partnerUsername = getPartnerUsername(focus);
-      const status = getItemStatus(focus);
-      const note = shrineNoteForStatus(status, partnerName);
-
-      const actionButtons = [];
-
-      actionButtons.push(`
-        <button
-          type="button"
-          class="action-button"
-          data-open-record="true"
-          data-partnership-uuid="${escapeHtml(uuid)}"
-          data-partnership-id="${escapeHtml(legacyId ?? "")}">
-          Open Record Chamber
-        </button>
-      `);
-
-      if (status === "pending_incoming") {
-        actionButtons.push(`
-          <button
-            type="button"
-            class="action-button"
-            data-shrine-action="accept"
-            data-partnership-uuid="${escapeHtml(uuid)}"
-            data-partnership-id="${escapeHtml(legacyId ?? "")}">
-            Accept
-          </button>
-        `);
-        actionButtons.push(`
-          <button
-            type="button"
-            class="action-button is-danger"
-            data-shrine-action="deny"
-            data-partnership-uuid="${escapeHtml(uuid)}"
-            data-partnership-id="${escapeHtml(legacyId ?? "")}">
-            Deny
-          </button>
-        `);
-      } else if (status === "pending_outgoing") {
-        actionButtons.push(`
-          <button
-            type="button"
-            class="action-button is-danger"
-            data-shrine-action="remove"
-            data-partnership-uuid="${escapeHtml(uuid)}"
-            data-partnership-id="${escapeHtml(legacyId ?? "")}">
-            Cancel Request
-          </button>
-        `);
-      } else if (status === "active") {
-        actionButtons.push(`
-          <button
-            type="button"
-            class="action-button is-danger"
-            data-shrine-action="remove"
-            data-partnership-uuid="${escapeHtml(uuid)}"
-            data-partnership-id="${escapeHtml(legacyId ?? "")}">
-            Remove Partnership
-          </button>
-        `);
-      }
-
-      container.innerHTML = `
-        <div class="shrine-shell">
-          <div class="shrine-head">
-            <div>
-              <span class="shrine-label">Chosen Record</span>
-              <h3 class="shrine-name">${escapeHtml(partnerName)}</h3>
-              <p class="shrine-copy">@${escapeHtml(partnerUsername)}</p>
-            </div>
-            <div class="status-pill">${escapeHtml(formatStatus(status))}</div>
+          <div class="bond-connector">
+            <div class="bond-connector-line"></div>
+            <div class="bond-connector-icon">⬡</div>
+            <div class="bond-connector-line"></div>
           </div>
-
-          <div class="shrine-focus-line">
-            This shrine is only a focus point for the selected record. The full bond state, ledger, and session detail stay inside the record chamber.
-          </div>
-
-          <div class="shrine-note">${escapeHtml(note)}</div>
-
-          <div class="button-row">
-            ${actionButtons.join("")}
+          <div class="bond-figure">
+            <div class="bond-figure-avatar ${getPartnerGender(item)==="female"?"female":""} ${item?.partner_hud_recent?"is-online":""}">${escapeHtml(initials(getPartnerName(item)))}</div>
+            <div class="bond-figure-name">${escapeHtml(getPartnerName(item))}</div>
+            <div class="bond-figure-realm">${escapeHtml(getPartnerRealm(item))}</div>
           </div>
         </div>
-      `;
-    }
-
-    function buildRailCard(item, selectedUuid) {
-      const uuid = getPartnershipUuid(item);
-      const legacyId = getPartnershipId(item);
-      const partnerName = getPartnerName(item);
-      const partnerUsername = getPartnerUsername(item);
-      const status = getItemStatus(item);
-      const isSelected = selectedUuid && uuid && selectedUuid === uuid;
-
-      return `
-        <article
-          class="rail-card ${isSelected ? "is-selected" : ""}"
-          data-select-record="true"
-          data-partnership-uuid="${escapeHtml(uuid)}"
-          data-partnership-id="${escapeHtml(legacyId ?? "")}">
-          <div class="rail-card-head">
-            <div>
-              <h3 class="rail-card-name">${escapeHtml(partnerName)}</h3>
-              <div class="rail-card-sub">@${escapeHtml(partnerUsername)}</div>
-            </div>
-            <div class="rail-status ${statusClass(status)}">${escapeHtml(formatStatus(status))}</div>
+        <div class="bond-body">
+          <div class="bond-stage-row">
+            <div class="bond-stage-name">${escapeHtml(getBondStage(item))}</div>
+            <div class="bond-percent">${pct.toFixed(1)}%</div>
           </div>
-
-          <div class="rail-card-copy">
-            ${escapeHtml(railCopyForStatus(status))}
+          <div class="bond-bar-track"><div class="bond-bar-fill" style="width:${Math.min(100,pct)}%"></div></div>
+          <div class="bond-resonance-row">
+            <div class="bond-resonance-dot ${resonance}"></div>
+            <div class="bond-resonance-label">${escapeHtml(getResonanceLabel(item))}</div>
           </div>
-        </article>
-      `;
+          <div class="bond-actions" onclick="event.stopPropagation()">${actions.join("")}</div>
+        </div>
+      </article>`;
     }
 
-    function renderRail(payload, focus) {
-      const container = document.getElementById("partnership-rail");
-      const items = getAllItems(payload);
-      const selectedUuid = getSelectedPartnershipUuid(payload) || getPartnershipUuid(focus);
-
-      if (!items.length) {
-        container.innerHTML = `
-          <div class="empty-panel">
-            <small>Empty Rail</small>
-            <strong>No partnership records yet</strong>
-            <div>Selectable records will appear here once you have active bonds, requests, or archived partnerships.</div>
-          </div>
-        `;
+    function renderGrid(payload) {
+      const grid = document.getElementById("bonds-grid");
+      const sorted = sortOldest(getAllItems(payload));
+      const selUuid = getSelectedUuid(payload);
+      if (!sorted.length) {
+        grid.innerHTML = `<div class="hall-empty"><div class="hall-empty-title">No bonds yet</div><p class="hall-empty-copy">Your bonds will appear here once you forge a partnership.</p></div>`;
         return;
       }
-
-      container.innerHTML = items.map((item) => buildRailCard(item, selectedUuid)).join("");
+      grid.innerHTML = sorted.map((item, i) => buildCard(item, i+1, selUuid)).join("");
     }
 
-    function renderAll(payload) {
-      state.payload = payload;
-      const focus = resolveCurrentFocus(payload);
+    function renderAll(payload) { state.payload = payload; renderGrid(payload); }
 
-      buildHeroSummary(payload, focus);
-      renderSummaryStrip(payload, focus);
-      renderFocusShrine(payload, focus);
-      renderRail(payload, focus);
+    async function loadList() {
+      const r = await authFetch("/.netlify/functions/load-partnership-list", { method:"GET" });
+      const d = await parseJson(r, "Failed to load partnership list.");
+      renderAll(d); return d;
     }
-
-    async function loadPartnershipList() {
-      const response = await authFetch("/.netlify/functions/load-partnership-list", {
-        method: "GET"
-      });
-
-      const data = await parseJsonResponse(
-        response,
-        "Invalid server response from partnership hall loader."
-      );
-
-      renderAll(data);
-      return data;
+    async function setSelected(uuid, id) {
+      const body = {}; if (uuid) body.partnership_uuid=uuid; if (id) body.partnership_id=id;
+      const r = await authFetch("/.netlify/functions/set-selected-partnership", { method:"POST", headers:{"Content-Type":"application/json"}, body:JSON.stringify(body) });
+      return parseJson(r, "Failed to select partnership.");
     }
-
-    async function setSelectedPartnership(partnershipUuid, partnershipId) {
-      const body = {};
-      if (partnershipUuid) body.partnership_uuid = partnershipUuid;
-      if (partnershipId) body.partnership_id = partnershipId;
-
-      const response = await authFetch("/.netlify/functions/set-selected-partnership", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json"
-        },
-        body: JSON.stringify(body)
-      });
-
-      return parseJsonResponse(
-        response,
-        "Invalid server response while selecting partnership."
-      );
+    async function openRecord(uuid, id) {
+      await setSelected(uuid, id);
+      if (uuid) { location.href=`/partnership-record.html?partnership_uuid=${encodeURIComponent(uuid)}`; return; }
+      if (id)   { location.href=`/partnership-record.html?partnership_id=${encodeURIComponent(id)}`; return; }
+      location.href="/partnership-record.html";
     }
-
-    async function openRecord(partnershipUuid, partnershipId) {
-      await setSelectedPartnership(partnershipUuid, partnershipId);
-
-      if (partnershipUuid) {
-        window.location.href = `/partnership-record.html?partnership_uuid=${encodeURIComponent(partnershipUuid)}`;
-        return;
-      }
-
-      if (partnershipId) {
-        window.location.href = `/partnership-record.html?partnership_id=${encodeURIComponent(partnershipId)}`;
-        return;
-      }
-
-      window.location.href = "/partnership-record.html";
-    }
-
-    async function sendPartnerRequest(event) {
-      event.preventDefault();
-      if (state.isSubmitting) return;
-
-      const username = safeText(document.getElementById("partner-username").value, "");
-      const avatarKey = safeText(document.getElementById("partner-avatar-key").value, "");
-
-      if (!username && !avatarKey) {
-        showPageMessage("Enter either a partner SL username or a partner avatar UUID.");
-        return;
-      }
-
+    async function sendRequest(event) {
+      event.preventDefault(); if (state.isSubmitting) return;
+      const username=safeText(document.getElementById("partner-username").value);
+      const avatarKey=safeText(document.getElementById("partner-avatar-key").value);
+      if (!username && !avatarKey) { showPageMessage("Enter a partner SL username or avatar UUID."); return; }
       try {
-        setButtonLoading(true);
-
-        const response = await authFetch("/.netlify/functions/send-partner-request", {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json"
-          },
-          body: JSON.stringify({
-            partner_username: username,
-            partner_avatar_key: avatarKey
-          })
-        });
-
-        const data = await parseJsonResponse(
-          response,
-          "Invalid server response while sending partner request."
-        );
-
-        document.getElementById("partner-username").value = "";
-        document.getElementById("partner-avatar-key").value = "";
-
-        showPageMessage(data.message || "Partner request sent successfully.");
-        await loadPartnershipList();
-      } catch (error) {
-        console.error("send partner request error:", error);
-        if (!/session has expired/i.test(safeText(error.message, ""))) {
-          showPageMessage(error?.message || "Failed to send partner request.");
-        }
-      } finally {
-        setButtonLoading(false);
-      }
-    }
-
-    async function acceptPartnerRequest(partnershipUuid, partnershipId) {
-      const response = await authFetch("/.netlify/functions/accept-partner-request", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json"
-        },
-        body: JSON.stringify({
-          ...(partnershipUuid ? { partnership_uuid: partnershipUuid } : {}),
-          ...(partnershipId ? { partnership_id: partnershipId } : {})
-        })
-      });
-
-      return parseJsonResponse(
-        response,
-        "Invalid server response while accepting partner request."
-      );
-    }
-
-    async function denyPartnerRequest(partnershipUuid, partnershipId) {
-      const response = await authFetch("/.netlify/functions/deny-partner-request", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json"
-        },
-        body: JSON.stringify({
-          ...(partnershipUuid ? { partnership_uuid: partnershipUuid } : {}),
-          ...(partnershipId ? { partnership_id: partnershipId } : {})
-        })
-      });
-
-      return parseJsonResponse(
-        response,
-        "Invalid server response while denying partner request."
-      );
-    }
-
-    async function removePartnership(partnershipUuid, partnershipId) {
-      const response = await authFetch("/.netlify/functions/remove-partnership", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json"
-        },
-        body: JSON.stringify({
-          ...(partnershipUuid ? { partnership_uuid: partnershipUuid } : {}),
-          ...(partnershipId ? { partnership_id: partnershipId } : {})
-        })
-      });
-
-      return parseJsonResponse(
-        response,
-        "Invalid server response while removing partnership."
-      );
+        setButtonLoading(true); setBusy(true);
+        const r=await authFetch("/.netlify/functions/send-partner-request",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({partner_username:username,partner_avatar_key:avatarKey})});
+        const d=await parseJson(r,"Failed to send request.");
+        showPageMessage(d.message||"Partner request sent.");
+        document.getElementById("partner-username").value="";
+        document.getElementById("partner-avatar-key").value="";
+        await loadList();
+      } catch(e){ if(!/session has expired/i.test(e.message)) showPageMessage(e.message||"Failed to send request."); }
+      finally { setButtonLoading(false); setBusy(false); }
     }
 
     function bindEvents() {
-      document
-        .getElementById("partner-request-form")
-        .addEventListener("submit", sendPartnerRequest);
+      document.getElementById("partner-request-form").addEventListener("submit", sendRequest);
+      document.getElementById("clear-request-form").addEventListener("click", () => { document.getElementById("partner-username").value=""; document.getElementById("partner-avatar-key").value=""; });
+      document.getElementById("logout-button").addEventListener("click", async (e) => { e.preventDefault(); await logoutUser(); });
 
-      document
-        .getElementById("clear-request-form")
-        .addEventListener("click", function () {
-          if (state.isSubmitting) return;
-          document.getElementById("partner-username").value = "";
-          document.getElementById("partner-avatar-key").value = "";
-        });
-
-      document
-        .getElementById("logout-button")
-        .addEventListener("click", async function (event) {
-          event.preventDefault();
-          await logoutUser();
-        });
-
-      document.body.addEventListener("click", async function (event) {
-        const selectCard = event.target.closest("[data-select-record='true']");
+      document.body.addEventListener("click", async (e) => {
+        const openBtn = e.target.closest("[data-open-record='true']");
+        if (openBtn) {
+          const uuid=safeText(openBtn.dataset.partnershipUuid); const id=openBtn.dataset.partnershipId?Number(openBtn.dataset.partnershipId):null;
+          try { setBusy(true); await openRecord(uuid,id); } catch(err){ if(!/session has expired/i.test(err.message)){ showPageMessage(err.message||"Failed to open record."); setBusy(false); } }
+          return;
+        }
+        const actionBtn = e.target.closest("[data-shrine-action]");
+        if (actionBtn) {
+          const action=safeText(actionBtn.dataset.shrineAction); const uuid=safeText(actionBtn.dataset.partnershipUuid); const id=actionBtn.dataset.partnershipId?Number(actionBtn.dataset.partnershipId):null;
+          try {
+            setBusy(true);
+            let d;
+            if (action==="accept"){ d=await parseJson(await authFetch("/.netlify/functions/accept-partner-request",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({...(uuid?{partnership_uuid:uuid}:{}),...(id?{partnership_id:id}:{})})})); }
+            if (action==="deny")  { d=await parseJson(await authFetch("/.netlify/functions/deny-partner-request",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({...(uuid?{partnership_uuid:uuid}:{}),...(id?{partnership_id:id}:{})})})); }
+            if (action==="remove"){ d=await parseJson(await authFetch("/.netlify/functions/remove-partnership",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({...(uuid?{partnership_uuid:uuid}:{}),...(id?{partnership_id:id}:{})})})); }
+            if (d) showPageMessage(d.message||"Done."); await loadList();
+          } catch(err){ if(!/session has expired/i.test(err.message)) showPageMessage(err.message||"Action failed."); }
+          finally { setBusy(false); }
+          return;
+        }
+        const selectCard = e.target.closest("[data-select-record='true']");
         if (selectCard) {
-          const partnershipUuid = safeText(selectCard.dataset.partnershipUuid, "");
-          const rawId = safeText(selectCard.dataset.partnershipId, "");
-          const partnershipId = rawId ? Number(rawId) : null;
-
-          try {
-            setBusy(true);
-            await setSelectedPartnership(partnershipUuid, partnershipId);
-            await loadPartnershipList();
-          } catch (error) {
-            console.error("select record error:", error);
-            if (!/session has expired/i.test(safeText(error.message, ""))) {
-              showPageMessage(error?.message || "Failed to select partnership record.");
-            }
-          } finally {
-            setBusy(false);
-          }
-          return;
-        }
-
-        const openButton = event.target.closest("[data-open-record='true']");
-        if (openButton) {
-          const partnershipUuid = safeText(openButton.dataset.partnershipUuid, "");
-          const rawId = safeText(openButton.dataset.partnershipId, "");
-          const partnershipId = rawId ? Number(rawId) : null;
-
-          try {
-            setBusy(true);
-            await openRecord(partnershipUuid, partnershipId);
-          } catch (error) {
-            console.error("open record error:", error);
-            if (!/session has expired/i.test(safeText(error.message, ""))) {
-              showPageMessage(error?.message || "Failed to open partnership record.");
-              setBusy(false);
-            }
-          }
-          return;
-        }
-
-        const actionButton = event.target.closest("[data-shrine-action]");
-        if (!actionButton) return;
-
-        const action = safeText(actionButton.dataset.shrineAction, "");
-        const partnershipUuid = safeText(actionButton.dataset.partnershipUuid, "");
-        const rawId = safeText(actionButton.dataset.partnershipId, "");
-        const partnershipId = rawId ? Number(rawId) : null;
-
-        try {
-          setBusy(true);
-
-          if (action === "accept") {
-            const data = await acceptPartnerRequest(partnershipUuid, partnershipId);
-            showPageMessage(data.message || "Partner request accepted.");
-            await loadPartnershipList();
-            return;
-          }
-
-          if (action === "deny") {
-            const data = await denyPartnerRequest(partnershipUuid, partnershipId);
-            showPageMessage(data.message || "Partner request denied.");
-            await loadPartnershipList();
-            return;
-          }
-
-          if (action === "remove") {
-            const data = await removePartnership(partnershipUuid, partnershipId);
-            showPageMessage(data.message || "Partnership record removed.");
-            await loadPartnershipList();
-          }
-        } catch (error) {
-          console.error(`${action} partnership error:`, error);
-          if (!/session has expired/i.test(safeText(error.message, ""))) {
-            showPageMessage(error?.message || "Failed to update partnership record.");
-          }
-        } finally {
-          setBusy(false);
+          const uuid=safeText(selectCard.dataset.partnershipUuid); const id=selectCard.dataset.partnershipId?Number(selectCard.dataset.partnershipId):null;
+          try { setBusy(true); await setSelected(uuid,id); await loadList(); } catch(err){ if(!/session has expired/i.test(err.message)) showPageMessage(err.message||"Failed to select."); } finally { setBusy(false); }
         }
       });
     }
 
     async function boot() {
       try {
-        clearPageMessage();
-        bindEvents();
-        await verifySession();
-        await loadPartnershipList();
-
-        state.refreshInterval = setInterval(async () => {
-          try {
-            await loadPartnershipList();
-          } catch (error) {
-            console.error("Partnership hall refresh error:", error);
-          }
-        }, 7000);
-      } catch (error) {
-        console.error("Partnership hall load error:", error);
-        if (!/session has expired/i.test(safeText(error.message, ""))) {
-          showPageMessage(error?.message || "Failed to load partnership hall.");
-        }
-      }
+        clearPageMessage(); bindEvents(); await verifySession(); await loadList();
+        state.refreshInterval = setInterval(async () => { try { await loadList(); } catch(e){ console.error("Hall refresh:",e); } }, 7000);
+      } catch(e){ if(!/session has expired/i.test(safeText(e.message))) showPageMessage(e.message||"Failed to load Hall of Bonds."); }
     }
-
     document.addEventListener("DOMContentLoaded", boot);
-
-    window.addEventListener("beforeunload", function () {
-      if (state.refreshInterval) {
-        clearInterval(state.refreshInterval);
-      }
-    });
+    window.addEventListener("beforeunload", () => { if(state.refreshInterval) clearInterval(state.refreshInterval); });
   </script>
 
   <script>
-  (function() {
-    var track = document.getElementById('ticker-track');
-    if (!track) return;
-    var _running = false;
-    var pos = 0;
-
-    function startScroll() {
-      if (_running) return;
-      _running = true;
-      function loop() {
-        var half = track.scrollWidth / 2;
-        pos -= 0.45;
-        if (half > 0 && Math.abs(pos) >= half) pos = 0;
-        track.style.transform = 'translateX(' + pos + 'px)';
-        requestAnimationFrame(loop);
-      }
-      loop();
-    }
-
-    function setItems(items) {
-      if (!items.length) items = [{ type: 'celestial', text: 'The celestial currents are still. Cultivate in peace.' }];
-      var doubled = items.concat(items);
-      track.innerHTML = doubled.map(function(i) {
-        return '<span class="ticker-item ' + i.type + '"><span class="ticker-dot ' + i.type + '"></span>' + i.text + '</span>';
-      }).join('');
-      startScroll();
-    }
-
-    async function loadTicker() {
-      var items = [];
-      try {
-        var res  = await fetch('/.netlify/functions/load-world-celestial-state', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: '{}', credentials: 'include' });
-        var data = await res.json();
-        var w = data.world || data;
-        if (w.phase_name)    items.push({ type: 'celestial', text: w.phase_name + (w.force_name ? ' · ' + w.force_name : '') });
-        if (w.phenomenon_name && w.phenomenon_name !== 'None') items.push({ type: 'celestial', text: 'Phenomenon: ' + w.phenomenon_name });
-        if (w.dashboard_effect_label) items.push({ type: 'celestial', text: w.dashboard_effect_label });
-      } catch(e) {}
-      try {
-        var nr = await fetch('/.netlify/functions/notifications-list', { credentials: 'include' });
-        var nd = await nr.json();
-        if (nd.success && nd.notifications) {
-          nd.notifications.filter(function(n){ return !n.is_read; }).slice(0,5).forEach(function(n) {
-            var urgent = n.type === 'breakthrough_success' || n.type === 'breakthrough_failure' || n.type === 'scroll_complete';
-            items.push({ type: urgent ? 'notice-urgent' : 'notice', text: n.title + ' — ' + n.message });
-          });
-          var badge = document.getElementById('notif-badge');
-          if (badge && nd.unread_count > 0) { badge.textContent = nd.unread_count > 99 ? '99+' : nd.unread_count; badge.style.display = 'flex'; }
-        }
-      } catch(e) {}
-      setItems(items);
-    }
-
-    loadTicker();
-    setInterval(loadTicker, 60000);
+  (function(){
+    var track=document.getElementById('ticker-track'); if(!track)return;
+    var _running=false,pos=0;
+    function startScroll(){if(_running)return;_running=true;function loop(){var half=track.scrollWidth/2;pos-=0.45;if(half>0&&Math.abs(pos)>=half)pos=0;track.style.transform='translateX('+pos+'px)';requestAnimationFrame(loop);}loop();}
+    function setItems(items){if(!items.length)items=[{type:'celestial',text:'The celestial currents are still. Cultivate in peace.'}];var doubled=items.concat(items);track.innerHTML=doubled.map(function(i){return'<span class="ticker-item '+i.type+'"><span class="ticker-dot '+i.type+'"></span>'+i.text+'</span>';}).join('');startScroll();}
+    async function loadTicker(){var items=[];try{var res=await fetch('/.netlify/functions/load-world-celestial-state',{method:'POST',headers:{'Content-Type':'application/json'},body:'{}',credentials:'include'});var data=await res.json();var w=data.world||data;if(w.phase_name)items.push({type:'celestial',text:w.phase_name+(w.force_name?' · '+w.force_name:'')});if(w.phenomenon_name&&w.phenomenon_name!=='None')items.push({type:'celestial',text:'Phenomenon: '+w.phenomenon_name});if(w.dashboard_effect_label)items.push({type:'celestial',text:w.dashboard_effect_label});}catch(e){}try{var nr=await fetch('/.netlify/functions/notifications-list',{credentials:'include'});var nd=await nr.json();if(nd.success&&nd.notifications){nd.notifications.filter(function(n){return!n.is_read;}).slice(0,5).forEach(function(n){var urgent=n.type==='breakthrough_success'||n.type==='breakthrough_failure'||n.type==='scroll_complete';items.push({type:urgent?'notice-urgent':'notice',text:n.title+' — '+n.message});});var badge=document.getElementById('notif-badge');if(badge&&nd.unread_count>0){badge.textContent=nd.unread_count>99?'99+':nd.unread_count;badge.style.display='flex';}}}catch(e){}setItems(items);}
+    loadTicker();setInterval(loadTicker,60000);
   })();
   </script>
 </body>
