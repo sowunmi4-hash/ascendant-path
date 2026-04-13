@@ -83,9 +83,9 @@ exports.handler = async (event) => {
     .maybeSingle();
 
   if (member?.v2_cultivation_status === "meditating" || member?.v2_cultivation_status === "breakthrough_ready") {
-    // No active scroll session — just clear the meditation status
-    // For breakthrough_ready: keep gate open but stop auric gain
-    const newStatus = member?.v2_cultivation_status === "breakthrough_ready" ? "breakthrough_ready" : "paused";
+    // No active scroll session — set to paused so HUD animation stops
+    // Gate flag stays untouched — breakthrough remains available
+    const newStatus = "paused";
     const { error: updateError } = await supabase
       .from("cultivation_members")
       .update({ v2_cultivation_status: newStatus })
