@@ -10,7 +10,7 @@
     html, body { min-height: 100%; }
     body { margin: 0; background: #07070b; color: #ddd5c8; }
     a { color: inherit; text-decoration: none; }
-    button, input, select { font: inherit; }
+    button, input { font: inherit; }
     .is-hidden { display: none !important; }
 
     .site-shell { width: min(1280px, calc(100% - 2rem)); margin: 0 auto; position: relative; z-index: 2; }
@@ -20,116 +20,170 @@
       width: fit-content; max-width: 100%; margin: 0 auto;
       display: flex; align-items: center; justify-content: center;
       gap: 0.55rem; flex-wrap: wrap; padding: 0.75rem 0.9rem; border-radius: 999px;
-      background: linear-gradient(180deg, rgba(255,255,255,0.03), rgba(255,255,255,0.01)), rgba(6,10,18,0.74);
+      background: linear-gradient(180deg,rgba(255,255,255,0.03),rgba(255,255,255,0.01)),rgba(6,10,18,0.74);
       border: 1px solid rgba(255,255,255,0.06); box-shadow: 0 14px 34px rgba(0,0,0,0.22); backdrop-filter: blur(10px);
     }
-    .dashboard-nav a { padding: 0.62rem 0.92rem; border-radius: 999px; border: 1px solid rgba(255,255,255,0.04); background: rgba(255,255,255,0.02); color: rgba(221,213,200,0.76); font-size: 0.84rem; transition: 0.18s ease; }
-    .dashboard-nav a:hover { color: #ddd5c8; border-color: rgba(200,169,106,0.22); background: rgba(255,255,255,0.04); }
-    .dashboard-nav a.active { color: #fff; border-color: rgba(200,169,106,0.28); background: rgba(200,169,106,0.10); }
+    .dashboard-nav a { padding:.62rem .92rem; border-radius:999px; border:1px solid rgba(255,255,255,0.04); background:rgba(255,255,255,0.02); color:rgba(221,213,200,0.76); font-size:.84rem; transition:.18s ease; }
+    .dashboard-nav a:hover { color:#ddd5c8; border-color:rgba(200,169,106,0.22); background:rgba(255,255,255,0.04); }
+    .dashboard-nav a.active { color:#fff; border-color:rgba(200,169,106,0.28); background:rgba(200,169,106,0.10); }
 
-    .hall-page { margin: 1.5rem auto 4rem; display: grid; gap: 1.5rem; }
+    .hall-page { margin:1.5rem auto 4rem; display:grid; gap:2rem; }
 
-    .hall-header { text-align: center; padding: 2rem 1rem 1rem; }
-    .hall-eyebrow { font-size: 0.72rem; letter-spacing: 0.18em; text-transform: uppercase; color: #c8a96a; margin-bottom: 0.5rem; }
-    .hall-title { margin: 0 0 0.5rem; font-size: clamp(2rem, 4vw, 3.2rem); line-height: 1; color: #fff; }
-    .hall-subtitle { margin: 0 auto; font-size: 0.95rem; line-height: 1.6; color: rgba(221,213,200,0.6); max-width: 48ch; }
+    /* ── Hall header ── */
+    .hall-header { text-align:center; padding:2rem 1rem 0.5rem; }
+    .hall-eyebrow { font-size:.72rem; letter-spacing:.18em; text-transform:uppercase; color:#c8a96a; margin-bottom:.5rem; }
+    .hall-title { margin:0 0 .5rem; font-size:clamp(2rem,4vw,3.2rem); line-height:1; color:#fff; }
+    .hall-subtitle { margin:0 auto; font-size:.95rem; line-height:1.6; color:rgba(221,213,200,0.55); max-width:48ch; }
 
-    .page-message { padding: 0.85rem 1rem; border-radius: 14px; border: 1px solid rgba(200,169,106,0.2); background: rgba(200,169,106,0.08); color: #ddd5c8; font-size: 0.88rem; line-height: 1.6; text-align: center; }
+    .page-message { padding:.85rem 1rem; border-radius:14px; border:1px solid rgba(200,169,106,0.2); background:rgba(200,169,106,0.08); color:#ddd5c8; font-size:.88rem; line-height:1.6; text-align:center; }
 
-    .bonds-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 1rem; }
-
-    .bond-card {
-      position: relative; overflow: hidden; border-radius: 24px;
-      border: 1px solid rgba(255,255,255,0.07);
-      background: linear-gradient(160deg, rgba(13,13,24,0.95), rgba(8,8,16,0.98));
-      box-shadow: 0 20px 50px rgba(0,0,0,0.3);
-      cursor: pointer; transition: transform 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease;
+    /* ── Hero card (first/strongest bond) ── */
+    .hero-bond {
+      position:relative; overflow:hidden; border-radius:28px;
+      border:1px solid rgba(200,169,106,0.22);
+      background:linear-gradient(160deg,rgba(18,14,10,0.97),rgba(8,7,4,0.99));
+      box-shadow:0 0 60px rgba(200,169,106,0.08), 0 28px 60px rgba(0,0,0,0.4);
+      padding:2rem 2rem 1.75rem;
+      display:grid; gap:1.25rem;
     }
-    .bond-card:hover { transform: translateY(-3px); border-color: rgba(200,169,106,0.22); box-shadow: 0 28px 60px rgba(0,0,0,0.36); }
-    .bond-card.is-selected { border-color: rgba(200,169,106,0.35); box-shadow: 0 0 0 2px rgba(200,169,106,0.15), 0 20px 50px rgba(0,0,0,0.3); }
-    .bond-card.is-pending { border-color: rgba(142,168,255,0.2); }
-    .bond-card.is-historical { opacity: 0.6; }
-
-    .bond-rank { position: absolute; top: 14px; left: 14px; width: 28px; height: 28px; border-radius: 50%; background: rgba(200,169,106,0.12); border: 1px solid rgba(200,169,106,0.25); display: flex; align-items: center; justify-content: center; font-size: 0.7rem; font-weight: 700; color: #c8a96a; }
-
-    .bond-status-badge { position: absolute; top: 14px; right: 14px; padding: 0.28rem 0.65rem; border-radius: 999px; font-size: 0.65rem; text-transform: uppercase; letter-spacing: 0.1em; font-weight: 600; }
-    .bond-status-badge.active { background: rgba(85,187,102,0.15); border: 1px solid rgba(85,187,102,0.3); color: #55bb66; }
-    .bond-status-badge.pending { background: rgba(142,168,255,0.12); border: 1px solid rgba(142,168,255,0.25); color: #8ea8ff; }
-    .bond-status-badge.historical { background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); color: rgba(221,213,200,0.5); }
-
-    .bond-figures { display: flex; align-items: flex-end; justify-content: center; gap: 0; padding: 2.2rem 1.5rem 0; min-height: 120px; }
-    .bond-figure { display: flex; flex-direction: column; align-items: center; gap: 0.3rem; flex: 1; }
-
-    .bond-figure-avatar {
-      width: 52px; height: 52px; border-radius: 50%;
-      border: 1.5px solid rgba(200,169,106,0.3);
-      background: radial-gradient(circle at top, rgba(200,169,106,0.12), rgba(8,8,16,1));
-      display: flex; align-items: center; justify-content: center;
-      font-size: 1.05rem; font-weight: 700; color: #c8a96a; font-family: 'Cinzel', serif;
-      position: relative;
+    /* ambient gold glow top */
+    .hero-bond::before {
+      content:''; position:absolute; top:-60px; left:50%; transform:translateX(-50%);
+      width:300px; height:160px; border-radius:50%;
+      background:radial-gradient(ellipse,rgba(200,169,106,0.12),transparent 70%);
+      pointer-events:none;
     }
-    .bond-figure-avatar.female { border-color: rgba(200,104,144,0.3); background: radial-gradient(circle at top, rgba(200,104,144,0.12), rgba(8,8,16,1)); color: #c86890; }
-    .bond-figure-avatar::after { content: ''; position: absolute; bottom: 1px; right: 1px; width: 10px; height: 10px; border-radius: 50%; background: transparent; border: 1.5px solid transparent; }
-    .bond-figure-avatar.is-online::after { background: #55bb66; border-color: #07070b; box-shadow: 0 0 6px rgba(85,187,102,0.6); }
+    .hero-crown {
+      display:flex; align-items:center; gap:.6rem; justify-content:center;
+    }
+    .hero-crown-line { flex:1; height:1px; background:linear-gradient(90deg,transparent,rgba(200,169,106,0.3)); }
+    .hero-crown-line.right { background:linear-gradient(90deg,rgba(200,169,106,0.3),transparent); }
+    .hero-crown-label { font-size:.68rem; letter-spacing:.2em; text-transform:uppercase; color:#c8a96a; white-space:nowrap; }
 
-    .bond-figure-name { font-size: 0.78rem; color: #ddd5c8; text-align: center; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 110px; }
-    .bond-figure-realm { font-size: 0.62rem; color: rgba(221,213,200,0.45); text-align: center; text-transform: uppercase; letter-spacing: 0.08em; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 110px; }
+    .hero-figures { display:flex; align-items:flex-end; justify-content:center; gap:0; }
+    .hero-figure { display:flex; flex-direction:column; align-items:center; gap:.4rem; flex:1; }
+    .hero-avatar {
+      width:72px; height:72px; border-radius:50%;
+      border:2px solid rgba(200,169,106,0.4);
+      background:radial-gradient(circle at top,rgba(200,169,106,0.18),rgba(8,7,4,1));
+      display:flex; align-items:center; justify-content:center;
+      font-size:1.4rem; font-weight:700; color:#c8a96a; font-family:'Cinzel',serif;
+      position:relative;
+      box-shadow:0 0 24px rgba(200,169,106,0.15);
+    }
+    .hero-avatar.female { border-color:rgba(200,104,144,0.4); background:radial-gradient(circle at top,rgba(200,104,144,0.18),rgba(8,7,4,1)); color:#c86890; box-shadow:0 0 24px rgba(200,104,144,0.15); }
+    .hero-avatar::after { content:''; position:absolute; bottom:2px; right:2px; width:13px; height:13px; border-radius:50%; background:transparent; border:2px solid transparent; }
+    .hero-avatar.is-online::after { background:#55bb66; border-color:#07070b; box-shadow:0 0 8px rgba(85,187,102,0.7); }
+    .hero-name { font-size:.9rem; color:#fff; text-align:center; font-weight:600; }
+    .hero-realm { font-size:.65rem; color:rgba(221,213,200,0.45); text-align:center; text-transform:uppercase; letter-spacing:.08em; }
 
-    .bond-connector { display: flex; flex-direction: column; align-items: center; gap: 0.2rem; padding-bottom: 0.5rem; flex-shrink: 0; width: 60px; }
-    .bond-connector-line { width: 40px; height: 1px; background: linear-gradient(90deg, transparent, rgba(200,169,106,0.4), transparent); }
-    .bond-connector-icon { font-size: 0.9rem; color: rgba(200,169,106,0.5); }
+    .hero-connector { display:flex; flex-direction:column; align-items:center; gap:.25rem; padding-bottom:.6rem; flex-shrink:0; width:72px; }
+    .hero-connector-line { width:52px; height:1px; background:linear-gradient(90deg,transparent,rgba(200,169,106,0.5),transparent); }
+    .hero-connector-icon { font-size:1.1rem; color:rgba(200,169,106,0.6); }
 
-    .bond-body { padding: 1rem 1.25rem 1.25rem; display: grid; gap: 0.75rem; }
+    .hero-info { display:grid; gap:.65rem; }
+    .hero-stage-row { display:flex; align-items:center; justify-content:space-between; }
+    .hero-stage { font-size:1.05rem; font-weight:700; color:#fff; font-family:'Cinzel',serif; letter-spacing:.04em; }
+    .hero-pct { font-size:.88rem; color:#c8a96a; font-weight:600; }
+    .hero-bar-track { height:4px; border-radius:2px; background:rgba(255,255,255,0.06); overflow:hidden; }
+    .hero-bar-fill { height:100%; border-radius:2px; background:linear-gradient(90deg,#c8a96a,#ead7aa); transition:width .6s ease; }
+    .hero-meta-row { display:flex; align-items:center; gap:1.2rem; flex-wrap:wrap; }
+    .hero-resonance { display:flex; align-items:center; gap:.45rem; }
+    .hero-res-dot { width:7px; height:7px; border-radius:50%; flex-shrink:0; }
+    .hero-res-dot.resonant { background:#55bb66; box-shadow:0 0 7px rgba(85,187,102,0.8); }
+    .hero-res-dot.nearby   { background:#c8a96a; box-shadow:0 0 7px rgba(200,169,106,0.6); }
+    .hero-res-dot.offline  { background:rgba(255,255,255,0.15); }
+    .hero-res-label { font-size:.72rem; color:rgba(221,213,200,0.55); text-transform:uppercase; letter-spacing:.1em; }
+    .hero-since { font-size:.72rem; color:rgba(221,213,200,0.4); }
 
-    .bond-stage-row { display: flex; align-items: center; justify-content: space-between; gap: 0.5rem; }
-    .bond-stage-name { font-size: 0.88rem; font-weight: 600; color: #fff; font-family: 'Cinzel', serif; letter-spacing: 0.04em; }
-    .bond-percent { font-size: 0.78rem; color: #c8a96a; font-weight: 600; }
+    .hero-actions { display:flex; gap:.6rem; flex-wrap:wrap; }
+    .hero-btn { flex:1; min-height:40px; border-radius:12px; cursor:pointer; font-size:.82rem; font-weight:600; letter-spacing:.04em; transition:.18s ease; }
+    .hero-btn.primary { border:1px solid rgba(200,169,106,0.3); background:rgba(200,169,106,0.14); color:#fff; }
+    .hero-btn.primary:hover { background:rgba(200,169,106,0.22); transform:translateY(-1px); }
+    .hero-btn.danger { border:1px solid rgba(204,68,68,0.25); background:rgba(204,68,68,0.08); color:#cc4444; }
+    .hero-btn.danger:hover { background:rgba(204,68,68,0.14); }
+    .hero-btn.accept { border:1px solid rgba(85,187,102,0.3); background:rgba(85,187,102,0.1); color:#55bb66; }
+    .hero-btn.accept:hover { background:rgba(85,187,102,0.18); }
 
-    .bond-bar-track { height: 3px; border-radius: 2px; background: rgba(255,255,255,0.06); overflow: hidden; }
-    .bond-bar-fill { height: 100%; border-radius: 2px; background: linear-gradient(90deg, #c8a96a, #ead7aa); transition: width 0.6s ease; }
+    /* ── Tier section ── */
+    .tier-section { display:grid; gap:.85rem; }
+    .tier-header { display:flex; align-items:center; gap:.75rem; }
+    .tier-dot { width:8px; height:8px; border-radius:50%; flex-shrink:0; }
+    .tier-name { font-size:.72rem; letter-spacing:.16em; text-transform:uppercase; color:rgba(221,213,200,0.5); }
+    .tier-line { flex:1; height:1px; background:rgba(255,255,255,0.05); }
+    .tier-count { font-size:.68rem; color:rgba(221,213,200,0.3); }
 
-    .bond-resonance-row { display: flex; align-items: center; gap: 0.5rem; }
-    .bond-resonance-dot { width: 6px; height: 6px; border-radius: 50%; flex-shrink: 0; }
-    .bond-resonance-dot.resonant { background: #55bb66; box-shadow: 0 0 6px rgba(85,187,102,0.7); }
-    .bond-resonance-dot.nearby   { background: #c8a96a; box-shadow: 0 0 6px rgba(200,169,106,0.5); }
-    .bond-resonance-dot.offline  { background: rgba(255,255,255,0.15); }
-    .bond-resonance-label { font-size: 0.72rem; color: rgba(221,213,200,0.55); text-transform: uppercase; letter-spacing: 0.1em; }
+    /* Tier dot colours by stage */
+    .tier-dot.eternal  { background:#ead7aa; box-shadow:0 0 6px rgba(234,215,170,0.6); }
+    .tier-dot.spirit   { background:#c8a96a; box-shadow:0 0 5px rgba(200,169,106,0.5); }
+    .tier-dot.soul     { background:#a08550; }
+    .tier-dot.core     { background:#7a6640; }
+    .tier-dot.root     { background:#554830; }
+    .tier-dot.seed     { background:rgba(221,213,200,0.2); }
+    .tier-dot.pending  { background:#8ea8ff; }
+    .tier-dot.archived { background:rgba(255,255,255,0.12); }
 
-    .bond-actions { display: flex; gap: 0.5rem; flex-wrap: wrap; }
-    .bond-btn { flex: 1; min-height: 36px; border-radius: 10px; cursor: pointer; font-size: 0.78rem; font-weight: 600; letter-spacing: 0.04em; transition: 0.18s ease; border: 1px solid rgba(200,169,106,0.25); background: rgba(200,169,106,0.1); color: #c8a96a; }
-    .bond-btn:hover { background: rgba(200,169,106,0.18); transform: translateY(-1px); }
-    .bond-btn.is-danger { border-color: rgba(204,68,68,0.25); background: rgba(204,68,68,0.08); color: #cc4444; }
-    .bond-btn.is-danger:hover { background: rgba(204,68,68,0.14); }
-    .bond-btn.is-accept { border-color: rgba(85,187,102,0.3); background: rgba(85,187,102,0.1); color: #55bb66; }
-    .bond-btn.is-accept:hover { background: rgba(85,187,102,0.18); }
+    /* ── Compact bond row ── */
+    .bond-rows { display:grid; gap:.5rem; }
+    .bond-row {
+      display:grid; grid-template-columns:32px 1fr auto auto;
+      align-items:center; gap:.75rem;
+      padding:.75rem 1rem; border-radius:16px;
+      border:1px solid rgba(255,255,255,0.06);
+      background:rgba(13,13,24,0.7);
+      cursor:pointer; transition:.18s ease;
+    }
+    .bond-row:hover { border-color:rgba(200,169,106,0.18); background:rgba(13,13,24,0.9); transform:translateX(2px); }
+    .bond-row.is-selected { border-color:rgba(200,169,106,0.3); background:rgba(200,169,106,0.06); }
+    .bond-row.is-pending { border-color:rgba(142,168,255,0.18); }
+    .bond-row.is-historical { opacity:.55; }
 
-    .request-panel { background: rgba(13,13,24,0.8); border: 1px solid rgba(255,255,255,0.07); border-radius: 24px; padding: 1.25rem 1.4rem; backdrop-filter: blur(8px); }
-    .request-panel-title { font-size: 0.72rem; text-transform: uppercase; letter-spacing: 0.14em; color: rgba(221,213,200,0.4); margin-bottom: 0.85rem; }
-    .request-form { display: grid; gap: 0.65rem; }
-    .request-fields { display: grid; grid-template-columns: 1fr 1fr auto auto; gap: 0.55rem; align-items: stretch; }
-    .request-input { min-height: 42px; border-radius: 12px; border: 1px solid rgba(255,255,255,0.08); background: rgba(255,255,255,0.04); color: #fff; padding: 0.6rem 0.85rem; outline: none; transition: 0.18s ease; font-size: 0.84rem; }
-    .request-input::placeholder { color: rgba(221,213,200,0.3); }
-    .request-input:focus { border-color: rgba(200,169,106,0.3); box-shadow: 0 0 0 3px rgba(200,169,106,0.07); }
-    .request-btn { min-height: 42px; padding: 0 1rem; border-radius: 12px; cursor: pointer; font-size: 0.82rem; font-weight: 600; transition: 0.18s ease; }
-    .request-btn.primary { border: 1px solid rgba(200,169,106,0.28); background: rgba(200,169,106,0.14); color: #fff; }
-    .request-btn.primary:hover { background: rgba(200,169,106,0.22); }
-    .request-btn.secondary { border: 1px solid rgba(255,255,255,0.08); background: rgba(255,255,255,0.04); color: rgba(221,213,200,0.6); }
-    .request-btn.secondary:hover { background: rgba(255,255,255,0.08); color: #ddd5c8; }
-    .request-btn:disabled { opacity: 0.5; cursor: wait; }
+    .bond-row-rank { font-size:.7rem; font-weight:700; color:rgba(221,213,200,0.35); text-align:center; font-family:'Cinzel',serif; }
+    .bond-row-main { display:grid; gap:.15rem; min-width:0; }
+    .bond-row-names { font-size:.86rem; color:#fff; font-weight:600; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+    .bond-row-sub { font-size:.68rem; color:rgba(221,213,200,0.45); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+    .bond-row-bar-wrap { width:80px; display:grid; gap:.2rem; }
+    .bond-row-pct { font-size:.68rem; color:#c8a96a; text-align:right; }
+    .bond-row-bar { height:2px; border-radius:1px; background:rgba(255,255,255,0.06); overflow:hidden; }
+    .bond-row-bar-fill { height:100%; border-radius:1px; background:linear-gradient(90deg,#c8a96a,#ead7aa); }
+    .bond-row-right { display:flex; align-items:center; gap:.5rem; }
+    .bond-row-dot { width:6px; height:6px; border-radius:50%; flex-shrink:0; }
+    .bond-row-dot.resonant { background:#55bb66; box-shadow:0 0 5px rgba(85,187,102,0.7); }
+    .bond-row-dot.nearby   { background:#c8a96a; box-shadow:0 0 5px rgba(200,169,106,0.5); }
+    .bond-row-dot.offline  { background:rgba(255,255,255,0.15); }
+    .bond-row-open { padding:.32rem .65rem; border-radius:8px; border:1px solid rgba(200,169,106,0.2); background:rgba(200,169,106,0.08); color:#c8a96a; font-size:.7rem; cursor:pointer; transition:.18s ease; white-space:nowrap; }
+    .bond-row-open:hover { background:rgba(200,169,106,0.14); }
+    .bond-row-open.accept { border-color:rgba(85,187,102,0.25); background:rgba(85,187,102,0.08); color:#55bb66; }
 
-    .hall-empty { text-align: center; padding: 3rem 1rem; border: 1px dashed rgba(255,255,255,0.08); border-radius: 24px; background: rgba(255,255,255,0.02); }
-    .hall-empty-title { font-size: 1.1rem; color: #fff; margin: 0 0 0.4rem; }
-    .hall-empty-copy { font-size: 0.88rem; color: rgba(221,213,200,0.5); margin: 0; }
+    /* ── Request panel ── */
+    .request-panel { background:rgba(13,13,24,0.8); border:1px solid rgba(255,255,255,0.07); border-radius:24px; padding:1.25rem 1.4rem; backdrop-filter:blur(8px); }
+    .request-panel-title { font-size:.72rem; text-transform:uppercase; letter-spacing:.14em; color:rgba(221,213,200,0.4); margin-bottom:.85rem; }
+    .request-fields { display:grid; grid-template-columns:1fr 1fr auto auto; gap:.55rem; align-items:stretch; }
+    .request-input { min-height:42px; border-radius:12px; border:1px solid rgba(255,255,255,0.08); background:rgba(255,255,255,0.04); color:#fff; padding:.6rem .85rem; outline:none; transition:.18s ease; font-size:.84rem; }
+    .request-input::placeholder { color:rgba(221,213,200,0.3); }
+    .request-input:focus { border-color:rgba(200,169,106,0.3); box-shadow:0 0 0 3px rgba(200,169,106,0.07); }
+    .request-btn { min-height:42px; padding:0 1rem; border-radius:12px; cursor:pointer; font-size:.82rem; font-weight:600; transition:.18s ease; }
+    .request-btn.primary { border:1px solid rgba(200,169,106,0.28); background:rgba(200,169,106,0.14); color:#fff; }
+    .request-btn.primary:hover { background:rgba(200,169,106,0.22); }
+    .request-btn.secondary { border:1px solid rgba(255,255,255,0.08); background:rgba(255,255,255,0.04); color:rgba(221,213,200,0.6); }
+    .request-btn.secondary:hover { background:rgba(255,255,255,0.08); color:#ddd5c8; }
+    .request-btn:disabled { opacity:.5; cursor:wait; }
 
-    #news-ticker-bar { font-family: 'Cinzel', serif; }
-    .ticker-item { display:inline-flex;align-items:center;padding:0 24px;font-size:11px;white-space:nowrap;gap:8px;border-right:1px solid rgba(200,169,106,0.12);font-family:'Cinzel',serif;letter-spacing:0.04em; }
+    .hall-empty { text-align:center; padding:3rem 1rem; border:1px dashed rgba(255,255,255,0.08); border-radius:24px; background:rgba(255,255,255,0.02); }
+    .hall-empty-title { font-size:1.1rem; color:#fff; margin:0 0 .4rem; }
+    .hall-empty-copy { font-size:.88rem; color:rgba(221,213,200,0.5); margin:0; }
+
+    /* Ticker */
+    #news-ticker-bar { font-family:'Cinzel',serif; }
+    .ticker-item { display:inline-flex;align-items:center;padding:0 24px;font-size:11px;white-space:nowrap;gap:8px;border-right:1px solid rgba(200,169,106,0.12);font-family:'Cinzel',serif;letter-spacing:.04em; }
     .ticker-item.celestial { color:#c8a96a; } .ticker-item.notice { color:rgba(221,213,200,0.8); } .ticker-item.notice-urgent { color:#c86890; }
     .ticker-dot { width:5px;height:5px;border-radius:50%;display:inline-block;flex-shrink:0; }
     .ticker-dot.celestial { background:#c8a96a; } .ticker-dot.notice { background:rgba(221,213,200,0.4); } .ticker-dot.notice-urgent { background:#c86890; }
 
-    @media (max-width: 700px) {
-      .request-fields { grid-template-columns: 1fr; }
-      .bonds-grid { grid-template-columns: 1fr; }
+    @media (max-width:700px) {
+      .request-fields { grid-template-columns:1fr; }
+      .bond-row { grid-template-columns:24px 1fr auto; }
+      .bond-row-bar-wrap { display:none; }
     }
   </style>
 </head>
@@ -161,16 +215,16 @@
 
       <div class="page-message is-hidden" id="page-message"></div>
 
-      <div class="bonds-grid" id="bonds-grid">
-        <div class="hall-empty">
-          <div class="hall-empty-title">Loading bonds...</div>
-          <p class="hall-empty-copy">One moment.</p>
-        </div>
-      </div>
+      <!-- Hero card: oldest/first active bond -->
+      <div id="hero-section"></div>
 
+      <!-- Tier sections -->
+      <div id="tiers-section"></div>
+
+      <!-- Request panel -->
       <div class="request-panel">
         <div class="request-panel-title">Send a Bond Request</div>
-        <form class="request-form" id="partner-request-form">
+        <form id="partner-request-form">
           <div class="request-fields">
             <input type="text" class="request-input" id="partner-username" placeholder="SL Username" autocomplete="off" />
             <input type="text" class="request-input" id="partner-avatar-key" placeholder="Avatar UUID (optional)" autocomplete="off" />
@@ -187,47 +241,48 @@
     const CSRF_KEY  = "ap_csrf_token";
     const state = { payload: null, isSubmitting: false, refreshInterval: null };
 
-    function safeText(v, fb="") { return String(v ?? "").trim() || fb; }
+    // ── Helpers ──
+    function safeText(v,fb="") { return String(v??"").trim()||fb; }
     function escapeHtml(v) { return safeText(v).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;").replace(/'/g,"&#39;"); }
-    function getCsrf() { return sessionStorage.getItem(CSRF_KEY) || ""; }
-    function setCsrf(t) { if (safeText(t)) sessionStorage.setItem(CSRF_KEY, t); }
+    function getCsrf() { return sessionStorage.getItem(CSRF_KEY)||""; }
+    function setCsrf(t) { if(safeText(t)) sessionStorage.setItem(CSRF_KEY,t); }
     function clearArtifacts() { sessionStorage.removeItem(CSRF_KEY); localStorage.removeItem("session_token"); }
-    function redirectLogin() { location.href = LOGIN_URL + "?next=" + encodeURIComponent(location.pathname+location.search+location.hash); }
-    function showPageMessage(msg) { const el=document.getElementById("page-message"); el.textContent=msg; el.classList.remove("is-hidden"); }
-    function clearPageMessage() { document.getElementById("page-message").classList.add("is-hidden"); }
-    function setBusy(v) { state.isSubmitting = v; }
+    function redirectLogin() { location.href=LOGIN_URL+"?next="+encodeURIComponent(location.pathname+location.search+location.hash); }
+    function showMsg(msg) { const el=document.getElementById("page-message"); el.textContent=msg; el.classList.remove("is-hidden"); }
+    function clearMsg() { document.getElementById("page-message").classList.add("is-hidden"); }
+    function setBusy(v) { state.isSubmitting=v; }
     function setButtonLoading(v) { const b=document.getElementById("send-request-button"); b.disabled=v; b.textContent=v?"Sending...":"Send Request"; }
 
-    async function authFetch(url, opts={}) {
-      const csrf = getCsrf();
-      const r = await fetch(url, { credentials:"include", headers:{"Accept":"application/json",...(csrf?{"X-AP-CSRF-Token":csrf}:{}),...(opts.headers||{})}, ...opts });
-      if (r.status === 401) { clearArtifacts(); redirectLogin(); throw new Error("session has expired"); }
+    async function authFetch(url,opts={}) {
+      const csrf=getCsrf();
+      const r=await fetch(url,{credentials:"include",headers:{"Accept":"application/json",...(csrf?{"X-AP-CSRF-Token":csrf}:{}),...(opts.headers||{})},...opts});
+      if(r.status===401){clearArtifacts();redirectLogin();throw new Error("session has expired");}
       return r;
     }
-    async function parseJson(r, fb) {
-      const text = await r.text(); let d;
-      try { d = text ? JSON.parse(text) : null; } catch { throw new Error(fb||"Invalid response"); }
-      if (!r.ok) throw new Error(d?.message||d?.error||("Request failed ("+r.status+")"));
+    async function parseJson(r,fb) {
+      const text=await r.text(); let d;
+      try{d=text?JSON.parse(text):null;}catch{throw new Error(fb||"Invalid response");}
+      if(!r.ok) throw new Error(d?.message||d?.error||("Request failed ("+r.status+")"));
       return d;
     }
     async function verifySession() {
-      const r = await fetch("/.netlify/functions/verify-session", { method:"GET", credentials:"include", headers:{Accept:"application/json"} });
-      if (r.status === 401) { clearArtifacts(); redirectLogin(); return; }
-      const d = await r.json();
-      if (!d?.authenticated) { clearArtifacts(); redirectLogin(); return; }
-      const tok = d.csrf_token||d.csrfToken||d.csrf||""; if (tok) setCsrf(tok);
+      const r=await fetch("/.netlify/functions/verify-session",{method:"GET",credentials:"include",headers:{Accept:"application/json"}});
+      if(r.status===401){clearArtifacts();redirectLogin();return;}
+      const d=await r.json(); if(!d?.authenticated){clearArtifacts();redirectLogin();return;}
+      const tok=d.csrf_token||d.csrfToken||d.csrf||""; if(tok) setCsrf(tok);
     }
     async function logoutUser() {
-      try { await authFetch("/.netlify/functions/logout", { method:"POST", headers:{"Content-Type":"application/json"}, body:"{}" }); } catch{}
-      clearArtifacts(); location.href = LOGIN_URL;
+      try{await authFetch("/.netlify/functions/logout",{method:"POST",headers:{"Content-Type":"application/json"},body:"{}"});}catch{}
+      clearArtifacts(); location.href=LOGIN_URL;
     }
 
-    function getUuid(item)     { return safeText(item?.partnership_uuid); }
-    function getId(item)       { return item?.partnership_id ?? null; }
+    // ── Data helpers ──
+    function getUuid(item)  { return safeText(item?.partnership_uuid); }
+    function getId(item)    { return item?.partnership_id??null; }
     function getStatus(item) {
-      const s = safeText(item?.status,"").toLowerCase();
-      if (s==="active"||s==="accepted") return "active";
-      if (s==="pending") return item?.can_accept ? "pending_incoming" : "pending_outgoing";
+      const s=safeText(item?.status,"").toLowerCase();
+      if(s==="active"||s==="accepted") return "active";
+      if(s==="pending") return item?.can_accept?"pending_incoming":"pending_outgoing";
       return "historical";
     }
     function getPartnerName(item) { return safeText(item?.summary?.partner_name)||safeText(item?.partner?.display_name)||safeText(item?.partner?.character_name)||safeText(item?.partner?.sl_username)||safeText(item?.counterpart?.sl_username)||"Unknown"; }
@@ -239,168 +294,281 @@
     function getSelectedUuid(p)   { return safeText(p?.selected_partnership_uuid)||safeText(p?.current_focus_partnership_uuid); }
     function getMemberGender(item){ return safeText(item?.member?.gender,"male").toLowerCase(); }
     function getPartnerGender(item){ return safeText(item?.partner?.gender,"male").toLowerCase(); }
-    function initials(name) { const w=safeText(name).split(" ").filter(Boolean); if(!w.length)return"?"; return (w[0][0]+(w[1]?w[1][0]:"")).toUpperCase(); }
-    function getAllItems(p) { return [...(p?.active_partnerships||p?.active||[]),...(p?.incoming_requests||p?.pending_incoming||[]),...(p?.outgoing_requests||p?.pending_outgoing||[]),...(p?.historical_partnerships||p?.historical||[])]; }
-    function sortOldest(items) { return items.slice().sort((a,b)=>{ const aT=Date.parse(safeText(a?.accepted_at||a?.created_at,""))||Infinity; const bT=Date.parse(safeText(b?.accepted_at||b?.created_at,""))||Infinity; return aT-bT; }); }
-
+    function initials(name) { const w=safeText(name).split(" ").filter(Boolean); if(!w.length)return"?"; return(w[0][0]+(w[1]?w[1][0]:"")).toUpperCase(); }
     function getResonance(item) {
-      if (item?.partner_presence_active) return "resonant";
-      if (item?.partner_hud_recent)      return "nearby";
+      if(item?.partner_presence_active) return "resonant";
+      if(item?.partner_hud_recent)      return "nearby";
       return "offline";
     }
     function getResonanceLabel(item) {
-      const s = getResonance(item);
-      if (s==="resonant") return "Resonance Active";
-      if (s==="nearby")   return "Partner Nearby";
+      const s=getResonance(item);
+      if(s==="resonant") return "Resonance Active";
+      if(s==="nearby")   return "Partner Nearby";
       return "Resonance Offline";
     }
-
-    function buildCard(item, rank, selectedUuid) {
-      const uuid       = getUuid(item);
-      const legacyId   = getId(item);
-      const status     = getStatus(item);
-      const isSelected = selectedUuid && uuid && selectedUuid === uuid;
-      const pct        = getBondPct(item);
-      const resonance  = getResonance(item);
-      const cardClass  = status==="active" ? "" : status.includes("pending") ? "is-pending" : "is-historical";
-      const badgeClass = status==="active" ? "active" : status.includes("pending") ? "pending" : "historical";
-      const badgeLabel = status==="active" ? "Active" : status==="pending_incoming" ? "Incoming" : status==="pending_outgoing" ? "Pending" : "Archived";
-
-      const actions = [
-        `<button type="button" class="bond-btn" data-open-record="true" data-partnership-uuid="${escapeHtml(uuid)}" data-partnership-id="${escapeHtml(legacyId??"")}">Open Record</button>`
-      ];
-      if (status==="pending_incoming") {
-        actions.push(`<button type="button" class="bond-btn is-accept" data-shrine-action="accept" data-partnership-uuid="${escapeHtml(uuid)}" data-partnership-id="${escapeHtml(legacyId??"")}">Accept</button>`);
-        actions.push(`<button type="button" class="bond-btn is-danger" data-shrine-action="deny" data-partnership-uuid="${escapeHtml(uuid)}" data-partnership-id="${escapeHtml(legacyId??"")}">Deny</button>`);
-      } else if (status==="pending_outgoing") {
-        actions.push(`<button type="button" class="bond-btn is-danger" data-shrine-action="remove" data-partnership-uuid="${escapeHtml(uuid)}" data-partnership-id="${escapeHtml(legacyId??"")}">Cancel</button>`);
-      } else if (status==="active") {
-        actions.push(`<button type="button" class="bond-btn is-danger" data-shrine-action="remove" data-partnership-uuid="${escapeHtml(uuid)}" data-partnership-id="${escapeHtml(legacyId??"")}">Remove</button>`);
-      }
-
-      return `<article class="bond-card ${cardClass} ${isSelected?"is-selected":""}" data-select-record="true" data-partnership-uuid="${escapeHtml(uuid)}" data-partnership-id="${escapeHtml(legacyId??"")}">
-        <div class="bond-rank">${rank}</div>
-        <div class="bond-status-badge ${badgeClass}">${escapeHtml(badgeLabel)}</div>
-        <div class="bond-figures">
-          <div class="bond-figure">
-            <div class="bond-figure-avatar ${getMemberGender(item)==="female"?"female":""}">${escapeHtml(initials(getMemberName(item)))}</div>
-            <div class="bond-figure-name">${escapeHtml(getMemberName(item))}</div>
-            <div class="bond-figure-realm">${escapeHtml(getMemberRealm(item))}</div>
-          </div>
-          <div class="bond-connector">
-            <div class="bond-connector-line"></div>
-            <div class="bond-connector-icon">⬡</div>
-            <div class="bond-connector-line"></div>
-          </div>
-          <div class="bond-figure">
-            <div class="bond-figure-avatar ${getPartnerGender(item)==="female"?"female":""} ${item?.partner_hud_recent?"is-online":""}">${escapeHtml(initials(getPartnerName(item)))}</div>
-            <div class="bond-figure-name">${escapeHtml(getPartnerName(item))}</div>
-            <div class="bond-figure-realm">${escapeHtml(getPartnerRealm(item))}</div>
-          </div>
-        </div>
-        <div class="bond-body">
-          <div class="bond-stage-row">
-            <div class="bond-stage-name">${escapeHtml(getBondStage(item))}</div>
-            <div class="bond-percent">${pct.toFixed(1)}%</div>
-          </div>
-          <div class="bond-bar-track"><div class="bond-bar-fill" style="width:${Math.min(100,pct)}%"></div></div>
-          <div class="bond-resonance-row">
-            <div class="bond-resonance-dot ${resonance}"></div>
-            <div class="bond-resonance-label">${escapeHtml(getResonanceLabel(item))}</div>
-          </div>
-          <div class="bond-actions" onclick="event.stopPropagation()">${actions.join("")}</div>
-        </div>
-      </article>`;
+    function formatDate(iso) {
+      if(!iso) return "";
+      const d=new Date(iso); if(isNaN(d)) return "";
+      return "Since "+d.toLocaleDateString("en-GB",{day:"numeric",month:"short",year:"numeric"});
     }
 
-    function renderGrid(payload) {
-      const grid = document.getElementById("bonds-grid");
-      const sorted = sortOldest(getAllItems(payload));
+    function getAllItems(p) {
+      return [...(p?.active_partnerships||p?.active||[]),...(p?.incoming_requests||p?.pending_incoming||[]),...(p?.outgoing_requests||p?.pending_outgoing||[]),...(p?.historical_partnerships||p?.historical||[])];
+    }
+    function sortOldest(items) {
+      return items.slice().sort((a,b)=>{
+        const aT=Date.parse(safeText(a?.accepted_at||a?.created_at,""))||Infinity;
+        const bT=Date.parse(safeText(b?.accepted_at||b?.created_at,""))||Infinity;
+        return aT-bT;
+      });
+    }
+
+    // ── Tier config ──
+    const TIERS = [
+      { key:"eternal", label:"Eternal Bond", minPct:100, dotClass:"eternal" },
+      { key:"spirit",  label:"Bond Spirit",  minPct:80,  dotClass:"spirit"  },
+      { key:"soul",    label:"Bond Soul",    minPct:60,  dotClass:"soul"    },
+      { key:"core",    label:"Bond Core",    minPct:40,  dotClass:"core"    },
+      { key:"root",    label:"Bond Root",    minPct:20,  dotClass:"root"    },
+      { key:"seed",    label:"Bond Seed",    minPct:0,   dotClass:"seed"    },
+      { key:"pending", label:"Pending",      minPct:-1,  dotClass:"pending" },
+      { key:"archived",label:"Archived",     minPct:-2,  dotClass:"archived"},
+    ];
+
+    function getTierKey(item) {
+      const status=getStatus(item);
+      if(status==="pending_incoming"||status==="pending_outgoing") return "pending";
+      if(status==="historical") return "archived";
+      const pct=getBondPct(item);
+      if(pct>=100) return "eternal";
+      if(pct>=80)  return "spirit";
+      if(pct>=60)  return "soul";
+      if(pct>=40)  return "core";
+      if(pct>=20)  return "root";
+      return "seed";
+    }
+
+    // ── Build action buttons html ──
+    function buildActions(item, style="hero") {
+      const uuid=getUuid(item); const legacyId=getId(item); const status=getStatus(item);
+      const btnClass = style==="hero" ? "hero-btn" : "bond-row-open";
+      const actions = [];
+
+      if(style==="hero") {
+        actions.push(`<button type="button" class="${btnClass} primary" data-open-record="true" data-partnership-uuid="${escapeHtml(uuid)}" data-partnership-id="${escapeHtml(legacyId??"")}">Open Record</button>`);
+        if(status==="pending_incoming") {
+          actions.push(`<button type="button" class="${btnClass} accept" data-shrine-action="accept" data-partnership-uuid="${escapeHtml(uuid)}" data-partnership-id="${escapeHtml(legacyId??"")}">Accept</button>`);
+          actions.push(`<button type="button" class="${btnClass} danger" data-shrine-action="deny" data-partnership-uuid="${escapeHtml(uuid)}" data-partnership-id="${escapeHtml(legacyId??"")}">Deny</button>`);
+        } else if(status==="pending_outgoing") {
+          actions.push(`<button type="button" class="${btnClass} danger" data-shrine-action="remove" data-partnership-uuid="${escapeHtml(uuid)}" data-partnership-id="${escapeHtml(legacyId??"")}">Cancel</button>`);
+        } else if(status==="active") {
+          actions.push(`<button type="button" class="${btnClass} danger" data-shrine-action="remove" data-partnership-uuid="${escapeHtml(uuid)}" data-partnership-id="${escapeHtml(legacyId??"")}">Remove</button>`);
+        }
+      } else {
+        if(status==="pending_incoming") {
+          return `<button type="button" class="${btnClass} accept" data-shrine-action="accept" data-partnership-uuid="${escapeHtml(uuid)}" data-partnership-id="${escapeHtml(legacyId??"")}">Accept</button>`;
+        }
+        return `<button type="button" class="${btnClass}" data-open-record="true" data-partnership-uuid="${escapeHtml(uuid)}" data-partnership-id="${escapeHtml(legacyId??"")}">Open</button>`;
+      }
+
+      return actions.join("");
+    }
+
+    // ── Hero card ──
+    function buildHeroCard(item, selectedUuid) {
+      if(!item) return `<div class="hall-empty"><div class="hall-empty-title">No bonds yet</div><p class="hall-empty-copy">Your bonds will appear here once you forge a partnership.</p></div>`;
+      const uuid=getUuid(item); const pct=getBondPct(item); const resonance=getResonance(item);
+      const isSelected=selectedUuid&&uuid&&selectedUuid===uuid;
+
+      return `<div class="hero-bond ${isSelected?"is-selected":""}" data-select-record="true" data-partnership-uuid="${escapeHtml(uuid)}" data-partnership-id="${escapeHtml(getId(item)??"")}">
+        <div class="hero-crown">
+          <div class="hero-crown-line"></div>
+          <div class="hero-crown-label">⬡ Most Loyal Bond ⬡</div>
+          <div class="hero-crown-line right"></div>
+        </div>
+        <div class="hero-figures">
+          <div class="hero-figure">
+            <div class="hero-avatar ${getMemberGender(item)==="female"?"female":""}">${escapeHtml(initials(getMemberName(item)))}</div>
+            <div class="hero-name">${escapeHtml(getMemberName(item))}</div>
+            <div class="hero-realm">${escapeHtml(getMemberRealm(item))}</div>
+          </div>
+          <div class="hero-connector">
+            <div class="hero-connector-line"></div>
+            <div class="hero-connector-icon">⬡</div>
+            <div class="hero-connector-line"></div>
+          </div>
+          <div class="hero-figure">
+            <div class="hero-avatar ${getPartnerGender(item)==="female"?"female":""} ${item?.partner_hud_recent?"is-online":""}">${escapeHtml(initials(getPartnerName(item)))}</div>
+            <div class="hero-name">${escapeHtml(getPartnerName(item))}</div>
+            <div class="hero-realm">${escapeHtml(getPartnerRealm(item))}</div>
+          </div>
+        </div>
+        <div class="hero-info">
+          <div class="hero-stage-row">
+            <div class="hero-stage">${escapeHtml(getBondStage(item))}</div>
+            <div class="hero-pct">${pct.toFixed(1)}%</div>
+          </div>
+          <div class="hero-bar-track"><div class="hero-bar-fill" style="width:${Math.min(100,pct)}%"></div></div>
+          <div class="hero-meta-row">
+            <div class="hero-resonance">
+              <div class="hero-res-dot ${resonance}"></div>
+              <div class="hero-res-label">${escapeHtml(getResonanceLabel(item))}</div>
+            </div>
+            <div class="hero-since">${escapeHtml(formatDate(item?.accepted_at||item?.created_at))}</div>
+          </div>
+          <div class="hero-actions" onclick="event.stopPropagation()">${buildActions(item,"hero")}</div>
+        </div>
+      </div>`;
+    }
+
+    // ── Compact bond row ──
+    function buildBondRow(item, rank, selectedUuid) {
+      const uuid=getUuid(item); const legacyId=getId(item); const status=getStatus(item);
+      const isSelected=selectedUuid&&uuid&&selectedUuid===uuid;
+      const pct=getBondPct(item); const resonance=getResonance(item);
+      const rowClass=status==="active"?"":status.includes("pending")?"is-pending":"is-historical";
+
+      return `<div class="bond-row ${rowClass} ${isSelected?"is-selected":""}" data-select-record="true" data-partnership-uuid="${escapeHtml(uuid)}" data-partnership-id="${escapeHtml(legacyId??"")}">
+        <div class="bond-row-rank">#${rank}</div>
+        <div class="bond-row-main">
+          <div class="bond-row-names">${escapeHtml(getMemberName(item))} · ${escapeHtml(getPartnerName(item))}</div>
+          <div class="bond-row-sub">${escapeHtml(getMemberRealm(item))} · ${escapeHtml(getPartnerRealm(item))}</div>
+        </div>
+        <div class="bond-row-bar-wrap">
+          <div class="bond-row-pct">${pct.toFixed(1)}%</div>
+          <div class="bond-row-bar"><div class="bond-row-bar-fill" style="width:${Math.min(100,pct)}%"></div></div>
+        </div>
+        <div class="bond-row-right" onclick="event.stopPropagation()">
+          <div class="bond-row-dot ${resonance}"></div>
+          ${buildActions(item,"row")}
+        </div>
+      </div>`;
+    }
+
+    // ── Render ──
+    function renderAll(payload) {
+      state.payload = payload;
+      const all = getAllItems(payload);
+      const sorted = sortOldest(all);
       const selUuid = getSelectedUuid(payload);
-      if (!sorted.length) {
-        grid.innerHTML = `<div class="hall-empty"><div class="hall-empty-title">No bonds yet</div><p class="hall-empty-copy">Your bonds will appear here once you forge a partnership.</p></div>`;
+
+      // Hero = first active bond (oldest)
+      const heroItem = sorted.find(i => getStatus(i)==="active") || sorted[0] || null;
+      const restItems = sorted.filter(i => i !== heroItem);
+
+      // Hero section
+      document.getElementById("hero-section").innerHTML = buildHeroCard(heroItem, selUuid);
+
+      if(!restItems.length) {
+        document.getElementById("tiers-section").innerHTML = "";
         return;
       }
-      grid.innerHTML = sorted.map((item, i) => buildCard(item, i+1, selUuid)).join("");
+
+      // Group rest into tiers
+      const tierMap = {};
+      restItems.forEach((item, idx) => {
+        const key = getTierKey(item);
+        if(!tierMap[key]) tierMap[key] = [];
+        tierMap[key].push({ item, rank: idx + 2 }); // rank starts at 2 since hero is #1
+      });
+
+      // Render tier sections in order
+      let html = "";
+      TIERS.forEach(tier => {
+        const group = tierMap[tier.key];
+        if(!group || !group.length) return;
+        html += `<div class="tier-section">
+          <div class="tier-header">
+            <div class="tier-dot ${tier.dotClass}"></div>
+            <div class="tier-name">${escapeHtml(tier.label)}</div>
+            <div class="tier-line"></div>
+            <div class="tier-count">${group.length}</div>
+          </div>
+          <div class="bond-rows">
+            ${group.map(({item,rank}) => buildBondRow(item, rank, selUuid)).join("")}
+          </div>
+        </div>`;
+      });
+
+      document.getElementById("tiers-section").innerHTML = html;
     }
 
-    function renderAll(payload) { state.payload = payload; renderGrid(payload); }
-
+    // ── API ──
     async function loadList() {
-      const r = await authFetch("/.netlify/functions/load-partnership-list", { method:"GET" });
-      const d = await parseJson(r, "Failed to load partnership list.");
+      const r=await authFetch("/.netlify/functions/load-partnership-list",{method:"GET"});
+      const d=await parseJson(r,"Failed to load partnership list.");
       renderAll(d); return d;
     }
-    async function setSelected(uuid, id) {
-      const body = {}; if (uuid) body.partnership_uuid=uuid; if (id) body.partnership_id=id;
-      const r = await authFetch("/.netlify/functions/set-selected-partnership", { method:"POST", headers:{"Content-Type":"application/json"}, body:JSON.stringify(body) });
-      return parseJson(r, "Failed to select partnership.");
+    async function setSelected(uuid,id) {
+      const body={}; if(uuid) body.partnership_uuid=uuid; if(id) body.partnership_id=id;
+      const r=await authFetch("/.netlify/functions/set-selected-partnership",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify(body)});
+      return parseJson(r,"Failed to select partnership.");
     }
-    async function openRecord(uuid, id) {
-      await setSelected(uuid, id);
-      if (uuid) { location.href=`/partnership-record.html?partnership_uuid=${encodeURIComponent(uuid)}`; return; }
-      if (id)   { location.href=`/partnership-record.html?partnership_id=${encodeURIComponent(id)}`; return; }
+    async function openRecord(uuid,id) {
+      await setSelected(uuid,id);
+      if(uuid){location.href=`/partnership-record.html?partnership_uuid=${encodeURIComponent(uuid)}`;return;}
+      if(id){location.href=`/partnership-record.html?partnership_id=${encodeURIComponent(id)}`;return;}
       location.href="/partnership-record.html";
     }
     async function sendRequest(event) {
-      event.preventDefault(); if (state.isSubmitting) return;
+      event.preventDefault(); if(state.isSubmitting) return;
       const username=safeText(document.getElementById("partner-username").value);
       const avatarKey=safeText(document.getElementById("partner-avatar-key").value);
-      if (!username && !avatarKey) { showPageMessage("Enter a partner SL username or avatar UUID."); return; }
+      if(!username&&!avatarKey){showMsg("Enter a partner SL username or avatar UUID.");return;}
       try {
         setButtonLoading(true); setBusy(true);
         const r=await authFetch("/.netlify/functions/send-partner-request",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({partner_username:username,partner_avatar_key:avatarKey})});
         const d=await parseJson(r,"Failed to send request.");
-        showPageMessage(d.message||"Partner request sent.");
+        showMsg(d.message||"Partner request sent.");
         document.getElementById("partner-username").value="";
         document.getElementById("partner-avatar-key").value="";
         await loadList();
-      } catch(e){ if(!/session has expired/i.test(e.message)) showPageMessage(e.message||"Failed to send request."); }
-      finally { setButtonLoading(false); setBusy(false); }
+      } catch(e){if(!/session has expired/i.test(e.message)) showMsg(e.message||"Failed to send request.");}
+      finally{setButtonLoading(false);setBusy(false);}
     }
 
     function bindEvents() {
-      document.getElementById("partner-request-form").addEventListener("submit", sendRequest);
-      document.getElementById("clear-request-form").addEventListener("click", () => { document.getElementById("partner-username").value=""; document.getElementById("partner-avatar-key").value=""; });
-      document.getElementById("logout-button").addEventListener("click", async (e) => { e.preventDefault(); await logoutUser(); });
+      document.getElementById("partner-request-form").addEventListener("submit",sendRequest);
+      document.getElementById("clear-request-form").addEventListener("click",()=>{document.getElementById("partner-username").value="";document.getElementById("partner-avatar-key").value="";});
+      document.getElementById("logout-button").addEventListener("click",async(e)=>{e.preventDefault();await logoutUser();});
 
-      document.body.addEventListener("click", async (e) => {
-        const openBtn = e.target.closest("[data-open-record='true']");
-        if (openBtn) {
+      document.body.addEventListener("click",async(e)=>{
+        const openBtn=e.target.closest("[data-open-record='true']");
+        if(openBtn){
           const uuid=safeText(openBtn.dataset.partnershipUuid); const id=openBtn.dataset.partnershipId?Number(openBtn.dataset.partnershipId):null;
-          try { setBusy(true); await openRecord(uuid,id); } catch(err){ if(!/session has expired/i.test(err.message)){ showPageMessage(err.message||"Failed to open record."); setBusy(false); } }
+          try{setBusy(true);await openRecord(uuid,id);}catch(err){if(!/session has expired/i.test(err.message)){showMsg(err.message||"Failed to open record.");setBusy(false);}}
           return;
         }
-        const actionBtn = e.target.closest("[data-shrine-action]");
-        if (actionBtn) {
+        const actionBtn=e.target.closest("[data-shrine-action]");
+        if(actionBtn){
           const action=safeText(actionBtn.dataset.shrineAction); const uuid=safeText(actionBtn.dataset.partnershipUuid); const id=actionBtn.dataset.partnershipId?Number(actionBtn.dataset.partnershipId):null;
-          try {
+          const endpoints={"accept":"accept-partner-request","deny":"deny-partner-request","remove":"remove-partnership"};
+          if(!endpoints[action]) return;
+          try{
             setBusy(true);
-            let d;
-            if (action==="accept"){ d=await parseJson(await authFetch("/.netlify/functions/accept-partner-request",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({...(uuid?{partnership_uuid:uuid}:{}),...(id?{partnership_id:id}:{})})})); }
-            if (action==="deny")  { d=await parseJson(await authFetch("/.netlify/functions/deny-partner-request",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({...(uuid?{partnership_uuid:uuid}:{}),...(id?{partnership_id:id}:{})})})); }
-            if (action==="remove"){ d=await parseJson(await authFetch("/.netlify/functions/remove-partnership",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({...(uuid?{partnership_uuid:uuid}:{}),...(id?{partnership_id:id}:{})})})); }
-            if (d) showPageMessage(d.message||"Done."); await loadList();
-          } catch(err){ if(!/session has expired/i.test(err.message)) showPageMessage(err.message||"Action failed."); }
-          finally { setBusy(false); }
+            const r=await authFetch(`/.netlify/functions/${endpoints[action]}`,{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({...(uuid?{partnership_uuid:uuid}:{}),...(id?{partnership_id:id}:{})})});
+            const d=await parseJson(r,"Action failed.");
+            showMsg(d.message||"Done."); await loadList();
+          }catch(err){if(!/session has expired/i.test(err.message)) showMsg(err.message||"Action failed.");}
+          finally{setBusy(false);}
           return;
         }
-        const selectCard = e.target.closest("[data-select-record='true']");
-        if (selectCard) {
+        const selectCard=e.target.closest("[data-select-record='true']");
+        if(selectCard){
           const uuid=safeText(selectCard.dataset.partnershipUuid); const id=selectCard.dataset.partnershipId?Number(selectCard.dataset.partnershipId):null;
-          try { setBusy(true); await setSelected(uuid,id); await loadList(); } catch(err){ if(!/session has expired/i.test(err.message)) showPageMessage(err.message||"Failed to select."); } finally { setBusy(false); }
+          try{setBusy(true);await setSelected(uuid,id);await loadList();}catch(err){if(!/session has expired/i.test(err.message)) showMsg(err.message||"Failed to select.");}finally{setBusy(false);}
         }
       });
     }
 
     async function boot() {
       try {
-        clearPageMessage(); bindEvents(); await verifySession(); await loadList();
-        state.refreshInterval = setInterval(async () => { try { await loadList(); } catch(e){ console.error("Hall refresh:",e); } }, 7000);
-      } catch(e){ if(!/session has expired/i.test(safeText(e.message))) showPageMessage(e.message||"Failed to load Hall of Bonds."); }
+        clearMsg(); bindEvents(); await verifySession(); await loadList();
+        state.refreshInterval=setInterval(async()=>{try{await loadList();}catch(e){console.error("Hall refresh:",e);}},7000);
+      } catch(e){if(!/session has expired/i.test(safeText(e.message))) showMsg(e.message||"Failed to load Hall of Bonds.");}
     }
-    document.addEventListener("DOMContentLoaded", boot);
-    window.addEventListener("beforeunload", () => { if(state.refreshInterval) clearInterval(state.refreshInterval); });
+    document.addEventListener("DOMContentLoaded",boot);
+    window.addEventListener("beforeunload",()=>{if(state.refreshInterval)clearInterval(state.refreshInterval);});
   </script>
 
   <script>
