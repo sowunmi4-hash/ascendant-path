@@ -150,15 +150,16 @@ exports.handler = async (event) => {
     });
   }
 
-  if (status === "breakthrough_ready" || status === "in_breakthrough") {
+  if (status === "in_breakthrough") {
     return json(200, {
       success: true,
       action: "blocked_by_breakthrough",
-      message: "Cultivation is at a breakthrough threshold. Complete or enter the breakthrough first.",
+      message: "A breakthrough is already underway. Complete it first.",
       v2_cultivation_status: status,
       cultivation_preference: preference
     });
   }
+  // breakthrough_ready: allow meditation so cultivator can channel Auric before entering
 
   // In manual mode, only meditating/paused/idle are valid starting states
   // In auto mode this endpoint is also called when meditation starts
