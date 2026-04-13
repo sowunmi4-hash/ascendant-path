@@ -288,6 +288,34 @@
       font-family:var(--fb);font-size:15px;font-style:italic;
       color:var(--text3);text-align:center;padding:8px 0;
     }
+
+    /* ── CELESTIAL FEED TICKER ── */
+    .ticker-bar{
+      width:100%;background:#0d0d18;
+      border-top:0.5px solid rgba(200,169,106,0.15);
+      border-bottom:0.5px solid rgba(200,169,106,0.15);
+      height:34px;display:flex;align-items:center;overflow:hidden;
+      position:relative;z-index:5;flex-shrink:0;
+    }
+    .ticker-lbl{
+      flex-shrink:0;padding:0 14px;font-size:9px;letter-spacing:.14em;
+      text-transform:uppercase;color:#c8a96a;font-weight:600;
+      border-right:0.5px solid rgba(200,169,106,0.25);height:100%;
+      display:flex;align-items:center;background:#0d0d18;
+      white-space:nowrap;font-family:'Cinzel',serif;
+    }
+    .ticker-scroll{overflow:hidden;flex:1;position:relative;height:100%}
+    .ticker-track{display:flex;align-items:center;height:100%;position:absolute;white-space:nowrap}
+    .ticker-item{display:inline-flex;align-items:center;padding:0 24px;font-size:11px;
+      white-space:nowrap;gap:8px;border-right:1px solid rgba(200,169,106,0.12);
+      font-family:'Cinzel',serif;letter-spacing:.04em;}
+    .ticker-item.celestial{color:#c8a96a}
+    .ticker-item.notice{color:rgba(255,255,255,0.65)}
+    .ticker-item.notice-urgent{color:#c86890}
+    .ticker-dot{width:5px;height:5px;border-radius:50%;display:inline-block;flex-shrink:0}
+    .ticker-dot.celestial{background:#c8a96a}
+    .ticker-dot.notice{background:rgba(255,255,255,0.3)}
+    .ticker-dot.notice-urgent{background:#c86890}
   </style>
 </head>
 <body>
@@ -315,6 +343,14 @@
     </nav>
   </header>
 </div>
+
+  <!-- Celestial Feed ticker -->
+  <div class="ticker-bar">
+    <div class="ticker-lbl">&#11042; Celestial Feed</div>
+    <div class="ticker-scroll">
+      <div class="ticker-track" id="tickerTrack"></div>
+    </div>
+  </div>
 
 <div class="state" id="stLoad"><div class="spin"></div><span>Consulting the omens&hellip;</span></div>
 <div class="state off" id="stErr"><span id="errTxt">Unable to read the omens.</span></div>
@@ -597,6 +633,7 @@
         return;
       }
       render(worldData,forecastData);
+      buildTicker(worldData);
       if(!silent){hide("stLoad");on("pgMain")}
     }
     doFetch(CEL,function(err,res){
@@ -618,6 +655,37 @@
       loadAll(true);
       setTimeout(function(){_fly=false},5000);
     },60000);
+  }
+
+  /* ── TICKER ── */
+  function buildTicker(world){
+    var items=[];
+    if(world){
+      if(world.has_active_phenomenon&&world.phenomenon_name){
+        items.push({type:'celestial',text:st(world.phenomenon_omen_text,'A major celestial sign is moving across the heavens.')});
+      }
+      if(world.dashboard_effect_summary){items.push({type:'celestial',text:world.dashboard_effect_summary})}
+      if(world.phase_omen_text){items.push({type:'celestial',text:world.phase_omen_text})}
+      items.push({type:'celestial',text:st(world.phase_name,'—')+' — '+st(world.force_name,'—')});
+    }
+    if(!items.length){items.push({type:'celestial',text:'The celestial currents are still. Cultivate in peace.'})}
+    var all=items.concat(items);
+    var track=g('tickerTrack');
+    if(!track)return;
+    track.innerHTML=all.map(function(item){
+      return '<span class="ticker-item '+item.type+'"><span class="ticker-dot '+item.type+'"></span>'+item.text+'</span>';
+    }).join('');
+    if(buildTicker._running)return;
+    buildTicker._running=true;
+    var pos=0;
+    function loop(){
+      var half=track.scrollWidth/2;
+      pos-=0.5;
+      if(half>0&&Math.abs(pos)>=half)pos=0;
+      track.style.transform='translateX('+pos+'px)';
+      requestAnimationFrame(loop);
+    }
+    loop();
   }
 
   function boot(){
