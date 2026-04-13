@@ -6,6 +6,21 @@
   <title>The Ascendant Path</title>
   <link rel="stylesheet" href="/css/style.css" />
   <style>
+    /* ── NAV ── */
+    .site-shell{width:min(1280px,calc(100% - 2rem));margin:0 auto;position:relative;z-index:10}
+    .site-header{padding-top:1rem;position:relative;z-index:20}
+    .dashboard-nav{
+      width:fit-content;max-width:100%;margin:0 auto;
+      display:flex;align-items:center;justify-content:center;
+      gap:.55rem;flex-wrap:wrap;padding:.75rem .9rem;border-radius:999px;
+      background:linear-gradient(180deg,rgba(255,255,255,0.03),rgba(255,255,255,0.01)),rgba(6,10,18,0.74);
+      border:1px solid rgba(255,255,255,0.06);box-shadow:0 14px 34px rgba(0,0,0,0.22);
+      backdrop-filter:blur(10px);font-family:'Cinzel',serif;font-size:.84rem;
+    }
+    .dashboard-nav a{padding:.62rem .92rem;border-radius:999px;border:1px solid rgba(255,255,255,0.04);background:rgba(255,255,255,0.02);color:rgba(221,213,200,0.7);text-decoration:none;transition:.18s ease}
+    .dashboard-nav a:hover{transform:translateY(-1px);color:#ddd5c8;border-color:rgba(142,168,255,0.22);background:rgba(255,255,255,0.04)}
+    .dashboard-nav a.active{color:#fff;border-color:rgba(142,168,255,0.28);background:rgba(142,168,255,0.10)}
+
     .landing-page {
       width: min(1240px, calc(100% - 2rem));
       margin: 1.5rem auto 4rem;
@@ -507,16 +522,24 @@
   <div class="rune-layer"></div>
   <div class="lightning-flash"></div>
 
-  <nav>
-    <a href="/index.html" class="active">Home</a>
-    <a href="/lore.html">Lore</a>
+  <div class="site-shell">
+    <header class="site-header">
+      <nav class="dashboard-nav" aria-label="Global">
+        <a href="/index.html" class="active">Home</a>
+        <a href="/lore.html">Lore</a>
+        <div id="nav-session-links" style="display:contents">
+          <a href="/dashboard.html" id="nav-dashboard-link">Dashboard</a>
+          <a href="/breath-of-celestial.html" id="nav-celestial-link">Celestial</a>
+          <a href="/login.html" id="nav-logout-link">Logout</a>
+        </div>
+      </nav>
+    </header>
+  </div>
 
-    <div class="nav-session-links" id="nav-session-links">
-      <a href="/dashboard.html" id="nav-dashboard-link">Dashboard</a>
-      <a href="/breath-of-celestial.html" id="nav-celestial-link">Celestial</a>
-      <a href="/index.html" id="nav-logout-link">Logout</a>
-    </div>
-  </nav>
+  <div id="news-ticker-bar">
+    <div id="ticker-label">&#11042; Celestial Feed</div>
+    <div class="ticker-scroll"><div id="ticker-track"></div></div>
+  </div>
 
   <main class="landing-page">
     <section class="hero-band">
@@ -746,6 +769,27 @@
         "Touch the central TAP seal to enter the path and begin your ascension.";
     }
 
+
+    function buildTicker(world) {
+      var items = [];
+      if (world) {
+        if (world.has_active_phenomenon && world.phenomenon_name) items.push({ type:'celestial', text: String(world.phenomenon_omen_text||'A major celestial sign is moving across the heavens.') });
+        if (world.dashboard_effect_summary) items.push({ type:'celestial', text: world.dashboard_effect_summary });
+        if (world.phase_omen_text) items.push({ type:'celestial', text: world.phase_omen_text });
+        items.push({ type:'celestial', text: String(world.phase_name||'—') + ' — ' + String(world.force_name||'—') });
+      }
+      if (!items.length) items.push({ type:'celestial', text:'The celestial currents are still.' });
+      var all = items.concat(items);
+      var track = document.getElementById('ticker-track');
+      if (!track) return;
+      track.innerHTML = all.map(i => '<span class="ticker-item '+i.type+'"><span class="ticker-dot '+i.type+'"></span>'+i.text+'</span>').join('');
+      if (buildTicker._running) return;
+      buildTicker._running = true;
+      var pos = 0;
+      function loop() { var half = track.scrollWidth/2; pos -= 0.5; if (half>0 && Math.abs(pos)>=half) pos=0; track.style.transform='translateX('+pos+'px)'; requestAnimationFrame(loop); }
+      loop();
+    }
+
     function setLoggedInView(member) {
       const displayName =
         safeText(member.character_name) ||
@@ -848,6 +892,7 @@
 
         if (member) {
           setLoggedInView(member);
+          if (data.world) buildTicker(data.world);
         } else {
           setLoggedOutView();
         }
