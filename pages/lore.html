@@ -11,17 +11,17 @@
   <style>
     *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
     :root{
-      --bg:#07070b;--card:#0c0c17;
-      --border:rgba(200,169,106,0.10);--border2:rgba(200,169,106,0.20);
-      --gold:#c8a96a;--text:#e8e0d0;--text2:rgba(232,224,208,0.55);--text3:rgba(232,224,208,0.26);
+      --bg:#07070b;--gold:#c8a96a;
+      --text:#e8e0d0;--text2:rgba(232,224,208,0.58);--text3:rgba(232,224,208,0.24);
       --fh:'Cinzel',serif;--fb:'Cormorant Garamond',serif;
+      --border:rgba(200,169,106,0.10);
     }
     html,body{min-height:100%;background:var(--bg);color:var(--text);font-family:var(--fb)}
 
-    /* ── ANIMATIONS ── */
-    @keyframes fadeUp{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}
-    @keyframes shimmer{0%{background-position:-300% center}100%{background-position:300% center}}
+    @keyframes fadeUp{from{opacity:0;transform:translateY(24px)}to{opacity:1;transform:translateY(0)}}
     @keyframes fadeIn{from{opacity:0}to{opacity:1}}
+    @keyframes shimmer{0%{background-position:-300% center}100%{background-position:300% center}}
+    @keyframes float{0%,100%{transform:translateY(0)}50%{transform:translateY(-8px)}}
 
     /* ── NAV ── */
     .site-shell{width:min(1280px,calc(100% - 2rem));margin:0 auto;position:relative;z-index:10}
@@ -34,228 +34,220 @@
       border:1px solid rgba(255,255,255,0.06);box-shadow:0 14px 34px rgba(0,0,0,0.22);
       backdrop-filter:blur(10px);font-family:var(--fh);font-size:.84rem;
     }
-    .dashboard-nav a{
-      padding:.62rem .92rem;border-radius:999px;
-      border:1px solid rgba(255,255,255,0.04);background:rgba(255,255,255,0.02);
-      color:rgba(221,213,200,0.7);text-decoration:none;transition:.18s ease;
-    }
+    .dashboard-nav a{padding:.62rem .92rem;border-radius:999px;border:1px solid rgba(255,255,255,0.04);background:rgba(255,255,255,0.02);color:rgba(221,213,200,0.7);text-decoration:none;transition:.18s ease}
     .dashboard-nav a:hover{transform:translateY(-1px);color:#ddd5c8;border-color:rgba(142,168,255,0.22);background:rgba(255,255,255,0.04)}
     .dashboard-nav a.active{color:#fff;border-color:rgba(142,168,255,0.28);background:rgba(142,168,255,0.10)}
 
-    /* ── HERO ── */
-    .lore-hero{
-      position:relative;overflow:hidden;
-      min-height:420px;display:flex;align-items:flex-end;
-      background:
-        linear-gradient(180deg,rgba(7,7,11,0.25) 0%,rgba(7,7,11,0.75) 70%,rgba(7,7,11,1) 100%),
-        radial-gradient(circle at 20% 30%,rgba(200,169,106,0.08),transparent 40%),
-        radial-gradient(circle at 80% 20%,rgba(100,130,200,0.06),transparent 40%),
-        url("https://images.unsplash.com/photo-1511497584788-876760111969?auto=format&fit=crop&w=1800&q=80") center 38%/cover no-repeat;
+    /* ── FULL SCREEN OPENING ── */
+    .lore-opening{
+      position:relative;width:100%;height:100vh;min-height:600px;
+      display:flex;flex-direction:column;align-items:center;justify-content:center;
+      overflow:hidden;
     }
-    /* shimmer top */
-    .lore-hero::before{
-      content:'';position:absolute;top:0;left:0;right:0;height:1.5px;
+    /* deep atmospheric background */
+    .lore-opening::before{
+      content:'';position:absolute;inset:0;
+      background:
+        radial-gradient(ellipse at 50% 30%, rgba(200,169,106,0.06) 0%, transparent 55%),
+        radial-gradient(ellipse at 20% 70%, rgba(100,130,200,0.04) 0%, transparent 40%),
+        radial-gradient(ellipse at 80% 60%, rgba(200,169,106,0.03) 0%, transparent 40%),
+        url("https://images.unsplash.com/photo-1511497584788-876760111969?auto=format&fit=crop&w=1800&q=80") center/cover no-repeat;
+    }
+    /* dark overlay */
+    .lore-opening::after{
+      content:'';position:absolute;inset:0;
+      background:linear-gradient(180deg,rgba(7,7,11,0.5) 0%,rgba(7,7,11,0.3) 40%,rgba(7,7,11,0.85) 80%,rgba(7,7,11,1) 100%);
+    }
+    /* shimmer line */
+    .opening-shimmer{
+      position:absolute;top:0;left:0;right:0;height:1px;z-index:3;
       background:linear-gradient(90deg,transparent,var(--gold),transparent);
       background-size:300% auto;animation:shimmer 6s linear infinite;
     }
-    .lore-hero-inner{
+    .opening-inner{
       position:relative;z-index:2;
-      max-width:1100px;width:100%;margin:0 auto;
-      padding:0 36px 52px;
-      animation:fadeUp .7s ease .1s both;
+      text-align:center;padding:0 24px;
+      animation:fadeUp .9s ease .2s both;
     }
-    .lore-eyebrow{
-      font-family:var(--fh);font-size:9px;letter-spacing:.28em;
-      color:rgba(200,169,106,0.6);text-transform:uppercase;margin-bottom:14px;display:block;
+    .opening-kanji{
+      font-family:var(--fh);font-size:clamp(14px,2.5vw,18px);
+      letter-spacing:.5em;color:rgba(200,169,106,0.2);
+      margin-bottom:28px;animation:float 6s ease-in-out infinite;
     }
-    .lore-title{
-      font-family:var(--fh);font-size:clamp(32px,5vw,58px);font-weight:700;
-      color:#fff;letter-spacing:.04em;line-height:1.05;margin-bottom:12px;
-      text-shadow:0 4px 20px rgba(0,0,0,0.6);
+    .opening-title{
+      font-family:var(--fh);font-size:clamp(36px,7vw,80px);
+      font-weight:700;color:#fff;letter-spacing:.08em;
+      line-height:1.0;margin-bottom:24px;
+      text-shadow:0 0 80px rgba(200,169,106,0.15),0 4px 24px rgba(0,0,0,0.8);
     }
-    .lore-kanji{
-      font-size:clamp(18px,3vw,26px);letter-spacing:.22em;
-      color:rgba(200,169,106,0.2);margin-bottom:16px;font-family:var(--fh);
+    .opening-title span{color:var(--gold)}
+    .opening-subtitle{
+      font-family:var(--fb);font-size:clamp(16px,2.5vw,22px);
+      font-style:italic;color:var(--text2);
+      max-width:620px;margin:0 auto 40px;line-height:1.7;
+      letter-spacing:.02em;
     }
-    .lore-subtitle{
-      font-family:var(--fb);font-size:18px;line-height:1.75;
-      color:rgba(232,224,208,0.75);max-width:680px;font-style:italic;
+    /* gold ornament */
+    .opening-orn{
+      display:flex;align-items:center;gap:12px;justify-content:center;
+      margin-bottom:0;
+    }
+    .orn-line{width:80px;height:1px;background:linear-gradient(to right,transparent,var(--gold))}
+    .orn-line.r{background:linear-gradient(to left,transparent,var(--gold))}
+    .orn-char{font-family:var(--fh);font-size:14px;color:rgba(200,169,106,0.5);letter-spacing:.1em}
+
+    /* scroll indicator */
+    .scroll-hint{
+      position:absolute;bottom:32px;left:50%;transform:translateX(-50%);
+      z-index:3;display:flex;flex-direction:column;align-items:center;gap:8px;
+      animation:fadeIn 1s ease 1.5s both;
+    }
+    .scroll-hint-text{font-family:var(--fh);font-size:8px;letter-spacing:.24em;color:var(--text3);text-transform:uppercase}
+    .scroll-hint-line{width:1px;height:40px;background:linear-gradient(to bottom,var(--gold),transparent);animation:float 2s ease-in-out infinite}
+
+    /* ── BODY ── */
+    .lore-scroll{position:relative;z-index:2}
+
+    /* ── SCRIPTURE SECTIONS ── */
+    /* Full width section with text centred, very spacious */
+    .scripture{
+      max-width:720px;margin:0 auto;
+      padding:100px 32px;
+      text-align:center;
+      position:relative;
+    }
+    .scripture+.scripture{
+      padding-top:0;
+    }
+    /* dividing ornament between sections */
+    .scripture-div{
+      display:flex;align-items:center;justify-content:center;gap:16px;
+      padding:20px 0 60px;
+      max-width:720px;margin:0 auto;
+    }
+    .scripture-div-line{flex:1;height:1px;background:linear-gradient(to right,transparent,rgba(200,169,106,0.2),transparent)}
+    .scripture-div-glyph{font-family:var(--fh);font-size:10px;color:rgba(200,169,106,0.25);letter-spacing:.2em}
+
+    .scripture-eyebrow{
+      font-family:var(--fh);font-size:8px;letter-spacing:.32em;
+      color:rgba(200,169,106,0.45);text-transform:uppercase;
+      margin-bottom:20px;display:block;
+    }
+    .scripture-title{
+      font-family:var(--fh);font-size:clamp(22px,4vw,34px);font-weight:600;
+      color:var(--gold);letter-spacing:.06em;line-height:1.2;
+      margin-bottom:32px;
+    }
+    .scripture-body{
+      font-family:var(--fb);font-size:clamp(17px,2vw,20px);
+      line-height:1.9;color:var(--text2);font-style:italic;
+      margin-bottom:20px;
+    }
+    .scripture-body:last-child{margin-bottom:0}
+    /* drop cap on first paragraph */
+    .scripture-body.drop-cap::first-letter{
+      font-family:var(--fh);font-size:4em;float:left;
+      line-height:.75;margin-right:.08em;margin-top:.05em;
+      color:var(--gold);opacity:.7;
     }
 
-    /* ── PAGE WRAP ── */
-    .lore-body{max-width:1100px;margin:0 auto;padding:56px 36px 100px}
-    @media(max-width:680px){.lore-body{padding:36px 16px 80px}.lore-hero-inner{padding:0 20px 40px}}
-
-    /* ── SECTION DIVIDER ── */
-    .sec-div{
-      display:flex;align-items:center;gap:14px;margin:0 0 28px;
-      animation:fadeIn .5s ease both;
+    /* ── THREE LAWS — horizontal trio ── */
+    .laws-wrap{
+      padding:80px 32px 100px;
+      max-width:1100px;margin:0 auto;
     }
-    .sec-div-line{flex:1;height:1px;background:var(--border)}
-    .sec-div-label{
-      font-family:var(--fh);font-size:9px;letter-spacing:.24em;
-      color:var(--text3);text-transform:uppercase;white-space:nowrap;
+    .laws-head{text-align:center;margin-bottom:60px}
+    .laws-eyebrow{font-family:var(--fh);font-size:8px;letter-spacing:.32em;color:rgba(200,169,106,0.45);text-transform:uppercase;margin-bottom:16px;display:block}
+    .laws-title{font-family:var(--fh);font-size:clamp(18px,3vw,26px);font-weight:600;color:var(--gold);letter-spacing:.06em}
+
+    .laws-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:1px;background:rgba(200,169,106,0.08)}
+    @media(max-width:780px){.laws-grid{grid-template-columns:1fr;gap:0}}
+
+    .law{
+      padding:48px 36px;background:var(--bg);
+      position:relative;text-align:center;
+    }
+    .law::before{
+      content:'';position:absolute;top:0;left:50%;transform:translateX(-50%);
+      width:30px;height:1px;background:var(--gold);opacity:.3;
+    }
+    .law-num{
+      font-family:var(--fh);font-size:10px;letter-spacing:.2em;
+      color:rgba(200,169,106,0.3);text-transform:uppercase;
+      margin-bottom:16px;display:block;
+    }
+    .law-title{
+      font-family:var(--fh);font-size:16px;font-weight:600;color:var(--text);
+      letter-spacing:.05em;margin-bottom:20px;line-height:1.3;
+    }
+    .law-body{
+      font-family:var(--fb);font-size:16px;line-height:1.8;
+      color:var(--text2);font-style:italic;
     }
 
-    /* ── CHRONICLE (Story So Far) ── */
-    .chronicle{
+    /* ── PATHS — immersive full-width strips ── */
+    .path-strip{
       position:relative;overflow:hidden;
-      background:var(--card);border:1px solid var(--border);border-radius:5px;
-      padding:40px 44px;margin-bottom:48px;
-      animation:fadeUp .5s ease .15s both;
+      padding:80px 0;
+      border-top:1px solid rgba(200,169,106,0.06);
     }
-    .chronicle::before{
-      content:'';position:absolute;top:0;left:0;right:0;height:1px;
-      background:linear-gradient(90deg,transparent,var(--gold),transparent);
-      background-size:200% auto;animation:shimmer 7s linear infinite;
+    .path-strip::before{
+      content:'';position:absolute;inset:0;
+      background:radial-gradient(ellipse at 0% 50%,rgba(200,169,106,0.04) 0%,transparent 50%);
     }
-    /* decorative left border */
-    .chronicle::after{
-      content:'';position:absolute;left:0;top:40px;bottom:40px;width:2px;
-      background:linear-gradient(180deg,transparent,var(--gold),transparent);
-      opacity:.3;
-    }
-    .chronicle-kicker{
-      font-family:var(--fh);font-size:9px;letter-spacing:.24em;color:rgba(200,169,106,0.6);
-      text-transform:uppercase;margin-bottom:12px;
-    }
-    .chronicle-title{
-      font-family:var(--fh);font-size:22px;font-weight:600;color:var(--gold);
-      letter-spacing:.05em;margin-bottom:24px;
-    }
-    .chronicle-text{
-      font-family:var(--fb);font-size:17px;line-height:1.8;
-      color:var(--text2);margin-bottom:16px;
-    }
-    .chronicle-text:last-child{margin-bottom:0}
-
-    /* ── DOCTRINE CARDS ── */
-    .doctrine-grid{
-      display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px;
-      margin-bottom:48px;
-    }
-    @media(max-width:780px){.doctrine-grid{grid-template-columns:1fr}}
-
-    .doctrine-card{
-      position:relative;overflow:hidden;
-      background:var(--card);border:1px solid var(--border);border-radius:5px;
-      padding:28px 26px;
-      animation:fadeUp .5s ease both;
-      transition:border-color .2s,transform .2s;
-    }
-    .doctrine-card:hover{border-color:var(--border2);transform:translateY(-3px)}
-    .doctrine-card::before{
-      content:'';position:absolute;top:0;left:0;right:0;height:1px;
-      background:linear-gradient(90deg,transparent,rgba(200,169,106,0.3),transparent);
-    }
-    /* left accent */
-    .doctrine-card::after{
-      content:'';position:absolute;left:0;top:0;bottom:0;width:2px;
-      background:linear-gradient(180deg,transparent,var(--gold),transparent);
-      opacity:.2;
-    }
-    .doctrine-tag{
-      font-family:var(--fh);font-size:8px;letter-spacing:.2em;
-      color:rgba(200,169,106,0.55);text-transform:uppercase;margin-bottom:10px;
-    }
-    .doctrine-title{
-      font-family:var(--fh);font-size:15px;font-weight:600;color:var(--text);
-      letter-spacing:.04em;margin-bottom:16px;line-height:1.3;
-    }
-    .doctrine-body{
-      font-family:var(--fb);font-size:15.5px;line-height:1.72;
-      color:var(--text2);font-style:italic;margin-bottom:12px;
-    }
-    .doctrine-body:last-child{margin-bottom:0}
-
-    /* ── PATH CARDS ── */
-    .path-grid{
-      display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px;
-      margin-bottom:48px;
-    }
-    @media(max-width:680px){.path-grid{grid-template-columns:1fr}}
-
-    .path-card{
-      position:relative;overflow:hidden;
-      background:var(--card);border:1px solid var(--border);border-radius:5px;
-      padding:28px 26px;
-      animation:fadeUp .5s ease both;
-      transition:border-color .2s,transform .2s;
-    }
-    .path-card:hover{border-color:var(--border2);transform:translateY(-3px)}
-    .path-card::before{
-      content:'';position:absolute;top:0;left:0;right:0;height:1px;
-      background:linear-gradient(90deg,transparent,rgba(200,169,106,0.3),transparent);
-    }
-    .path-card::after{
-      content:'';position:absolute;left:0;top:0;bottom:0;width:2px;
-      background:linear-gradient(180deg,transparent,var(--gold),transparent);opacity:.2;
-    }
-    .path-tag{
-      font-family:var(--fh);font-size:8px;letter-spacing:.2em;
-      color:rgba(200,169,106,0.55);text-transform:uppercase;margin-bottom:10px;
-    }
-    .path-title{
-      font-family:var(--fh);font-size:15px;font-weight:600;color:var(--text);
-      letter-spacing:.04em;margin-bottom:16px;
-    }
-    .path-body{
-      font-family:var(--fb);font-size:15.5px;line-height:1.72;
-      color:var(--text2);font-style:italic;margin-bottom:12px;
-    }
+    .path-inner{max-width:720px;margin:0 auto;padding:0 32px;position:relative;z-index:1}
+    .path-tag{font-family:var(--fh);font-size:8px;letter-spacing:.3em;color:rgba(200,169,106,0.4);text-transform:uppercase;margin-bottom:16px;display:block}
+    .path-title{font-family:var(--fh);font-size:clamp(20px,3vw,28px);font-weight:600;color:var(--text);letter-spacing:.05em;margin-bottom:24px}
+    .path-body{font-family:var(--fb);font-size:18px;line-height:1.85;color:var(--text2);font-style:italic;margin-bottom:16px}
     .path-body:last-child{margin-bottom:0}
 
-    /* ── ENTRY FRAME ── */
-    .entry-wrap{display:flex;justify-content:center;animation:fadeUp .5s ease both}
-    .entry-frame{
-      position:relative;overflow:hidden;
-      background:var(--card);border:1px solid var(--border);border-radius:5px;
-      padding:36px 40px;width:min(540px,100%);text-align:center;
+    /* ── ENTRY — full atmospheric centred ── */
+    .entry-section{
+      padding:100px 32px 120px;
+      text-align:center;position:relative;
+      border-top:1px solid rgba(200,169,106,0.08);
     }
-    .entry-frame::before{
-      content:'';position:absolute;top:0;left:0;right:0;height:1px;
-      background:linear-gradient(90deg,transparent,var(--gold),transparent);
-      background-size:200% auto;animation:shimmer 5s linear infinite;
+    .entry-section::before{
+      content:'';position:absolute;top:0;left:50%;transform:translateX(-50%);
+      width:1px;height:100px;background:linear-gradient(to bottom,var(--gold),transparent);
+      opacity:.2;
     }
-    .entry-kicker{
-      font-family:var(--fh);font-size:9px;letter-spacing:.24em;
-      color:rgba(200,169,106,0.55);text-transform:uppercase;margin-bottom:12px;display:block;
-    }
-    .entry-title{
-      font-family:var(--fh);font-size:18px;font-weight:600;color:var(--text);
-      letter-spacing:.04em;margin-bottom:14px;line-height:1.3;
-    }
-    .entry-copy{
-      font-family:var(--fb);font-size:16px;line-height:1.7;
-      color:var(--text2);font-style:italic;margin-bottom:10px;
-    }
-    .session-note{
-      font-family:var(--fh);font-size:10px;letter-spacing:.1em;
-      color:rgba(200,169,106,0.5);margin-bottom:24px;min-height:1.4em;
-    }
-    .entry-actions{display:flex;justify-content:center;gap:12px;flex-wrap:wrap}
-    .btn-primary{
-      font-family:var(--fh);font-size:11px;letter-spacing:.14em;text-transform:uppercase;
-      padding:11px 24px;border-radius:3px;text-decoration:none;
+    .entry-eyebrow{font-family:var(--fh);font-size:8px;letter-spacing:.3em;color:rgba(200,169,106,0.4);text-transform:uppercase;margin-bottom:20px;display:block}
+    .entry-title{font-family:var(--fh);font-size:clamp(20px,3vw,28px);font-weight:600;color:var(--gold);letter-spacing:.05em;margin-bottom:16px;line-height:1.3}
+    .entry-body{font-family:var(--fb);font-size:18px;line-height:1.8;color:var(--text2);font-style:italic;margin-bottom:8px;max-width:520px;margin-left:auto;margin-right:auto}
+    .entry-note{font-family:var(--fh);font-size:10px;letter-spacing:.1em;color:rgba(200,169,106,0.4);margin-bottom:36px;min-height:1.4em}
+    .entry-actions{display:flex;justify-content:center;gap:14px;flex-wrap:wrap}
+    .btn-gold{
+      font-family:var(--fh);font-size:10px;letter-spacing:.16em;text-transform:uppercase;
+      padding:13px 28px;border-radius:2px;text-decoration:none;
       background:var(--gold);color:#07070b;border:none;cursor:pointer;
       transition:opacity .2s,transform .15s;
     }
-    .btn-primary:hover{opacity:.88;transform:translateY(-1px)}
-    .btn-secondary{
-      font-family:var(--fh);font-size:11px;letter-spacing:.14em;text-transform:uppercase;
-      padding:11px 24px;border-radius:3px;text-decoration:none;
+    .btn-gold:hover{opacity:.85;transform:translateY(-1px)}
+    .btn-ghost{
+      font-family:var(--fh);font-size:10px;letter-spacing:.16em;text-transform:uppercase;
+      padding:13px 28px;border-radius:2px;text-decoration:none;
       background:transparent;color:var(--text2);
-      border:1px solid var(--border2);cursor:pointer;
+      border:1px solid rgba(200,169,106,0.2);cursor:pointer;
       transition:all .2s;
     }
-    .btn-secondary:hover{border-color:var(--gold);color:var(--gold);transform:translateY(-1px)}
+    .btn-ghost:hover{border-color:var(--gold);color:var(--gold);transform:translateY(-1px)}
 
     /* ── FOOTER ── */
     footer{
-      text-align:center;padding:24px;
-      font-family:var(--fh);font-size:9px;letter-spacing:.16em;
+      text-align:center;padding:28px;
+      font-family:var(--fh);font-size:8px;letter-spacing:.2em;
       text-transform:uppercase;color:var(--text3);
-      border-top:1px solid var(--border);
+      border-top:1px solid rgba(200,169,106,0.06);
+    }
+
+    @media(max-width:680px){
+      .scripture{padding:60px 20px}
+      .laws-wrap{padding:60px 20px 80px}
+      .law{padding:36px 24px}
+      .path-strip{padding:60px 0}
+      .path-inner{padding:0 20px}
+      .entry-section{padding:70px 20px 80px}
     }
   </style>
 </head>
@@ -264,7 +256,6 @@
   <div class="rune-layer"></div>
   <div class="lightning-flash"></div>
 
-  <!-- Nav -->
   <div class="site-shell">
     <header class="site-header">
       <nav class="dashboard-nav" aria-label="Global">
@@ -278,169 +269,151 @@
     </header>
   </div>
 
-  <!-- Ticker -->
   <div id="news-ticker-bar">
     <div id="ticker-label">&#11042; Celestial Feed</div>
-    <div class="ticker-scroll">
-      <div id="ticker-track"></div>
-    </div>
+    <div class="ticker-scroll"><div id="ticker-track"></div></div>
   </div>
 
-  <!-- Hero -->
-  <div class="lore-hero">
-    <div class="lore-hero-inner">
-      <span class="lore-eyebrow">The World of Ascension</span>
-      <h1 class="lore-title">The Lore of The Ascendant Path</h1>
-      <div class="lore-kanji">昇天世界之录</div>
-      <p class="lore-subtitle">
-        In this world, cultivation is the sacred art of refining the body, spirit, and soul
-        beyond mortal limitation. Through meditation, trials, discipline, and battle, a person
-        may awaken the power within and begin the long ascent toward immortality.
-      </p>
+  <div class="lore-scroll">
+
+    <!-- Full screen opening -->
+    <div class="lore-opening">
+      <div class="opening-shimmer"></div>
+      <div class="opening-inner">
+        <div class="opening-kanji">昇 天 世 界 之 录</div>
+        <h1 class="opening-title">The <span>Ascendant</span> Path</h1>
+        <p class="opening-subtitle">
+          A world where the mortal body is not a limit — but a beginning.
+          Where breath, blood, and will can be refined into something eternal.
+        </p>
+        <div class="opening-orn">
+          <div class="orn-line"></div>
+          <span class="orn-char">道</span>
+          <div class="orn-line r"></div>
+        </div>
+      </div>
+      <div class="scroll-hint">
+        <span class="scroll-hint-text">Read the chronicles</span>
+        <div class="scroll-hint-line"></div>
+      </div>
     </div>
-  </div>
 
-  <!-- Body -->
-  <div class="lore-body">
-
-    <!-- Story So Far -->
-    <div class="sec-div" style="animation-delay:.1s">
-      <div class="sec-div-line"></div>
-      <div class="sec-div-label">Central Chronicle</div>
-      <div class="sec-div-line"></div>
-    </div>
-
-    <div class="chronicle">
-      <div class="chronicle-kicker">Central Chronicle</div>
-      <div class="chronicle-title">The Story So Far</div>
-      <p class="chronicle-text">
+    <!-- The Story So Far — scripture style -->
+    <div class="scripture" style="animation:fadeUp .7s ease both">
+      <span class="scripture-eyebrow">Central Chronicle</span>
+      <h2 class="scripture-title">The Story So Far</h2>
+      <p class="scripture-body drop-cap">
         Long before the rise of great sects and ancient clans, mortals lived short and fragile
         lives beneath silent heavens, unaware that spiritual energy flowed through all things.
         But a rare few began to sense it — hidden in breath, blood, flame, storm, stillness,
         and will. These first seekers discovered that the mortal body was not a prison, but a gate.
       </p>
-      <p class="chronicle-text">
+      <p class="scripture-body">
         Through meditation and struggle, they learned to refine that hidden power and break beyond
         the boundaries of ordinary life. Their discoveries became the first foundations of cultivation.
         Over time, those teachings spread across the world, forming sacred traditions, rival lineages,
         ancient clans, and legends whose names echoed through the ages.
       </p>
-      <p class="chronicle-text">
+      <p class="scripture-body">
         But power never grows in peace for long. Cultivators began to clash over honour, territory,
         spiritual knowledge, rare resources, and destiny itself. Some chose to walk the road alone,
         trusting only their own discipline and inner strength. Others cultivated beside a partner,
         drawing harmony, devotion, and deeper power from a bond forged through shared trials.
       </p>
-      <p class="chronicle-text">
+      <p class="scripture-body">
         Now a new age begins. The world is restless, rivals gather, and the road to ascension opens
         once again. Whether you walk alone or with a partner at your side, your story begins as a
         mortal — but it does not need to end as one.
       </p>
     </div>
 
+    <div class="scripture-div">
+      <div class="scripture-div-line"></div>
+      <span class="scripture-div-glyph">⬡</span>
+      <div class="scripture-div-line"></div>
+    </div>
+
     <!-- Three Laws -->
-    <div class="sec-div" style="animation-delay:.2s">
-      <div class="sec-div-line"></div>
-      <div class="sec-div-label">Core Doctrine</div>
-      <div class="sec-div-line"></div>
-    </div>
-
-    <div class="doctrine-grid">
-      <div class="doctrine-card" style="animation-delay:.25s">
-        <div class="doctrine-tag">Cultivation</div>
-        <div class="doctrine-title">What Cultivation Means</div>
-        <p class="doctrine-body">
-          Cultivation is the process of gathering spiritual energy and shaping it into strength,
-          awareness, resilience, and transcendence. It is not simply training to fight. It is
-          the path of transforming your very existence.
-        </p>
-        <p class="doctrine-body">
-          A cultivator tempers mind, body, and soul through meditation, hardship, breakthroughs,
-          and willpower. Each realm reached is more than a rise in power — it is proof that the
-          mortal self is slowly being left behind.
-        </p>
+    <div class="laws-wrap">
+      <div class="laws-head">
+        <span class="laws-eyebrow">Core Doctrine</span>
+        <div class="laws-title">Three Laws of the World</div>
       </div>
-      <div class="doctrine-card" style="animation-delay:.32s">
-        <div class="doctrine-tag">Purpose</div>
-        <div class="doctrine-title">The Final Goal</div>
-        <p class="doctrine-body">
-          Some walk this path for strength. Others seek purpose, protection, revenge, love,
-          enlightenment, or legacy. Yet above all these desires stands one final dream shared
-          by cultivators across the world: immortality.
-        </p>
-        <p class="doctrine-body">
-          To cultivate is to challenge fate itself, to defy the limits of flesh and time, and
-          to prove that your will is greater than death.
-        </p>
-      </div>
-      <div class="doctrine-card" style="animation-delay:.39s">
-        <div class="doctrine-tag">Transcendence</div>
-        <div class="doctrine-title">The Pursuit of Immortality</div>
-        <p class="doctrine-body">
-          At the end of all struggle lies the dream that has driven cultivators for generations:
-          immortality. Not merely endless life, but true transcendence — to surpass mortal weakness,
-          conquer the fear of death, and become something greater than human.
-        </p>
-        <p class="doctrine-body">
-          Many will fall. Some will turn back. Others will lose themselves on the journey. But those
-          with unwavering discipline, fierce spirit, and the courage to continue may one day step
-          beyond the mortal realm and claim their place among the eternal.
-        </p>
+      <div class="laws-grid">
+        <div class="law">
+          <span class="law-num">I — Cultivation</span>
+          <div class="law-title">What Cultivation Means</div>
+          <p class="law-body">
+            Cultivation is the process of gathering spiritual energy and shaping it into strength,
+            awareness, resilience, and transcendence. It is not simply training to fight —
+            it is the path of transforming your very existence.
+            Each realm reached is proof that the mortal self is slowly being left behind.
+          </p>
+        </div>
+        <div class="law">
+          <span class="law-num">II — Purpose</span>
+          <div class="law-title">The Final Goal</div>
+          <p class="law-body">
+            Some walk this path for strength. Others seek purpose, protection, revenge, love,
+            enlightenment, or legacy. Yet above all these desires stands one final dream
+            shared by cultivators across the world — to challenge fate itself,
+            and prove that your will is greater than death.
+          </p>
+        </div>
+        <div class="law">
+          <span class="law-num">III — Transcendence</span>
+          <div class="law-title">The Pursuit of Immortality</div>
+          <p class="law-body">
+            At the end of all struggle lies the dream that has driven cultivators for generations.
+            Not merely endless life, but true transcendence. Many will fall. Some will turn back.
+            But those with unwavering discipline and the courage to continue may one day step
+            beyond the mortal realm entirely.
+          </p>
+        </div>
       </div>
     </div>
 
-    <!-- Paths -->
-    <div class="sec-div" style="animation-delay:.3s">
-      <div class="sec-div-line"></div>
-      <div class="sec-div-label">Paths of the World</div>
-      <div class="sec-div-line"></div>
-    </div>
-
-    <div class="path-grid">
-      <div class="path-card" style="animation-delay:.35s">
-        <div class="path-tag">Journey</div>
-        <div class="path-title">Your Journey</div>
+    <!-- Paths — immersive strips -->
+    <div class="path-strip">
+      <div class="path-inner">
+        <span class="path-tag">Your Journey</span>
+        <div class="path-title">Every cultivator walks a different road.</div>
         <p class="path-body">
-          Every cultivator walks a different road. Some choose solitude, sharpening themselves
-          through patience, self-mastery, and relentless discipline. Others choose to cultivate
-          with a partner, growing stronger together through trust, balance, and shared purpose.
+          Some choose solitude, sharpening themselves through patience, self-mastery, and relentless
+          discipline. Others choose to cultivate with a partner, growing stronger together through
+          trust, balance, and shared purpose.
         </p>
         <p class="path-body">
           However your story begins, the path ahead is filled with trials, breakthroughs, rivals,
           and choices that will shape the legend you become.
         </p>
       </div>
-      <div class="path-card" style="animation-delay:.42s">
-        <div class="path-tag">Conflict</div>
-        <div class="path-title">Battle and Rivalry</div>
+    </div>
+
+    <div class="path-strip">
+      <div class="path-inner">
+        <span class="path-tag">Battle &amp; Rivalry</span>
+        <div class="path-title">Cultivation is not a peaceful journey.</div>
         <p class="path-body">
-          Cultivation is not a peaceful journey. Strength must be tested. Rival cultivators will
-          challenge your honour, your skill, your alliances, and your right to rise above them.
+          Strength must be tested. Rival cultivators will challenge your honour, your skill,
+          your alliances, and your right to rise above them.
         </p>
         <p class="path-body">
-          Fight other players, defend your name, overcome trials, and prove that your spirit deserves
-          ascension. Every victory refines you. Every defeat teaches you.
+          Fight other players, defend your name, overcome trials, and prove that your spirit
+          deserves ascension. Every victory refines you. Every defeat teaches you.
         </p>
       </div>
     </div>
 
     <!-- Entry -->
-    <div class="sec-div" style="animation-delay:.4s">
-      <div class="sec-div-line"></div>
-      <div class="sec-div-label">Your Beginning</div>
-      <div class="sec-div-line"></div>
-    </div>
-
-    <div class="entry-wrap" style="animation-delay:.45s">
-      <div class="entry-frame">
-        <span class="entry-kicker">Your Beginning</span>
-        <div class="entry-title" id="entry-title">Loading your archive entry...</div>
-        <p class="entry-copy" id="entry-copy">Verifying your session and restoring your place on the path.</p>
-        <p class="session-note" id="session-note"></p>
-        <div class="entry-actions">
-          <a href="/dashboard.html" class="btn-primary" id="entry-primary-link">Return to Dashboard</a>
-          <a href="/index.html" class="btn-secondary">Return Home</a>
-        </div>
+    <div class="entry-section">
+      <span class="entry-eyebrow">Your Beginning</span>
+      <div class="entry-title" id="entry-title">Loading your archive entry...</div>
+      <p class="entry-body" id="entry-copy">Verifying your session and restoring your place on the path.</p>
+      <p class="entry-note" id="session-note"></p>
+      <div class="entry-actions">
+        <a href="/dashboard.html" class="btn-gold" id="entry-primary-link">Return to Dashboard</a>
+        <a href="/index.html" class="btn-ghost">Return Home</a>
       </div>
     </div>
 
@@ -449,110 +422,78 @@
   <footer>The Ascendant Path &nbsp;•&nbsp; Refine the mortal self &nbsp;•&nbsp; Rise beyond the heavens</footer>
 
   <script>
-    const LOGIN_URL = "/login.html";
-    const VERIFY_SESSION_URL = "/.netlify/functions/verify-session";
-    const LOGOUT_URL = "/.netlify/functions/logout";
-    const DASHBOARD_STATE_URL = "/.netlify/functions/load-dashboard-state";
-
-    const CLIENT_SESSION_KEYS = ["sl_username","slUsername","avatar_key","avatarKey","member_id","memberId","session_token","sessionToken","cultivation_session","cultivationSession","ascendant_session","ascendantSession"];
-    let csrfToken = "";
-
-    function safeText(value, fallback = "") { const text = String(value ?? "").trim(); return text || fallback; }
-    function clearClientSessionArtifacts() {
-      try { sessionStorage.clear(); } catch(e) {}
-      try { CLIENT_SESSION_KEYS.forEach(k => localStorage.removeItem(k)); } catch(e) {}
+    const LOGIN_URL="/login.html",VERIFY_SESSION_URL="/.netlify/functions/verify-session",
+          LOGOUT_URL="/.netlify/functions/logout",DASHBOARD_STATE_URL="/.netlify/functions/load-dashboard-state";
+    const CLIENT_SESSION_KEYS=["sl_username","slUsername","avatar_key","avatarKey","member_id","memberId","session_token","sessionToken","cultivation_session","cultivationSession","ascendant_session","ascendantSession"];
+    let csrfToken="";
+    function safeText(v,fb=""){const t=String(v??"").trim();return t||fb}
+    function clearClientSessionArtifacts(){try{sessionStorage.clear()}catch(e){}try{CLIENT_SESSION_KEYS.forEach(k=>localStorage.removeItem(k))}catch(e){}}
+    function redirectToLogin(){clearClientSessionArtifacts();window.location.replace(LOGIN_URL)}
+    async function readJsonSafely(r){try{return await r.json()}catch(e){return{}}}
+    function extractCsrfToken(p){return safeText(p?.csrf_token||p?.csrfToken||p?.session?.csrf_token||p?.session?.csrfToken||p?.viewer?.csrf_token||p?.viewer?.csrfToken||"")}
+    async function verifySessionOrRedirect(){
+      try{
+        const r=await fetch(VERIFY_SESSION_URL,{method:"GET",credentials:"include",headers:{"Accept":"application/json","Cache-Control":"no-store"}});
+        const data=await readJsonSafely(r);
+        if(!r.ok||data?.success===false){redirectToLogin();return null}
+        csrfToken=extractCsrfToken(data);return data;
+      }catch(e){console.error("Session verification failed:",e);redirectToLogin();return null}
     }
-    function redirectToLogin() { clearClientSessionArtifacts(); window.location.replace(LOGIN_URL); }
-    async function readJsonSafely(r) { try { return await r.json(); } catch(e) { return {}; } }
-    function extractCsrfToken(p) { return safeText(p?.csrf_token||p?.csrfToken||p?.session?.csrf_token||p?.session?.csrfToken||p?.viewer?.csrf_token||p?.viewer?.csrfToken||""); }
-
-    async function verifySessionOrRedirect() {
-      try {
-        const r = await fetch(VERIFY_SESSION_URL, { method:"GET", credentials:"include", headers:{"Accept":"application/json","Cache-Control":"no-store"} });
-        const data = await readJsonSafely(r);
-        if (!r.ok || data?.success === false) { redirectToLogin(); return null; }
-        csrfToken = extractCsrfToken(data);
-        return data;
-      } catch(e) { console.error("Session verification failed:", e); redirectToLogin(); return null; }
-    }
-
-    async function authenticatedFetch(url, options = {}) {
-      const method = safeText(options.method || "GET", "GET").toUpperCase();
-      const headers = new Headers(options.headers || {});
-      headers.set("Accept", "application/json");
-      if (!headers.has("Content-Type") && method !== "GET" && method !== "HEAD" && options.body) headers.set("Content-Type", "application/json");
-      if (csrfToken) { headers.set("X-CSRF-Token", csrfToken); headers.set("X-Session-CSRF", csrfToken); }
-      const r = await fetch(url, { ...options, method, credentials:"include", cache:"no-store", headers });
-      if (r.status === 401 || r.status === 403) { redirectToLogin(); throw new Error("Session expired."); }
+    async function authenticatedFetch(url,options={}){
+      const method=safeText(options.method||"GET","GET").toUpperCase();
+      const headers=new Headers(options.headers||{});
+      headers.set("Accept","application/json");
+      if(!headers.has("Content-Type")&&method!=="GET"&&method!=="HEAD"&&options.body)headers.set("Content-Type","application/json");
+      if(csrfToken){headers.set("X-CSRF-Token",csrfToken);headers.set("X-Session-CSRF",csrfToken)}
+      const r=await fetch(url,{...options,method,credentials:"include",cache:"no-store",headers});
+      if(r.status===401||r.status===403){redirectToLogin();throw new Error("Session expired.")}
       return r;
     }
-
-    async function handleLogout(event) {
-      if (event) event.preventDefault();
-      try { await authenticatedFetch(LOGOUT_URL, { method:"POST" }); } catch(e) {}
-      finally { redirectToLogin(); }
+    async function handleLogout(e){if(e)e.preventDefault();try{await authenticatedFetch(LOGOUT_URL,{method:"POST"})}catch(e2){}finally{redirectToLogin()}}
+    function formatRealmLabel(v){
+      const t=safeText(v,"Mortal Realm"),m={"mortal":"Mortal Realm","mortal realm":"Mortal Realm","auric gathering":"Auric Gathering Realm","auric gathering realm":"Auric Gathering Realm","foundation":"Foundation Realm","foundation realm":"Foundation Realm","core formation":"Core Formation Realm","core formation realm":"Core Formation Realm","nascent soul":"Nascent Soul Realm","nascent soul realm":"Nascent Soul Realm","soul transformation":"Soul Transformation Realm","soul transformation realm":"Soul Transformation Realm","void refinement":"Void Refinement Realm","void refinement realm":"Void Refinement Realm","body integration":"Body Integration Realm","body integration realm":"Body Integration Realm","mahayana":"Mahayana Realm","mahayana realm":"Mahayana Realm","tribulation":"Tribulation Realm","tribulation realm":"Tribulation Realm"};
+      return m[t.toLowerCase()]||t;
     }
-
-    function formatRealmLabel(value) {
-      const text = safeText(value, "Mortal Realm");
-      const map = { "mortal":"Mortal Realm","mortal realm":"Mortal Realm","auric gathering":"Auric Gathering Realm","auric gathering realm":"Auric Gathering Realm","foundation":"Foundation Realm","foundation realm":"Foundation Realm","core formation":"Core Formation Realm","core formation realm":"Core Formation Realm","nascent soul":"Nascent Soul Realm","nascent soul realm":"Nascent Soul Realm","soul transformation":"Soul Transformation Realm","soul transformation realm":"Soul Transformation Realm","void refinement":"Void Refinement Realm","void refinement realm":"Void Refinement Realm","body integration":"Body Integration Realm","body integration realm":"Body Integration Realm","mahayana":"Mahayana Realm","mahayana realm":"Mahayana Realm","tribulation":"Tribulation Realm","tribulation realm":"Tribulation Realm" };
-      return map[text.toLowerCase()] || text;
+    function setLoggedInView(member){
+      const dn=safeText(member.character_name)||safeText(member.display_name)||safeText(member.sl_username)||"Cultivator";
+      const un=safeText(member.sl_username);
+      const rn=formatRealmLabel(safeText(member.realm_display_name)||safeText(member.realm_name,"Mortal Realm"));
+      document.getElementById("entry-title").textContent="The archive already knows your name";
+      document.getElementById("entry-copy").textContent="Your session is active. Return to your dashboard and continue your cultivation journey through the world you have now entered.";
+      document.getElementById("session-note").textContent=un?`Signed in as ${dn} • @${un} • ${rn}`:`Signed in as ${dn} • ${rn}`;
+      const lnk=document.getElementById("entry-primary-link");lnk.href="/dashboard.html";lnk.textContent="Return to Dashboard";
     }
-
-    function setLoggedInView(member) {
-      const displayName = safeText(member.character_name) || safeText(member.display_name) || safeText(member.sl_username) || "Cultivator";
-      const username = safeText(member.sl_username);
-      const realmName = formatRealmLabel(safeText(member.realm_display_name) || safeText(member.realm_name, "Mortal Realm"));
-      document.getElementById("entry-title").textContent = "The archive already knows your name";
-      document.getElementById("entry-copy").textContent = "Your session is active. Return to your dashboard and continue your cultivation journey through the world you have now entered.";
-      const note = document.getElementById("session-note");
-      note.textContent = username ? `Signed in as ${displayName} • @${username} • ${realmName}` : `Signed in as ${displayName} • ${realmName}`;
-      const link = document.getElementById("entry-primary-link");
-      link.href = "/dashboard.html";
-      link.textContent = "Return to Dashboard";
-    }
-
-    function buildTicker(world) {
-      var items = [];
-      if (world) {
-        if (world.has_active_phenomenon && world.phenomenon_name) items.push({ type:"celestial", text: safeText(world.phenomenon_omen_text, "A major celestial sign is moving across the heavens.") });
-        if (world.dashboard_effect_summary) items.push({ type:"celestial", text: world.dashboard_effect_summary });
-        if (world.phase_omen_text) items.push({ type:"celestial", text: world.phase_omen_text });
-        items.push({ type:"celestial", text: safeText(world.phase_name,"—") + " — " + safeText(world.force_name,"—") });
+    function buildTicker(world){
+      var items=[];
+      if(world){
+        if(world.has_active_phenomenon&&world.phenomenon_name)items.push({type:"celestial",text:safeText(world.phenomenon_omen_text,"A major celestial sign is moving across the heavens.")});
+        if(world.dashboard_effect_summary)items.push({type:"celestial",text:world.dashboard_effect_summary});
+        if(world.phase_omen_text)items.push({type:"celestial",text:world.phase_omen_text});
+        items.push({type:"celestial",text:safeText(world.phase_name,"—")+" — "+safeText(world.force_name,"—")});
       }
-      if (!items.length) items.push({ type:"celestial", text:"The celestial currents are still. Cultivate in peace." });
-      var all = items.concat(items);
-      var track = document.getElementById("ticker-track");
-      if (!track) return;
-      track.innerHTML = all.map(function(i){ return '<span class="ticker-item '+i.type+'"><span class="ticker-dot '+i.type+'"></span>'+i.text+'</span>'; }).join("");
-      if (buildTicker._running) return;
-      buildTicker._running = true;
-      var pos = 0;
-      function loop() { var half = track.scrollWidth / 2; pos -= 0.5; if (half > 0 && Math.abs(pos) >= half) pos = 0; track.style.transform = "translateX(" + pos + "px)"; requestAnimationFrame(loop); }
+      if(!items.length)items.push({type:"celestial",text:"The celestial currents are still. Cultivate in peace."});
+      var all=items.concat(items);
+      var track=document.getElementById("ticker-track");if(!track)return;
+      track.innerHTML=all.map(i=>'<span class="ticker-item '+i.type+'"><span class="ticker-dot '+i.type+'"></span>'+i.text+'</span>').join("");
+      if(buildTicker._running)return;buildTicker._running=true;var pos=0;
+      function loop(){var half=track.scrollWidth/2;pos-=0.5;if(half>0&&Math.abs(pos)>=half)pos=0;track.style.transform="translateX("+pos+"px)";requestAnimationFrame(loop)}
       loop();
     }
-
-    async function loadLoreState() {
-      try {
-        const r = await authenticatedFetch(DASHBOARD_STATE_URL, { method:"GET" });
-        const data = await readJsonSafely(r);
-        if (!r.ok || !data.success || !data.member) throw new Error(data.message || "Failed to load.");
+    async function loadLoreState(){
+      try{
+        const r=await authenticatedFetch(DASHBOARD_STATE_URL,{method:"GET"});
+        const data=await readJsonSafely(r);
+        if(!r.ok||!data.success||!data.member)throw new Error(data.message||"Failed to load.");
         setLoggedInView(data.member);
-        if (data.world) buildTicker(data.world);
-      } catch(e) {
-        console.error("Lore state load error:", e);
-        if (!/Session expired/i.test(String(e?.message || ""))) redirectToLogin();
-      }
+        if(data.world)buildTicker(data.world);
+      }catch(e){console.error("Lore state load error:",e);if(!/Session expired/i.test(String(e?.message||"")))redirectToLogin()}
     }
-
-    async function init() {
-      document.getElementById("nav-logout-link").addEventListener("click", handleLogout);
-      const verified = await verifySessionOrRedirect();
-      if (!verified) return;
+    async function init(){
+      document.getElementById("nav-logout-link").addEventListener("click",handleLogout);
+      const verified=await verifySessionOrRedirect();if(!verified)return;
       await loadLoreState();
     }
-
-    window.addEventListener("DOMContentLoaded", init);
+    window.addEventListener("DOMContentLoaded",init);
   </script>
 </body>
 </html>
