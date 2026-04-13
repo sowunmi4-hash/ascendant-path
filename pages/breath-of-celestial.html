@@ -217,34 +217,6 @@
       font-family:var(--fh);font-size:9px;letter-spacing:.22em;
       color:var(--text3);text-transform:uppercase;white-space:nowrap;
     }
-
-    /* ── CELESTIAL FEED TICKER ── */
-    .ticker-bar{
-      width:100%;background:#0d0d18;
-      border-top:0.5px solid rgba(200,169,106,0.15);
-      border-bottom:0.5px solid rgba(200,169,106,0.15);
-      height:34px;display:flex;align-items:center;overflow:hidden;
-      position:relative;z-index:5;flex-shrink:0;
-    }
-    .ticker-lbl{
-      flex-shrink:0;padding:0 14px;font-size:9px;letter-spacing:.14em;
-      text-transform:uppercase;color:#c8a96a;font-weight:600;
-      border-right:0.5px solid rgba(200,169,106,0.25);height:100%;
-      display:flex;align-items:center;background:#0d0d18;
-      white-space:nowrap;font-family:'Cinzel',serif;
-    }
-    .ticker-scroll{overflow:hidden;flex:1;position:relative;height:100%}
-    .ticker-track{display:flex;align-items:center;height:100%;position:absolute;white-space:nowrap}
-    .ticker-item{display:inline-flex;align-items:center;padding:0 24px;font-size:11px;
-      white-space:nowrap;gap:8px;border-right:1px solid rgba(200,169,106,0.12);
-      font-family:'Cinzel',serif;letter-spacing:.04em;}
-    .ticker-item.celestial{color:#c8a96a}
-    .ticker-item.notice{color:rgba(255,255,255,0.65)}
-    .ticker-item.notice-urgent{color:#c86890}
-    .ticker-dot{width:5px;height:5px;border-radius:50%;display:inline-block;flex-shrink:0}
-    .ticker-dot.celestial{background:#c8a96a}
-    .ticker-dot.notice{background:rgba(255,255,255,0.3)}
-    .ticker-dot.notice-urgent{background:#c86890}
   </style>
 </head>
 <body>
@@ -267,10 +239,10 @@
 </div>
 
   <!-- Celestial Feed ticker -->
-  <div class="ticker-bar">
-    <div class="ticker-lbl">&#11042; Celestial Feed</div>
+    <div id="news-ticker-bar">
+    <div id="ticker-label">&#11042; Celestial Feed</div>
     <div class="ticker-scroll">
-      <div class="ticker-track" id="tickerTrack"></div>
+      <div id="ticker-track"></div>
     </div>
   </div>
 

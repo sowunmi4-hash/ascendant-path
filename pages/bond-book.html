@@ -459,10 +459,10 @@ nav a:hover { border-color: rgba(200,169,106,0.22); color: var(--text-primary); 
   </nav>
 
   <!-- CELESTIAL FEED -->
-  <div id="news-ticker-bar" style="background:#0d0d18;border:0.5px solid rgba(200,169,106,0.12);border-radius:var(--radius-md);height:32px;display:flex;align-items:center;overflow:hidden;">
-    <div style="flex-shrink:0;padding:0 12px;font-size:9px;letter-spacing:0.14em;text-transform:uppercase;color:#c8a96a;font-weight:600;border-right:0.5px solid rgba(200,169,106,0.18);height:100%;display:flex;align-items:center;background:#0d0d18;white-space:nowrap;font-family:'Cinzel',serif;">⬡ Celestial Feed</div>
-    <div style="overflow:hidden;flex:1;position:relative;height:100%;">
-      <div id="ticker-track" style="display:flex;align-items:center;height:100%;position:absolute;white-space:nowrap;"></div>
+    <div id="news-ticker-bar">
+    <div id="ticker-label">&#11042; Celestial Feed</div>
+    <div class="ticker-scroll">
+      <div id="ticker-track"></div>
     </div>
   </div>
 
