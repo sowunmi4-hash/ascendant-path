@@ -316,7 +316,7 @@ function applyTribulationOverlay(worldRow, tribulation) {
 }
 
 exports.handler = async (event) => {
-  if (event.httpMethod !== "GET") {
+  if (event.httpMethod !== "GET" && event.httpMethod !== "POST") {
     return json(405, {
       success: false,
       error: "method_not_allowed"

@@ -535,12 +535,14 @@
       document.body.addEventListener("click",async(e)=>{
         const openBtn=e.target.closest("[data-open-record='true']");
         if(openBtn){
+          e.stopPropagation();
           const uuid=safeText(openBtn.dataset.partnershipUuid); const id=openBtn.dataset.partnershipId?Number(openBtn.dataset.partnershipId):null;
           try{setBusy(true);await openRecord(uuid,id);}catch(err){if(!/session has expired/i.test(err.message)){showMsg(err.message||"Failed to open record.");setBusy(false);}}
           return;
         }
         const actionBtn=e.target.closest("[data-shrine-action]");
         if(actionBtn){
+          e.stopPropagation();
           const action=safeText(actionBtn.dataset.shrineAction); const uuid=safeText(actionBtn.dataset.partnershipUuid); const id=actionBtn.dataset.partnershipId?Number(actionBtn.dataset.partnershipId):null;
           const endpoints={"accept":"accept-partner-request","deny":"deny-partner-request","remove":"remove-partnership"};
           if(!endpoints[action]) return;
