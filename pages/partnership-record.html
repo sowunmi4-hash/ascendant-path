@@ -1018,23 +1018,28 @@
       ctx.strokeStyle = `rgba(${r1},${g1},${b1},0.18)`;
       ctx.lineWidth = 1.5; ctx.stroke();
 
-      // ── Progress arc ──
+      // ── Progress arc (blends both cultivator colours) ──
       if (_orbPct > 0.1) {
         const startAngle = -Math.PI/2;
         const endAngle = startAngle + (Math.PI * 2 * (_orbPct/100));
 
+        // Gradient arc blending c1 (member) → c2 (partner)
+        const arcGrad = ctx.createLinearGradient(CX - R, CY, CX + R, CY);
+        arcGrad.addColorStop(0, color1);
+        arcGrad.addColorStop(1, color2);
+
         // Glow shadow
         ctx.save();
-        ctx.shadowColor = `rgba(${r1},${g1},${b1},0.6)`;
+        ctx.shadowColor = `rgba(${r1},${g1},${b1},0.55)`;
         ctx.shadowBlur = 14;
         ctx.beginPath(); ctx.arc(CX, CY, R, startAngle, endAngle);
-        ctx.strokeStyle = `rgba(${r1},${g1},${b1},0.9)`;
+        ctx.strokeStyle = arcGrad;
         ctx.lineWidth = 5; ctx.lineCap = 'round'; ctx.stroke();
         ctx.restore();
 
         // Clean arc on top
         ctx.beginPath(); ctx.arc(CX, CY, R, startAngle, endAngle);
-        ctx.strokeStyle = color1; ctx.lineWidth = 3; ctx.lineCap = 'round'; ctx.stroke();
+        ctx.strokeStyle = arcGrad; ctx.lineWidth = 3; ctx.lineCap = 'round'; ctx.stroke();
       }
 
       // ── Inner energy pulse (multiple rings) ──
@@ -1164,13 +1169,22 @@
     setText('info-chronicles-done', fmt(bond?.completed_books_count));
     setText('info-bonded-since', formatDate(partnership?.accepted_at));
 
+    // Gender colours
+    const memberGender  = safeText(member?.gender, 'male').toLowerCase();
+    const partnerGender = safeText(partner?.gender, 'male').toLowerCase();
+    const mColor = memberGender  === 'female' ? '#c86890' : '#c8a96a';
+    const pColor = partnerGender === 'female' ? '#c86890' : '#c8a96a';
+
     // Member card
     setText('info-member-title', safeText(member?.display_name || member?.character_name || member?.sl_username, 'You'));
     setText('info-member-realm', safeText(member?.realm_display_name, '—'));
     const mAuric = safeNumber(payload?.personal_auric_current, 0);
     const mAuricMax = safeNumber(payload?.personal_auric_maximum, 1);
     setText('info-member-auric', fmt(mAuric) + ' / ' + fmt(mAuricMax));
-    setStyle('info-member-auric-bar', 'width', Math.min(100, mAuricMax > 0 ? (mAuric/mAuricMax)*100 : 0)+'%');
+    const mAuricBarEl = document.getElementById('info-member-auric-bar');
+    if (mAuricBarEl) { mAuricBarEl.style.width = Math.min(100, mAuricMax > 0 ? (mAuric/mAuricMax)*100 : 0)+'%'; mAuricBarEl.style.background = `linear-gradient(90deg, ${mColor}, ${mColor}cc)`; }
+    const mAuricValEl = document.getElementById('info-member-auric');
+    if (mAuricValEl) { mAuricValEl.style.color = mColor; }
     setText('info-member-vestiges', fmt(payload?.personal_vestiges));
     setText('info-member-tokens', fmt(payload?.personal_ascension_tokens));
     const selfSessionStatus = safeText(session?.self_status, '—');
@@ -1182,10 +1196,12 @@
     const pAuric = safeNumber(payload?.partner_auric_current, 0);
     const pAuricMax = safeNumber(payload?.partner_auric_maximum, 1);
     setText('info-partner-auric', fmt(pAuric) + ' / ' + fmt(pAuricMax));
-    setStyle('info-partner-auric-bar', 'width', Math.min(100, pAuricMax > 0 ? (pAuric/pAuricMax)*100 : 0)+'%');
+    const pAuricBarEl = document.getElementById('info-partner-auric-bar');
+    if (pAuricBarEl) { pAuricBarEl.style.width = Math.min(100, pAuricMax > 0 ? (pAuric/pAuricMax)*100 : 0)+'%'; pAuricBarEl.style.background = `linear-gradient(90deg, ${pColor}, ${pColor}cc)`; }
+    const pAuricValEl = document.getElementById('info-partner-auric');
+    if (pAuricValEl) { pAuricValEl.style.color = pColor; }
     setText('info-partner-vestiges', fmt(payload?.partner_vestiges));
     setText('info-partner-tokens', fmt(payload?.partner_ascension_tokens));
-    const presReason = safeText(payload?.partner_presence_reason, '');
     const presLabel = payload?.partner_presence_active ? 'Resonance Active' : payload?.partner_hud_recent ? 'Partner Nearby' : 'Offline';
     setText('info-partner-presence', presLabel);
   }
