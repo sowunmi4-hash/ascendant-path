@@ -150,7 +150,8 @@ async function loadMember(slAvatarKey, slUsername) {
       v2_active_stage_key,
       v2_breakthrough_gate_open,
       v2_stage_needs_repair,
-      v2_accumulated_seconds
+      v2_accumulated_seconds,
+      gender
     `)
     .limit(1);
 
