@@ -263,7 +263,8 @@ function buildPublicMember(row) {
     current_region_name: safeText(row.current_region_name, ""),
     current_position_x: hasValidPosition(row) ? safeNumber(row.current_position_x) : null,
     current_position_y: hasValidPosition(row) ? safeNumber(row.current_position_y) : null,
-    current_position_z: hasValidPosition(row) ? safeNumber(row.current_position_z) : null
+    current_position_z: hasValidPosition(row) ? safeNumber(row.current_position_z) : null,
+    gender: safeText(row.gender, "male")
   };
 }
 
