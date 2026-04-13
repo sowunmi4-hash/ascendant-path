@@ -63,10 +63,10 @@
       position: relative; z-index: 2;
     }
     .figure-canvas-wrap {
-      position: relative; width: 160px; height: 160px;
+      position: relative; width: 200px; height: 220px;
     }
     .figure-canvas {
-      width: 160px; height: 160px; display: block;
+      width: 200px; height: 220px; display: block;
     }
     /* glow beneath figure */
     .figure-glow {
@@ -236,7 +236,7 @@
         <div class="bond-thread"></div>
         <div class="figure-panel" id="member-figure-panel">
           <div class="figure-canvas-wrap">
-            <canvas class="figure-canvas" id="member-figure-canvas" width="320" height="320"></canvas>
+            <canvas class="figure-canvas" id="member-figure-canvas" width="400" height="440"></canvas>
             <div class="figure-glow gold" id="member-glow"></div>
           </div>
           <div class="figure-name"  id="member-name">—</div>
@@ -256,7 +256,7 @@
 
         <div class="figure-panel" id="partner-figure-panel">
           <div class="figure-canvas-wrap">
-            <canvas class="figure-canvas" id="partner-figure-canvas" width="320" height="320"></canvas>
+            <canvas class="figure-canvas" id="partner-figure-canvas" width="400" height="440"></canvas>
             <div class="figure-glow gold" id="partner-glow"></div>
           </div>
           <div class="figure-name"  id="partner-name">—</div>
@@ -898,11 +898,14 @@
   }
 
   // ══════════════════════════════════════════════════════
-  //  FIGURE RENDERER
+  //  FIGURE RENDERER — full animated vessel with aura & auric veins
   // ══════════════════════════════════════════════════════
   const _figCache = { male: null, female: null };
   const _figCallbacks = { male: [], female: [] };
   const _figLoading = { male: false, female: false };
+  const _figRAFs = {};   // canvasId → raf handle
+  const _figT = {};      // canvasId → time
+  const _starfields = {}; // canvasId → star array
 
   function loadFigure(gender, callback) {
     const g = gender === 'female' ? 'female' : 'male';
@@ -942,21 +945,188 @@
     img.src = url;
   }
 
-  function drawFigureOnCanvas(canvasId, gender) {
+  function initStarfield(canvasId, count) {
+    _starfields[canvasId] = [];
+    for (let i = 0; i < count; i++) {
+      _starfields[canvasId].push({
+        x: Math.random(), y: Math.random(),
+        sz: 0.4 + Math.random() * 1.5,
+        sp: 0.0004 + Math.random() * 0.001,
+        ph: Math.random() * 6.28,
+        bright: 0.2 + Math.random() * 0.5
+      });
+    }
+  }
+
+  function drawStarfield(ctx, W, H, t, color, pct, canvasId) {
+    if (!_starfields[canvasId]) initStarfield(canvasId, 60);
+    ctx.save();
+    for (let s of _starfields[canvasId]) {
+      s.y -= s.sp;
+      if (s.y < -0.02) { s.y = 1.02; s.x = Math.random(); }
+      const flicker = 0.6 + Math.sin(t * 1.5 + s.ph) * 0.4;
+      ctx.globalAlpha = s.bright * flicker * (0.4 + pct * 0.6);
+      ctx.fillStyle = color;
+      ctx.beginPath(); ctx.arc(s.x * W, s.y * H, s.sz, 0, Math.PI * 2); ctx.fill();
+    }
+    ctx.restore();
+  }
+
+  function drawQiVeins(ctx, cx, cy, baseR, t, color, alpha, pct) {
+    ctx.save();
+    const pulse = 0.5 + Math.sin(t * 0.8) * 0.3;
+    ctx.globalAlpha = alpha * (0.5 + pct * 0.5) * pulse;
+    ctx.strokeStyle = color; ctx.lineWidth = 1.2;
+    for (let v = 0; v < 6; v++) {
+      const angle = (v / 6) * Math.PI * 2 + t * 0.02;
+      ctx.beginPath();
+      let px = cx, py = cy;
+      ctx.moveTo(px, py);
+      const segLen = baseR * 0.22;
+      for (let s = 0; s < 5; s++) {
+        const drift = Math.sin(t * 0.5 + v + s * 2) * 0.3;
+        px += Math.cos(angle + drift) * segLen;
+        py += Math.sin(angle + drift) * segLen;
+        ctx.lineTo(px, py);
+        if (s === 2) {
+          const bAngle = angle + drift + 0.6;
+          ctx.moveTo(px, py);
+          ctx.lineTo(px + Math.cos(bAngle) * segLen * 0.5, py + Math.sin(bAngle) * segLen * 0.5);
+          ctx.moveTo(px, py);
+        }
+      }
+      ctx.stroke();
+    }
+    ctx.restore();
+  }
+
+  function drawAura(ctx, cx, cy, baseR, pct, c1, c2, t) {
+    if (pct <= 0) return;
+    const start = -Math.PI / 2;
+    const end   = start + Math.PI * 2 * pct;
+
+    // Outer halo
+    const haloR = baseR + 22 + Math.sin(t * 0.8) * 6;
+    ctx.save();
+    ctx.beginPath(); ctx.arc(cx, cy, haloR, 0, Math.PI * 2);
+    const haloGrad = ctx.createRadialGradient(cx, cy, baseR * 0.8, cx, cy, haloR);
+    haloGrad.addColorStop(0, c1.replace('1)', '0.08)').replace('rgb', 'rgba'));
+    haloGrad.addColorStop(1, 'rgba(0,0,0,0)');
+    ctx.fillStyle = haloGrad; ctx.fill(); ctx.restore();
+
+    // Track ring
+    ctx.save(); ctx.beginPath(); ctx.arc(cx, cy, baseR, 0, Math.PI * 2);
+    ctx.strokeStyle = 'rgba(255,255,255,0.05)'; ctx.lineWidth = 12; ctx.stroke(); ctx.restore();
+
+    // Wide soft arc
+    ctx.save(); ctx.beginPath(); ctx.arc(cx, cy, baseR, start, end);
+    ctx.strokeStyle = c1; ctx.lineWidth = 20;
+    ctx.globalAlpha = 0.15 + Math.sin(t * 1.2) * 0.05;
+    ctx.lineCap = 'round'; ctx.stroke(); ctx.restore();
+
+    // Mid arc
+    ctx.save(); ctx.beginPath(); ctx.arc(cx, cy, baseR, start, end);
+    ctx.strokeStyle = c2; ctx.lineWidth = 10;
+    ctx.globalAlpha = 0.30 + Math.sin(t * 1.5) * 0.1;
+    ctx.lineCap = 'round'; ctx.stroke(); ctx.restore();
+
+    // Crisp arc
+    ctx.save(); ctx.beginPath(); ctx.arc(cx, cy, baseR, start, end);
+    ctx.strokeStyle = c1; ctx.lineWidth = 3;
+    ctx.globalAlpha = 0.9; ctx.lineCap = 'round'; ctx.stroke(); ctx.restore();
+
+    // Inner secondary arc
+    ctx.save(); ctx.beginPath(); ctx.arc(cx, cy, baseR - 14, start, end * 0.97 + Math.sin(t * 0.4) * 0.06);
+    ctx.strokeStyle = c2; ctx.lineWidth = 2;
+    ctx.globalAlpha = 0.45 + Math.sin(t * 2) * 0.2;
+    ctx.lineCap = 'round'; ctx.stroke(); ctx.restore();
+
+    // Particles along arc
+    const count = Math.floor(pct * 12) + 2;
+    for (let i = 0; i < count; i++) {
+      const phase = (i / count) * pct * Math.PI * 2 + t * (0.4 + i * 0.02);
+      const drift = Math.sin(t * 2 + i * 1.3) * 6;
+      const px = cx + Math.cos(start + phase) * (baseR + drift);
+      const py = cy + Math.sin(start + phase) * (baseR + drift);
+      const pAlpha = 0.35 + Math.sin(t * 2.5 + i * 0.7) * 0.4;
+      ctx.save(); ctx.beginPath(); ctx.arc(px, py, 1.5 + Math.sin(t * 3 + i), 0, Math.PI * 2);
+      ctx.fillStyle = i % 2 === 0 ? c1 : c2;
+      ctx.globalAlpha = pAlpha; ctx.fill(); ctx.restore();
+    }
+
+    // Arc tip spark
+    const tipX = cx + Math.cos(end) * baseR;
+    const tipY = cy + Math.sin(end) * baseR;
+    const ripple = Math.sin(t * 4) * 0.5 + 0.5;
+    ctx.save(); ctx.beginPath(); ctx.arc(tipX, tipY, 10 + ripple * 4, 0, Math.PI * 2);
+    ctx.fillStyle = c1; ctx.globalAlpha = 0.1 * ripple; ctx.fill(); ctx.restore();
+    ctx.save(); ctx.beginPath(); ctx.arc(tipX, tipY, 3.5, 0, Math.PI * 2);
+    ctx.fillStyle = '#fff'; ctx.globalAlpha = 0.9; ctx.fill(); ctx.restore();
+    ctx.save(); ctx.beginPath(); ctx.arc(tipX, tipY, 2, 0, Math.PI * 2);
+    ctx.fillStyle = c1; ctx.globalAlpha = 1; ctx.fill(); ctx.restore();
+  }
+
+  function startFigureAnimation(canvasId, gender, auricCurrent, auricMax) {
+    if (_figRAFs[canvasId]) { cancelAnimationFrame(_figRAFs[canvasId]); }
+    if (!_figT[canvasId]) _figT[canvasId] = 0;
+
     const canvas = document.getElementById(canvasId);
     if (!canvas) return;
     const ctx = canvas.getContext('2d');
     const W = canvas.width, H = canvas.height;
-    ctx.clearRect(0, 0, W, H);
-    loadFigure(gender, function(offscreen) {
-      if (!offscreen) return;
+    const cx = W / 2, cy = H * 0.42;
+    const baseR = Math.min(W, H) * 0.32;
+    const g = gender === 'female' ? 'female' : 'male';
+    const color  = g === 'female' ? '#c86890' : '#c8a96a';
+    const colorRGB = g === 'female' ? '200,104,144' : '200,169,106';
+    const c1 = `rgba(${colorRGB},0.7)`;
+    const c2 = `rgba(${colorRGB},0.35)`;
+    const pct = auricMax > 0 ? Math.min(1, auricCurrent / auricMax) : 0;
+
+    let figImg = null;
+    loadFigure(g, function(src) { figImg = src; });
+
+    function frame() {
+      _figT[canvasId] += 0.016;
+      const t = _figT[canvasId];
       ctx.clearRect(0, 0, W, H);
-      // Draw centered with slight float animation
-      const scale = W / 1024;
+
+      // Ambient background glow
       ctx.save();
-      ctx.drawImage(offscreen, 0, 0, W, H);
+      const bgGrad = ctx.createRadialGradient(cx, cy, baseR * 0.3, cx, cy, baseR * 1.6);
+      bgGrad.addColorStop(0, `rgba(${colorRGB},0.04)`);
+      bgGrad.addColorStop(1, 'rgba(0,0,0,0)');
+      ctx.fillStyle = bgGrad; ctx.beginPath(); ctx.arc(cx, cy, baseR * 1.6, 0, Math.PI * 2); ctx.fill();
       ctx.restore();
-    });
+
+      // Starfield
+      drawStarfield(ctx, W, H, t, color, pct, canvasId);
+
+      // Auric veins
+      drawQiVeins(ctx, cx, cy, baseR, t, `rgba(${colorRGB},0.5)`, 0.28, pct);
+
+      // Aura ring
+      drawAura(ctx, cx, cy, baseR, pct, c1, c2, t);
+
+      // Figure
+      if (figImg) {
+        const figH = baseR * 1.7;
+        const figW = figH;
+        const floatY = Math.sin(t * 0.8) * 4;
+        ctx.save();
+        ctx.drawImage(figImg, cx - figW * 0.5, cy - figH * 0.72 + floatY, figW, figH);
+        ctx.restore();
+      }
+
+      _figRAFs[canvasId] = requestAnimationFrame(frame);
+    }
+
+    _figRAFs[canvasId] = requestAnimationFrame(frame);
+  }
+
+  // Keep old drawFigureOnCanvas as alias for initial call — replaced by startFigureAnimation
+  function drawFigureOnCanvas(canvasId, gender) {
+    startFigureAnimation(canvasId, gender, 0, 1);
   }
 
   // ══════════════════════════════════════════════════════
@@ -1124,9 +1294,9 @@
     // Member figure
     setText('member-name',  safeText(member?.display_name || member?.character_name || member?.sl_username, 'You'));
     setText('member-realm', safeText(member?.realm_display_name, '—'));
-    drawFigureOnCanvas('member-figure-canvas', memberGender);
-    const memberGlow = document.getElementById('member-glow');
-    if (memberGlow) { memberGlow.className = 'figure-glow ' + (memberGender==='female'?'rose':'gold'); }
+    const mAuricNow = safeNumber(payload?.personal_auric_current, 0);
+    const mAuricCapNow = safeNumber(payload?.personal_auric_maximum, 1);
+    startFigureAnimation('member-figure-canvas', memberGender, mAuricNow, mAuricCapNow);
     const memberDot = document.getElementById('member-status-dot');
     if (memberDot) { memberDot.className = 'figure-status-dot nearby'; }
     setText('member-status-label', 'Active');
@@ -1134,9 +1304,10 @@
     // Partner figure
     setText('partner-name',  safeText(partner?.display_name || partner?.character_name || partner?.sl_username, 'Partner'));
     setText('partner-realm', safeText(partner?.realm_display_name, '—'));
-    drawFigureOnCanvas('partner-figure-canvas', partnerGender);
-    const partnerGlow = document.getElementById('partner-glow');
-    if (partnerGlow) { partnerGlow.className = 'figure-glow ' + (partnerGender==='female'?'rose':'gold'); }
+    const pAuricNow = safeNumber(payload?.partner_auric_current, 0);
+    const pAuricCapNow = safeNumber(payload?.partner_auric_maximum, 1);
+    startFigureAnimation('partner-figure-canvas', partnerGender, pAuricNow, pAuricCapNow);
+
     const partnerDot = document.getElementById('partner-status-dot');
     if (partnerDot) {
       const resClass = presenceActive ? 'resonant' : presenceRecent ? 'nearby' : 'offline';
@@ -1351,6 +1522,7 @@
   window.addEventListener('beforeunload', function(){
     if(state.refreshInterval) clearInterval(state.refreshInterval);
     if(_orbRAF) cancelAnimationFrame(_orbRAF);
+    Object.values(_figRAFs).forEach(id => cancelAnimationFrame(id));
   });
 </script>
 
