@@ -1884,7 +1884,7 @@
 
           var v2StatusNow = safeLower(getV2CultivationStatus());
           var figureGone     = (v2StatusNow === 'in_breakthrough');
-          var figureAscended = (v2StatusNow === 'idle' && !coalesce(state.member && state.member.v2_breakthrough_gate_open, false));
+          var figureAscended = (v2StatusNow === 'idle' && !Boolean(state.member && state.member.v2_breakthrough_gate_open));
           var figureDamaged  = (v2StatusNow === 'awaiting_repair');
 
           var auraC1 = figureAscended ? 'rgba(255,230,120,0.9)' : figureDamaged ? 'rgba(200,80,80,0.7)' : c1;
@@ -2359,7 +2359,7 @@
         } else if (v2Status === 'in_breakthrough' || btState.includes('active') || btState.includes('countdown') || btState.includes('timer')) {
           gateState = 'active';
         } else if (showEntry || v2Status === 'breakthrough_ready' || 
-                   (v2Status === 'meditating' && coalesce(state.member && state.member.v2_breakthrough_gate_open, false))) {
+                   (v2Status === 'meditating' && Boolean(state.member && state.member.v2_breakthrough_gate_open))) {
           gateState = 'open';
         } else if (v2Status === 'idle' && store && store.section_completed) {
           gateState = 'complete';
@@ -2628,7 +2628,7 @@
         if (secondary) { secondary.href = "/cultivation.html"; secondary.textContent = "Meditation Page"; }
         if (actionWell) {
           var hideActionWell = showEntry || v2Status === 'breakthrough_ready' || v2Status === 'in_breakthrough' ||
-            (v2Status === 'meditating' && coalesce(state.member && state.member.v2_breakthrough_gate_open, false));
+            (v2Status === 'meditating' && Boolean(state.member && state.member.v2_breakthrough_gate_open));
           actionWell.style.display = hideActionWell ? 'none' : '';
         }
       } catch(e) {

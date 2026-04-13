@@ -458,7 +458,7 @@ function buildV2SectionRecord({
   let uiState = normalizedStageStatus;
   if (needsRepair) {
     uiState = "damaged";
-  } else if (breakthroughApplies && normalizedStageStatus === "complete") {
+  } else if (breakthroughApplies && normalizedStageStatus === "comprehended") {
     uiState = "breakthrough_pending";
   }
 
