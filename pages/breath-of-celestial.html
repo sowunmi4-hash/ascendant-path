@@ -314,7 +314,7 @@
   var LOGOUT="/.netlify/functions/logout";
   var CEL="/.netlify/functions/load-world-celestial-state";
   var LOGIN="/login.html";
-  var _raf=null,_ri=null,_fly=false;
+  var _raf=null,_ri=null,_fly=false,_phaseKey="";
 
   function st(v,fb){fb=fb||"—";return String(v==null?"":v).trim()||fb}
   function nk(v){return String(v==null?"":v).trim().toLowerCase().replace(/[^a-z0-9]+/g,"_").replace(/^_+|_+$/g,"")}
@@ -464,6 +464,101 @@
         ctx.lineWidth=1;ctx.stroke();
       }
 
+      /* ── Celestial body (sun or moon) ── */
+      (function(){
+        var pk=_phaseKey;
+        // sun phases
+        var isSun=(pk==="golden_meridian"||pk==="zenith_of_heaven");
+        var isRise=(pk==="veil_of_first_breath");
+        var isSet=(pk==="ashen_descent");
+        var isMoon=(pk==="night_tide_omen"||pk==="moon_grave_silence");
+
+        var bodyX,bodyY,bodyR;
+        var pulse=0.85+0.15*Math.sin(t*0.4);
+
+        if(isSun){
+          // high in sky, slightly right of centre
+          bodyX=W*0.62; bodyY=H*0.18; bodyR=W*0.038;
+          // rays
+          ctx.save();
+          ctx.translate(bodyX,bodyY);
+          for(var ri=0;ri<12;ri++){
+            var ra=(ri/12)*Math.PI*2+t*0.05;
+            var rl=bodyR*(1.6+0.2*Math.sin(t*1.2+ri));
+            ctx.beginPath();
+            ctx.moveTo(Math.cos(ra)*(bodyR*1.25),Math.sin(ra)*(bodyR*1.25));
+            ctx.lineTo(Math.cos(ra)*rl,Math.sin(ra)*rl);
+            ctx.strokeStyle="rgba(255,220,120,"+(0.18*pulse)+")";
+            ctx.lineWidth=1.5; ctx.stroke();
+          }
+          ctx.restore();
+          // glow
+          var sg=ctx.createRadialGradient(bodyX,bodyY,0,bodyX,bodyY,bodyR*5);
+          sg.addColorStop(0,"rgba(255,230,140,"+(0.22*pulse)+")");
+          sg.addColorStop(0.4,"rgba(255,200,80,"+(0.08*pulse)+")");
+          sg.addColorStop(1,"rgba(0,0,0,0)");
+          ctx.fillStyle=sg; ctx.fillRect(0,0,W,H);
+          // disc
+          ctx.beginPath(); ctx.arc(bodyX,bodyY,bodyR*pulse,0,Math.PI*2);
+          ctx.fillStyle="rgba(255,240,180,0.92)"; ctx.fill();
+
+        } else if(isRise){
+          // sunrise — sun just above horizon left side
+          bodyX=W*0.18; bodyY=H*0.72; bodyR=W*0.045;
+          // horizon glow
+          var hg=ctx.createRadialGradient(bodyX,bodyY,0,bodyX,bodyY,W*0.35);
+          hg.addColorStop(0,"rgba(255,160,60,0.18)");
+          hg.addColorStop(0.5,"rgba(255,100,30,0.06)");
+          hg.addColorStop(1,"rgba(0,0,0,0)");
+          ctx.fillStyle=hg; ctx.fillRect(0,0,W,H);
+          // disc partially clipped by horizon
+          ctx.save(); ctx.beginPath(); ctx.rect(0,0,W,bodyY+bodyR*0.3); ctx.clip();
+          var dg=ctx.createRadialGradient(bodyX,bodyY,0,bodyX,bodyY,bodyR);
+          dg.addColorStop(0,"rgba(255,220,120,0.95)");
+          dg.addColorStop(1,"rgba(255,140,40,0.8)");
+          ctx.fillStyle=dg;
+          ctx.beginPath(); ctx.arc(bodyX,bodyY,bodyR,0,Math.PI*2); ctx.fill();
+          ctx.restore();
+
+        } else if(isSet){
+          // sunset — sun near horizon right side
+          bodyX=W*0.82; bodyY=H*0.70; bodyR=W*0.045;
+          var hg2=ctx.createRadialGradient(bodyX,bodyY,0,bodyX,bodyY,W*0.38);
+          hg2.addColorStop(0,"rgba(255,120,40,0.20)");
+          hg2.addColorStop(0.5,"rgba(200,60,20,0.07)");
+          hg2.addColorStop(1,"rgba(0,0,0,0)");
+          ctx.fillStyle=hg2; ctx.fillRect(0,0,W,H);
+          ctx.save(); ctx.beginPath(); ctx.rect(0,0,W,bodyY+bodyR*0.4); ctx.clip();
+          var dg2=ctx.createRadialGradient(bodyX,bodyY,0,bodyX,bodyY,bodyR);
+          dg2.addColorStop(0,"rgba(255,180,80,0.9)");
+          dg2.addColorStop(1,"rgba(220,80,20,0.75)");
+          ctx.fillStyle=dg2;
+          ctx.beginPath(); ctx.arc(bodyX,bodyY,bodyR,0,Math.PI*2); ctx.fill();
+          ctx.restore();
+
+        } else if(isMoon){
+          // moon — upper right, crescent effect
+          bodyX=W*0.72; bodyY=H*0.15; bodyR=W*0.028;
+          // glow halo
+          var mg=ctx.createRadialGradient(bodyX,bodyY,0,bodyX,bodyY,bodyR*5);
+          mg.addColorStop(0,"rgba(180,210,255,"+(0.14*pulse)+")");
+          mg.addColorStop(0.4,"rgba(140,180,255,"+(0.05*pulse)+")");
+          mg.addColorStop(1,"rgba(0,0,0,0)");
+          ctx.fillStyle=mg; ctx.fillRect(0,0,W,H);
+          // full disc
+          ctx.beginPath(); ctx.arc(bodyX,bodyY,bodyR*pulse,0,Math.PI*2);
+          ctx.fillStyle="rgba(210,225,245,0.88)"; ctx.fill();
+          // crescent shadow — offset circle to cut
+          ctx.save(); ctx.globalCompositeOperation="destination-out";
+          ctx.beginPath(); ctx.arc(bodyX+bodyR*0.38,bodyY-bodyR*0.1,bodyR*0.82,0,Math.PI*2);
+          ctx.fillStyle="rgba(0,0,0,0.92)"; ctx.fill();
+          ctx.restore();
+          // rim glow
+          ctx.beginPath(); ctx.arc(bodyX,bodyY,bodyR*pulse,0,Math.PI*2);
+          ctx.strokeStyle="rgba(200,220,255,0.3)"; ctx.lineWidth=1.5; ctx.stroke();
+        }
+      })();
+
       /* Central glow behind phase text */
       var gc=ctx.createRadialGradient(W/2,H*.42,0,W/2,H*.42,W*.28);
       gc.addColorStop(0,"rgba("+r+","+gr+","+b+",0.1)");
@@ -504,6 +599,7 @@
   }
 
   function renderWorld(w){
+    _phaseKey=nk(w.phase_key||w.phase_name||"");
     applyForce(w);
     tx("tPhase",w.phase_name);tx("tForce",w.force_name);
     tx("tSlt",st(w.slt_time_text,"—")+" SLT");
