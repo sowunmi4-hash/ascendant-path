@@ -1516,7 +1516,13 @@
         if (remainEl)   remainEl.textContent = displayedRemaining;
         if (qiEl)       qiEl.textContent = auricCurrent + ' / ' + auricMax;
         if (cpEl)       cpEl.textContent = cp.toLocaleString();
-        if (_vesselRafId === null) runGateVessel();
+        // Restart vessel if not running OR if gender changed (e.g. female member loads after init)
+        var _currentGender = safeLower(state.member && (state.member.gender || state.member.sl_gender)) || 'male';
+        if (_vesselRafId === null || _vesselGenderColor[_currentGender] !== _vesselCurrentColor) {
+          _vesselCurrentColor = _vesselGenderColor[_currentGender];
+          stopGateVessel();
+          runGateVessel();
+        }
       } catch(e) {
         console.error('renderAltar error:', e);
       }

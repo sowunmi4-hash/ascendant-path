@@ -1068,9 +1068,10 @@
   }
 
   function startFigureAnimation(canvasId, gender, auricCurrent, auricMax) {
-    // Don't restart if already running with same gender (auric is read live from pct each frame)
+    // Don't restart if already running with same gender AND figure is loaded
     const prev = _figState[canvasId];
-    if (prev && prev.gender === gender && _figRAFs[canvasId]) {
+    const g = gender === 'female' ? 'female' : 'male';
+    if (prev && prev.gender === gender && _figRAFs[canvasId] && _figCache[g]) {
       // Just update the stored auric values — the running frame will pick them up
       prev.auricCurrent = auricCurrent; prev.auricMax = auricMax;
       return;
