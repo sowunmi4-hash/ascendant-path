@@ -2230,42 +2230,47 @@
 
 
 
+    var _gateFigureCacheByGender = { male: null, female: null };
+    var _gateFigureCbsByGender   = { male: [], female: [] };
+    var _gateFigureLoadingByGender = { male: false, female: false };
+
     function loadGateFigure(gender, callback) {
-      if (_gateFigureCache) { callback(_gateFigureCache); return; }
-      _gateFigureCallbacks.push(callback);
-      if (_gateFigureLoading) return;
-      _gateFigureLoading = true;
-      var url = (gender === 'female') ? '/images/female-figure.svg' : '/images/figure.svg';
+      var g = (gender === 'female') ? 'female' : 'male';
+      var rgb = (g === 'female') ? [200, 104, 144] : [200, 169, 106];
+      if (_gateFigureCacheByGender[g] !== null) { callback(_gateFigureCacheByGender[g]); return; }
+      _gateFigureCbsByGender[g].push(callback);
+      if (_gateFigureLoadingByGender[g]) return;
+      _gateFigureLoadingByGender[g] = true;
+      var url = (g === 'female') ? '/images/female-figure.svg' : '/images/figure.svg';
       var img = new Image();
       img.onload = function() {
         try {
           var off = document.createElement('canvas');
           off.width = 1024; off.height = 1024;
-          var ctx = off.getContext('2d');
-          ctx.drawImage(img, 0, 0);
-          var id = ctx.getImageData(0, 0, 1024, 1024);
+          var ctx2 = off.getContext('2d');
+          ctx2.drawImage(img, 0, 0);
+          var id = ctx2.getImageData(0, 0, 1024, 1024);
           var d = id.data;
           for (var i = 0; i < d.length; i += 4) {
             if (d[i+3] > 10 && d[i] < 80 && d[i+1] < 80 && d[i+2] < 80) {
-              d[i] = 200; d[i+1] = 169; d[i+2] = 106;
+              d[i] = rgb[0]; d[i+1] = rgb[1]; d[i+2] = rgb[2];
             } else { d[i+3] = 0; }
           }
-          ctx.putImageData(id, 0, 0);
-          _gateFigureCache = off;
-        } catch(e) { _gateFigureCache = null; }
-        _gateFigureLoading = false;
-        var cbs = _gateFigureCallbacks.slice(); _gateFigureCallbacks = [];
-        for (var j = 0; j < cbs.length; j++) { cbs[j](_gateFigureCache); }
+          ctx2.putImageData(id, 0, 0);
+          _gateFigureCacheByGender[g] = off;
+        } catch(e) { _gateFigureCacheByGender[g] = null; }
+        _gateFigureLoadingByGender[g] = false;
+        var cbs = _gateFigureCbsByGender[g].slice(); _gateFigureCbsByGender[g] = [];
+        for (var j = 0; j < cbs.length; j++) { cbs[j](_gateFigureCacheByGender[g]); }
       };
       img.onerror = function() {
-        _gateFigureCache = null; _gateFigureLoading = false;
-        var cbs = _gateFigureCallbacks.slice(); _gateFigureCallbacks = [];
+        _gateFigureCacheByGender[g] = null; _gateFigureLoadingByGender[g] = false;
+        var cbs = _gateFigureCbsByGender[g].slice(); _gateFigureCbsByGender[g] = [];
         for (var j = 0; j < cbs.length; j++) { cbs[j](null); }
       };
       img.crossOrigin = 'anonymous';
       img.src = url;
     }
-
     function drawGateFigure(canvas, color, size, srcCanvas) {
       if (!canvas) return;
       canvas.width = size; canvas.height = size;
