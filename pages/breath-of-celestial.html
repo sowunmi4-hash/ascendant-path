@@ -388,8 +388,19 @@
     }
 
     async function boot(){
-      try{await verify();await load(false);startRefresh()}
-      catch(e){console.error(e)}
+      try{
+        await verify();
+        await load(false);
+        startRefresh();
+      } catch(e){
+        console.error('Boot error:', e);
+        // Don't redirect on celestial page errors — show error instead
+        if(!/session expired/i.test(e.message||'')){
+          document.getElementById('elLoad').classList.add('h');
+          document.getElementById('errMsg').textContent = 'Unable to load: ' + (e.message||'Unknown error');
+          document.getElementById('elErr').classList.remove('h');
+        }
+      }
     }
 
     el('btnRefresh').addEventListener('click',()=>load(false));
