@@ -137,6 +137,26 @@ exports.handler = async (event) => {
     .maybeSingle();
 
   const preference = (member?.personal_cultivation_preference || "manual").toLowerCase();
+  const currentStatus = member?.v2_cultivation_status || "idle";
+
+  // When breakthrough_ready: skip all scroll logic regardless of mode.
+  // Just reset the auric sync anchor and return — meditation is already active.
+  if (currentStatus === "breakthrough_ready") {
+    await supabase
+      .from("cultivation_members")
+      .update({ last_manual_cultivation_sync_at: new Date().toISOString() })
+      .eq("sl_avatar_key", avatarKey);
+
+    return json(200, {
+      success: true,
+      action: "breakthrough_ready_meditation",
+      message: "The threshold is open. Meditate to channel Auric — enter the breakthrough when ready.",
+      cultivation_preference: preference,
+      v2_cultivation_status: "breakthrough_ready",
+      auric_filling: true,
+      cultivation_active: false
+    });
+  }
 
   // Manual mode: call v2_start_meditation — sets status = 'meditating'.
   // Does NOT call v2_begin_cultivation, so the cultivation book stays idle.

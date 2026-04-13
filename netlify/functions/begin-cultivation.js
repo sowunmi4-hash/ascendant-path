@@ -159,10 +159,25 @@ exports.handler = async (event) => {
       cultivation_preference: preference
     });
   }
-  // breakthrough_ready: allow meditation so cultivator can channel Auric before entering
 
-  // In manual mode, only meditating/paused/idle are valid starting states
-  // In auto mode this endpoint is also called when meditation starts
+  // When breakthrough_ready: skip scroll cultivation entirely.
+  // Just reset the auric sync anchor so gains resume, and return success.
+  if (status === "breakthrough_ready") {
+    await supabase
+      .from("cultivation_members")
+      .update({ last_manual_cultivation_sync_at: new Date().toISOString() })
+      .eq("sl_avatar_key", avatarKey);
+
+    return json(200, {
+      success: true,
+      action: "breakthrough_ready_meditation",
+      message: "The threshold is open. Meditate to channel Auric — enter the breakthrough when ready.",
+      v2_cultivation_status: "breakthrough_ready",
+      cultivation_preference: preference
+    });
+  }
+
+  // Normal flow: only meditating/paused/idle are valid starting states
   if (!["meditating", "paused", "idle"].includes(status)) {
     return json(409, {
       error: "Cannot begin cultivation from current state",

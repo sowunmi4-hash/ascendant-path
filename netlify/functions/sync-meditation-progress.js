@@ -95,9 +95,9 @@ exports.handler = async (event) => {
   const preference = (member?.personal_cultivation_preference || 'manual').toLowerCase();
   const cultivationStatus = member?.v2_cultivation_status || 'idle';
 
-  // 'meditating' = base meditation (auric fills freely, scroll is idle).
+  // 'meditating' or 'breakthrough_ready' = auric fills freely, no scroll to sync.
   // Call v2_sync_auric_gain to fill auric + vestiges based on elapsed time.
-  if (cultivationStatus === 'meditating') {
+  if (cultivationStatus === 'meditating' || cultivationStatus === 'breakthrough_ready') {
     const { data: auricResult, error: auricError } = await supabase
       .schema('library')
       .rpc('v2_sync_auric_gain', { p_sl_avatar_key: avatarKey });

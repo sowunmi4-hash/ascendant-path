@@ -82,11 +82,13 @@ exports.handler = async (event) => {
     .eq("sl_avatar_key", avatarKey)
     .maybeSingle();
 
-  if (member?.v2_cultivation_status === "meditating") {
+  if (member?.v2_cultivation_status === "meditating" || member?.v2_cultivation_status === "breakthrough_ready") {
     // No active scroll session — just clear the meditation status
+    // For breakthrough_ready: keep gate open but stop auric gain
+    const newStatus = member?.v2_cultivation_status === "breakthrough_ready" ? "breakthrough_ready" : "paused";
     const { error: updateError } = await supabase
       .from("cultivation_members")
-      .update({ v2_cultivation_status: "paused" })
+      .update({ v2_cultivation_status: newStatus })
       .eq("sl_avatar_key", avatarKey);
 
     if (updateError) {
@@ -97,7 +99,8 @@ exports.handler = async (event) => {
     return json(200, {
       success: true,
       action: "meditation_stopped",
-      message: "Meditation ended. Auric and vestige gains stopped."
+      message: "Meditation ended. Auric and vestige gains stopped.",
+      v2_cultivation_status: newStatus
     });
   }
 
