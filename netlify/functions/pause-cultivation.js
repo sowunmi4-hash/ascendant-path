@@ -93,14 +93,14 @@ exports.handler = async (event) => {
   const preference = (member?.personal_cultivation_preference || "manual").toLowerCase();
   const currentStatus = member?.v2_cultivation_status || "idle";
 
-  // If in pure 'meditating' state (no active scroll session), nothing to pause
-  if (currentStatus === "meditating") {
+  // If in pure 'meditating' or 'breakthrough_ready' state (no active scroll session), nothing to pause
+  if (currentStatus === "meditating" || currentStatus === "breakthrough_ready") {
     return json(200, {
       success: true,
       action: "already_paused",
       message: "No active scroll session. Meditation continues.",
       cultivation_preference: preference,
-      v2_cultivation_status: "meditating"
+      v2_cultivation_status: currentStatus
     });
   }
 

@@ -150,12 +150,28 @@ exports.handler = async (event) => {
     });
   }
 
-  if (status === "breakthrough_ready" || status === "in_breakthrough") {
+  if (status === "in_breakthrough") {
     return json(200, {
       success: true,
       action: "blocked_by_breakthrough",
-      message: "Cultivation is at a breakthrough threshold. Complete or enter the breakthrough first.",
+      message: "A breakthrough is already underway. Complete it first.",
       v2_cultivation_status: status,
+      cultivation_preference: preference
+    });
+  }
+
+  // When breakthrough_ready: skip scroll logic, just reset auric sync anchor
+  if (status === "breakthrough_ready") {
+    await supabase
+      .from("cultivation_members")
+      .update({ last_manual_cultivation_sync_at: new Date().toISOString() })
+      .eq("sl_avatar_key", avatarKey);
+
+    return json(200, {
+      success: true,
+      action: "breakthrough_ready_meditation",
+      message: "The threshold is open. Meditate to channel Auric — enter the breakthrough when ready.",
+      v2_cultivation_status: "breakthrough_ready",
       cultivation_preference: preference
     });
   }
