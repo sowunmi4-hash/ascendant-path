@@ -1,1398 +1,428 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Celestial Omen | The Ascendant Path</title>
-  <link rel="stylesheet" href="/css/style.css" />
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+  <title>Celestial Omens — Ascendant Path</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com"/>
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;500;600;700&family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;1,300;1,400&display=swap" rel="stylesheet"/>
   <style>
-    :root {
-      --bg-1: #040814;
-      --bg-2: #081120;
-      --bg-3: #0c1730;
-      --panel: rgba(10, 16, 32, 0.78);
-      --panel-strong: rgba(14, 20, 40, 0.88);
-      --border: rgba(255, 255, 255, 0.09);
-      --text: #edf4ff;
-      --muted: #b7c4dc;
-      --gold: #e3c98a;
-      --silver: #c8d8ff;
-      --violet: #8b80ff;
-      --glow: 0 0 0 1px rgba(255,255,255,0.03), 0 18px 50px rgba(0,0,0,0.34);
-      --radius-xl: 30px;
-      --radius-lg: 24px;
-      --radius-md: 18px;
-    }
-
-    * {
-      box-sizing: border-box;
-    }
-
-    html, body {
-      margin: 0;
-      padding: 0;
-      min-height: 100%;
-      background:
-        radial-gradient(circle at top, rgba(82, 99, 170, 0.22), transparent 38%),
-        radial-gradient(circle at 20% 20%, rgba(167, 196, 255, 0.08), transparent 24%),
-        linear-gradient(180deg, var(--bg-2) 0%, var(--bg-1) 42%, #03050d 100%);
-      color: var(--text);
-      font-family: "Inter", "Segoe UI", sans-serif;
-      overflow-x: hidden;
-    }
-
-    body::before,
-    body::after {
-      content: "";
-      position: fixed;
-      inset: -20%;
-      pointer-events: none;
-      z-index: 0;
-    }
-
-    body::before {
-      background:
-        radial-gradient(circle at 15% 28%, rgba(210,226,255,0.09) 0 2px, transparent 2.2px),
-        radial-gradient(circle at 70% 12%, rgba(210,226,255,0.12) 0 1.8px, transparent 2px),
-        radial-gradient(circle at 82% 40%, rgba(255,255,255,0.09) 0 1.4px, transparent 1.6px),
-        radial-gradient(circle at 32% 78%, rgba(210,226,255,0.08) 0 1.7px, transparent 2px),
-        radial-gradient(circle at 56% 62%, rgba(233,214,163,0.11) 0 1.6px, transparent 1.8px);
-      animation: twinkleField 12s ease-in-out infinite alternate;
-      opacity: 0.85;
-    }
-
-    body::after {
-      background:
-        radial-gradient(45% 28% at 50% 0%, rgba(157,190,255,0.10), transparent 70%),
-        radial-gradient(38% 24% at 50% 100%, rgba(139,128,255,0.08), transparent 70%);
-      filter: blur(60px);
-      animation: breatheGlow 14s ease-in-out infinite;
-    }
-
-    .omen-shell {
-      position: relative;
-      z-index: 1;
-      width: min(1440px, calc(100% - 32px));
-      margin: 0 auto;
-      padding: 28px 0 60px;
-    }
-
-    .floating-mist,
-    .floating-mist::before,
-    .floating-mist::after {
-      position: absolute;
-      inset: auto;
-      border-radius: 999px;
-      filter: blur(40px);
-      pointer-events: none;
-    }
-
-    .floating-mist {
-      top: 120px;
-      left: -120px;
-      width: 360px;
-      height: 220px;
-      background: rgba(151,187,255,0.08);
-      animation: driftSlow 18s ease-in-out infinite alternate;
-    }
-
-    .floating-mist::before {
-      content: "";
-      top: 430px;
-      right: -1020px;
-      width: 460px;
-      height: 240px;
-      background: rgba(232,217,175,0.07);
-      animation: driftSlow 22s ease-in-out infinite alternate-reverse;
-    }
-
-    .floating-mist::after {
-      content: "";
-      top: 780px;
-      right: -720px;
-      width: 320px;
-      height: 200px;
-      background: rgba(168,180,255,0.09);
-      animation: driftSlow 20s ease-in-out infinite alternate;
-    }
-
-    .omen-topbar {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 16px;
-      margin-bottom: 18px;
-      flex-wrap: wrap;
-    }
-
-    .omen-topbar-actions {
-      display: flex;
-      align-items: center;
-      gap: 12px;
-      flex-wrap: wrap;
-    }
-
-    .omen-back-link,
-    .omen-logout-button {
-      display: inline-flex;
-      align-items: center;
-      gap: 10px;
-      min-height: 44px;
-      padding: 0 16px;
-      border-radius: 999px;
-      text-decoration: none;
-      color: var(--text);
-      background: rgba(255,255,255,0.05);
-      border: 1px solid rgba(255,255,255,0.09);
-      box-shadow: 0 8px 22px rgba(0,0,0,0.18);
-      transition: transform 0.25s ease, border-color 0.25s ease, background 0.25s ease;
-      font: inherit;
-    }
-
-    .omen-logout-button {
-      cursor: pointer;
-    }
-
-    .omen-back-link:hover,
-    .omen-logout-button:hover {
-      transform: translateY(-2px);
-      border-color: rgba(255,255,255,0.16);
-      background: rgba(255,255,255,0.08);
-    }
-
-    .omen-topbar-note {
-      color: var(--muted);
-      font-size: 0.95rem;
-    }
-
-    .omen-hero {
-      position: relative;
-      overflow: hidden;
-      background:
-        linear-gradient(135deg, rgba(13, 20, 40, 0.94), rgba(10, 18, 36, 0.68)),
-        radial-gradient(circle at top right, rgba(229, 210, 157, 0.13), transparent 36%);
-      border: 1px solid var(--border);
-      border-radius: 36px;
-      padding: 34px 32px;
-      box-shadow: var(--glow);
-      margin-bottom: 24px;
-      isolation: isolate;
-    }
-
-    .omen-hero::before {
-      content: "";
-      position: absolute;
-      inset: 0;
-      background: linear-gradient(120deg, transparent 0%, rgba(255,255,255,0.04) 42%, transparent 64%);
-      transform: translateX(-100%);
-      animation: sheenSweep 10s linear infinite;
-      z-index: 0;
-    }
-
-    .omen-hero::after {
-      content: "";
-      position: absolute;
-      inset: auto auto -42px -42px;
-      width: 220px;
-      height: 220px;
-      border-radius: 50%;
-      background: radial-gradient(circle, rgba(214,198,154,0.18), transparent 70%);
-      filter: blur(12px);
-      animation: breatheGlow 11s ease-in-out infinite;
-      z-index: 0;
-    }
-
-    .omen-hero-grid {
-      position: relative;
-      z-index: 1;
-      display: grid;
-      grid-template-columns: minmax(0, 1.35fr) minmax(240px, 0.9fr);
-      gap: 24px;
-      align-items: center;
-    }
-
-    .omen-kicker {
-      display: inline-flex;
-      align-items: center;
-      gap: 10px;
-      padding: 8px 14px;
-      border-radius: 999px;
-      background: rgba(255,255,255,0.05);
-      border: 1px solid rgba(255,255,255,0.08);
-      color: var(--gold);
-      letter-spacing: 0.08em;
-      text-transform: uppercase;
-      font-size: 0.76rem;
-      margin-bottom: 14px;
-    }
-
-    .omen-title {
-      margin: 0;
-      font-size: clamp(2.4rem, 4vw, 4.1rem);
-      line-height: 0.98;
-      letter-spacing: -0.03em;
-    }
-
-    .omen-subtitle {
-      margin: 14px 0 0;
-      max-width: 780px;
-      color: var(--muted);
-      font-size: 1rem;
-      line-height: 1.75;
-    }
-
-    .omen-hero-orb-panel {
-      position: relative;
-      min-height: 220px;
-      display: grid;
-      place-items: center;
-    }
-
-    .omen-hero-orb {
-      position: relative;
-      width: clamp(160px, 22vw, 250px);
-      aspect-ratio: 1 / 1;
-      border-radius: 50%;
-      display: grid;
-      place-items: center;
-      background:
-        radial-gradient(circle at 35% 30%, rgba(255,255,255,0.22), rgba(163,189,255,0.08) 32%, rgba(18,26,49,0.2) 58%, transparent 72%);
-      box-shadow:
-        0 0 0 1px rgba(255,255,255,0.08),
-        0 0 36px rgba(173,197,255,0.2),
-        inset 0 0 34px rgba(255,255,255,0.08);
-      animation: floatOrb 8s ease-in-out infinite;
-    }
-
-    .omen-hero-orb::before,
-    .omen-hero-orb::after {
-      content: "";
-      position: absolute;
-      inset: 14px;
-      border-radius: 50%;
-      border: 1px solid rgba(255,255,255,0.14);
-    }
-
-    .omen-hero-orb::before {
-      transform: rotate(18deg);
-      animation: rotateSlow 16s linear infinite;
-    }
-
-    .omen-hero-orb::after {
-      inset: -10px;
-      border-color: rgba(227,201,138,0.18);
-      animation: rotateSlowReverse 20s linear infinite;
-    }
-
-    .hero-orb-core {
-      width: 42%;
-      aspect-ratio: 1 / 1;
-      border-radius: 50%;
-      background:
-        radial-gradient(circle at 38% 34%, rgba(255,255,255,0.86), rgba(232,211,160,0.78) 20%, rgba(141,171,255,0.44) 52%, rgba(40,64,114,0.12) 82%);
-      box-shadow:
-        0 0 30px rgba(186,210,255,0.3),
-        inset 0 0 16px rgba(255,255,255,0.28);
-      animation: pulseCore 5s ease-in-out infinite;
-    }
-
-    .hero-orb-particle {
-      position: absolute;
-      width: 10px;
-      aspect-ratio: 1 / 1;
-      border-radius: 50%;
-      background: radial-gradient(circle, rgba(255,255,255,0.92), rgba(190,211,255,0.28));
-      box-shadow: 0 0 14px rgba(200,220,255,0.3);
-      opacity: 0.75;
-    }
-
-    .hero-orb-particle.p1 { top: 20%; left: 16%; animation: driftParticleA 9s linear infinite; }
-    .hero-orb-particle.p2 { top: 18%; right: 19%; animation: driftParticleB 11s linear infinite; }
-    .hero-orb-particle.p3 { bottom: 16%; left: 22%; animation: driftParticleB 10s linear infinite reverse; }
-    .hero-orb-particle.p4 { bottom: 14%; right: 18%; animation: driftParticleA 12s linear infinite reverse; }
-
-    .omen-summary-strip {
-      display: grid;
-      grid-template-columns: repeat(3, minmax(0, 1fr));
-      gap: 16px;
-      margin-bottom: 24px;
-    }
-
-    .summary-card {
-      position: relative;
-      overflow: hidden;
-      background: var(--panel);
-      border: 1px solid var(--border);
-      border-radius: var(--radius-lg);
-      box-shadow: var(--glow);
-      padding: 20px 18px;
-      backdrop-filter: blur(14px);
-      animation: fadeRise 0.7s ease both;
-    }
-
-    .summary-card::before {
-      content: "";
-      position: absolute;
-      inset: 0;
-      background: linear-gradient(135deg, rgba(255,255,255,0.03), transparent 32%, transparent 70%, rgba(255,255,255,0.03));
-      pointer-events: none;
-    }
-
-    .summary-label {
-      position: relative;
-      z-index: 1;
-      font-size: 0.74rem;
-      letter-spacing: 0.08em;
-      text-transform: uppercase;
-      color: var(--gold);
-      margin-bottom: 10px;
-    }
-
-    .summary-value {
-      position: relative;
-      z-index: 1;
-      font-size: 1.05rem;
-      line-height: 1.6;
-      color: var(--muted);
-    }
-
-    .summary-value strong {
-      color: #fff;
-      font-weight: 700;
-      letter-spacing: -0.01em;
-    }
-
-    .omen-board {
-      position: relative;
-      overflow: hidden;
-      background: linear-gradient(180deg, rgba(12,18,35,0.72), rgba(8,13,26,0.88));
-      border: 1px solid var(--border);
-      border-radius: 32px;
-      padding: 28px 24px 26px;
-      box-shadow: var(--glow);
-      backdrop-filter: blur(15px);
-    }
-
-    .omen-board::before {
-      content: "";
-      position: absolute;
-      inset: auto auto -60px -80px;
-      width: 220px;
-      height: 220px;
-      border-radius: 50%;
-      background: radial-gradient(circle, rgba(150,181,255,0.14), transparent 70%);
-      filter: blur(16px);
-      animation: breatheGlow 9s ease-in-out infinite;
-      pointer-events: none;
-    }
-
-    .section-head {
-      display: flex;
-      flex-wrap: wrap;
-      align-items: end;
-      justify-content: space-between;
-      gap: 14px;
-      margin-bottom: 16px;
-    }
-
-    .section-title {
-      margin: 0;
-      font-size: clamp(1.55rem, 2.4vw, 2.2rem);
-      letter-spacing: -0.03em;
-    }
-
-    .section-subtitle {
-      margin: 8px 0 0;
-      color: var(--muted);
-      font-size: 0.98rem;
-      line-height: 1.7;
-      max-width: 760px;
-    }
-
-    .forecast-meta {
-      color: var(--gold);
-      font-size: 0.92rem;
-      margin-bottom: 14px;
-    }
-
-    .forecast-error {
-      display: none;
-      margin-bottom: 14px;
-      padding: 14px 16px;
-      border-radius: 16px;
-      background: rgba(163,52,68,0.16);
-      border: 1px solid rgba(255,122,141,0.26);
-      color: #ffd0d9;
-    }
-
-    .omen-cards-grid {
-      display: grid;
-      grid-template-columns: repeat(7, minmax(0, 1fr));
-      gap: 14px;
-      align-items: start;
-    }
-
-    .omen-loading {
-      grid-column: 1 / -1;
-      min-height: 220px;
-      border-radius: 26px;
-      background: rgba(255,255,255,0.035);
-      border: 1px solid rgba(255,255,255,0.08);
-      display: grid;
-      place-items: center;
-      gap: 16px;
-      text-align: center;
-      padding: 32px 18px;
-      color: var(--muted);
-    }
-
-    .omen-loading-orb {
-      width: 62px;
-      aspect-ratio: 1 / 1;
-      border-radius: 50%;
-      border: 2px solid rgba(255,255,255,0.08);
-      border-top-color: rgba(227,201,138,0.78);
-      border-right-color: rgba(176,198,255,0.68);
-      animation: rotateSlow 1.2s linear infinite;
-    }
-
-    .omen-card {
-      position: relative;
-      overflow: hidden;
-      background: rgba(255,255,255,0.04);
-      border: 1px solid rgba(255,255,255,0.08);
-      border-radius: 24px;
-      box-shadow: 0 12px 28px rgba(0,0,0,0.22);
-      animation: fadeRise 0.7s ease both;
-      transition:
-        transform 0.28s ease,
-        border-color 0.28s ease,
-        box-shadow 0.28s ease,
-        background 0.28s ease;
-    }
-
-    .omen-card:hover {
-      transform: translateY(-5px);
-      border-color: rgba(255,255,255,0.14);
-      box-shadow: 0 20px 42px rgba(0,0,0,0.28);
-    }
-
-    .omen-card.is-firm {
-      background:
-        linear-gradient(180deg, rgba(255,255,255,0.05), rgba(255,255,255,0.03)),
-        radial-gradient(circle at top, rgba(218,199,145,0.08), transparent 40%);
-    }
-
-    .omen-card.is-uncertain {
-      background:
-        linear-gradient(180deg, rgba(255,255,255,0.05), rgba(255,255,255,0.025)),
-        radial-gradient(circle at top, rgba(142,119,255,0.07), transparent 42%);
-    }
-
-    .omen-card-toggle {
-      position: relative;
-      width: 100%;
-      border: 0;
-      background: transparent;
-      color: inherit;
-      text-align: left;
-      padding: 18px 16px 14px;
-      cursor: pointer;
-      appearance: none;
-    }
-
-    .omen-card-sheen {
-      position: absolute;
-      inset: 0;
-      background: linear-gradient(130deg, transparent 0%, rgba(255,255,255,0.055) 42%, transparent 70%);
-      transform: translateX(-115%);
-      animation: sheenSweep 8s linear infinite;
-      pointer-events: none;
-    }
-
-    .omen-card-top,
-    .omen-card-foot {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 10px;
-      position: relative;
-      z-index: 1;
-    }
-
-    .omen-card-day {
-      font-size: 1rem;
-      font-weight: 700;
-      letter-spacing: -0.02em;
-    }
-
-    .omen-card-date {
-      margin-top: 5px;
-      color: var(--muted);
-      font-size: 0.9rem;
-    }
-
-    .omen-card-state {
-      display: inline-flex;
-      align-items: center;
-      min-height: 30px;
-      padding: 0 12px;
-      border-radius: 999px;
-      font-size: 0.72rem;
-      letter-spacing: 0.07em;
-      text-transform: uppercase;
-      border: 1px solid rgba(255,255,255,0.1);
-      background: rgba(255,255,255,0.055);
-      color: var(--gold);
-      white-space: nowrap;
-    }
-
-    .omen-card-core {
-      position: relative;
-      z-index: 1;
-      display: grid;
-      grid-template-columns: minmax(0, 1fr) 76px;
-      gap: 12px;
-      align-items: center;
-      margin: 18px 0 14px;
-    }
-
-    .omen-card-reading-label {
-      color: #96a7cc;
-      font-size: 0.74rem;
-      letter-spacing: 0.08em;
-      text-transform: uppercase;
-      margin-bottom: 7px;
-    }
-
-    .omen-card-reading-main {
-      min-height: 58px;
-      display: flex;
-      flex-wrap: wrap;
-      gap: 6px;
-      align-items: center;
-      font-size: 0.95rem;
-      line-height: 1.4;
-    }
-
-    .omen-force-primary {
-      font-weight: 700;
-      color: #fff;
-      letter-spacing: -0.01em;
-    }
-
-    .omen-force-shadow {
-      color: #c6d4ef;
-      font-weight: 700;
-      letter-spacing: -0.01em;
-    }
-
-    .omen-force-divider {
-      color: rgba(255,255,255,0.45);
-      font-weight: 700;
-    }
-
-    .omen-card-ratio {
-      display: inline-flex;
-      align-items: center;
-      min-height: 28px;
-      padding: 0 10px;
-      border-radius: 999px;
-      margin-top: 9px;
-      font-size: 0.72rem;
-      letter-spacing: 0.07em;
-      text-transform: uppercase;
-      background: rgba(139,128,255,0.15);
-      border: 1px solid rgba(139,128,255,0.28);
-      color: #d7d3ff;
-      width: fit-content;
-    }
-
-    .omen-card-ratio.is-firm {
-      background: rgba(227,201,138,0.14);
-      border-color: rgba(227,201,138,0.24);
-      color: #f3dfb2;
-    }
-
-    .omen-card-orb-wrap {
-      display: grid;
-      place-items: center;
-    }
-
-    .omen-card-orb {
-      position: relative;
-      width: 62px;
-      aspect-ratio: 1 / 1;
-      border-radius: 50%;
-      display: grid;
-      place-items: center;
-      animation: floatOrb 7s ease-in-out infinite;
-    }
-
-    .omen-orb-core {
-      width: 34px;
-      aspect-ratio: 1 / 1;
-      border-radius: 50%;
-      background:
-        radial-gradient(circle at 35% 35%, rgba(255,255,255,0.9), rgba(225,206,164,0.78) 24%, rgba(120,147,232,0.35) 64%, rgba(255,255,255,0.08) 100%);
-      box-shadow: 0 0 22px rgba(185,205,255,0.26);
-    }
-
-    .omen-orb-ring {
-      position: absolute;
-      inset: 0;
-      border-radius: 50%;
-      border: 1px solid rgba(255,255,255,0.12);
-    }
-
-    .omen-orb-ring.ring-a { animation: rotateSlow 11s linear infinite; }
-    .omen-orb-ring.ring-b {
-      inset: -7px;
-      border-color: rgba(227,201,138,0.18);
-      animation: rotateSlowReverse 15s linear infinite;
-    }
-
-    .omen-card-advisory {
-      position: relative;
-      z-index: 1;
-      margin: 0 0 14px;
-      font-size: 0.92rem;
-      line-height: 1.66;
-      color: var(--muted);
-    }
-
-    .omen-card-foot {
-      position: relative;
-      z-index: 1;
-      color: #92a3c8;
-      font-size: 0.83rem;
-    }
-
-    .omen-card-chevron {
-      display: inline-block;
-      font-size: 1.2rem;
-      transition: transform 0.24s ease;
-    }
-
-    .omen-card.is-open .omen-card-chevron {
-      transform: rotate(180deg);
-    }
-
-    .omen-card-detail-panel {
-      overflow: hidden;
-      transition: max-height 0.26s ease, opacity 0.22s ease;
-      opacity: 1;
-    }
-
-    .omen-card-detail-panel[hidden] {
-      display: block;
-      opacity: 0;
-    }
-
-    .omen-card-detail-inner {
-      padding: 0 16px 16px;
-    }
-
-    .omen-card-detail-title {
-      margin: 0 0 12px;
-      padding-top: 4px;
-      font-size: 0.78rem;
-      color: var(--gold);
-      letter-spacing: 0.08em;
-      text-transform: uppercase;
-    }
-
-    .omen-phase-list {
-      display: grid;
-      gap: 10px;
-    }
-
-    .omen-phase-row {
-      display: grid;
-      gap: 6px;
-      padding: 11px 12px;
-      border-radius: 16px;
-      background: rgba(255,255,255,0.038);
-      border: 1px solid rgba(255,255,255,0.07);
-      animation: fadeRise 0.45s ease both;
-    }
-
-    .omen-phase-name {
-      font-size: 0.79rem;
-      color: #98a9ce;
-      letter-spacing: 0.07em;
-      text-transform: uppercase;
-    }
-
-    .omen-phase-values {
-      display: flex;
-      flex-wrap: wrap;
-      align-items: center;
-      gap: 6px;
-      font-size: 0.92rem;
-      line-height: 1.5;
-    }
-
-    .omen-phase-primary {
-      font-weight: 700;
-      color: #fff;
-    }
-
-    .omen-phase-shadow {
-      color: #c7d2ea;
-    }
-
-    .omen-phase-divider {
-      color: rgba(255,255,255,0.45);
-    }
-
-    .omen-phase-ratio {
-      display: inline-flex;
-      align-items: center;
-      min-height: 24px;
-      padding: 0 8px;
-      border-radius: 999px;
-      background: rgba(139,128,255,0.14);
-      border: 1px solid rgba(139,128,255,0.24);
-      color: #d7d3ff;
-      font-size: 0.68rem;
-      letter-spacing: 0.07em;
-      text-transform: uppercase;
-      margin-left: auto;
-    }
-
-    .omen-bottom-note {
-      margin-top: 18px;
-      text-align: center;
-      color: #93a5cb;
-      font-size: 0.94rem;
-      line-height: 1.7;
-    }
-
-    @keyframes driftSlow {
-      0% { transform: translate3d(0, 0, 0); }
-      100% { transform: translate3d(90px, -24px, 0); }
-    }
-
-    @keyframes pulseCore {
-      0%, 100% { transform: scale(0.96); }
-      50% { transform: scale(1.04); }
-    }
-
-    @keyframes breatheGlow {
-      0%, 100% { opacity: 0.56; transform: scale(0.98); }
-      50% { opacity: 0.9; transform: scale(1.04); }
-    }
-
-    @keyframes rotateSlow {
-      from { transform: rotate(0deg); }
-      to { transform: rotate(360deg); }
-    }
-
-    @keyframes rotateSlowReverse {
-      from { transform: rotate(360deg); }
-      to { transform: rotate(0deg); }
-    }
-
-    @keyframes floatOrb {
-      0%, 100% { transform: translateY(0px); }
-      50% { transform: translateY(-10px); }
-    }
-
-    @keyframes driftParticleA {
-      0% { transform: translate(0, 0) scale(0.9); opacity: 0.55; }
-      50% { transform: translate(12px, -16px) scale(1.04); opacity: 1; }
-      100% { transform: translate(0, -28px) scale(0.9); opacity: 0.6; }
-    }
-
-    @keyframes driftParticleB {
-      0% { transform: translate(0, 0) scale(0.85); opacity: 0.6; }
-      50% { transform: translate(-14px, 12px) scale(1.08); opacity: 1; }
-      100% { transform: translate(0, 22px) scale(0.9); opacity: 0.55; }
-    }
-
-    @keyframes sheenSweep {
-      from { transform: translateX(-110%); }
-      to { transform: translateX(110%); }
-    }
-
-    @keyframes fadeRise {
-      from {
-        opacity: 0;
-        transform: translateY(16px);
-      }
-      to {
-        opacity: 1;
-        transform: translateY(0);
-      }
-    }
-
-    @keyframes twinkleField {
-      0% { opacity: 0.72; }
-      50% { opacity: 0.95; }
-      100% { opacity: 0.76; }
-    }
-
-    @media (max-width: 1280px) {
-      .omen-summary-strip {
-        grid-template-columns: 1fr;
-      }
-
-      .omen-cards-grid {
-        grid-template-columns: repeat(2, minmax(0, 1fr));
-      }
-    }
-
-    @media (max-width: 980px) {
-      .omen-shell {
-        width: min(100% - 20px, 1200px);
-      }
-
-      .omen-hero-grid {
-        grid-template-columns: 1fr;
-      }
-
-      .omen-cards-grid {
-        grid-template-columns: 1fr;
-      }
-
-      .omen-card-core {
-        grid-template-columns: minmax(0, 1fr) 64px;
-      }
-    }
-
-    @media (max-width: 640px) {
-      .omen-hero,
-      .omen-board {
-        padding-left: 18px;
-        padding-right: 18px;
-      }
-
-      .omen-card-toggle,
-      .omen-card-detail-inner {
-        padding-left: 14px;
-        padding-right: 14px;
-      }
-
-      .omen-title {
-        font-size: 2.15rem;
-      }
-    }
+    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+    :root{
+      --bg:#07070b;--card:#0c0c17;--card2:rgba(12,12,22,0.6);
+      --border:rgba(200,169,106,0.10);--border2:rgba(200,169,106,0.18);
+      --gold:#c8a96a;--text:#e8e0d0;--text2:rgba(232,224,208,0.52);--text3:rgba(232,224,208,0.26);
+      --fh:'Cinzel',serif;--fb:'Cormorant Garamond',serif;
+      --fc:#c8a96a;--fg:rgba(200,169,106,0.15);
+    }
+    html,body{min-height:100%;background:var(--bg);color:var(--text);font-family:var(--fb)}
+
+    /* ── ANIMATIONS ── */
+    @keyframes fadeUp{from{opacity:0;transform:translateY(18px)}to{opacity:1;transform:translateY(0)}}
+    @keyframes fadeIn{from{opacity:0}to{opacity:1}}
+    @keyframes shimmer{0%{background-position:-200% center}100%{background-position:200% center}}
+    @keyframes pulseRing{0%,100%{box-shadow:0 0 0 0 rgba(200,169,106,0)}50%{box-shadow:0 0 0 5px rgba(200,169,106,0.12)}}
+    @keyframes rowIn{from{opacity:0;transform:translateX(-8px)}to{opacity:1;transform:translateX(0)}}
+    @keyframes spin{to{transform:rotate(360deg)}}
+
+    /* ── NAV ── */
+    .site-shell{width:min(1280px,calc(100% - 2rem));margin:0 auto;position:relative;z-index:2}
+    .site-header{padding-top:1rem;position:relative;z-index:20}
+    .dashboard-nav{
+      width:fit-content;max-width:100%;margin:0 auto;
+      display:flex;align-items:center;justify-content:center;
+      gap:.55rem;flex-wrap:wrap;padding:.75rem .9rem;border-radius:999px;
+      background:linear-gradient(180deg,rgba(255,255,255,0.03),rgba(255,255,255,0.01)),rgba(6,10,18,0.74);
+      border:1px solid rgba(255,255,255,0.06);box-shadow:0 14px 34px rgba(0,0,0,0.22);
+      backdrop-filter:blur(10px);font-family:var(--fh);font-size:.84rem;
+    }
+    .dashboard-nav a,.btn-rf{
+      padding:.62rem .92rem;border-radius:999px;
+      border:1px solid rgba(255,255,255,0.04);background:rgba(255,255,255,0.02);
+      color:rgba(221,213,200,0.7);text-decoration:none;transition:.18s ease;
+    }
+    .dashboard-nav a:hover,.btn-rf:hover{transform:translateY(-1px);color:#ddd5c8;border-color:rgba(142,168,255,0.22);background:rgba(255,255,255,0.04)}
+    .dashboard-nav a.active{color:#fff;border-color:rgba(142,168,255,0.28);background:rgba(142,168,255,0.10)}
+    .btn-rf{background:none;cursor:pointer;font-family:var(--fh);font-size:.84rem}
+
+    /* ── STATES ── */
+    .state{position:fixed;inset:0;z-index:100;display:flex;flex-direction:column;
+      align-items:center;justify-content:center;background:var(--bg);
+      gap:14px;font-family:var(--fh);font-size:11px;letter-spacing:.12em;color:var(--text3)}
+    .state.off{display:none}
+    .spin{width:32px;height:32px;border-radius:50%;border:1.5px solid rgba(200,169,106,.1);border-top-color:var(--fc);animation:spin 1.1s linear infinite}
+
+    /* ── PAGE ── */
+    .pg{display:none}
+    .pg.on{display:block}
+    .wrap{max-width:1100px;width:100%;margin:0 auto;padding:36px 32px 80px}
+    @media(max-width:680px){.wrap{padding:24px 16px 60px}}
+
+    /* ── BANNER ── */
+    .banner{
+      position:relative;overflow:hidden;
+      background:var(--card);border:1px solid var(--border);border-radius:6px;
+      padding:28px 32px 24px;margin-bottom:28px;
+      animation:fadeUp .5s ease both;
+    }
+    .banner::before{
+      content:'';position:absolute;top:0;left:0;right:0;height:1.5px;
+      background:linear-gradient(90deg,transparent,var(--fc),transparent);
+      background-size:200% auto;animation:shimmer 4s linear infinite;
+    }
+    .banner-row{display:flex;align-items:flex-start;justify-content:space-between;gap:16px;margin-bottom:6px}
+    .banner-date{font-family:var(--fh);font-size:10px;letter-spacing:.2em;color:var(--text3);text-transform:uppercase;margin-bottom:10px}
+    .banner-advisory{font-family:var(--fh);font-size:20px;font-weight:600;color:var(--fc);letter-spacing:.04em;line-height:1.35}
+    .banner-sub{font-family:var(--fb);font-size:16px;font-style:italic;color:var(--text2);margin-top:8px}
+    .reading-pill{
+      flex-shrink:0;font-family:var(--fh);font-size:9px;letter-spacing:.14em;
+      text-transform:uppercase;padding:5px 14px;border-radius:999px;margin-top:2px;
+      border:1px solid rgba(85,187,102,0.35);background:rgba(85,187,102,0.08);color:#55bb66;
+    }
+    .reading-pill.uncertain{border-color:rgba(200,169,106,0.35);background:rgba(200,169,106,0.08);color:var(--fc)}
+
+    /* ── SECTION HEADER ── */
+    .sec-head{display:flex;align-items:center;gap:14px;margin:0 0 16px}
+    .sec-line{flex:1;height:1px;background:var(--border)}
+    .sec-label{font-family:var(--fh);font-size:9px;letter-spacing:.22em;color:var(--text3);text-transform:uppercase;white-space:nowrap}
+
+    /* ── TODAY PHASES ── */
+    .phases{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:10px;margin-bottom:32px}
+    @media(max-width:680px){.phases{grid-template-columns:repeat(3,minmax(0,1fr))}}
+    @media(max-width:400px){.phases{grid-template-columns:repeat(2,minmax(0,1fr))}}
+
+    .phase{
+      background:var(--card);border:1px solid var(--border);border-radius:5px;
+      padding:14px 10px 12px;text-align:center;
+      transition:transform .15s,border-color .2s;cursor:default;
+    }
+    .phase:hover{transform:translateY(-3px);border-color:var(--border2)}
+    .phase.active{
+      border-color:rgba(200,169,106,0.45);
+      background:rgba(200,169,106,0.05);
+      animation:pulseRing 2.8s ease-in-out infinite;
+    }
+    .phase-icon{font-size:20px;margin-bottom:6px;display:block}
+    .phase-name{font-family:var(--fh);font-size:9px;letter-spacing:.1em;text-transform:uppercase;
+      color:var(--text3);line-height:1.4;margin-bottom:8px}
+    .phase.active .phase-name{color:rgba(200,169,106,0.7)}
+    .phase-force{font-family:var(--fb);font-size:14px;font-weight:500;color:var(--text);line-height:1.3}
+    .phase.active .phase-force{color:var(--fc)}
+    .phase-now{font-family:var(--fh);font-size:8px;letter-spacing:.12em;text-transform:uppercase;
+      color:var(--fc);margin-top:5px;opacity:.8}
+
+    /* ── FORECAST TABLE ── */
+    .tbl-wrap{overflow-x:auto;border:1px solid var(--border);border-radius:5px}
+    .tbl{width:100%;border-collapse:collapse;font-size:12px;min-width:680px}
+    .tbl thead tr{background:rgba(200,169,106,0.04)}
+    .tbl th{
+      font-family:var(--fh);font-size:9px;letter-spacing:.12em;text-transform:uppercase;
+      color:var(--text3);padding:12px 10px;text-align:left;
+      border-bottom:1px solid var(--border);white-space:nowrap;
+    }
+    .tbl td{padding:10px;border-bottom:1px solid rgba(200,169,106,0.06);vertical-align:top}
+    .tbl tr:last-child td{border-bottom:none}
+    .tbl tbody tr{transition:background .15s}
+    .tbl tbody tr:hover td{background:rgba(200,169,106,0.03)}
+    .tbl tbody tr.today td{background:rgba(200,169,106,0.04)}
+    .tbl tbody tr.faded{opacity:.5}
+    .tbl tbody tr.very-faded{opacity:.25}
+
+    .day-label{font-family:var(--fh);font-size:11px;font-weight:600;color:var(--text);white-space:nowrap}
+    .day-date{font-family:var(--fh);font-size:9px;letter-spacing:.08em;color:var(--text3);margin-top:2px}
+    .live-dot{
+      display:inline-block;width:6px;height:6px;border-radius:50%;background:var(--fc);
+      margin-left:5px;vertical-align:middle;animation:pulseRing 2s ease-in-out infinite;
+    }
+    .force-main{font-family:var(--fb);font-size:13px;color:var(--text);line-height:1.3}
+    .force-shadow{font-family:var(--fb);font-size:11px;color:var(--text3);text-decoration:line-through;margin-top:2px;font-style:italic}
+    .adv-text{font-family:var(--fb);font-size:12px;font-style:italic;color:var(--text2);line-height:1.5;max-width:130px}
+    .obscured{font-family:var(--fb);font-size:12px;font-style:italic;color:var(--text3);padding:4px 0}
   </style>
 </head>
 <body>
-  <div class="omen-shell">
-    <div class="floating-mist" aria-hidden="true"></div>
 
-    <div class="omen-topbar">
-      <div class="omen-topbar-actions">
-        <a class="omen-back-link" href="/breath-of-celestial.html">← Back to Breath of Celestial</a>
-        <button type="button" class="omen-logout-button" id="logoutButton">Logout</button>
+<div class="site-shell">
+  <header class="site-header">
+    <nav class="dashboard-nav" aria-label="Global">
+      <a href="/index.html">Home</a>
+      <a href="/lore.html">Lore</a>
+      <a href="/dashboard.html">Dashboard</a>
+      <a href="/oracle.html">Ascendant Oracle</a>
+      <a href="/breath-of-celestial.html">Celestial</a>
+      <a href="/celestial-omen.html" class="active">Omens</a>
+      <button class="btn-rf" id="btnRf">&#8635; Refresh</button>
+      <a href="/.netlify/functions/logout" id="btnOut">Logout</a>
+    </nav>
+  </header>
+</div>
+
+<div class="state" id="stLoad"><div class="spin"></div><span>Consulting the omens&hellip;</span></div>
+<div class="state off" id="stErr"><span id="errTxt">Unable to read the omens.</span></div>
+
+<div class="pg" id="pgMain">
+  <div class="wrap">
+
+    <!-- Banner -->
+    <div class="banner" id="elBanner">
+      <div class="banner-date" id="tDate">— Celestial Date</div>
+      <div class="banner-row">
+        <div class="banner-advisory" id="tAdvisory">—</div>
+        <div class="reading-pill" id="tPill">—</div>
       </div>
-      <div class="omen-topbar-note">Projected sky reading for the next seven celestial days.</div>
+      <div class="banner-sub" id="tSub">—</div>
     </div>
 
-    <section class="omen-hero">
-      <div class="omen-hero-grid">
-        <div>
-          <div class="omen-kicker">Forecast Archive</div>
-          <h1 class="omen-title">Celestial Omen</h1>
-          <p class="omen-subtitle">
-            The living heavens do not reveal tomorrow with equal mercy. Near skies arrive as
-            firmer signs. Distant skies split into uncertain currents, where one omen may yet
-            overturn another before the phase is born.
-          </p>
-        </div>
+    <!-- Today phases -->
+    <div class="sec-head" style="animation:fadeIn .4s ease .3s both;opacity:0;animation-fill-mode:both">
+      <div class="sec-line"></div>
+      <div class="sec-label">Today's phases</div>
+      <div class="sec-line"></div>
+    </div>
 
-        <div class="omen-hero-orb-panel" aria-hidden="true">
-          <div class="omen-hero-orb">
-            <div class="hero-orb-core"></div>
-            <span class="hero-orb-particle p1"></span>
-            <span class="hero-orb-particle p2"></span>
-            <span class="hero-orb-particle p3"></span>
-            <span class="hero-orb-particle p4"></span>
-          </div>
-        </div>
-      </div>
-    </section>
+    <div class="phases" id="elPhases"></div>
 
-    <section class="omen-summary-strip">
-      <article class="summary-card">
-        <div class="summary-label">Reading Rule</div>
-        <div class="summary-value">
-          <strong>Today</strong> and <strong>Tomorrow</strong> arrive as firmer celestial readings.
-        </div>
-      </article>
+    <!-- Forecast -->
+    <div class="sec-head" style="animation:fadeIn .4s ease .85s both;opacity:0;animation-fill-mode:both">
+      <div class="sec-line"></div>
+      <div class="sec-label">7-day forecast</div>
+      <div class="sec-line"></div>
+    </div>
 
-      <article class="summary-card">
-        <div class="summary-label">Distant Omen</div>
-        <div class="summary-value">
-          <strong>Day 3–7</strong> may split into dual skies, shown as a <strong>50/50</strong> reading.
-        </div>
-      </article>
+    <div class="tbl-wrap" style="animation:fadeUp .5s ease .9s both;opacity:0;animation-fill-mode:both">
+      <table class="tbl">
+        <thead>
+          <tr>
+            <th>Day</th>
+            <th>&#127765; Moon Grave</th>
+            <th>&#127748; First Breath</th>
+            <th>&#9728;&#65039; Golden Meridian</th>
+            <th>&#127774; Zenith</th>
+            <th>&#127747; Ashen Descent</th>
+            <th>&#127761; Night Tide</th>
+            <th>Reading</th>
+          </tr>
+        </thead>
+        <tbody id="elRows"></tbody>
+      </table>
+    </div>
 
-      <article class="summary-card">
-        <div class="summary-label">Interpretation</div>
-        <div class="summary-value">
-          Open a day card to reveal all <strong>6 phase readings</strong> beneath the surface omen.
-        </div>
-      </article>
-    </section>
-
-    <section class="omen-board">
-      <div class="section-head">
-        <div>
-          <h2 class="section-title">Seven-Day Celestial Reading</h2>
-          <p class="section-subtitle">
-            Each card holds a summary omen first. Open the card to reveal the six phase readings
-            beneath it. One card may stand open at a time.
-          </p>
-        </div>
-      </div>
-
-      <div id="forecastMeta" class="forecast-meta">Reading the seven skies...</div>
-      <div id="forecastError" class="forecast-error"></div>
-      <div id="forecastCards" class="omen-cards-grid"></div>
-
-      <div class="omen-bottom-note">
-        The farther the reading reaches, the more the heavens may turn before the phase arrives.
-      </div>
-    </section>
   </div>
+</div>
 
-  <script>
-    const LOGIN_PAGE_URL = "/login.html";
-    const VERIFY_SESSION_URL = "/.netlify/functions/verify-session";
-    const LOGOUT_URL = "/.netlify/functions/logout";
-    const CELESTIAL_FORECAST_URL = "/.netlify/functions/load-seven-day-celestial-forecast";
+<script>
+(function(){
+  "use strict";
+  var VERIFY="/.netlify/functions/verify-session";
+  var LOGOUT="/.netlify/functions/logout";
+  var FORECAST="/.netlify/functions/load-seven-day-celestial-forecast";
+  var CELESTIAL="/.netlify/functions/load-world-celestial-state";
+  var LOGIN="/login.html";
 
-    const FORECAST_PHASE_ORDER = [
-      "moon_grave_silence",
-      "veil_of_first_breath",
-      "golden_meridian",
-      "zenith_of_heaven",
-      "ashen_descent",
-      "night_tide_omen"
-    ];
+  var _ri=null,_fly=false;
 
-    const FORECAST_PHASE_LABELS = {
-      moon_grave_silence: "Moon Grave Silence",
-      veil_of_first_breath: "Veil of First Breath",
-      golden_meridian: "Golden Meridian",
-      zenith_of_heaven: "Zenith of Heaven",
-      ashen_descent: "Ashen Descent",
-      night_tide_omen: "Night Tide Omen"
-    };
+  var PHASE_ORDER=["moon_grave_silence","veil_of_first_breath","golden_meridian","zenith_of_heaven","ashen_descent","night_tide_omen"];
+  var PHASE_ICONS={"moon_grave_silence":"🌕","veil_of_first_breath":"🌅","golden_meridian":"☀️","zenith_of_heaven":"🌞","ashen_descent":"🌇","night_tide_omen":"🌙"};
+  var PHASE_LABELS={"moon_grave_silence":"Moon Grave Silence","veil_of_first_breath":"Veil of First Breath","golden_meridian":"Golden Meridian","zenith_of_heaven":"Zenith of Heaven","ashen_descent":"Ashen Descent","night_tide_omen":"Night Tide Omen"};
 
-    function escapeHtml(value) {
-      return String(value ?? "")
-        .replace(/&/g, "&amp;")
-        .replace(/</g, "&lt;")
-        .replace(/>/g, "&gt;")
-        .replace(/"/g, "&quot;")
-        .replace(/'/g, "&#39;");
-    }
+  function st(v,fb){fb=fb||"—";return String(v==null?"":v).trim()||fb}
+  function nk(v){return String(v==null?"":v).trim().toLowerCase().replace(/[^a-z0-9]+/g,"_").replace(/^_+|_+$/g,"")}
+  function g(id){return document.getElementById(id)}
+  function tx(id,v){var e=g(id);if(e)e.textContent=st(v)}
+  function show(id){var e=g(id);if(e)e.classList.remove("off")}
+  function hide(id){var e=g(id);if(e)e.classList.add("off")}
+  function on(id){var e=g(id);if(e)e.classList.add("on")}
+  function off(id){var e=g(id);if(e)e.classList.remove("on")}
 
-    function clearClientSessionArtifacts() {
-      const keysToRemove = [
-        "session",
-        "sessionToken",
-        "session_token",
-        "websiteSession",
-        "website_session",
-        "member",
-        "memberState",
-        "member_state",
-        "user",
-        "user_state",
-        "sl_username",
-        "slUsername",
-        "avatar_key",
-        "avatarKey",
-        "selected_partnership_uuid",
-        "selectedPartnershipUuid"
-      ];
-
-      for (const key of keysToRemove) {
-        try { localStorage.removeItem(key); } catch (_) {}
-        try { sessionStorage.removeItem(key); } catch (_) {}
-      }
-    }
-
-    function redirectToLogin() {
-      clearClientSessionArtifacts();
-      window.location.href = LOGIN_PAGE_URL;
-    }
-
-    async function authFetch(url, options = {}) {
-      const response = await fetch(url, {
-        ...options,
-        credentials: "include",
-        cache: "no-store",
-        headers: {
-          Accept: "application/json",
-          ...(options.headers || {})
-        }
-      });
-
-      if (response.status === 401 || response.status === 403) {
-        redirectToLogin();
-        throw new Error("Your session has expired. Please sign in again.");
-      }
-
-      return response;
-    }
-
-    async function verifySession() {
-      const response = await authFetch(VERIFY_SESSION_URL, {
-        method: "GET"
-      });
-
-      const rawText = await response.text();
-      let payload = null;
-
-      try {
-        payload = rawText ? JSON.parse(rawText) : null;
-      } catch {
-        payload = null;
-      }
-
-      if (!response.ok || !payload?.success) {
-        redirectToLogin();
-        throw new Error(payload?.message || "Unable to verify session.");
-      }
-
-      return payload;
-    }
-
-    async function logoutUser() {
-      try {
-        await fetch(LOGOUT_URL, {
-          method: "POST",
-          credentials: "include"
-        });
-      } catch (error) {
-        console.error("Logout request error:", error);
-      } finally {
-        clearClientSessionArtifacts();
-        window.location.href = LOGIN_PAGE_URL;
-      }
-    }
-
-    function getForecastElements() {
-      return {
-        cards: document.getElementById("forecastCards"),
-        meta: document.getElementById("forecastMeta"),
-        error: document.getElementById("forecastError")
-      };
-    }
-
-    function setForecastMeta(text) {
-      const { meta } = getForecastElements();
-      if (meta) meta.textContent = text || "";
-    }
-
-    function setForecastError(text) {
-      const { error } = getForecastElements();
-      if (!error) return;
-      error.textContent = text || "";
-      error.style.display = text ? "block" : "none";
-    }
-
-    function getOrderedPhaseEntries(day) {
-      const phases = day?.phases || {};
-
-      return FORECAST_PHASE_ORDER.map((phaseKey) => ({
-        key: phaseKey,
-        label: FORECAST_PHASE_LABELS[phaseKey] || phaseKey,
-        projected: phases?.[phaseKey]?.projected_force || "Unknown",
-        shadow: phases?.[phaseKey]?.shadow_force || null
-      }));
-    }
-
-    function pickLeadForce(day, mode = "projected") {
-      const ordered = getOrderedPhaseEntries(day);
-      const counts = new Map();
-
-      ordered.forEach((phase, index) => {
-        const value = mode === "shadow" ? phase.shadow : phase.projected;
-        if (!value) return;
-
-        if (!counts.has(value)) {
-          counts.set(value, { count: 1, firstIndex: index });
-        } else {
-          counts.get(value).count += 1;
-        }
-      });
-
-      let winner = null;
-
-      for (const [name, stats] of counts.entries()) {
-        if (
-          !winner ||
-          stats.count > winner.count ||
-          (stats.count === winner.count && stats.firstIndex < winner.firstIndex)
-        ) {
-          winner = { name, ...stats };
-        }
-      }
-
-      return winner?.name || null;
-    }
-
-    function buildLeadSummary(day) {
-      const projectedLead = pickLeadForce(day, "projected");
-      const shadowLead = pickLeadForce(day, "shadow");
-      const isFirm = day?.day_reading_type === "Firm reading";
-
-      if (isFirm || !shadowLead) {
-        return {
-          primary: projectedLead || "Unclear Reading",
-          secondary: null,
-          ratio: "Firm"
-        };
-      }
-
-      return {
-        primary: projectedLead || "Unclear Reading",
-        secondary: shadowLead,
-        ratio: "50/50"
-      };
-    }
-
-    function renderDetailRow(phase) {
-      const hasShadow = Boolean(phase.shadow);
-
-      return `
-        <div class="omen-phase-row ${hasShadow ? "is-uncertain" : ""}">
-          <div class="omen-phase-name">${escapeHtml(phase.label)}</div>
-          <div class="omen-phase-values">
-            <span class="omen-phase-primary">${escapeHtml(phase.projected)}</span>
-            ${
-              hasShadow
-                ? `
-                  <span class="omen-phase-divider">/</span>
-                  <span class="omen-phase-shadow">${escapeHtml(phase.shadow)}</span>
-                  <span class="omen-phase-ratio">50/50</span>
-                `
-                : ""
-            }
-          </div>
-        </div>
-      `;
-    }
-
-    function renderForecastCard(day, index) {
-      const isFirm = day?.day_reading_type === "Firm reading";
-      const lead = buildLeadSummary(day);
-      const orderedPhases = getOrderedPhaseEntries(day);
-      const detailId = `omen-detail-${index}`;
-
-      return `
-        <article class="omen-card ${isFirm ? "is-firm" : "is-uncertain"} ${index === 0 ? "is-open" : ""}" style="animation-delay:${index * 70}ms">
-          <button
-            type="button"
-            class="omen-card-toggle"
-            aria-expanded="${index === 0 ? "true" : "false"}"
-            aria-controls="${detailId}"
-          >
-            <div class="omen-card-sheen"></div>
-
-            <div class="omen-card-top">
-              <div>
-                <div class="omen-card-day">${escapeHtml(day.forecast_day_label)}</div>
-                <div class="omen-card-date">${escapeHtml(day.celestial_date_text)}</div>
-              </div>
-              <span class="omen-card-state">${escapeHtml(day.day_reading_type)}</span>
-            </div>
-
-            <div class="omen-card-core">
-              <div class="omen-card-reading">
-                <div class="omen-card-reading-label">Lead Omen</div>
-                <div class="omen-card-reading-main">
-                  <span class="omen-force-primary">${escapeHtml(lead.primary)}</span>
-                  ${
-                    lead.secondary
-                      ? `
-                        <span class="omen-force-divider">/</span>
-                        <span class="omen-force-shadow">${escapeHtml(lead.secondary)}</span>
-                      `
-                      : ""
-                  }
-                </div>
-                <div class="omen-card-ratio ${isFirm ? "is-firm" : ""}">
-                  ${escapeHtml(lead.ratio)}
-                </div>
-              </div>
-
-              <div class="omen-card-orb-wrap" aria-hidden="true">
-                <div class="omen-card-orb">
-                  <span class="omen-orb-ring ring-a"></span>
-                  <span class="omen-orb-ring ring-b"></span>
-                  <span class="omen-orb-core"></span>
-                </div>
-              </div>
-            </div>
-
-            <p class="omen-card-advisory">${escapeHtml(day.day_advisory)}</p>
-
-            <div class="omen-card-foot">
-              <span>Open reading</span>
-              <span class="omen-card-chevron">⌄</span>
-            </div>
-          </button>
-
-          <div id="${detailId}" class="omen-card-detail-panel" ${index === 0 ? "" : "hidden"}>
-            <div class="omen-card-detail-inner">
-              <div class="omen-card-detail-title">Phase Reading</div>
-              <div class="omen-phase-list">
-                ${orderedPhases.map(renderDetailRow).join("")}
-              </div>
-            </div>
-          </div>
-        </article>
-      `;
-    }
-
-    function closeAllCardsExcept(openCard) {
-      const cards = document.querySelectorAll(".omen-card");
-
-      cards.forEach((card) => {
-        const button = card.querySelector(".omen-card-toggle");
-        const panel = card.querySelector(".omen-card-detail-panel");
-        if (!button || !panel) return;
-
-        if (card === openCard) {
-          card.classList.add("is-open");
-          button.setAttribute("aria-expanded", "true");
-          panel.hidden = false;
-          panel.style.maxHeight = `${panel.scrollHeight}px`;
-        } else {
-          card.classList.remove("is-open");
-          button.setAttribute("aria-expanded", "false");
-          panel.style.maxHeight = "0px";
-          window.setTimeout(() => {
-            if (!card.classList.contains("is-open")) panel.hidden = true;
-          }, 220);
-        }
-      });
-    }
-
-    function initializeAccordion() {
-      const cards = document.querySelectorAll(".omen-card");
-
-      cards.forEach((card, index) => {
-        const button = card.querySelector(".omen-card-toggle");
-        const panel = card.querySelector(".omen-card-detail-panel");
-        if (!button || !panel) return;
-
-        if (index === 0) {
-          panel.hidden = false;
-          panel.style.maxHeight = `${panel.scrollHeight}px`;
-        } else {
-          panel.hidden = true;
-          panel.style.maxHeight = "0px";
-        }
-
-        button.addEventListener("click", () => {
-          const isOpen = card.classList.contains("is-open");
-
-          if (isOpen) {
-            card.classList.remove("is-open");
-            button.setAttribute("aria-expanded", "false");
-            panel.style.maxHeight = "0px";
-            window.setTimeout(() => {
-              if (!card.classList.contains("is-open")) panel.hidden = true;
-            }, 220);
-            return;
-          }
-
-          closeAllCardsExcept(card);
-        });
-      });
-    }
-
-    function renderForecast(forecast) {
-      const { cards } = getForecastElements();
-      if (!cards) return;
-
-      const days = Array.isArray(forecast?.days) ? forecast.days : [];
-      cards.innerHTML = days.map((day, index) => renderForecastCard(day, index)).join("");
-
-      initializeAccordion();
-
-      const firstDay = days[0];
-      setForecastMeta(
-        firstDay?.celestial_date_text
-          ? `Seven-day reading beginning ${firstDay.celestial_date_text}`
-          : "Seven-day reading loaded"
-      );
-    }
-
-    async function loadCelestialOmen() {
-      const { cards } = getForecastElements();
-      if (!cards) return;
-
-      setForecastError("");
-      setForecastMeta("Reading the seven skies...");
-      cards.innerHTML = `
-        <div class="omen-loading">
-          <div class="omen-loading-orb"></div>
-          <div class="omen-loading-text">The omens are being gathered from the celestial current...</div>
-        </div>
-      `;
-
-      try {
-        const response = await authFetch(CELESTIAL_FORECAST_URL, {
-          method: "GET"
-        });
-
-        const rawText = await response.text();
-        let payload = null;
-
-        try {
-          payload = rawText ? JSON.parse(rawText) : null;
-        } catch {
-          payload = null;
-        }
-
-        if (!response.ok || !payload?.success || !payload?.forecast) {
-          throw new Error(
-            payload?.details ||
-            payload?.error ||
-            payload?.message ||
-            `HTTP ${response.status} ${response.statusText}`
-          );
-        }
-
-        renderForecast(payload.forecast);
-      } catch (error) {
-        console.error("Celestial Omen load error:", error);
-        cards.innerHTML = "";
-        setForecastMeta("");
-        setForecastError(error.message || "Unable to read the celestial omen right now.");
-      }
-    }
-
-    function wireEvents() {
-      const logoutButton = document.getElementById("logoutButton");
-      if (logoutButton) {
-        logoutButton.addEventListener("click", async () => {
-          await logoutUser();
-        });
-      }
-    }
-
-    document.addEventListener("DOMContentLoaded", async () => {
-      wireEvents();
-
-      try {
-        await verifySession();
-        await loadCelestialOmen();
-      } catch (error) {
-        console.error("Celestial Omen boot error:", error);
-      }
+  function clearArt(){
+    ["session","sessionToken","session_token","websiteSession","website_session",
+     "member","memberState","member_state","user","user_state"].forEach(function(k){
+      try{localStorage.removeItem(k)}catch(e){}
+      try{sessionStorage.removeItem(k)}catch(e){}
     });
-  </script>
+  }
+  function goLogin(){clearArt();window.location.href=LOGIN}
+
+  function requireAuth(cb){
+    fetch(VERIFY,{method:"GET",credentials:"include",headers:{Accept:"application/json"}})
+      .then(function(r){
+        if(r.status===401||r.status===403){goLogin();return null}
+        return r.json()
+      })
+      .then(function(d){if(!d)return;if(!d.authenticated){goLogin();return}cb()})
+      .catch(function(e){console.error("Auth",e);goLogin()})
+  }
+
+  function doFetch(url,cb){
+    fetch(url,{method:"GET",credentials:"include",headers:{Accept:"application/json"},cache:"no-store"})
+      .then(function(r){
+        if(r.status===401||r.status===403){goLogin();return null}
+        return r.json().then(function(d){return{ok:r.ok,status:r.status,data:d}})
+      })
+      .then(function(res){if(res)cb(null,res)})
+      .catch(function(e){cb(e,null)})
+  }
+
+  /* ── Build today phase cards ── */
+  function buildPhases(todayDay, currentPhaseKey){
+    var wrap=g("elPhases");
+    if(!wrap)return;
+    wrap.innerHTML="";
+    var phases=todayDay.phases||{};
+    PHASE_ORDER.forEach(function(pk,idx){
+      var info=phases[pk]||{};
+      var force=st(info.projected_force,"—");
+      var isActive=(nk(currentPhaseKey)===pk);
+      var div=document.createElement("div");
+      div.className="phase"+(isActive?" active":"");
+      div.style.animation="fadeUp .4s ease "+(0.35+idx*0.07)+"s both";
+      div.style.opacity="0";
+      div.style.animationFillMode="both";
+      div.innerHTML=
+        '<span class="phase-icon">'+st(PHASE_ICONS[pk],"·")+'</span>'+
+        '<div class="phase-name">'+st(PHASE_LABELS[pk])+'</div>'+
+        '<div class="phase-force">'+force+'</div>'+
+        (isActive?'<div class="phase-now">Now</div>':'');
+      wrap.appendChild(div);
+    });
+  }
+
+  /* ── Build forecast rows ── */
+  function buildRows(days, currentPhaseKey){
+    var tbody=g("elRows");
+    if(!tbody)return;
+    tbody.innerHTML="";
+    var uncertain=(days.length>2);
+
+    days.forEach(function(day,di){
+      var isFirm=(di<2);
+      var isToday=(di===0);
+      var isVeryFar=(di>=4);
+
+      var tr=document.createElement("tr");
+      if(isToday)tr.className="today";
+      else if(isVeryFar)tr.className="very-faded";
+      else if(!isFirm)tr.className="faded";
+      tr.style.animation="rowIn .35s ease "+(0.95+di*0.1)+"s both";
+      tr.style.opacity="0";
+      tr.style.animationFillMode="both";
+
+      /* Day cell */
+      var dayLabel=st(day.forecast_day_label,"Day "+(di+1));
+      var dayDate=st(day.celestial_date_text,"—");
+      var liveDot=isToday?'<span class="live-dot"></span>':'';
+      var td0='<td><div class="day-label">'+dayLabel+liveDot+'</div><div class="day-date">'+dayDate+'</div></td>';
+
+      /* Phase cells */
+      var phaseCells="";
+      if(isVeryFar){
+        phaseCells='<td colspan="6" class="obscured">Distant heavens obscured — reading unreliable</td>';
+      } else {
+        var phases=day.phases||{};
+        PHASE_ORDER.forEach(function(pk){
+          var info=phases[pk]||{};
+          var main=st(info.projected_force,"—");
+          var shadow=st(info.shadow_force,"");
+          var shadowHtml=shadow?'<div class="force-shadow">'+shadow+'</div>':'';
+          phaseCells+='<td><div class="force-main">'+main+'</div>'+shadowHtml+'</td>';
+        });
+      }
+
+      /* Advisory cell */
+      var advText=isFirm?"Firm reading":st(day.day_reading_type,"Uncertain");
+      var advCell='<td class="adv-text">'+advText+'</td>';
+
+      tr.innerHTML=td0+phaseCells+advCell;
+      tbody.appendChild(tr);
+    });
+  }
+
+  /* ── Render ── */
+  function render(world, forecast){
+    /* Banner from world */
+    var todayForecast=forecast.days[0]||{};
+    var advisory=st(todayForecast.day_advisory,"The heavens hold their shape.");
+    var dateText=st(todayForecast.celestial_date_text,"—");
+    var readingType=st(todayForecast.day_reading_type,"Firm reading");
+    var isFirm=(nk(readingType).indexOf("firm")>=0||nk(readingType).indexOf("clear")>=0);
+
+    tx("tDate",dateText+" · Today's Reading");
+    tx("tAdvisory",advisory);
+    tx("tSub","Phase · "+st(world.phase_name,"—")+" · Bias: "+dbias(world.effective_bias||world.phase_bias));
+
+    var pill=g("tPill");
+    if(pill){
+      pill.textContent=readingType;
+      pill.className="reading-pill"+(isFirm?"":" uncertain");
+    }
+
+    var currentPhaseKey=nk(world.phase_key||world.phase_name||"");
+    buildPhases(todayForecast, currentPhaseKey);
+    buildRows(forecast.days, currentPhaseKey);
+  }
+
+  function dbias(v){
+    var k=nk(v);
+    if(k==="yin")return"Yin";if(k==="yang")return"Yang";
+    if(k==="balance"||k==="balanced"||k==="taiji")return"Taiji";
+    return st(v,"Balanced");
+  }
+
+  /* ── Load both endpoints in parallel ── */
+  function loadAll(silent){
+    if(!silent){show("stLoad");hide("stErr");off("pgMain")}
+    var worldData=null,forecastData=null,errors=0,done=0;
+
+    function tryRender(){
+      done++;
+      if(done<2)return;
+      if(errors>=2){
+        if(!silent){hide("stLoad");tx("errTxt","Unable to load the omens.");show("stErr")}
+        return;
+      }
+      if(!worldData||!forecastData){
+        if(!silent){hide("stLoad");tx("errTxt","Incomplete data from the heavens.");show("stErr")}
+        return;
+      }
+      render(worldData,forecastData);
+      if(!silent){hide("stLoad");on("pgMain")}
+    }
+
+    doFetch(CELESTIAL,function(err,res){
+      if(err||!res||!res.ok||!res.data||!res.data.world){errors++}
+      else{worldData=res.data.world}
+      tryRender();
+    });
+
+    doFetch(FORECAST,function(err,res){
+      if(err||!res||!res.ok||!res.data||!res.data.forecast){errors++}
+      else{forecastData=res.data.forecast}
+      tryRender();
+    });
+  }
+
+  function startRefresh(){
+    if(_ri)clearInterval(_ri);
+    _ri=setInterval(function(){
+      if(_fly)return;_fly=true;
+      loadAll(true);
+      setTimeout(function(){_fly=false},5000);
+    },60000);
+  }
+
+  function boot(){
+    requireAuth(function(){
+      loadAll(false);
+      startRefresh();
+    });
+  }
+
+  g("btnRf").addEventListener("click",function(){loadAll(false)});
+  g("btnOut").addEventListener("click",function(e){e.preventDefault();clearArt();window.location.href=LOGOUT});
+  document.addEventListener("DOMContentLoaded",boot);
+  window.addEventListener("beforeunload",function(){if(_ri)clearInterval(_ri)});
+})();
+</script>
 </body>
 </html>
