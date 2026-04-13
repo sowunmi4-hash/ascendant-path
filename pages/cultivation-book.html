@@ -2358,7 +2358,8 @@
           gateState = 'damaged';
         } else if (v2Status === 'in_breakthrough' || btState.includes('active') || btState.includes('countdown') || btState.includes('timer')) {
           gateState = 'active';
-        } else if (showEntry || v2Status === 'breakthrough_ready') {
+        } else if (showEntry || v2Status === 'breakthrough_ready' || 
+                   (v2Status === 'meditating' && coalesce(state.member && state.member.v2_breakthrough_gate_open, false))) {
           gateState = 'open';
         } else if (v2Status === 'idle' && store && store.section_completed) {
           gateState = 'complete';
@@ -2626,7 +2627,8 @@
         }
         if (secondary) { secondary.href = "/cultivation.html"; secondary.textContent = "Meditation Page"; }
         if (actionWell) {
-          var hideActionWell = showEntry || v2Status === 'breakthrough_ready' || v2Status === 'in_breakthrough';
+          var hideActionWell = showEntry || v2Status === 'breakthrough_ready' || v2Status === 'in_breakthrough' ||
+            (v2Status === 'meditating' && coalesce(state.member && state.member.v2_breakthrough_gate_open, false));
           actionWell.style.display = hideActionWell ? 'none' : '';
         }
       } catch(e) {
